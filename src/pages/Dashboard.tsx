@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -22,6 +21,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // Types
 interface WaitlistUser {
@@ -76,7 +77,7 @@ const mockProperties: Property[] = [
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { accountType } = useAuth();
+  const { accountType, setAccountType } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [myProperties, setMyProperties] = useState<Property[]>([]);
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
@@ -222,6 +223,12 @@ const Dashboard: React.FC = () => {
     } else {
       toast.success("User declined from waitlist.");
     }
+  };
+
+  // Account type change handler
+  const handleAccountTypeChange = (type: 'buyer' | 'seller') => {
+    setAccountType(type);
+    toast.success(`Account type changed to ${type}`);
   };
 
   return (
@@ -613,6 +620,40 @@ const Dashboard: React.FC = () => {
                     Save Changes
                   </Button>
                 </form>
+              </div>
+              
+              <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
+                <h2 className="text-2xl font-bold mb-6">Account Type</h2>
+                
+                <div className="p-6 border-2 border-black mb-6">
+                  <h3 className="font-bold text-lg mb-4">Select your account type:</h3>
+                  
+                  <RadioGroup 
+                    value={accountType} 
+                    onValueChange={(value: 'buyer' | 'seller') => handleAccountTypeChange(value)}
+                    className="flex flex-col gap-4"
+                  >
+                    <div className="flex items-center justify-between p-4 border-2 border-black hover:bg-gray-50">
+                      <div className="flex items-center space-x-3">
+                        <RadioGroupItem value="buyer" id="buyer" />
+                        <Label htmlFor="buyer" className="font-bold text-lg cursor-pointer">Buyer</Label>
+                      </div>
+                      <div className="text-gray-600 text-sm max-w-[50%]">
+                        Browse properties, join waitlists, and get notified about new deals
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-4 border-2 border-black hover:bg-gray-50">
+                      <div className="flex items-center space-x-3">
+                        <RadioGroupItem value="seller" id="seller" />
+                        <Label htmlFor="seller" className="font-bold text-lg cursor-pointer">Seller</Label>
+                      </div>
+                      <div className="text-gray-600 text-sm max-w-[50%]">
+                        List properties, manage waitlists, and communicate with potential buyers
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </div>
               </div>
               
               <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
