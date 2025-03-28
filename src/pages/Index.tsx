@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SearchBar from '@/components/SearchBar';
@@ -6,46 +7,6 @@ import PropertyCard from '@/components/PropertyCard';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-// Mock data
-const featuredProperties = [
-  {
-    id: "prop1",
-    title: "Modern Craftsman Home",
-    price: 425000,
-    marketPrice: 520000,
-    image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=roam-in-color-z3QZ6gjGKOA-unsplash.jpg",
-    location: "Portland, OR",
-    beds: 3,
-    baths: 2,
-    sqft: 1850,
-    belowMarket: 18,
-  },
-  {
-    id: "prop2",
-    title: "Downtown Luxury Condo",
-    price: 610000,
-    marketPrice: 750000,
-    image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=scott-webb-167099-unsplash.jpg",
-    location: "Seattle, WA",
-    beds: 2,
-    baths: 2,
-    sqft: 1200,
-    belowMarket: 19,
-  },
-  {
-    id: "prop3",
-    title: "Renovated Victorian",
-    price: 750000,
-    marketPrice: 900000,
-    image: "https://images.unsplash.com/photo-1496307653780-42ee777d4833?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=todd-kent-178j8tJrNlc-unsplash.jpg",
-    location: "San Francisco, CA",
-    beds: 4,
-    baths: 3,
-    sqft: 2400,
-    belowMarket: 17,
-  },
-];
 
 // Animation variants
 const fadeInUp = {
@@ -63,8 +24,59 @@ const stagger = {
   }
 };
 
+interface Listing {
+  id: string;
+  title: string;
+  price: number;
+  marketPrice: number;
+  image: string;
+  location: string;
+  beds: number;
+  baths: number;
+  sqft: number;
+  belowMarket: number;
+}
+
 const Index: React.FC = () => {
   const navigate = useNavigate();
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // In a real app, this would fetch from a real API
+    const fetchListings = async () => {
+      setLoading(true);
+      try {
+        // Simulating API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // For now, using a mock data - in production this would come from your backend
+        const mockListings = [
+          {
+            id: "prop1",
+            title: "Modern Craftsman Home",
+            price: 425000,
+            marketPrice: 520000,
+            image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=roam-in-color-z3QZ6gjGKOA-unsplash.jpg",
+            location: "Portland, OR",
+            beds: 3,
+            baths: 2,
+            sqft: 1850,
+            belowMarket: 18,
+          }
+        ];
+        
+        setListings(mockListings);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+        setListings([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -155,30 +167,45 @@ const Index: React.FC = () => {
             Discover properties below market value, exclusively available through DoneDeal.
           </p>
           
-          {featuredProperties.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProperties.map((property, index) => (
-                <motion.div 
-                  key={property.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <PropertyCard {...property} />
-                </motion.div>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((_, index) => (
+                <div key={index} className="border-4 border-black p-4 h-[400px] animate-pulse">
+                  <div className="bg-gray-200 h-[240px] w-full mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                </div>
               ))}
             </div>
           ) : (
-            <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-              <h3 className="text-2xl font-bold text-black mb-6">No properties have been listed yet.</h3>
-              <Button
-                className="bg-[#ea384c] hover:bg-[#ea384c]/90 text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
-                onClick={() => navigate('/sell')}
-              >
-                List Your Property
-              </Button>
-            </div>
+            <>
+              {listings.length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {listings.map((property, index) => (
+                    <motion.div 
+                      key={property.id}
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <PropertyCard {...property} />
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                  <h3 className="text-2xl font-bold text-black mb-6">No properties have been listed yet.</h3>
+                  <Button
+                    className="bg-[#ea384c] hover:bg-[#ea384c]/90 text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                    onClick={() => navigate('/sell')}
+                  >
+                    List Your Property
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </motion.section>
