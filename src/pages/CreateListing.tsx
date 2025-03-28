@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -14,6 +13,7 @@ import { Upload, Plus, X, Check, Image } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Select,
   SelectContent,
@@ -64,6 +64,7 @@ const CreateListing: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
 
@@ -88,66 +89,103 @@ const CreateListing: React.FC = () => {
     }
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Generate a unique ID for the property
-    const propertyId = `property-${Date.now()}`;
-
-    // Create the location string from city, state and zip
-    const location = `${values.city}, ${values.state} ${values.zipCode}`;
-
-    // Calculate below market percentage
-    const price = Number(values.price);
-    const marketPrice = Number(values.marketPrice);
-    const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
-
-    // Generate title from location and beds/baths
-    const title = `${values.beds} bed, ${values.baths} bath home in ${values.city}, ${values.state}`;
-
-    // Prepare the listing data
-    const newListing = {
-      id: propertyId,
-      title: title, // Auto-generated title
-      price: Number(values.price),
-      marketPrice: Number(values.marketPrice),
-      location: location,
-      address: values.address, // Include the address
-      description: values.description,
-      beds: Number(values.beds),
-      baths: Number(values.baths),
-      sqft: Number(values.sqft),
-      image: images.length > 0 ? images[0] : "https://source.unsplash.com/random/800x600?house",
-      belowMarket: Number(belowMarket),
-      sellerId: user?.id || 'unknown',
-      sellerName: user?.name || 'Unknown Seller',
-      images: images,
-      afterRepairValue: values.afterRepairValue ? Number(values.afterRepairValue) : undefined,
-      estimatedRehab: values.estimatedRehab ? Number(values.estimatedRehab) : undefined,
-      comparables: [values.comparableAddress1, values.comparableAddress2, values.comparableAddress3].filter(Boolean),
-      createdAt: new Date().toISOString()
-    };
-
-    // Save to localStorage
+  // Function to upload images to Supabase storage
+  const uploadImagesToSupabase = async (files: File[]): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+    
     try {
-      // Get existing listings
-      const existingListingsJSON = localStorage.getItem('propertyListings');
-      const existingListings = existingListingsJSON ? JSON.parse(existingListingsJSON) : [];
+      for (const file of files) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+        const filePath = `${user?.id}/${fileName}`;
+        
+        const { data, error } = await supabase.storage
+          .from('property_images')
+          .upload(filePath, file);
+          
+        if (error) {
+          console.error('Error uploading image:', error);
+          toast.error(`Error uploading image: ${error.message}`);
+          continue;
+        }
+        
+        // Get public URL for the uploaded image
+        const { data: { publicUrl } } = supabase.storage
+          .from('property_images')
+          .getPublicUrl(filePath);
+          
+        uploadedUrls.push(publicUrl);
+      }
+    } catch (error) {
+      console.error('Error in image upload:', error);
+      toast.error('Something went wrong while uploading images');
+    }
+    
+    return uploadedUrls;
+  };
 
-      // Add new listing
-      const updatedListings = [...existingListings, newListing];
-
-      // Save back to localStorage
-      localStorage.setItem('propertyListings', JSON.stringify(updatedListings));
-
-      // Also save to user's listings
-      const userListingsJSON = localStorage.getItem(`userListings-${user?.id}`);
-      const userListings = userListingsJSON ? JSON.parse(userListingsJSON) : [];
-      const updatedUserListings = [...userListings, newListing];
-      localStorage.setItem(`userListings-${user?.id}`, JSON.stringify(updatedUserListings));
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!user) {
+      toast.error("You must be logged in to create a listing");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    toast.loading("Creating your listing...");
+    
+    try {
+      // Upload images to Supabase storage
+      const uploadedImageUrls = await uploadImagesToSupabase(imageFiles);
+      
+      // Use uploaded URLs or fall back to default
+      const finalImages = uploadedImageUrls.length > 0 
+        ? uploadedImageUrls 
+        : ["https://source.unsplash.com/random/800x600?house"];
+      
+      // Create the location string from city, state and zip
+      const location = `${values.city}, ${values.state} ${values.zipCode}`;
+      
+      // Calculate below market percentage
+      const price = Number(values.price);
+      const marketPrice = Number(values.marketPrice);
+      const belowMarket = marketPrice > price 
+        ? ((marketPrice - price) / marketPrice * 100).toFixed(1) 
+        : "0";
+      
+      // Generate title from location and beds/baths
+      const title = `${values.beds} bed, ${values.baths} bath home in ${values.city}, ${values.state}`;
+      
+      // Insert listing into Supabase
+      const { data, error } = await supabase
+        .from('property_listings')
+        .insert({
+          title: title,
+          price: price,
+          market_price: marketPrice,
+          location: location,
+          description: values.description,
+          beds: parseInt(values.beds),
+          baths: parseInt(values.baths),
+          sqft: parseInt(values.sqft),
+          images: finalImages,
+          user_id: user.id
+        })
+        .select();
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.dismiss();
       toast.success("Property listing created successfully!");
       navigate('/dashboard');
-    } catch (error) {
-      console.error("Error saving listing:", error);
-      toast.error("Failed to create listing. Please try again.");
+      
+    } catch (error: any) {
+      console.error("Error creating listing:", error);
+      toast.dismiss();
+      toast.error(`Failed to create listing: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -439,7 +477,7 @@ const CreateListing: React.FC = () => {
                     />
                     <Button 
                       type="button" 
-                      className="h-32 w-full border-2 border-black rounded-none hover:bg-gray-50 flex flex-col items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
+                      className="h-32 w-full border-4 border-black rounded-none hover:bg-gray-50 flex flex-col items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
                       onClick={handleImageUpload}
                     >
                       <Upload size={24} />
@@ -448,7 +486,7 @@ const CreateListing: React.FC = () => {
                   </div>
                   
                   {images.length > 0 && <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      {images.map((img, index) => <div key={index} className="relative border-2 border-black group">
+                      {images.map((img, index) => <div key={index} className="relative border-4 border-black group">
                           <img src={img} alt={`Property ${index + 1}`} className="h-32 w-full object-cover" />
                           <button type="button" className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => removeImage(index)}>
                             <X size={16} />
@@ -458,12 +496,20 @@ const CreateListing: React.FC = () => {
                 </div>
                 
                 <div className="pt-6 border-t-2 border-black flex justify-end gap-4">
-                  <Button type="button" variant="outline" className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => navigate('/dashboard')}>
+                  <Button type="button" variant="outline" className="font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => navigate('/dashboard')}>
                     Cancel
                   </Button>
-                  <Button type="submit" className="text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#d60013]">
-                    <Check size={18} className="mr-2" />
-                    Create Listing
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="text-white font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#d60013]"
+                  >
+                    {isSubmitting ? 'Creating...' : (
+                      <>
+                        <Check size={18} className="mr-2" />
+                        Create Listing
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>

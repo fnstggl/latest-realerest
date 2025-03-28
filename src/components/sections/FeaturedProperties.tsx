@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import PropertyCard from '@/components/PropertyCard';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { supabase } from "@/integrations/supabase/client";
 
 // Animation variants
 const fadeInUp = {
@@ -16,7 +17,7 @@ interface Listing {
   id: string;
   title?: string;
   price: number;
-  marketPrice: number;
+  market_price: number;
   image: string;
   location: string;
   address?: string;
@@ -24,6 +25,7 @@ interface Listing {
   baths: number;
   sqft: number;
   belowMarket: number;
+  images?: string[];
 }
 
 const FeaturedProperties: React.FC = () => {
@@ -32,20 +34,43 @@ const FeaturedProperties: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch property listings from localStorage
-    const fetchListings = () => {
+    const fetchListings = async () => {
       setLoading(true);
+      
       try {
-        const storedListings = localStorage.getItem('propertyListings');
-        if (storedListings) {
-          const parsedListings = JSON.parse(storedListings);
-          setListings(parsedListings);
-        } else {
-          setListings([]);
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(6);
+        
+        if (error) {
+          throw error;
+        }
+        
+        if (data) {
+          // Transform the data to match our component props
+          const transformedListings = data.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            marketPrice: item.market_price,
+            location: item.location,
+            beds: item.beds,
+            baths: item.baths,
+            sqft: item.sqft,
+            // Use the first image from the array if available
+            image: item.images && item.images.length > 0 ? item.images[0] : 'https://source.unsplash.com/random/800x600?house',
+            // Calculate below market percentage
+            belowMarket: item.market_price > item.price 
+              ? parseFloat(((item.market_price - item.price) / item.market_price * 100).toFixed(1)) 
+              : 0
+          }));
+          
+          setListings(transformedListings);
         }
       } catch (error) {
         console.error("Error fetching listings:", error);
-        setListings([]);
       } finally {
         setLoading(false);
       }
@@ -76,7 +101,7 @@ const FeaturedProperties: React.FC = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((_, index) => (
-              <div key={index} className="border-2 border-black p-4 h-[400px] animate-pulse">
+              <div key={index} className="border-4 border-black p-4 h-[400px] animate-pulse">
                 <div className="bg-gray-200 h-[240px] w-full mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
@@ -96,7 +121,18 @@ const FeaturedProperties: React.FC = () => {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    <PropertyCard {...property} />
+                    <PropertyCard
+                      id={property.id}
+                      price={property.price}
+                      marketPrice={property.marketPrice}
+                      image={property.image}
+                      location={property.location}
+                      address={property.title}
+                      beds={property.beds}
+                      baths={property.baths}
+                      sqft={property.sqft}
+                      belowMarket={property.belowMarket}
+                    />
                   </motion.div>
                 ))}
               </div>

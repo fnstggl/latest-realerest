@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BadgePercent, Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
@@ -30,7 +31,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 }) => {
   return (
     <Link to={`/property/${id}`} className="block">
-      <div className="relative bg-white shadow-lg overflow-hidden border-2 border-black">
+      <div className="relative bg-white shadow-lg overflow-hidden border-4 border-black">
         {/* Main image */}
         <div className="relative">
           <img
@@ -39,7 +40,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             className="h-[240px] w-full object-cover"
           />
           {/* Below Market Tag as bookmarker on upper left - adjusted position */}
-          <div className="absolute top-4 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-r-2 border-b-2 border-black">
+          <div className="absolute top-6 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-r-3 border-b-3 border-black border-r-4 border-b-4">
             {belowMarket}% OFF
           </div>
         </div>
@@ -60,7 +61,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             <span>{location}</span>
           </div>
           
-          <div className="border-t border-gray-200 pt-4 mt-2">
+          <div className="border-t-2 border-gray-200 pt-4 mt-2">
             <div className="flex justify-between items-center">
               {/* Property details */}
               <div className="flex items-center gap-4">
@@ -79,7 +80,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               </div>
               
               {/* Arrow button */}
-              <div className="bg-[#d60013] text-white w-12 h-12 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+              <div className="bg-[#d60013] text-white w-12 h-12 flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
                 <ArrowRight size={20} />
               </div>
             </div>
