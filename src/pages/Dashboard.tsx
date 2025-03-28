@@ -1,12 +1,36 @@
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import Navbar from '@/components/Navbar';
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Building, User, Clock, Settings, CheckCircle, XCircle, Bell } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import PropertyCard from '@/components/PropertyCard';
+import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+import {
+  Building2,
+  Home,
+  User,
+  Bell,
+  ClipboardCheck,
+  Plus,
+  Check,
+  X,
+} from "lucide-react";
+import { motion } from "framer-motion";
+
+// Types
+interface WaitlistUser {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  propertyId: string;
+  status: "pending" | "accepted" | "declined";
+}
 
 interface Property {
   id: string;
@@ -19,97 +43,167 @@ interface Property {
   baths: number;
   sqft: number;
   belowMarket: number;
-  sellerId?: string;
 }
 
-interface WaitlistUser {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  propertyId: string;
-  propertyTitle: string;
-  status: 'pending' | 'accepted' | 'declined';
-}
+// Mock data
+const mockProperties: Property[] = [
+  {
+    id: "prop1",
+    title: "Modern Townhouse",
+    price: 350000,
+    marketPrice: 420000,
+    image: "https://placehold.co/600x400?text=Property+Image",
+    location: "123 Main St, San Francisco, CA",
+    beds: 3,
+    baths: 2,
+    sqft: 1800,
+    belowMarket: 17,
+  },
+  {
+    id: "prop2",
+    title: "Downtown Condo",
+    price: 275000,
+    marketPrice: 325000,
+    image: "https://placehold.co/600x400?text=Property+Image",
+    location: "456 Market St, San Francisco, CA",
+    beds: 2,
+    baths: 2,
+    sqft: 1200,
+    belowMarket: 15,
+  },
+];
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { user, accountType, isAuthenticated } = useAuth();
-  const [properties, setProperties] = useState<Property[]>([]);
+  const { accountType } = useAuth();
+  const [activeTab, setActiveTab] = useState("properties");
+  const [myProperties, setMyProperties] = useState<Property[]>([]);
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(0);
+  const [showAddForm, setShowAddForm] = useState(false);
+  
+  // Form fields
+  const [newProperty, setNewProperty] = useState({
+    title: "",
+    price: "",
+    marketPrice: "",
+    location: "",
+    beds: "",
+    baths: "",
+    sqft: "",
+  });
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/signin');
+    // Load properties from localStorage
+    const storedProperties = localStorage.getItem("propertyListings");
+    if (storedProperties) {
+      const parsedProperties = JSON.parse(storedProperties);
+      setMyProperties(parsedProperties);
+    } else {
+      // No properties in localStorage, set mock data
+      setMyProperties(mockProperties);
+      // Save mock data to localStorage
+      localStorage.setItem("propertyListings", JSON.stringify(mockProperties));
+    }
+
+    // Set mock waitlist data
+    const mockWaitlistUsers: WaitlistUser[] = [
+      {
+        id: "user1",
+        name: "John Doe",
+        email: "john@example.com",
+        phone: "555-123-4567",
+        propertyId: "prop1",
+        status: "pending"
+      },
+      {
+        id: "user2",
+        name: "Jane Smith",
+        email: "jane@example.com",
+        phone: "555-987-6543",
+        propertyId: "prop2",
+        status: "accepted"
+      },
+      {
+        id: "user3",
+        name: "Bob Johnson",
+        email: "bob@example.com",
+        phone: "555-555-5555",
+        propertyId: "prop1",
+        status: "declined"
+      },
+    ];
+    
+    setWaitlistUsers(mockWaitlistUsers);
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewProperty({
+      ...newProperty,
+      [name]: value,
+    });
+  };
+
+  const handleAddProperty = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!newProperty.title || !newProperty.price || !newProperty.location) {
+      toast.error("Please fill in all required fields");
       return;
     }
+    
+    // Create new property
+    const price = parseFloat(newProperty.price);
+    const marketPrice = parseFloat(newProperty.marketPrice) || price * 1.2;
+    const belowMarket = Math.round(((marketPrice - price) / marketPrice) * 100);
+    
+    const newPropertyObj: Property = {
+      id: `prop${Date.now()}`,
+      title: newProperty.title,
+      price: price,
+      marketPrice: marketPrice,
+      image: "https://placehold.co/600x400?text=New+Property",
+      location: newProperty.location,
+      beds: parseInt(newProperty.beds) || 0,
+      baths: parseInt(newProperty.baths) || 0,
+      sqft: parseInt(newProperty.sqft) || 0,
+      belowMarket: belowMarket,
+    };
+    
+    // Add to properties list
+    const updatedProperties = [...myProperties, newPropertyObj];
+    setMyProperties(updatedProperties);
+    
+    // Save to localStorage
+    localStorage.setItem("propertyListings", JSON.stringify(updatedProperties));
+    
+    // Reset form
+    setNewProperty({
+      title: "",
+      price: "",
+      marketPrice: "",
+      location: "",
+      beds: "",
+      baths: "",
+      sqft: "",
+    });
+    
+    setShowAddForm(false);
+    toast.success("Property added successfully!");
+  };
 
-    // Fetch user's properties
-    if (accountType === 'seller' && user?.id) {
-      const userListingsJSON = localStorage.getItem(`userListings-${user.id}`);
-      if (userListingsJSON) {
-        setProperties(JSON.parse(userListingsJSON));
-      }
-    }
-
-    // Get waitlist data
-    const waitlistDataJSON = localStorage.getItem('waitlistData');
-    if (waitlistDataJSON) {
-      const allWaitlistData = JSON.parse(waitlistDataJSON) as WaitlistUser[];
-      
-      if (accountType === 'seller') {
-        // Filter waitlist entries for properties owned by this seller
-        const sellerProperties = properties.map(prop => prop.id);
-        const sellerWaitlistUsers = allWaitlistData.filter(
-          entry => sellerProperties.includes(entry.propertyId)
-        );
-        setWaitlistUsers(sellerWaitlistUsers);
-        
-        // Set notification count
-        const pendingRequests = sellerWaitlistUsers.filter(
-          entry => entry.status === 'pending'
-        ).length;
-        setNotificationCount(pendingRequests);
-      } else {
-        // For buyers, show waitlist entries they've made
-        const buyerWaitlistEntries = allWaitlistData.filter(
-          entry => entry.id === user?.id
-        );
-        setWaitlistUsers(buyerWaitlistEntries);
-      }
-    }
-  }, [isAuthenticated, navigate, user, accountType, properties]);
-
-  const handleWaitlistAction = (userId: string, propertyId: string, action: 'accepted' | 'declined') => {
-    const waitlistDataJSON = localStorage.getItem('waitlistData');
-    if (waitlistDataJSON) {
-      const allWaitlistData = JSON.parse(waitlistDataJSON) as WaitlistUser[];
-      
-      // Update the status of the specific entry
-      const updatedWaitlistData = allWaitlistData.map(entry => {
-        if (entry.id === userId && entry.propertyId === propertyId) {
-          return { ...entry, status: action };
-        }
-        return entry;
-      });
-      
-      // Save back to localStorage
-      localStorage.setItem('waitlistData', JSON.stringify(updatedWaitlistData));
-      
-      // Update state
-      const sellerProperties = properties.map(prop => prop.id);
-      const sellerWaitlistUsers = updatedWaitlistData.filter(
-        entry => sellerProperties.includes(entry.propertyId)
-      );
-      setWaitlistUsers(sellerWaitlistUsers);
-      
-      // Update notification count
-      const pendingRequests = sellerWaitlistUsers.filter(
-        entry => entry.status === 'pending'
-      ).length;
-      setNotificationCount(pendingRequests);
+  const handleUpdateWaitlistStatus = (userId: string, newStatus: "accepted" | "declined") => {
+    const updatedUsers = waitlistUsers.map(user => 
+      user.id === userId ? { ...user, status: newStatus } : user
+    );
+    
+    setWaitlistUsers(updatedUsers);
+    
+    if (newStatus === "accepted") {
+      toast.success("User accepted to waitlist!");
+    } else {
+      toast.success("User declined from waitlist.");
     }
   };
 
@@ -118,320 +212,473 @@ const Dashboard: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          
-          {accountType === 'seller' && (
-            <div className="relative">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
-                onClick={() => setShowNotifications(!showNotifications)}
-              >
-                <Bell />
-                {notificationCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[#d60013] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border border-black">
-                    {notificationCount}
-                  </span>
-                )}
-              </Button>
-              
-              {showNotifications && (
-                <div className="absolute right-0 mt-2 w-80 bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] z-50">
-                  <div className="p-4 border-b-2 border-black">
-                    <h3 className="font-bold">Waitlist Notifications</h3>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {waitlistUsers.length > 0 ? (
-                      waitlistUsers.map((waitlistUser, index) => (
-                        <div key={index} className="p-4 border-b border-gray-200">
-                          <p className="font-bold">{waitlistUser.name}</p>
-                          <p className="text-sm">Wants to view: {waitlistUser.propertyTitle}</p>
-                          <p className="text-sm">Status: {waitlistUser.status}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="p-4 text-center">
-                        <p>No waitlist requests</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-4xl font-bold">Dashboard</h1>
+              <p className="text-lg">Manage your {accountType === 'seller' ? 'properties' : 'waitlists'}</p>
             </div>
-          )}
-        </div>
-        
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="w-full bg-white border-4 border-black p-1 mb-8">
-            <TabsTrigger 
-              value="overview" 
-              className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white px-4 py-2 font-bold border-2 border-transparent data-[state=active]:border-black"
-            >
-              <Home size={18} className="mr-2" />
-              Overview
-            </TabsTrigger>
             
             {accountType === 'seller' && (
-              <>
-                <TabsTrigger 
-                  value="listings" 
-                  className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white px-4 py-2 font-bold border-2 border-transparent data-[state=active]:border-black"
-                >
-                  <Building size={18} className="mr-2" />
-                  My Listings
-                </TabsTrigger>
-                
-                <TabsTrigger 
-                  value="waitlist" 
-                  className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white px-4 py-2 font-bold border-2 border-transparent data-[state=active]:border-black"
-                >
-                  <Clock size={18} className="mr-2" />
-                  Waitlist
-                  {notificationCount > 0 && (
-                    <span className="ml-2 bg-[#d60013] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border border-black">
-                      {notificationCount}
-                    </span>
-                  )}
-                </TabsTrigger>
-              </>
+              <Button 
+                className="neo-button-primary"
+                onClick={() => setShowAddForm(true)}
+              >
+                <Plus size={18} className="mr-2" />
+                Add Property
+              </Button>
             )}
-            
-            <TabsTrigger 
-              value="profile" 
-              className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white px-4 py-2 font-bold border-2 border-transparent data-[state=active]:border-black"
-            >
-              <User size={18} className="mr-2" />
-              Profile
-            </TabsTrigger>
-            
-            <TabsTrigger 
-              value="settings" 
-              className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white px-4 py-2 font-bold border-2 border-transparent data-[state=active]:border-black"
-            >
-              <Settings size={18} className="mr-2" />
-              Settings
-            </TabsTrigger>
-          </TabsList>
+          </div>
           
-          <TabsContent value="overview" className="mt-6">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
-                <h2 className="text-xl font-bold mb-4">Welcome back, {user?.name}!</h2>
-                <p className="mb-4">You are logged in as a <span className="font-bold">{accountType.toUpperCase()}</span></p>
-                
-                {accountType === 'seller' ? (
-                  <div>
-                    <p className="mb-4">Quick actions:</p>
-                    <div className="flex flex-col gap-3">
-                      <Button asChild className="neo-button-primary">
-                        <Link to="/sell/create">Create New Listing</Link>
-                      </Button>
-                      <Button asChild variant="outline" className="neo-button">
-                        <Link to="/manage-listings">Manage Listings</Link>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+            <TabsList className="border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
+              <TabsTrigger value="properties" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+                <Home size={18} className="mr-2" />
+                Properties
+              </TabsTrigger>
+              <TabsTrigger value="waitlist" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+                <ClipboardCheck size={18} className="mr-2" />
+                Waitlist
+              </TabsTrigger>
+              <TabsTrigger value="account" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+                <User size={18} className="mr-2" />
+                Account
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+                <Bell size={18} className="mr-2" />
+                Notifications
+              </TabsTrigger>
+            </TabsList>
+            
+            {/* Properties Tab */}
+            <TabsContent value="properties" className="space-y-6">
+              {showAddForm ? (
+                <div className="border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white mb-8">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold">Add New Property</h2>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setShowAddForm(false)}
+                      className="neo-button"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                  
+                  <form onSubmit={handleAddProperty} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="title" className="font-bold">Property Title</Label>
+                        <Input
+                          id="title"
+                          name="title"
+                          value={newProperty.title}
+                          onChange={handleInputChange}
+                          placeholder="e.g. Modern Townhouse"
+                          className="mt-2 border-2 border-black"
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="location" className="font-bold">Location</Label>
+                        <Input
+                          id="location"
+                          name="location"
+                          value={newProperty.location}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 123 Main St, San Francisco, CA"
+                          className="mt-2 border-2 border-black"
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="price" className="font-bold">Asking Price ($)</Label>
+                        <Input
+                          id="price"
+                          name="price"
+                          type="number"
+                          value={newProperty.price}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 350000"
+                          className="mt-2 border-2 border-black"
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="marketPrice" className="font-bold">Market Value ($)</Label>
+                        <Input
+                          id="marketPrice"
+                          name="marketPrice"
+                          type="number"
+                          value={newProperty.marketPrice}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 420000"
+                          className="mt-2 border-2 border-black"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="beds" className="font-bold">Bedrooms</Label>
+                        <Input
+                          id="beds"
+                          name="beds"
+                          type="number"
+                          value={newProperty.beds}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 3"
+                          className="mt-2 border-2 border-black"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="baths" className="font-bold">Bathrooms</Label>
+                        <Input
+                          id="baths"
+                          name="baths"
+                          type="number"
+                          value={newProperty.baths}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 2"
+                          className="mt-2 border-2 border-black"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="sqft" className="font-bold">Square Footage</Label>
+                        <Input
+                          id="sqft"
+                          name="sqft"
+                          type="number"
+                          value={newProperty.sqft}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 1800"
+                          className="mt-2 border-2 border-black"
+                        />
+                      </div>
+                    </div>
+                    
+                    <Button type="submit" className="neo-button-primary">
+                      Add Property
+                    </Button>
+                  </form>
+                </div>
+              ) : (
+                <>
+                  {myProperties.length > 0 ? (
+                    <div className="grid md:grid-cols-1 gap-6">
+                      {myProperties.map((property) => (
+                        <div key={property.id} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+                          <div className="flex flex-col md:flex-row">
+                            <div className="w-full md:w-1/3">
+                              <img 
+                                src={property.image} 
+                                alt={property.title} 
+                                className="h-64 w-full object-cover border-b-4 md:border-b-0 md:border-r-4 border-black"
+                              />
+                            </div>
+                            <div className="p-6 flex-1">
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className="text-2xl font-bold">{property.title}</h3>
+                                <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold">
+                                  {property.belowMarket}% BELOW MARKET
+                                </div>
+                              </div>
+                              <p className="text-lg mb-4">{property.location}</p>
+                              
+                              <div className="flex gap-6 mb-6">
+                                <div className="text-2xl font-bold">${property.price.toLocaleString()}</div>
+                                <div className="text-gray-500 line-through">${property.marketPrice.toLocaleString()}</div>
+                              </div>
+                              
+                              <div className="flex gap-6 mb-6">
+                                <div className="font-bold">{property.beds} Beds</div>
+                                <div className="font-bold">{property.baths} Baths</div>
+                                <div className="font-bold">{property.sqft.toLocaleString()} sqft</div>
+                              </div>
+                              
+                              {accountType === 'seller' && (
+                                <div className="flex gap-4">
+                                  <Button asChild className="neo-button" variant="outline">
+                                    <Link to={`/property/${property.id}`}>View Listing</Link>
+                                  </Button>
+                                  <Button className="neo-button-primary">
+                                    Edit
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {accountType === 'seller' && (
+                            <div className="border-t-4 border-black p-4 bg-gray-50">
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <span className="font-bold mr-2">Waitlist:</span>
+                                  {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
+                                </div>
+                                <Button asChild className="neo-button" variant="outline">
+                                  <Link to={`/property/${property.id}/waitlist`}>
+                                    Manage Waitlist
+                                  </Link>
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                      <Building2 size={48} className="mx-auto mb-4" />
+                      <h3 className="text-2xl font-bold mb-4">No Properties Listed</h3>
+                      <p className="mb-6">You haven't listed any properties yet.</p>
+                      <Button 
+                        className="neo-button-primary"
+                        onClick={() => setShowAddForm(true)}
+                      >
+                        <Plus size={18} className="mr-2" />
+                        Add Your First Property
                       </Button>
                     </div>
+                  )}
+                </>
+              )}
+            </TabsContent>
+            
+            {/* Waitlist Tab */}
+            <TabsContent value="waitlist" className="space-y-6">
+              {waitlistUsers.length > 0 ? (
+                <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
+                  <div className="border-b-4 border-black p-4 bg-gray-50">
+                    <h2 className="text-xl font-bold">Waitlist Requests</h2>
                   </div>
-                ) : (
-                  <div>
-                    <p className="mb-4">Quick actions:</p>
-                    <div className="flex flex-col gap-3">
+                  
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b-4 border-black">
+                        <th className="text-left p-4 font-bold">Name</th>
+                        <th className="text-left p-4 font-bold">Contact</th>
+                        <th className="text-left p-4 font-bold">Property</th>
+                        <th className="text-left p-4 font-bold">Status</th>
+                        {accountType === 'seller' && (
+                          <th className="text-left p-4 font-bold">Actions</th>
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {waitlistUsers.map((user) => {
+                        const property = myProperties.find(p => p.id === user.propertyId);
+                        return (
+                          <tr key={user.id} className="border-b-2 border-gray-200">
+                            <td className="p-4 font-bold">{user.name}</td>
+                            <td className="p-4">
+                              <div>{user.email}</div>
+                              <div>{user.phone}</div>
+                            </td>
+                            <td className="p-4">{property?.title || 'Unknown Property'}</td>
+                            <td className="p-4">
+                              <span className={`px-2 py-1 font-bold ${
+                                user.status === 'accepted' ? 'bg-green-100 text-green-800' : 
+                                user.status === 'declined' ? 'bg-red-100 text-red-800' : 
+                                'bg-yellow-100 text-yellow-800'
+                              }`}>
+                                {user.status.toUpperCase()}
+                              </span>
+                            </td>
+                            {accountType === 'seller' && (
+                              <td className="p-4">
+                                <div className="flex gap-2">
+                                  {user.status === 'pending' && (
+                                    <>
+                                      <Button 
+                                        size="sm" 
+                                        className="bg-green-600 hover:bg-green-700 border-2 border-black"
+                                        onClick={() => handleUpdateWaitlistStatus(user.id, 'accepted')}
+                                      >
+                                        <Check size={16} className="mr-1" />
+                                        Accept
+                                      </Button>
+                                      <Button 
+                                        size="sm" 
+                                        className="bg-red-600 hover:bg-red-700 border-2 border-black"
+                                        onClick={() => handleUpdateWaitlistStatus(user.id, 'declined')}
+                                      >
+                                        <X size={16} className="mr-1" />
+                                        Decline
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                  <ClipboardCheck size={48} className="mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold mb-4">No Waitlist Requests</h3>
+                  {accountType === 'buyer' ? (
+                    <>
+                      <p className="mb-6">You haven't joined any property waitlists yet.</p>
                       <Button asChild className="neo-button-primary">
                         <Link to="/search">Browse Properties</Link>
                       </Button>
-                      <Button asChild variant="outline" className="neo-button">
-                        <Link to="/saved-properties">Saved Properties</Link>
+                    </>
+                  ) : (
+                    <p>You don't have any waitlist requests for your properties yet.</p>
+                  )}
+                </div>
+              )}
+            </TabsContent>
+            
+            {/* Account Tab */}
+            <TabsContent value="account" className="space-y-6">
+              <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold">Account Information</h2>
+                  <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold">
+                    {accountType.toUpperCase()} ACCOUNT
+                  </div>
+                </div>
+                
+                <form className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="name" className="font-bold">Full Name</Label>
+                      <Input
+                        id="name"
+                        defaultValue="John Doe"
+                        className="mt-2 border-2 border-black"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="email" className="font-bold">Email Address</Label>
+                      <Input
+                        id="email"
+                        defaultValue="john@example.com"
+                        className="mt-2 border-2 border-black"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="phone" className="font-bold">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        defaultValue="555-123-4567"
+                        className="mt-2 border-2 border-black"
+                      />
+                    </div>
+                  </div>
+                  
+                  <Button className="neo-button-primary">
+                    Save Changes
+                  </Button>
+                </form>
+              </div>
+              
+              <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
+                <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
+                
+                <div className="space-y-4">
+                  <div className="p-4 border-2 border-black">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-bold text-lg">Notification Preferences</h3>
+                        <p className="text-gray-600">Manage how you receive notifications</p>
+                      </div>
+                      <Button className="neo-button" variant="outline">
+                        Manage
                       </Button>
                     </div>
                   </div>
-                )}
-              </div>
-              
-              <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
-                <h2 className="text-xl font-bold mb-4">Activity Summary</h2>
-                
-                {accountType === 'seller' ? (
-                  <div className="space-y-4">
+                  
+                  <div className="p-4 border-2 border-black">
                     <div className="flex justify-between items-center">
-                      <span>Active Listings:</span>
-                      <span className="font-bold">{properties.length}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Waitlist Requests:</span>
-                      <span className="font-bold">{waitlistUsers.length}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Views This Week:</span>
-                      <span className="font-bold">{Math.floor(Math.random() * 100)}</span>
+                      <div>
+                        <h3 className="font-bold text-lg">Password & Security</h3>
+                        <p className="text-gray-600">Update your password and security settings</p>
+                      </div>
+                      <Button className="neo-button" variant="outline">
+                        Update
+                      </Button>
                     </div>
                   </div>
-                ) : (
-                  <div className="space-y-4">
+                  
+                  <div className="p-4 border-2 border-black">
                     <div className="flex justify-between items-center">
-                      <span>Waitlist Requests Sent:</span>
-                      <span className="font-bold">{waitlistUsers.length}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Waitlist Requests Accepted:</span>
-                      <span className="font-bold">
-                        {waitlistUsers.filter(user => user.status === 'accepted').length}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Properties Viewed:</span>
-                      <span className="font-bold">{Math.floor(Math.random() * 20)}</span>
+                      <div>
+                        <h3 className="font-bold text-lg">Subscription Plan</h3>
+                        <p className="text-gray-600">You are currently on the Free plan</p>
+                      </div>
+                      <Button className="neo-button-primary">
+                        Upgrade
+                      </Button>
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
-          </TabsContent>
-          
-          {accountType === 'seller' && (
-            <>
-              <TabsContent value="listings" className="mt-6">
-                <div className="mb-6 flex justify-between items-center">
-                  <h2 className="text-2xl font-bold">My Listings</h2>
-                  <Button asChild className="neo-button-primary">
-                    <Link to="/sell/create">Add New Listing</Link>
-                  </Button>
                 </div>
-                
-                {properties.length > 0 ? (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {properties.map((property) => (
-                      <PropertyCard 
-                        key={property.id}
-                        {...property}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                    <h3 className="text-xl font-bold mb-4">No Listings Yet</h3>
-                    <p className="mb-6">You haven't created any property listings yet.</p>
-                    <Button asChild className="neo-button-primary">
-                      <Link to="/sell/create">Create Your First Listing</Link>
+              </div>
+            </TabsContent>
+            
+            {/* Notifications Tab */}
+            <TabsContent value="notifications" className="space-y-6">
+              <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
+                <div className="border-b-4 border-black p-4 bg-gray-50">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold">Recent Notifications</h2>
+                    <Button className="neo-button" variant="outline">
+                      Mark All as Read
                     </Button>
                   </div>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="waitlist" className="mt-6">
-                <h2 className="text-2xl font-bold mb-6">Waitlist Requests</h2>
+                </div>
                 
-                {waitlistUsers.length > 0 ? (
-                  <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                    {waitlistUsers.map((waitlistUser, index) => (
-                      <div key={index} className={`p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between ${index !== waitlistUsers.length - 1 ? 'border-b-2 border-black' : ''}`}>
-                        <div>
-                          <h3 className="font-bold text-lg">{waitlistUser.name}</h3>
-                          <p>{waitlistUser.email}</p>
-                          <p>{waitlistUser.phone}</p>
-                          <p className="text-sm mt-1">
-                            Property: <span className="font-bold">{waitlistUser.propertyTitle}</span>
-                          </p>
-                          <p className="text-sm mt-1">
-                            Status: <span className={`font-bold ${
-                              waitlistUser.status === 'accepted' ? 'text-green-600' : 
-                              waitlistUser.status === 'declined' ? 'text-red-600' : ''
-                            }`}>
-                              {waitlistUser.status.toUpperCase()}
-                            </span>
-                          </p>
-                        </div>
-                        
-                        {waitlistUser.status === 'pending' && (
-                          <div className="flex gap-2 mt-4 sm:mt-0">
-                            <Button 
-                              className="neo-button border-green-600 flex items-center"
-                              onClick={() => handleWaitlistAction(waitlistUser.id, waitlistUser.propertyId, 'accepted')}
-                            >
-                              <CheckCircle size={18} className="mr-2 text-green-600" />
-                              Accept
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              className="neo-button border-red-600 flex items-center"
-                              onClick={() => handleWaitlistAction(waitlistUser.id, waitlistUser.propertyId, 'declined')}
-                            >
-                              <XCircle size={18} className="mr-2 text-red-600" />
-                              Decline
-                            </Button>
-                          </div>
-                        )}
+                <div className="divide-y-2 divide-gray-200">
+                  <div className="p-4 bg-blue-50">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-lg">New waitlist request</h3>
+                        <p>John Doe has requested to join the waitlist for Modern Townhouse.</p>
+                        <p className="text-sm text-gray-500 mt-2">2 hours ago</p>
                       </div>
-                    ))}
+                      <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded">NEW</div>
+                    </div>
                   </div>
-                ) : (
-                  <div className="border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                    <h3 className="text-xl font-bold mb-2">No Waitlist Requests</h3>
-                    <p>You don't have any waitlist requests for your properties yet.</p>
+                  
+                  <div className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-lg">Price update</h3>
+                        <p>The market price for Downtown Condo has been updated.</p>
+                        <p className="text-sm text-gray-500 mt-2">1 day ago</p>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </TabsContent>
-            </>
-          )}
-          
-          <TabsContent value="profile" className="mt-6">
-            <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
-              <h2 className="text-2xl font-bold mb-6">Your Profile</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <Label htmlFor="name" className="text-lg font-bold">Name</Label>
-                  <Input 
-                    id="name" 
-                    value={user?.name || ''} 
-                    disabled 
-                    className="mt-2 border-2 border-black" 
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="email" className="text-lg font-bold">Email</Label>
-                  <Input 
-                    id="email" 
-                    value={user?.email || ''} 
-                    disabled 
-                    className="mt-2 border-2 border-black" 
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="accountType" className="text-lg font-bold">Account Type</Label>
-                  <Input 
-                    id="accountType" 
-                    value={accountType.toUpperCase()} 
-                    disabled 
-                    className="mt-2 border-2 border-black" 
-                  />
+                  
+                  <div className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-lg">Waitlist status</h3>
+                        <p>Your request to join the waitlist for Suburban House has been accepted.</p>
+                        <p className="text-sm text-gray-500 mt-2">3 days ago</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="settings" className="mt-6">
-            <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
-              <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <Button className="neo-button">Change Password</Button>
-                </div>
-                
-                <div>
-                  <Button className="neo-button">Notification Settings</Button>
-                </div>
-                
-                <div>
-                  <Button className="neo-button-primary">Update Account Information</Button>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+          </Tabs>
+        </motion.div>
       </div>
     </div>
   );
