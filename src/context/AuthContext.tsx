@@ -1,87 +1,90 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext, ReactNode } from 'react';
 
-type User = {
+interface User {
   id: string;
   name: string;
   email: string;
   accountType: 'buyer' | 'seller';
-};
+}
 
-type AuthContextType = {
+interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  accountType: 'buyer' | 'seller';
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string, accountType: 'buyer' | 'seller') => Promise<void>;
+  signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  toggleAccountType: () => void;
-};
+  setAccountType: (type: 'buyer' | 'seller') => void;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  
-  // Check if user is stored in localStorage on initial load
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  const [accountType, setAccountTypeState] = useState<'buyer' | 'seller'>('buyer');
+
+  const isAuthenticated = !!user;
 
   const login = async (email: string, password: string) => {
-    // This would be replaced with actual auth API call
     // For demo purposes, we're simulating a successful login
-    const mockUser: User = {
-      id: '1',
-      name: 'Demo User',
-      email,
-      accountType: 'buyer',
-    };
+    // In a real app, this would call an API endpoint
+    console.log('Logging in with:', email, password);
     
-    setUser(mockUser);
-    localStorage.setItem('user', JSON.stringify(mockUser));
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Set mock user data
+    setUser({
+      id: 'user-123',
+      name: 'Demo User',
+      email: email,
+      accountType: accountType
+    });
   };
 
-  const signup = async (name: string, email: string, password: string, accountType: 'buyer' | 'seller') => {
-    // This would be replaced with actual auth API call
+  const signup = async (name: string, email: string, password: string) => {
     // For demo purposes, we're simulating a successful signup
-    const mockUser: User = {
-      id: '1',
-      name,
-      email,
-      accountType,
-    };
+    // In a real app, this would call an API endpoint
+    console.log('Signing up with:', name, email, password);
     
-    setUser(mockUser);
-    localStorage.setItem('user', JSON.stringify(mockUser));
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Set mock user data
+    setUser({
+      id: 'user-' + Math.floor(Math.random() * 1000),
+      name: name,
+      email: email,
+      accountType: accountType
+    });
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
   };
-  
-  const toggleAccountType = () => {
+
+  const setAccountType = (type: 'buyer' | 'seller') => {
+    setAccountTypeState(type);
+    
+    // If user is logged in, update their account type
     if (user) {
-      const updatedUser = { 
-        ...user, 
-        accountType: user.accountType === 'buyer' ? 'seller' : 'buyer' 
-      };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser({
+        ...user,
+        accountType: type
+      });
     }
   };
 
   return (
     <AuthContext.Provider value={{ 
       user, 
-      isAuthenticated: !!user, 
+      isAuthenticated, 
+      accountType,
       login, 
       signup, 
       logout,
-      toggleAccountType
+      setAccountType
     }}>
       {children}
     </AuthContext.Provider>
