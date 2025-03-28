@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from 'lucide-react';
 
@@ -16,7 +15,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      // Search logic will go here when connected to a database
       console.log('Searching for:', query);
       navigate(`/search?q=${encodeURIComponent(query)}`);
     }
@@ -25,19 +23,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
   return (
     <form onSubmit={handleSearch} className={`relative w-full max-w-3xl ${className}`}>
       <div className="relative flex w-full">
-        <Input
+        <input
           type="text"
           placeholder="Search by city, address, or zip code..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="pr-16 h-14 rounded-lg border-2 border-gray-200 focus:border-donedeal-orange shadow-sm font-futura"
+          className="w-full px-6 py-4 text-lg border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-0"
         />
         <Button 
           type="submit" 
-          size="icon" 
-          className="absolute right-1 top-1/2 -translate-y-1/2 bg-donedeal-orange hover:bg-donedeal-orange/90 h-10 w-10 rounded-lg"
+          className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#ea384c] hover:bg-[#ea384c]/90 text-white font-bold h-10 w-10 border-2 border-black flex items-center justify-center"
         >
-          <Search size={20} />
+          <Search className="h-5 w-5" />
         </Button>
       </div>
     </form>
