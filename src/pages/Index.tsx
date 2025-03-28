@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -81,10 +82,11 @@ const Index: React.FC = () => {
               className="order-2 md:order-1"
               variants={fadeInUp}
             >
+              {/* Updated header text layout - now in two longer lines */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-black mb-4">
                 Find your dream home...
               </h1>
-              <div className="bg-[#d60013] inline-block mb-6 px-3 py-1 -rotate-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="bg-[#d60013] inline-block mb-6 px-3 py-1 -rotate-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-3xl">
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white">
                   we'll find your dream price
                 </h1>

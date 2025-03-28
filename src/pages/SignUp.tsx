@@ -26,7 +26,7 @@ const SignUp: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <div className="w-full lg:w-1/2 p-8 flex flex-col">
+      <div className="w-full p-8 flex flex-col">
         <Button 
           variant="ghost" 
           className="w-fit mb-8 font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
@@ -86,33 +86,6 @@ const SignUp: React.FC = () => {
               Already have an account? <Link to="/signin" className="text-[#d60013] font-bold hover:underline">Log In</Link>
             </p>
           </form>
-        </div>
-      </div>
-    
-      <div className="hidden lg:block lg:w-1/2 bg-white p-12 text-black relative overflow-hidden border-l-4 border-black">
-        <h2 className="text-4xl font-bold mb-4">Find Your Dream Home</h2>
-        <p className="text-lg mb-8">Discover properties below market value through DoneDeal's exclusive platform.</p>
-        
-        <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 bg-[#d60013] text-white">
-          <h3 className="text-2xl font-bold mb-4">How DoneDeal Works</h3>
-          <ol className="space-y-4 list-decimal ml-5">
-            <li className="pl-2">
-              <span className="font-bold">Create an account</span>
-              <p className="text-sm">Sign up as a buyer or seller in just minutes</p>
-            </li>
-            <li className="pl-2">
-              <span className="font-bold">Browse properties</span>
-              <p className="text-sm">Find homes below market value in your area</p>
-            </li>
-            <li className="pl-2">
-              <span className="font-bold">Join the waitlist</span>
-              <p className="text-sm">Express interest in properties you love</p>
-            </li>
-            <li className="pl-2">
-              <span className="font-bold">Get approved</span>
-              <p className="text-sm">Connect with sellers and view full property details</p>
-            </li>
-          </ol>
         </div>
       </div>
     </div>

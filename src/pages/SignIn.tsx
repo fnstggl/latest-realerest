@@ -25,7 +25,7 @@ const SignIn: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <div className="w-full lg:w-1/2 p-8 flex flex-col">
+      <div className="w-full p-8 flex flex-col">
         <Button 
           variant="ghost" 
           className="w-fit mb-8 font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
@@ -76,33 +76,6 @@ const SignIn: React.FC = () => {
               Don't have an account? <Link to="/signup" className="text-[#d60013] font-bold hover:underline">Sign up</Link>
             </p>
           </form>
-        </div>
-      </div>
-      
-      <div className="hidden lg:block lg:w-1/2 bg-white p-12 text-black relative overflow-hidden border-l-4 border-black">
-        <h2 className="text-3xl font-bold mb-4">DoneDeal</h2>
-        <p className="text-lg mb-8">Find your dream home at the right price.</p>
-        
-        <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 bg-[#d60013] text-white">
-          <h3 className="text-2xl font-bold mb-4">Why Use DoneDeal?</h3>
-          <ul className="space-y-4">
-            <li className="flex items-start">
-              <span className="font-bold mr-2">✓</span>
-              <span>Access exclusive below-market properties</span>
-            </li>
-            <li className="flex items-start">
-              <span className="font-bold mr-2">✓</span>
-              <span>Connect directly with sellers</span>
-            </li>
-            <li className="flex items-start">
-              <span className="font-bold mr-2">✓</span>
-              <span>Save thousands on your dream home</span>
-            </li>
-            <li className="flex items-start">
-              <span className="font-bold mr-2">✓</span>
-              <span>Simple, transparent process</span>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
