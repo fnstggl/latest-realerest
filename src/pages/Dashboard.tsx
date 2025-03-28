@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -332,7 +333,7 @@ const Dashboard: React.FC = () => {
                       </div>
                       
                       <div>
-                        <Label htmlFor="marketPrice" className="font-bold">Market Value ($)</队员</Label>
+                        <Label htmlFor="marketPrice" className="font-bold">Market Value ($)</Label>
                         <Input
                           id="marketPrice"
                           name="marketPrice"
