@@ -31,7 +31,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 }) => {
   return (
     <Link to={`/property/${id}`} className="block">
-      <div className="relative bg-white shadow-lg overflow-hidden border-4 border-black">
+      <div className="relative bg-white shadow-lg overflow-hidden border-[6px] border-black">
         {/* Main image */}
         <div className="relative">
           <img
@@ -40,7 +40,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             className="h-[240px] w-full object-cover"
           />
           {/* Below Market Tag as bookmarker on upper left - adjusted position */}
-          <div className="absolute top-8 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-r-3 border-b-3 border-black border-r-4 border-b-4">
+          <div className="absolute top-12 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-black border-r-[6px] border-b-[6px]">
             {belowMarket}% OFF
           </div>
         </div>
@@ -80,7 +80,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               </div>
               
               {/* Arrow button */}
-              <div className="bg-[#d60013] text-white w-12 h-12 flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+              <div className="bg-[#d60013] text-white w-12 h-12 flex items-center justify-center border-[6px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
                 <ArrowRight size={20} />
               </div>
             </div>
