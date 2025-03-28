@@ -76,7 +76,7 @@ const CreateListing: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -105,8 +105,10 @@ const CreateListing: React.FC = () => {
     if (!isAuthenticated) {
       toast.error("You must be logged in to create a listing");
       navigate('/signin', { state: { returnPath: '/sell/create' } });
+    } else {
+      console.log("Authenticated user:", user?.id);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, user]);
 
   // Cleanup function for image processing
   useEffect(() => {
@@ -262,7 +264,9 @@ const CreateListing: React.FC = () => {
       toast.loading("Saving listing details...", { id: loadingToastId });
       setUploadProgress(97);
       
-      // Insert listing into Supabase - Ensure user_id is a string that matches the format in the database
+      // Insert listing into Supabase - Ensure user_id is a string
+      console.log("Attempting to insert listing with user_id:", user.id);
+      
       const { data, error } = await supabase
         .from('property_listings')
         .insert({
@@ -302,6 +306,14 @@ const CreateListing: React.FC = () => {
         toast.error("Authentication error. Please sign out and sign in again.");
       } else if (error.message?.includes('foreign key constraint')) {
         toast.error("User account error. Please update your profile.");
+      } else if (error.message?.includes('violates row-level security policy')) {
+        toast.error("Access denied. Please ensure you're properly signed in.");
+        console.error("RLS policy violation. User ID:", user.id);
+        // Force re-authentication
+        logout();
+        setTimeout(() => {
+          navigate('/signin', { state: { returnPath: '/sell/create' } });
+        }, 1500);
       } else {
         toast.error(`Failed to create listing: ${error.message || 'Unknown error'}`);
       }

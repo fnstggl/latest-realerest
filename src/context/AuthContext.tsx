@@ -47,24 +47,63 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [user]);
 
+  // Set up auth state listener on mount
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
+        
+        if (session && session.user) {
+          // Update the user with data from Supabase auth
+          const updatedUser = {
+            id: session.user.id,
+            name: session.user.user_metadata.name || session.user.email?.split('@')[0] || '',
+            email: session.user.email || '',
+            accountType: accountType
+          };
+          setUser(updatedUser);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+      }
+    );
+
+    // Check for existing session on load
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session && session.user) {
+        console.log('Found existing session:', session.user.id);
+        const updatedUser = {
+          id: session.user.id,
+          name: session.user.user_metadata.name || session.user.email?.split('@')[0] || '',
+          email: session.user.email || '',
+          accountType: accountType
+        };
+        setUser(updatedUser);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [accountType]);
+
   const login = async (email: string, password: string) => {
-    console.log('Logging in with:', email);
+    console.log('Attempting to log in with:', email);
     
     try {
-      // For this demo, we'll use a hybrid approach - try to use Supabase auth if available,
-      // but we'll still use our simplified approach for the demo
-      
       // Try to sign in with Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
       
-      // If Supabase auth succeeds, use that user ID
+      // If Supabase auth succeeds, use that user
       if (data && data.user) {
+        console.log('Supabase login successful for user ID:', data.user.id);
+        
         const newUser = {
           id: data.user.id,
-          name: email.split('@')[0], // Use part of email as name if not available
+          name: data.user.user_metadata.name || email.split('@')[0] || '',
           email: email,
           accountType: accountType
         };
@@ -73,24 +112,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return;
       }
       
-      // If Supabase auth fails, fall back to our demo approach
-      console.log('Falling back to demo auth approach');
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Generate a valid UUID that will work with Supabase
-      const userId = uuidv4();
-      
-      const newUser = {
-        id: userId,
-        name: email.split('@')[0], // Use part of email as name
-        email: email,
-        accountType: accountType
-      };
-      
-      setUser(newUser);
-      return;
+      // If Supabase auth fails, check the error
+      if (error) {
+        console.error('Supabase login error:', error);
+        
+        // For demo purposes, if it's just an invalid credential error, fall back to demo mode
+        if (error.message.includes('Invalid login credentials')) {
+          console.log('Falling back to demo auth approach');
+          
+          // Simulate API call delay
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Generate a valid UUID that will work with Supabase
+          const userId = uuidv4();
+          console.log('Created demo user with ID:', userId);
+          
+          const newUser = {
+            id: userId,
+            name: email.split('@')[0], // Use part of email as name
+            email: email,
+            accountType: accountType
+          };
+          
+          setUser(newUser);
+          return;
+        }
+        
+        // For other errors, throw them to be handled by the caller
+        throw error;
+      }
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -115,6 +165,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // If Supabase signup succeeds, use that user ID
       if (data && data.user) {
+        console.log('Supabase signup successful for user ID:', data.user.id);
+        
         const newUser = {
           id: data.user.id,
           name: name,
@@ -126,24 +178,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return;
       }
       
-      // If Supabase signup fails, fall back to our demo approach
-      console.log('Falling back to demo signup approach');
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Generate a valid UUID that will work with Supabase
-      const userId = uuidv4();
-      
-      const newUser = {
-        id: userId,
-        name: name,
-        email: email,
-        accountType: accountType
-      };
-      
-      setUser(newUser);
-      return;
+      // If Supabase signup fails, check the error
+      if (error) {
+        console.error('Supabase signup error:', error);
+        
+        // For demo purposes only, allow creation of a demo user
+        console.log('Falling back to demo signup approach');
+        
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Generate a valid UUID that will work with Supabase
+        const userId = uuidv4();
+        console.log('Created demo user with ID:', userId);
+        
+        const newUser = {
+          id: userId,
+          name: name,
+          email: email,
+          accountType: accountType
+        };
+        
+        setUser(newUser);
+        return;
+      }
     } catch (error) {
       console.error('Signup error:', error);
       throw error;
@@ -151,6 +209,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
+    console.log('Logging out user');
+    
     // Try to sign out from Supabase
     supabase.auth.signOut().catch(error => {
       console.error('Supabase logout error:', error);
