@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 interface Notification {
   id: string;
@@ -23,8 +23,6 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { toast } = useToast();
-  
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const addNotification = (newNotification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {

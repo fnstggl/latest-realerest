@@ -3,7 +3,7 @@ import React from 'react';
 import { Bell } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { useNotifications } from "@/context/NotificationContext";
 
 interface NotificationCenterProps {
@@ -14,7 +14,6 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   showIndicator = true
 }) => {
   const { notifications, markAsRead, clearAll, unreadCount } = useNotifications();
-  const { toast } = useToast();
 
   const handleMarkAsRead = (id: string) => {
     markAsRead(id);
