@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BadgePercent, Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
@@ -39,8 +38,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             alt={location}
             className="h-[240px] w-full object-cover"
           />
-          {/* Below Market Tag as bookmarker on upper left */}
-          <div className="absolute top-0 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-r-2 border-b-2 border-black">
+          {/* Below Market Tag as bookmarker on upper left - adjusted position */}
+          <div className="absolute top-4 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-r-2 border-b-2 border-black">
             {belowMarket}% OFF
           </div>
         </div>

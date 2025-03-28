@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -20,6 +19,7 @@ import {
   Check,
   X,
   Trash2,
+  LogOut,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
@@ -80,7 +80,7 @@ const mockProperties: Property[] = [
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { accountType, setAccountType } = useAuth();
+  const { accountType, setAccountType, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [myProperties, setMyProperties] = useState<Property[]>([]);
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
@@ -704,6 +704,25 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6 mt-6">
+                <h2 className="text-2xl font-bold mb-6">Account Actions</h2>
+                
+                <div className="space-y-4">
+                  <Button 
+                    variant="destructive" 
+                    className="w-full justify-center font-bold bg-red-600 text-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-red-700"
+                    onClick={() => {
+                      logout();
+                      navigate('/');
+                    }}
+                  >
+                    <LogOut size={18} className="mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
+              </div>
+              
             </TabsContent>
             
             {/* Notifications Tab */}

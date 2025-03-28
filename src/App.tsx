@@ -21,6 +21,7 @@ import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import Careers from "./pages/Careers";
 import PropertyDetail from "./pages/PropertyDetail";
+import PropertyEdit from "./pages/PropertyEdit";
 import { NotificationProvider } from "@/context/NotificationContext";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/cookies" element={<Cookies />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/property/:id" element={<PropertyDetail />} />
+            <Route path="/property/:id/edit" element={<PropertyEdit />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

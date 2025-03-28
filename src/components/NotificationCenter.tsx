@@ -31,7 +31,11 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="relative">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="relative border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+        >
           <Bell />
           {showIndicator && unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
