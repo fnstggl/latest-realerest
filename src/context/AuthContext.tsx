@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 interface User {
   id: string;
@@ -20,11 +20,26 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Check if we have user data in localStorage
+const getUserFromStorage = (): User | null => {
+  const userData = localStorage.getItem('donedeal_user');
+  return userData ? JSON.parse(userData) : null;
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [accountType, setAccountTypeState] = useState<'buyer' | 'seller'>('buyer');
+  const [user, setUser] = useState<User | null>(getUserFromStorage());
+  const [accountType, setAccountTypeState] = useState<'buyer' | 'seller'>(user?.accountType || 'buyer');
 
   const isAuthenticated = !!user;
+
+  // Save user data to localStorage whenever it changes
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('donedeal_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('donedeal_user');
+    }
+  }, [user]);
 
   const login = async (email: string, password: string) => {
     // For demo purposes, we're simulating a successful login
@@ -35,12 +50,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Set mock user data
-    setUser({
+    const newUser = {
       id: 'user-123',
-      name: 'Demo User',
+      name: email.split('@')[0], // Use part of email as name
       email: email,
       accountType: accountType
-    });
+    };
+    
+    setUser(newUser);
   };
 
   const signup = async (name: string, email: string, password: string) => {
@@ -52,16 +69,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Set mock user data
-    setUser({
+    const newUser = {
       id: 'user-' + Math.floor(Math.random() * 1000),
       name: name,
       email: email,
       accountType: accountType
-    });
+    };
+    
+    setUser(newUser);
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('donedeal_user');
   };
 
   const setAccountType = (type: 'buyer' | 'seller') => {
@@ -69,10 +89,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     // If user is logged in, update their account type
     if (user) {
-      setUser({
+      const updatedUser = {
         ...user,
         accountType: type
-      });
+      };
+      setUser(updatedUser);
     }
   };
 

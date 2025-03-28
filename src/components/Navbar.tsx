@@ -2,16 +2,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Search, Menu, User } from 'lucide-react';
+import { Search, Menu, User, LogIn } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [accountType, setAccountType] = useState<'buyer' | 'seller'>('buyer');
-  const isLoggedIn = false; // This would be replaced with actual auth state
+  const { isAuthenticated, user, accountType } = useAuth();
 
   const handleSignIn = () => {
     navigate('/signin');
@@ -73,7 +73,7 @@ const Navbar: React.FC = () => {
           </nav>
           
           <div className="flex flex-col gap-3 mt-4">
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <Button 
                 className="w-full justify-center font-bold bg-black text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(214,0,19,1)]"
                 onClick={() => navigate('/dashboard')}
@@ -145,7 +145,7 @@ const Navbar: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <div className="flex gap-4 items-center">
               <div className="hidden md:block bg-black text-white px-4 py-1 rounded-none border-2 border-black">
                 <span className="font-bold text-sm">{accountType.toUpperCase()} ACCOUNT</span>
@@ -156,7 +156,7 @@ const Navbar: React.FC = () => {
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={20} className="mr-2" />
-                <span className="font-bold">Account</span>
+                <span className="font-bold">{user?.name || 'Account'}</span>
               </Button>
             </div>
           ) : (
@@ -176,6 +176,7 @@ const Navbar: React.FC = () => {
                 className="hidden md:flex neo-button font-bold"
                 onClick={handleSignIn}
               >
+                <LogIn size={18} className="mr-2" />
                 Log In
               </Button>
               
