@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -419,24 +420,26 @@ const Dashboard: React.FC = () => {
                                 <div className="font-bold">{property.sqft.toLocaleString()} sqft</div>
                               </div>
                               
-                              {accountType === 'seller' && (
-                                <div className="flex gap-4">
-                                  <Button asChild className="neo-button" variant="outline">
-                                    <Link to={`/property/${property.id}`}>View Listing</Link>
-                                  </Button>
-                                  <Button className="neo-button-primary">
-                                    Edit
-                                  </Button>
-                                  <Button 
-                                    variant="destructive" 
-                                    className="border-2 border-black"
-                                    onClick={() => handleUnlistProperty(property.id)}
-                                  >
-                                    <Trash2 size={18} className="mr-2" />
-                                    Unlist
-                                  </Button>
-                                </div>
-                              )}
+                              <div className="flex gap-4">
+                                <Button asChild className="neo-button" variant="outline">
+                                  <Link to={`/property/${property.id}`}>View Listing</Link>
+                                </Button>
+                                {accountType === 'seller' && (
+                                  <>
+                                    <Button className="neo-button-primary">
+                                      Edit
+                                    </Button>
+                                    <Button 
+                                      variant="destructive" 
+                                      className="border-2 border-black"
+                                      onClick={() => handleUnlistProperty(property.id)}
+                                    >
+                                      <Trash2 size={18} className="mr-2" />
+                                      Unlist
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
                           
