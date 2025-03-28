@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: string;
@@ -15,7 +16,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  accountType: string; // Added back temporarily to fix build errors
+  accountType: string; // Temporary to fix build errors
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,7 +38,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     // First set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.id);
         
         if (event === 'SIGNED_OUT') {
@@ -46,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         
         if (session && session.user) {
-          fetchUserProfile(session.user);
+          await fetchUserProfile(session.user);
         }
       }
     );
@@ -84,7 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .from('profiles')
         .select('*')
         .eq('id', supabaseUser.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching profile:', error);
@@ -111,6 +112,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
         
         setUser(profileUser);
+      } else {
+        console.log('No profile found, creating from auth data');
+        
+        // Create user object directly from auth data if no profile found
+        const newUser: User = {
+          id: supabaseUser.id,
+          name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || '',
+          email: supabaseUser.email || ''
+        };
+        
+        setUser(newUser);
+        
+        // Optionally create a profile record if desired
+        // await createProfile(newUser);
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
@@ -133,7 +148,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // Check for specific error cases
         if (error.message.includes("Email not confirmed")) {
-          toast.error("Please confirm your email before logging in. Check your inbox for a confirmation link.");
+          // Special handling for unverified emails
+          toast.error("Please verify your email before logging in. Check your inbox for a confirmation link.");
+          
+          // Offer to resend verification email
+          const { error: resendError } = await supabase.auth.resend({
+            type: 'signup',
+            email: email,
+          });
+          
+          if (!resendError) {
+            toast.info("Verification email resent. Please check your inbox.");
+          }
         } else {
           toast.error(error.message || "Login failed. Please check your credentials.");
         }
@@ -143,6 +169,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // User will be set by the auth state listener
       console.log('Login successful for user ID:', data.user?.id);
+      toast.success("Login successful!");
       return;
     } catch (error: any) {
       console.error('Login error:', error);
@@ -177,7 +204,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Signup successful for user ID:', data.user?.id);
       toast.success("Account created successfully! Please check your email to confirm your account.");
       
-      // User will be set by the auth state listener and trigger
+      // User will be set by the auth state listener
       return;
     } catch (error: any) {
       console.error('Signup error:', error);

@@ -1,17 +1,20 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from '@/integrations/supabase/client';
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isAuthenticated } = useAuth();
@@ -28,17 +31,42 @@ const SignIn: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError(null);
     setIsLoading(true);
     
     try {
       await login(email, password);
-      toast.success("Login successful!");
-      navigate(returnPath);
+      // The success toast is handled in the login function
+      // Redirect is handled by the useEffect above
     } catch (error: any) {
       console.error("Login failed:", error);
-      // The toast error is already handled in the login function
+      setLoginError(error.message || "An error occurred during login");
+      // The error toast is already handled in the login function
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!email) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+      });
+      
+      if (error) {
+        toast.error("Failed to resend verification email: " + error.message);
+        return;
+      }
+      
+      toast.success("Verification email resent. Please check your inbox.");
+    } catch (error: any) {
+      toast.error("Failed to resend verification email: " + error.message);
     }
   };
 
@@ -63,6 +91,22 @@ const SignIn: React.FC = () => {
                 : "Welcome back! Please log in to continue."}
             </p>
           </div>
+          
+          {loginError && loginError.includes("Email not confirmed") && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Your email address is not verified. 
+                <Button
+                  variant="link"
+                  className="p-0 h-auto font-semibold text-white underline ml-1"
+                  onClick={handleResendVerification}
+                >
+                  Resend verification email
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
           
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
@@ -92,6 +136,7 @@ const SignIn: React.FC = () => {
             </div>
             
             <Button 
+              type="submit"
               className="w-full bg-[#d60013] hover:bg-[#d60013]/90 text-white font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
               disabled={isLoading}
             >
