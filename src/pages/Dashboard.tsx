@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -23,6 +24,8 @@ import {
 import { motion } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useNotifications } from "@/context/NotificationContext";
+import NotificationCenter from "@/components/NotificationCenter";
 
 // Types
 interface WaitlistUser {
@@ -82,6 +85,7 @@ const Dashboard: React.FC = () => {
   const [myProperties, setMyProperties] = useState<Property[]>([]);
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const { notifications, markAsRead, clearAll } = useNotifications();
   
   // Form fields
   const [newProperty, setNewProperty] = useState({
@@ -228,6 +232,7 @@ const Dashboard: React.FC = () => {
   // Account type change handler
   const handleAccountTypeChange = (type: 'buyer' | 'seller') => {
     setAccountType(type);
+    localStorage.setItem('accountType', type);
     toast.success(`Account type changed to ${type}`);
   };
 
@@ -438,7 +443,7 @@ const Dashboard: React.FC = () => {
                                     </Button>
                                     <Button 
                                       variant="destructive" 
-                                      className="border-2 border-black"
+                                      className="bg-black text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                                       onClick={() => handleUnlistProperty(property.id)}
                                     >
                                       <Trash2 size={18} className="mr-2" />
@@ -458,7 +463,7 @@ const Dashboard: React.FC = () => {
                                   {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                                 </div>
                                 <Button asChild className="neo-button" variant="outline">
-                                  <Link to={`/property/${property.id}/waitlist`}>
+                                  <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
                                     Manage Waitlist
                                   </Link>
                                 </Button>
@@ -474,11 +479,13 @@ const Dashboard: React.FC = () => {
                       <h3 className="text-2xl font-bold mb-4">No Properties Listed</h3>
                       <p className="mb-6">You haven't listed any properties yet.</p>
                       <Button 
+                        asChild
                         className="neo-button-primary"
-                        onClick={() => setShowAddForm(true)}
                       >
-                        <Plus size={18} className="mr-2" />
-                        Add Your First Property
+                        <Link to="/sell/create">
+                          <Plus size={18} className="mr-2" />
+                          Add Your First Property
+                        </Link>
                       </Button>
                     </div>
                   )}
@@ -705,7 +712,11 @@ const Dashboard: React.FC = () => {
                 <div className="border-b-4 border-black p-4 bg-gray-50">
                   <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold">Recent Notifications</h2>
-                    <Button className="neo-button" variant="outline">
+                    <Button 
+                      onClick={clearAll}
+                      className="neo-button font-bold" 
+                      variant="outline"
+                    >
                       Mark All as Read
                     </Button>
                   </div>

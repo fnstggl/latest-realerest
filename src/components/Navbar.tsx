@@ -7,11 +7,14 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import NotificationCenter from './NotificationCenter';
+import { useNotifications } from '@/context/NotificationContext';
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { isAuthenticated, user, accountType } = useAuth();
+  const { unreadCount } = useNotifications();
 
   const handleSignIn = () => {
     navigate('/signin');
@@ -150,13 +153,22 @@ const Navbar: React.FC = () => {
               <div className="hidden md:block bg-black text-white px-4 py-1 rounded-none border-2 border-black">
                 <span className="font-bold text-sm">{accountType.toUpperCase()} ACCOUNT</span>
               </div>
+              
+              <NotificationCenter showIndicator={false} />
+              
               <Button 
                 variant="ghost" 
-                className="p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none"
+                className="p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none relative"
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={20} className="mr-2" />
                 <span className="font-bold">{user?.name || 'Account'}</span>
+                
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
               </Button>
             </div>
           ) : (
