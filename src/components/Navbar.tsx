@@ -13,7 +13,7 @@ import { useNotifications } from '@/context/NotificationContext';
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { isAuthenticated, user, accountType } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { unreadCount } = useNotifications();
 
   const handleSignIn = () => {
@@ -150,10 +150,6 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <div className="flex gap-4 items-center">
-              <div className="hidden md:flex bg-black text-white px-3 py-1 rounded-none border-2 border-black text-sm">
-                <span className="font-bold">{accountType.toUpperCase()}</span>
-              </div>
-              
               <NotificationCenter showIndicator={unreadCount > 0} />
               
               <Button 

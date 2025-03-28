@@ -80,7 +80,7 @@ const mockProperties: Property[] = [
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { accountType, setAccountType, logout } = useAuth();
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [myProperties, setMyProperties] = useState<Property[]>([]);
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
@@ -229,13 +229,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Account type change handler
-  const handleAccountTypeChange = (type: 'buyer' | 'seller') => {
-    setAccountType(type);
-    localStorage.setItem('accountType', type);
-    toast.success(`Account type changed to ${type}`);
-  };
-
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -249,18 +242,16 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-4xl font-bold">Dashboard</h1>
-              <p className="text-lg">Manage your {accountType === 'seller' ? 'properties' : 'waitlists'}</p>
+              <p className="text-lg">Manage your properties and waitlists</p>
             </div>
             
-            {accountType === 'seller' && (
-              <Button 
-                className="neo-button-primary"
-                onClick={() => setShowAddForm(true)}
-              >
-                <Plus size={18} className="mr-2" />
-                Add Property
-              </Button>
-            )}
+            <Button 
+              className="neo-button-primary"
+              onClick={() => setShowAddForm(true)}
+            >
+              <Plus size={18} className="mr-2" />
+              Add Property
+            </Button>
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
@@ -341,7 +332,7 @@ const Dashboard: React.FC = () => {
                       </div>
                       
                       <div>
-                        <Label htmlFor="marketPrice" className="font-bold">Market Value ($)</Label>
+                        <Label htmlFor="marketPrice" className="font-bold">Market Value ($)</队员</Label>
                         <Input
                           id="marketPrice"
                           name="marketPrice"
@@ -436,40 +427,34 @@ const Dashboard: React.FC = () => {
                                 <Button asChild className="neo-button" variant="outline">
                                   <Link to={`/property/${property.id}`}>View Listing</Link>
                                 </Button>
-                                {accountType === 'seller' && (
-                                  <>
-                                    <Button className="neo-button-primary">
-                                      Edit
-                                    </Button>
-                                    <Button 
-                                      variant="destructive" 
-                                      className="bg-black text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-                                      onClick={() => handleUnlistProperty(property.id)}
-                                    >
-                                      <Trash2 size={18} className="mr-2" />
-                                      Unlist
-                                    </Button>
-                                  </>
-                                )}
+                                <Button className="neo-button-primary">
+                                  Edit
+                                </Button>
+                                <Button 
+                                  variant="destructive" 
+                                  className="bg-black text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                                  onClick={() => handleUnlistProperty(property.id)}
+                                >
+                                  <Trash2 size={18} className="mr-2" />
+                                  Unlist
+                                </Button>
                               </div>
                             </div>
                           </div>
                           
-                          {accountType === 'seller' && (
-                            <div className="border-t-4 border-black p-4 bg-gray-50">
-                              <div className="flex justify-between items-center">
-                                <div>
-                                  <span className="font-bold mr-2">Waitlist:</span>
-                                  {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
-                                </div>
-                                <Button asChild className="neo-button" variant="outline">
-                                  <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
-                                    Manage Waitlist
-                                  </Link>
-                                </Button>
+                          <div className="border-t-4 border-black p-4 bg-gray-50">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <span className="font-bold mr-2">Waitlist:</span>
+                                {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                               </div>
+                              <Button asChild className="neo-button" variant="outline">
+                                <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
+                                  Manage Waitlist
+                                </Link>
+                              </Button>
                             </div>
-                          )}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -508,9 +493,7 @@ const Dashboard: React.FC = () => {
                         <th className="text-left p-4 font-bold">Contact</th>
                         <th className="text-left p-4 font-bold">Property</th>
                         <th className="text-left p-4 font-bold">Status</th>
-                        {accountType === 'seller' && (
-                          <th className="text-left p-4 font-bold">Actions</th>
-                        )}
+                        <th className="text-left p-4 font-bold">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -533,32 +516,30 @@ const Dashboard: React.FC = () => {
                                 {user.status.toUpperCase()}
                               </span>
                             </td>
-                            {accountType === 'seller' && (
-                              <td className="p-4">
-                                <div className="flex gap-2">
-                                  {user.status === 'pending' && (
-                                    <>
-                                      <Button 
-                                        size="sm" 
-                                        className="bg-green-600 hover:bg-green-700 border-2 border-black"
-                                        onClick={() => handleUpdateWaitlistStatus(user.id, 'accepted')}
-                                      >
-                                        <Check size={16} className="mr-1" />
-                                        Accept
-                                      </Button>
-                                      <Button 
-                                        size="sm" 
-                                        className="bg-red-600 hover:bg-red-700 border-2 border-black"
-                                        onClick={() => handleUpdateWaitlistStatus(user.id, 'declined')}
-                                      >
-                                        <X size={16} className="mr-1" />
-                                        Decline
-                                      </Button>
-                                    </>
-                                  )}
-                                </div>
-                              </td>
-                            )}
+                            <td className="p-4">
+                              <div className="flex gap-2">
+                                {user.status === 'pending' && (
+                                  <>
+                                    <Button 
+                                      size="sm" 
+                                      className="bg-green-600 hover:bg-green-700 border-2 border-black"
+                                      onClick={() => handleUpdateWaitlistStatus(user.id, 'accepted')}
+                                    >
+                                      <Check size={16} className="mr-1" />
+                                      Accept
+                                    </Button>
+                                    <Button 
+                                      size="sm" 
+                                      className="bg-red-600 hover:bg-red-700 border-2 border-black"
+                                      onClick={() => handleUpdateWaitlistStatus(user.id, 'declined')}
+                                    >
+                                      <X size={16} className="mr-1" />
+                                      Decline
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            </td>
                           </tr>
                         );
                       })}
@@ -569,16 +550,7 @@ const Dashboard: React.FC = () => {
                 <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                   <ClipboardCheck size={48} className="mx-auto mb-4" />
                   <h3 className="text-2xl font-bold mb-4">No Waitlist Requests</h3>
-                  {accountType === 'buyer' ? (
-                    <>
-                      <p className="mb-6">You haven't joined any property waitlists yet.</p>
-                      <Button asChild className="neo-button-primary">
-                        <Link to="/search">Browse Properties</Link>
-                      </Button>
-                    </>
-                  ) : (
-                    <p>You don't have any waitlist requests for your properties yet.</p>
-                  )}
+                  <p>You don't have any waitlist requests for your properties yet.</p>
                 </div>
               )}
             </TabsContent>
@@ -588,9 +560,6 @@ const Dashboard: React.FC = () => {
               <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold">Account Information</h2>
-                  <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold">
-                    {accountType.toUpperCase()} ACCOUNT
-                  </div>
                 </div>
                 
                 <form className="space-y-6">
@@ -627,40 +596,6 @@ const Dashboard: React.FC = () => {
                     Save Changes
                   </Button>
                 </form>
-              </div>
-              
-              <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
-                <h2 className="text-2xl font-bold mb-6">Account Type</h2>
-                
-                <div className="p-6 border-2 border-black mb-6">
-                  <h3 className="font-bold text-lg mb-4">Select your account type:</h3>
-                  
-                  <RadioGroup 
-                    value={accountType} 
-                    onValueChange={(value: 'buyer' | 'seller') => handleAccountTypeChange(value)}
-                    className="flex flex-col gap-4"
-                  >
-                    <div className="flex items-center justify-between p-4 border-2 border-black hover:bg-gray-50">
-                      <div className="flex items-center space-x-3">
-                        <RadioGroupItem value="buyer" id="buyer" />
-                        <Label htmlFor="buyer" className="font-bold text-lg cursor-pointer">Buyer</Label>
-                      </div>
-                      <div className="text-gray-600 text-sm max-w-[50%]">
-                        Browse properties, join waitlists, and get notified about new deals
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 border-2 border-black hover:bg-gray-50">
-                      <div className="flex items-center space-x-3">
-                        <RadioGroupItem value="seller" id="seller" />
-                        <Label htmlFor="seller" className="font-bold text-lg cursor-pointer">Seller</Label>
-                      </div>
-                      <div className="text-gray-600 text-sm max-w-[50%]">
-                        List properties, manage waitlists, and communicate with potential buyers
-                      </div>
-                    </div>
-                  </RadioGroup>
-                </div>
               </div>
               
               <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">

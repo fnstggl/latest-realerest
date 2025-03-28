@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -34,9 +35,10 @@ const PropertyDetail: React.FC = () => {
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState('');
-  const { accountType, user } = useAuth();
+  const { user } = useAuth();
   
-  const isBuyer = accountType === 'buyer';
+  // User role flags
+  const [isOwner, setIsOwner] = useState(false);
   
   // Check if this buyer has been approved to view this property
   const [isApproved, setIsApproved] = useState(false);
@@ -50,6 +52,17 @@ const PropertyDetail: React.FC = () => {
           (entry: any) => entry.id === user.id && entry.propertyId === id
         );
         setIsApproved(userEntry?.status === 'accepted');
+      }
+      
+      // Check if the user is the owner of this property
+      const allListingsJSON = localStorage.getItem('propertyListings');
+      if (allListingsJSON) {
+        const allListings = JSON.parse(allListingsJSON);
+        const propertyObj = allListings.find((p: Property) => p.id === id);
+        
+        if (propertyObj && propertyObj.sellerId === user.id) {
+          setIsOwner(true);
+        }
       }
     }
   }, [user?.id, id]);
@@ -122,9 +135,9 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
-  // Helper function to mask the address for buyers who aren't approved
+  // Helper function to mask the address for users who aren't approved
   const getDisplayLocation = () => {
-    if (!isBuyer || isApproved) {
+    if (isOwner || isApproved) {
       return property.location;
     }
     return property.location.replace(/^[^,]+/, "123 XXXX Street");
@@ -213,7 +226,14 @@ const PropertyDetail: React.FC = () => {
                 </div>
               </div>
               
-              {isBuyer ? (
+              {isOwner ? (
+                <Link to={`/property/${property.id}/edit`}>
+                  <Button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 neo-shadow-sm transition-colors">
+                    <Cog size={18} className="mr-2" />
+                    Edit Listing
+                  </Button>
+                </Link>
+              ) : (
                 isApproved ? (
                   <div className="border-2 border-green-600 p-4 mb-6">
                     <div className="font-bold text-green-600 mb-2">Your waitlist request has been approved!</div>
@@ -222,17 +242,10 @@ const PropertyDetail: React.FC = () => {
                 ) : (
                   <WaitlistButton propertyId={property.id} propertyTitle={property.title} />
                 )
-              ) : (
-                <Link to={`/property/${property.id}/edit`}>
-                  <Button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 neo-shadow-sm transition-colors">
-                    <Cog size={18} className="mr-2" />
-                    Edit Listing
-                  </Button>
-                </Link>
               )}
             </div>
             
-            {(!isBuyer || isApproved) && property.sellerName && (
+            {(isOwner || isApproved) && property.sellerName && (
               <div className="border-2 border-black p-4 mt-6">
                 <h3 className="font-bold mb-2">Contact Seller</h3>
                 <p className="mb-1">{property.sellerName}</p>
@@ -305,7 +318,7 @@ const PropertyDetail: React.FC = () => {
           </div>
         </div>
         
-        {(!isBuyer || isApproved) && property.comparables && property.comparables.length > 0 && (
+        {(isOwner || isApproved) && property.comparables && property.comparables.length > 0 && (
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 mb-12">
             <h2 className="text-2xl font-bold mb-4">Comparable Properties</h2>
             <ul className="space-y-2">

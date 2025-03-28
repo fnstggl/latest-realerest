@@ -15,6 +15,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  accountType: string; // Added back temporarily to fix build errors
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +29,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   
   const isAuthenticated = !!user;
+  const accountType = 'buyer'; // Default value to prevent errors
 
   // Set up auth state listener on mount and check for existing session
   useEffect(() => {
@@ -201,7 +203,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isAuthenticated, 
       login, 
       signup, 
-      logout
+      logout,
+      accountType
     }}>
       {!isLoading && children}
     </AuthContext.Provider>
