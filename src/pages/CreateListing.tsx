@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -74,7 +75,7 @@ const CreateListing: React.FC = () => {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [isProcessingImages, setIsProcessingImages] = useState(0);
+  const [isProcessingImages, setIsProcessingImages] = useState(false); // Changed from number to boolean
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, isAuthenticated, logout } = useAuth();
   const abortControllerRef = useRef<AbortController | null>(null);
