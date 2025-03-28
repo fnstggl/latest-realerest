@@ -8,7 +8,6 @@ import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { supabase } from '@/integrations/supabase/client';
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState('');
@@ -34,6 +33,12 @@ const SignUp: React.FC = () => {
     setIsLoading(true);
     
     // Basic validation
+    if (!name || !email || !password) {
+      setSignupError("All fields are required");
+      setIsLoading(false);
+      return;
+    }
+    
     if (password.length < 6) {
       setSignupError("Password must be at least 6 characters long");
       setIsLoading(false);
@@ -43,7 +48,6 @@ const SignUp: React.FC = () => {
     try {
       await signup(name, email, password);
       setSignupSuccess(true);
-      // The toast notification is handled in the signup function
     } catch (error: any) {
       console.error("Signup failed:", error);
       setSignupError(error.message || "An error occurred during signup");

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -35,13 +36,25 @@ const SignIn: React.FC = () => {
     setIsLoading(true);
     
     try {
+      // Validate input
+      if (!email || !password) {
+        setLoginError("Please enter both email and password");
+        setIsLoading(false);
+        return;
+      }
+      
+      // Attempt login
       await login(email, password);
-      // The success toast is handled in the login function
       // Redirect is handled by the useEffect above
     } catch (error: any) {
       console.error("Login failed:", error);
-      setLoginError(error.message || "An error occurred during login");
-      // The error toast is already handled in the login function
+      
+      // Special handling for email confirmation errors
+      if (error.message && error.message.includes('Email not confirmed')) {
+        setLoginError("Your email address is not verified. Please check your inbox for a verification link.");
+      } else {
+        setLoginError(error.message || "An error occurred during login");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -105,6 +118,13 @@ const SignIn: React.FC = () => {
                   Resend verification email
                 </Button>
               </AlertDescription>
+            </Alert>
+          )}
+          
+          {loginError && !loginError.includes("Email not confirmed") && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{loginError}</AlertDescription>
             </Alert>
           )}
           

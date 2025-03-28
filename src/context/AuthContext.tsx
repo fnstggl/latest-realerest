@@ -2,7 +2,6 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
-import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: string;
@@ -16,7 +15,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  accountType: string; // Temporary to fix build errors
+  accountType: string; // Will be removed in future refactoring
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,45 +33,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Set up auth state listener on mount and check for existing session
   useEffect(() => {
-    console.log("Setting up auth state listener");
-    
-    // First set up the auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
-        
-        if (event === 'SIGNED_OUT') {
-          setUser(null);
-          return;
+    try {
+      console.log("Setting up auth state listener");
+      
+      // First set up the auth state listener
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          console.log('Auth state changed:', event, session?.user?.id);
+          
+          if (event === 'SIGNED_OUT') {
+            setUser(null);
+            return;
+          }
+          
+          if (session && session.user) {
+            await fetchUserProfile(session.user);
+          }
         }
-        
-        if (session && session.user) {
-          await fetchUserProfile(session.user);
-        }
-      }
-    );
+      );
 
-    // Then check for existing session
-    const fetchCurrentSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user) {
-          console.log('Found existing session:', session.user.id);
-          await fetchUserProfile(session.user);
+      // Then check for existing session
+      const fetchCurrentSession = async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          
+          if (session?.user) {
+            console.log('Found existing session:', session.user.id);
+            await fetchUserProfile(session.user);
+          }
+        } catch (error) {
+          console.error('Error fetching session:', error);
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error('Error fetching session:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
 
-    fetchCurrentSession();
-    
-    return () => {
-      subscription.unsubscribe();
-    };
+      fetchCurrentSession();
+      
+      return () => {
+        subscription.unsubscribe();
+      };
+    } catch (error) {
+      console.error("Error in auth setup:", error);
+      setIsLoading(false);
+    }
   }, []);
 
   // Fetch user profile from the profiles table
@@ -123,9 +127,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
         
         setUser(newUser);
-        
-        // Optionally create a profile record if desired
-        // await createProfile(newUser);
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
@@ -145,25 +146,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (error) {
         console.error('Supabase login error:', error);
-        
-        // Check for specific error cases
-        if (error.message.includes("Email not confirmed")) {
-          // Special handling for unverified emails
-          toast.error("Please verify your email before logging in. Check your inbox for a confirmation link.");
-          
-          // Offer to resend verification email
-          const { error: resendError } = await supabase.auth.resend({
-            type: 'signup',
-            email: email,
-          });
-          
-          if (!resendError) {
-            toast.info("Verification email resent. Please check your inbox.");
-          }
-        } else {
-          toast.error(error.message || "Login failed. Please check your credentials.");
-        }
-        
+        toast.error(error.message || "Login failed. Please check your credentials.");
         throw error;
       }
       
@@ -224,6 +207,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // State will be cleared by the auth state listener
   };
 
+  // Don't render children until we've checked for an existing session
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-t-[#d60013] border-b-[#d60013] border-l-gray-200 border-r-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-lg font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -233,7 +228,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       logout,
       accountType
     }}>
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

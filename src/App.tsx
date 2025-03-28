@@ -22,59 +22,53 @@ import Cookies from "./pages/Cookies";
 import Careers from "./pages/Careers";
 import PropertyDetail from "./pages/PropertyDetail";
 import PropertyEdit from "./pages/PropertyEdit";
-import { AuthProvider } from "@/context/AuthContext";
-import { NotificationProvider } from "@/context/NotificationContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <NotificationProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route 
-                path="/sell/create" 
-                element={
-                  <ProtectedRoute>
-                    <CreateListing />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/cookies" element={<Cookies />} />
-              <Route path="/careers" element={<Careers />} />
-              <Route path="/property/:id" element={<PropertyDetail />} />
-              <Route 
-                path="/property/:id/edit" 
-                element={
-                  <ProtectedRoute>
-                    <PropertyEdit />
-                  </ProtectedRoute>
-                } 
-              />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </NotificationProvider>
-    </AuthProvider>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route 
+            path="/sell/create" 
+            element={
+              <ProtectedRoute>
+                <CreateListing />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/property/:id" element={<PropertyDetail />} />
+          <Route 
+            path="/property/:id/edit" 
+            element={
+              <ProtectedRoute>
+                <PropertyEdit />
+              </ProtectedRoute>
+            } 
+          />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
