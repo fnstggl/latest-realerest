@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -94,7 +93,7 @@ const CreateListing: React.FC = () => {
     const uploadedUrls: string[] = [];
     
     try {
-      // Create a random folder name instead of using user.id which might not be a valid UUID
+      // Create a random folder name
       const folderName = `listing-${Math.random().toString(36).substring(2, 15)}`;
       
       for (const file of files) {
@@ -158,11 +157,7 @@ const CreateListing: React.FC = () => {
       // Generate title from location and beds/baths
       const title = `${values.beds} bed, ${values.baths} bath home in ${values.city}, ${values.state}`;
       
-      // Create an actual UUID for the user_id if the user object doesn't provide one
-      // This is a workaround for development/testing purposes
-      const userId = user.id || crypto.randomUUID();
-      
-      // Insert listing into Supabase
+      // Insert listing into Supabase with a valid UUID
       const { data, error } = await supabase
         .from('property_listings')
         .insert({
@@ -175,7 +170,7 @@ const CreateListing: React.FC = () => {
           baths: parseInt(values.baths),
           sqft: parseInt(values.sqft),
           images: finalImages,
-          user_id: userId
+          user_id: user.id // This should now be a valid UUID
         })
         .select();
       
