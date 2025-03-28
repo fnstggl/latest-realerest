@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid'; // Correct import for UUID generation
@@ -63,9 +64,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Use a valid UUID format for the user ID
+      // Generate a valid UUID that will work with Supabase
+      const userId = uuidv4();
+      
       const newUser = {
-        id: uuidv4(), // Generate a valid UUID
+        id: userId,
         name: email.split('@')[0], // Use part of email as name
         email: email,
         accountType: accountType
@@ -98,9 +101,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (error) throw error;
       
-      // Use a valid UUID format for the user ID
+      // Generate a valid UUID that will work with Supabase
+      const userId = uuidv4();
+      
       const newUser = {
-        id: uuidv4(), // Generate a valid UUID
+        id: userId,
         name: name,
         email: email,
         accountType: accountType
