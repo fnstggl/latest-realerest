@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -19,10 +19,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, [isAuthenticated]);
 
   if (!isAuthenticated) {
+    console.log("Protected route: User not authenticated, redirecting to signin");
     // Redirect to login page with the current path as the return destination
     return <Navigate to="/signin" state={{ returnPath: location.pathname }} replace />;
   }
 
+  console.log("Protected route: User authenticated:", user?.id);
   return <>{children}</>;
 };
 

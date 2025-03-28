@@ -14,8 +14,7 @@ CREATE POLICY "Public Read Policy" ON storage.objects
 CREATE POLICY "Authenticated Upload Policy" ON storage.objects 
     FOR INSERT TO authenticated
     WITH CHECK (
-        bucket_id = 'property_images' AND 
-        auth.uid()::text IS NOT NULL
+        bucket_id = 'property_images'
     );
 
 -- Create a policy to allow users to update their own images

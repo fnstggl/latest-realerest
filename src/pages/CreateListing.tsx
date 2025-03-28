@@ -74,7 +74,7 @@ const CreateListing: React.FC = () => {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const [isProcessingImages, setIsProcessingImages] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, isAuthenticated, logout } = useAuth();
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -107,6 +107,35 @@ const CreateListing: React.FC = () => {
       navigate('/signin', { state: { returnPath: '/sell/create' } });
     } else {
       console.log("Authenticated user:", user?.id);
+      
+      // Check storage bucket exists
+      const checkStorageBucket = async () => {
+        try {
+          const { data, error } = await supabase.storage.getBucket('property_images');
+          if (error) {
+            console.error("Storage bucket error:", error);
+            
+            // If bucket doesn't exist, create it
+            if (error.message.includes('not found')) {
+              const { error: createError } = await supabase.storage.createBucket('property_images', {
+                public: true
+              });
+              
+              if (createError) {
+                console.error("Failed to create bucket:", createError);
+              } else {
+                console.log("Created property_images bucket");
+              }
+            }
+          } else {
+            console.log("Property images bucket exists:", data);
+          }
+        } catch (err) {
+          console.error("Error checking storage bucket:", err);
+        }
+      };
+      
+      checkStorageBucket();
     }
   }, [isAuthenticated, navigate, user]);
 
@@ -264,9 +293,10 @@ const CreateListing: React.FC = () => {
       toast.loading("Saving listing details...", { id: loadingToastId });
       setUploadProgress(97);
       
-      // Insert listing into Supabase - Ensure user_id is a string
-      console.log("Attempting to insert listing with user_id:", user.id);
+      // Log the user ID being used for debugging
+      console.log("Inserting listing with user_id:", user.id, "Type:", typeof user.id);
       
+      // Insert listing into Supabase with explicit type handling
       const { data, error } = await supabase
         .from('property_listings')
         .insert({
