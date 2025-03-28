@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
-import { BadgePercent, Bed, Bath, SquareFoot } from 'lucide-react';
+import { BadgePercent, Bed, Bath, Square } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
 interface PropertyCardProps {
@@ -68,7 +68,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 <span className="font-bold">{baths}</span>
               </div>
               <div className="flex items-center">
-                <SquareFoot size={18} className="mr-1" />
+                <Square size={18} className="mr-1" />
                 <span className="font-bold">{sqft.toLocaleString()} sqft</span>
               </div>
             </div>
