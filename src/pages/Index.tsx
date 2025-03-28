@@ -82,12 +82,12 @@ const Index: React.FC = () => {
               className="order-2 md:order-1"
               variants={fadeInUp}
             >
-              {/* Fixed header text layout - exactly two lines */}
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-black mb-4 inline-block">
+              {/* Single-line header text layout */}
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-black mb-4 whitespace-nowrap">
                 Find your dream home...
               </h1>
               <div className="bg-[#d60013] block mb-6 px-3 py-1 -rotate-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-3xl">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white whitespace-nowrap">
                   we'll find your dream price
                 </h1>
               </div>
