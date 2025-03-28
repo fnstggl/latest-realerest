@@ -124,24 +124,24 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
         
-        <div className="hidden md:flex space-x-8">
-          <Link to="/" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
+        <div className="hidden md:flex space-x-6 text-lg">
+          <Link to="/" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
             <span className="text-[#d60013]">Home</span>
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/search" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
+          <Link to="/search" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
             <span>Browse</span>
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/sell/create" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
+          <Link to="/sell/create" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
             <span>Sell</span>
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/about" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
+          <Link to="/about" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
             <span>About</span>
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/contact" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
+          <Link to="/contact" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
             <span>Contact</span>
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
           </Link>
@@ -150,11 +150,11 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <div className="flex gap-4 items-center">
-              <div className="hidden md:block bg-black text-white px-4 py-1 rounded-none border-2 border-black">
-                <span className="font-bold text-sm">{accountType.toUpperCase()} ACCOUNT</span>
+              <div className="hidden md:flex bg-black text-white px-3 py-1 rounded-none border-2 border-black text-sm">
+                <span className="font-bold">{accountType.toUpperCase()}</span>
               </div>
               
-              <NotificationCenter showIndicator={false} />
+              <NotificationCenter showIndicator={unreadCount > 0} />
               
               <Button 
                 variant="ghost" 

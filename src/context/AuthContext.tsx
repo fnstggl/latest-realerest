@@ -1,5 +1,6 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface User {
   id: string;
@@ -50,18 +51,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // In a real app, this would call an API endpoint
     console.log('Logging in with:', email, password);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Set mock user data
-    const newUser = {
-      id: 'user-123',
-      name: email.split('@')[0], // Use part of email as name
-      email: email,
-      accountType: accountType
-    };
-    
-    setUser(newUser);
+    try {
+      // In a real app, this would verify with Supabase
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) throw error;
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Set mock user data
+      const newUser = {
+        id: 'user-123',
+        name: email.split('@')[0], // Use part of email as name
+        email: email,
+        accountType: accountType
+      };
+      
+      setUser(newUser);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const signup = async (name: string, email: string, password: string) => {
@@ -69,23 +83,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // In a real app, this would call an API endpoint
     console.log('Signing up with:', name, email, password);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Set mock user data
-    const newUser = {
-      id: 'user-' + Math.floor(Math.random() * 1000),
-      name: name,
-      email: email,
-      accountType: accountType
-    };
-    
-    setUser(newUser);
+    try {
+      // In a real app, this would register with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+            accountType: accountType
+          }
+        }
+      });
+      
+      if (error) throw error;
+      
+      // Set mock user data
+      const newUser = {
+        id: 'user-' + Math.floor(Math.random() * 1000),
+        name: name,
+        email: email,
+        accountType: accountType
+      };
+      
+      setUser(newUser);
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('donedeal_user');
+    // In a real app, this would sign out from Supabase
+    supabase.auth.signOut().then(() => {
+      setUser(null);
+      localStorage.removeItem('donedeal_user');
+    });
   };
 
   const setAccountType = (type: 'buyer' | 'seller') => {
