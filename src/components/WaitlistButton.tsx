@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { ClipboardList, X, Check } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from 'lucide-react';
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from '@/context/AuthContext';
+import { toast } from "sonner";
 
 interface WaitlistButtonProps {
   propertyId: string;
@@ -14,100 +14,147 @@ interface WaitlistButtonProps {
 }
 
 const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTitle }) => {
-  const [phone, setPhone] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const { toast } = useToast();
   const { user } = useAuth();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [isInWaitlist, setIsInWaitlist] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validate phone number
-    if (!phone || phone.length < 10) {
-      toast({
-        title: "Invalid phone number",
-        description: "Please enter a valid phone number.",
-        variant: "destructive"
-      });
+  // Check if user is already in waitlist for this property
+  React.useEffect(() => {
+    if (user?.id) {
+      const waitlistDataJSON = localStorage.getItem('waitlistData');
+      if (waitlistDataJSON) {
+        const waitlistData = JSON.parse(waitlistDataJSON);
+        const isInList = waitlistData.some(
+          (entry: any) => entry.id === user.id && entry.propertyId === propertyId
+        );
+        setIsInWaitlist(isInList);
+      }
+    }
+  }, [user?.id, propertyId]);
+
+  const handleJoinWaitlist = () => {
+    setDialogOpen(true);
+  };
+
+  const handleSubmit = () => {
+    if (!phone) {
+      toast.error("Please enter your phone number");
       return;
     }
     
-    setIsLoading(true);
-    
-    // Simulate API call to join waitlist
-    try {
-      // In a real app, this would be an API call to your backend
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Success!
-      toast({
-        title: "Joined Waitlist!",
-        description: `You've successfully joined the waitlist for ${propertyTitle}. The seller will contact you soon.`,
-      });
-      
-      setDialogOpen(false);
-      setPhone("");
-    } catch (error) {
-      toast({
-        title: "Failed to join waitlist",
-        description: "There was an error joining the waitlist. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
+    if (!user) {
+      toast.error("You must be logged in to join the waitlist");
+      return;
     }
+    
+    setSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      try {
+        // Get existing waitlist data
+        const waitlistDataJSON = localStorage.getItem('waitlistData');
+        const waitlistData = waitlistDataJSON ? JSON.parse(waitlistDataJSON) : [];
+        
+        // Add new entry
+        const newEntry = {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: phone,
+          propertyId: propertyId,
+          propertyTitle: propertyTitle,
+          status: 'pending',
+          timestamp: new Date().toISOString()
+        };
+        
+        // Save back to localStorage
+        localStorage.setItem('waitlistData', JSON.stringify([...waitlistData, newEntry]));
+        
+        setIsInWaitlist(true);
+        setDialogOpen(false);
+        toast.success("Successfully joined the waitlist!");
+      } catch (error) {
+        console.error("Error joining waitlist:", error);
+        toast.error("Failed to join waitlist. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
+    }, 1000);
   };
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-full mt-4 neo-button-primary">Join Waitlist</Button>
-      </DialogTrigger>
-      <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Join Property Waitlist</DialogTitle>
-          <DialogDescription className="text-black font-medium">
-            Enter your phone number to join the waitlist for this property.
-            The seller will contact you when the property becomes available.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <form onSubmit={handleSubmit}>
+    <>
+      {isInWaitlist ? (
+        <Button 
+          className="w-full bg-gray-200 text-black font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center cursor-not-allowed"
+          disabled
+        >
+          <Check size={18} className="mr-2" />
+          In Waitlist
+        </Button>
+      ) : (
+        <Button 
+          className="w-full bg-[#d60013] text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+          onClick={handleJoinWaitlist}
+        >
+          <ClipboardList size={18} className="mr-2" />
+          Join Waitlist
+        </Button>
+      )}
+      
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Join Property Waitlist</DialogTitle>
+            <DialogDescription>
+              Please provide your phone number to join the waitlist for this property.
+            </DialogDescription>
+          </DialogHeader>
+          
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="font-bold">Phone Number</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="(555) 123-4567"
-                value={phone}
+            <div>
+              <Label htmlFor="phone" className="text-black font-bold">Phone Number</Label>
+              <Input 
+                id="phone" 
+                type="tel" 
+                placeholder="Enter your phone number" 
+                value={phone} 
                 onChange={(e) => setPhone(e.target.value)}
-                required
-                className="neo-input"
+                className="mt-2 border-2 border-black focus:ring-0"
               />
             </div>
+            
+            <p className="text-sm text-gray-600">
+              Once you join the waitlist, the seller will review your request and may contact you with more information about the property.
+            </p>
           </div>
           
-          <DialogFooter>
+          <DialogFooter className="flex gap-2">
             <Button 
-              type="submit"
-              disabled={isLoading}
-              className="neo-button-primary"
+              type="button" 
+              variant="outline" 
+              onClick={() => setDialogOpen(false)}
+              className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                "Join Waitlist"
-              )}
+              <X size={18} className="mr-2" />
+              Cancel
+            </Button>
+            <Button 
+              type="button" 
+              className="bg-[#d60013] hover:bg-[#d60013]/90 text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              onClick={handleSubmit}
+              disabled={submitting}
+            >
+              <Check size={18} className="mr-2" />
+              {submitting ? "Submitting..." : "Submit"}
             </Button>
           </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

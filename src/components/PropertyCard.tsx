@@ -85,7 +85,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               <WaitlistButton propertyId={id} propertyTitle={title} />
             ) : (
               <Link to={`/property/${id}`}>
-                <button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 transition-colors neo-shadow-sm">
+                <button className="w-full bg-black text-white font-bold py-2 border-4 border-black hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   View Details
                 </button>
               </Link>

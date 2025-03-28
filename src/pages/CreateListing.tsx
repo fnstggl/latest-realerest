@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Upload, Plus, X, Check } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters" }),
@@ -33,6 +34,7 @@ const formSchema = z.object({
 const CreateListing: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
+  const { user } = useAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,12 +56,66 @@ const CreateListing: React.FC = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // This would be replaced with actual API call
-    console.log(values);
-    console.log('Images:', images);
+    // Generate a unique ID for the property
+    const propertyId = `property-${Date.now()}`;
     
-    toast.success("Property listing created successfully!");
-    navigate('/dashboard');
+    // Calculate below market percentage
+    const price = Number(values.price);
+    const marketPrice = Number(values.marketPrice);
+    const belowMarket = marketPrice > price 
+      ? ((marketPrice - price) / marketPrice * 100).toFixed(1) 
+      : "0";
+    
+    // Prepare the listing data
+    const newListing = {
+      id: propertyId,
+      title: values.title,
+      price: Number(values.price),
+      marketPrice: Number(values.marketPrice),
+      location: values.location,
+      description: values.description,
+      beds: Number(values.beds),
+      baths: Number(values.baths),
+      sqft: Number(values.sqft),
+      image: images.length > 0 ? images[0] : "https://source.unsplash.com/random/800x600?house",
+      belowMarket: Number(belowMarket),
+      sellerId: user?.id || 'unknown',
+      sellerName: user?.name || 'Unknown Seller',
+      images: images,
+      afterRepairValue: values.afterRepairValue ? Number(values.afterRepairValue) : undefined,
+      estimatedRehab: values.estimatedRehab ? Number(values.estimatedRehab) : undefined,
+      comparables: [
+        values.comparableAddress1,
+        values.comparableAddress2,
+        values.comparableAddress3
+      ].filter(Boolean),
+      createdAt: new Date().toISOString(),
+    };
+    
+    // Save to localStorage
+    try {
+      // Get existing listings
+      const existingListingsJSON = localStorage.getItem('propertyListings');
+      const existingListings = existingListingsJSON ? JSON.parse(existingListingsJSON) : [];
+      
+      // Add new listing
+      const updatedListings = [...existingListings, newListing];
+      
+      // Save back to localStorage
+      localStorage.setItem('propertyListings', JSON.stringify(updatedListings));
+      
+      // Also save to user's listings
+      const userListingsJSON = localStorage.getItem(`userListings-${user?.id}`);
+      const userListings = userListingsJSON ? JSON.parse(userListingsJSON) : [];
+      const updatedUserListings = [...userListings, newListing];
+      localStorage.setItem(`userListings-${user?.id}`, JSON.stringify(updatedUserListings));
+      
+      toast.success("Property listing created successfully!");
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Error saving listing:", error);
+      toast.error("Failed to create listing. Please try again.");
+    }
   };
 
   const handleImageUpload = () => {

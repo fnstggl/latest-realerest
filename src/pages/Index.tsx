@@ -43,15 +43,17 @@ const Index: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, this would fetch from a real API
-    const fetchListings = async () => {
+    // Fetch property listings from localStorage
+    const fetchListings = () => {
       setLoading(true);
       try {
-        // Simulating API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Removing mock listings to allow for real listings to show
-        setListings([]);
+        const storedListings = localStorage.getItem('propertyListings');
+        if (storedListings) {
+          const parsedListings = JSON.parse(storedListings);
+          setListings(parsedListings);
+        } else {
+          setListings([]);
+        }
       } catch (error) {
         console.error("Error fetching listings:", error);
         setListings([]);
@@ -91,20 +93,7 @@ const Index: React.FC = () => {
               <p className="text-xl text-black mb-8">
                 Connecting families to affordable housing—fast. Discover properties below market value through DoneDeal's exclusive platform.
               </p>
-              <div className="mb-8">
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    placeholder="Enter location, zipcode, or address..." 
-                    className="w-full px-6 py-4 text-lg border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-0"
-                  />
-                  <Button 
-                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#d60013] hover:bg-[#d60013]/90 text-white font-bold h-10 w-10 border-2 border-black flex items-center justify-center"
-                  >
-                    <Search className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
+              <SearchBar className="mb-8" />
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild 
                   className="neo-button-primary"
@@ -123,8 +112,8 @@ const Index: React.FC = () => {
               className="order-1 md:order-2"
               variants={fadeInUp}
             >
-              <div className="w-full h-[400px] neo-container flex items-center justify-center">
-                <h3 className="text-2xl font-bold">Home Sweet Home</h3>
+              <div className="w-full h-[400px] neo-container flex items-center justify-center bg-[#f3f4f6]">
+                <h3 className="text-2xl font-bold">Find Properties Below Market Value</h3>
               </div>
             </motion.div>
           </motion.div>
@@ -182,7 +171,7 @@ const Index: React.FC = () => {
                   <h3 className="text-2xl font-bold text-black mb-6">No properties have been listed yet.</h3>
                   <Button
                     className="neo-button-primary"
-                    onClick={() => navigate('/sell')}
+                    onClick={() => navigate('/sell/create')}
                   >
                     List Your Property
                   </Button>
@@ -193,7 +182,7 @@ const Index: React.FC = () => {
         </div>
       </motion.section>
       
-      {/* CTA Section - Changed black background to white */}
+      {/* CTA Section */}
       <motion.section 
         className="py-16 bg-white text-black border-t-4 border-b-4 border-black"
         initial="hidden"
@@ -223,7 +212,7 @@ const Index: React.FC = () => {
               </div>
             </div>
             <div>
-              <div className="w-full h-[300px] neo-container flex items-center justify-center">
+              <div className="w-full h-[300px] neo-container flex items-center justify-center bg-[#f3f4f6]">
                 <h3 className="text-2xl font-bold">Find Your Dream Home</h3>
               </div>
             </div>
@@ -249,7 +238,7 @@ const Index: React.FC = () => {
               <h3 className="font-bold text-black mb-4 text-xl">Platform</h3>
               <ul className="space-y-2">
                 <li><Link to="/search" className="text-black hover:text-[#d60013] font-bold">Search Homes</Link></li>
-                <li><Link to="/sell" className="text-black hover:text-[#d60013] font-bold">List Property</Link></li>
+                <li><Link to="/sell/create" className="text-black hover:text-[#d60013] font-bold">List Property</Link></li>
                 <li><Link to="/pricing" className="text-black hover:text-[#d60013] font-bold">Pricing</Link></li>
                 <li><Link to="/faq" className="text-black hover:text-[#d60013] font-bold">FAQ</Link></li>
               </ul>
