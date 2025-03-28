@@ -26,7 +26,11 @@ const getUserFromStorage = (): User | null => {
   return userData ? JSON.parse(userData) : null;
 };
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(getUserFromStorage());
   const [accountType, setAccountTypeState] = useState<'buyer' | 'seller'>(user?.accountType || 'buyer');
 
