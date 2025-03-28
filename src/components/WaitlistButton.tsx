@@ -62,12 +62,12 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full mt-4">Join Waitlist</Button>
+        <Button className="w-full mt-4 neo-button-primary">Join Waitlist</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
         <DialogHeader>
-          <DialogTitle>Join Property Waitlist</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-2xl font-bold">Join Property Waitlist</DialogTitle>
+          <DialogDescription className="text-black font-medium">
             Enter your phone number to join the waitlist for this property.
             The seller will contact you when the property becomes available.
           </DialogDescription>
@@ -76,7 +76,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone" className="font-bold">Phone Number</Label>
               <Input
                 id="phone"
                 type="tel"
@@ -84,6 +84,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
+                className="neo-input"
               />
             </div>
           </div>
@@ -92,6 +93,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
             <Button 
               type="submit"
               disabled={isLoading}
+              className="neo-button-primary"
             >
               {isLoading ? (
                 <>

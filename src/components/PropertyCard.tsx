@@ -43,7 +43,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           alt={title}
           className="h-[240px] w-full object-cover border-b-4 border-black"
         />
-        <div className="absolute top-3 right-3 bg-[#ea384c] text-white px-3 py-1 border-2 border-black font-bold flex items-center gap-1">
+        <div className="absolute top-3 right-3 bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold flex items-center gap-1">
           <BadgePercent size={16} />
           <span>{belowMarket}% BELOW</span>
         </div>
@@ -85,7 +85,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               <WaitlistButton propertyId={id} propertyTitle={title} />
             ) : (
               <Link to={`/property/${id}`}>
-                <button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 transition-colors">
+                <button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 transition-colors neo-shadow-sm">
                   View Details
                 </button>
               </Link>
