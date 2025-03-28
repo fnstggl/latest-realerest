@@ -23,8 +23,11 @@ import {
 } from "@/components/ui/select";
 
 const formSchema = z.object({
-  description: z.string().min(20, {
-    message: "Description must be at least 20 characters"
+  address: z.string().min(1, {
+    message: "Property address is required"
+  }),
+  description: z.string().min(1, {
+    message: "Description is required"
   }),
   price: z.string().min(1, {
     message: "Price is required"
@@ -67,6 +70,7 @@ const CreateListing: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      address: "",
       description: "",
       price: "",
       marketPrice: "",
@@ -106,6 +110,7 @@ const CreateListing: React.FC = () => {
       price: Number(values.price),
       marketPrice: Number(values.marketPrice),
       location: location,
+      address: values.address, // Include the address
       description: values.description,
       beds: Number(values.beds),
       baths: Number(values.baths),
@@ -230,6 +235,19 @@ const CreateListing: React.FC = () => {
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div>
+                  <h2 className="text-xl font-bold mb-4">Property Address</h2>
+                  <FormField control={form.control} name="address" render={({
+                  field
+                }) => <FormItem>
+                        <FormLabel className="text-black font-bold">Full Property Address</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. 123 Main St" className="h-12 rounded-none border-2 border-black" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>} />
+                </div>
+                
                 <div>
                   <h2 className="text-xl font-bold mb-4">Basic Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -426,7 +444,6 @@ const CreateListing: React.FC = () => {
                     >
                       <Upload size={24} />
                       <span className="font-bold">Click to Upload Images (max 15)</span>
-                      <span className="text-sm text-gray-500">{images.length}/15 uploaded</span>
                     </Button>
                   </div>
                   
