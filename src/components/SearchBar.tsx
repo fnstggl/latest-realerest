@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from 'lucide-react';
@@ -10,12 +11,15 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Search logic will go here when connected to a database
-    console.log('Searching for:', query);
-    window.location.href = `/search?q=${encodeURIComponent(query)}`;
+    if (query.trim()) {
+      // Search logic will go here when connected to a database
+      console.log('Searching for:', query);
+      navigate(`/search?q=${encodeURIComponent(query)}`);
+    }
   };
 
   return (
@@ -26,7 +30,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
           placeholder="Search by city, address, or zip code..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="pr-16 h-14 rounded-lg border-2 border-gray-200 focus:border-donedeal-orange shadow-sm"
+          className="pr-16 h-14 rounded-lg border-2 border-gray-200 focus:border-donedeal-orange shadow-sm font-futura"
         />
         <Button 
           type="submit" 
