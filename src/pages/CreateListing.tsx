@@ -157,6 +157,8 @@ const CreateListing: React.FC = () => {
       // Generate title from location and beds/baths
       const title = `${values.beds} bed, ${values.baths} bath home in ${values.city}, ${values.state}`;
       
+      console.log('User ID before insert:', user.id); // Debug log to verify UUID format
+      
       // Insert listing into Supabase with a valid UUID
       const { data, error } = await supabase
         .from('property_listings')
