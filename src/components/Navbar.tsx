@@ -47,13 +47,13 @@ const Navbar: React.FC = () => {
               Home
             </Link>
             <Link 
-              to="/browse" 
+              to="/search" 
               className="text-black hover:text-[#d60013] transition-colors font-bold text-xl py-3 border-b-2 border-black"
             >
               Browse
             </Link>
             <Link 
-              to="/sell" 
+              to="/sell/create" 
               className="text-black hover:text-[#d60013] transition-colors font-bold text-xl py-3 border-b-2 border-black"
             >
               Sell
@@ -126,11 +126,11 @@ const Navbar: React.FC = () => {
             <span className="text-[#d60013]">Home</span>
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/browse" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
+          <Link to="/search" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
             <span>Browse</span>
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/sell" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
+          <Link to="/sell/create" className="text-black hover:text-[#d60013] transition-colors font-bold text-xl relative group">
             <span>Sell</span>
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
           </Link>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import PropertyCard from '@/components/PropertyCard';
 import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 // Animation variants
 const fadeInUp = {
@@ -109,6 +110,16 @@ const FeaturedProperties: React.FC = () => {
                 </Button>
               </div>
             )}
+            
+            <div className="mt-12 text-center">
+              <Button 
+                onClick={() => navigate('/search')}
+                className="neo-button font-bold"
+              >
+                View All Properties
+                <ArrowRight size={18} />
+              </Button>
+            </div>
           </>
         )}
       </div>

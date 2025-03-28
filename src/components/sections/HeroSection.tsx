@@ -52,7 +52,7 @@ const HeroSection: React.FC = () => {
               <Button asChild 
                 className="neo-button-primary font-bold"
               >
-                <Link to="/search">Get Started</Link>
+                <Link to="/search">Find Homes</Link>
               </Button>
               <Button asChild 
                 variant="outline" 
