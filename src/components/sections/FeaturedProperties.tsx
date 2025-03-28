@@ -54,7 +54,7 @@ const FeaturedProperties: React.FC = () => {
             id: item.id,
             title: item.title,
             price: item.price,
-            marketPrice: item.market_price,
+            market_price: item.market_price,  // Changed from marketPrice to match Listing interface
             location: item.location,
             beds: item.beds,
             baths: item.baths,
@@ -124,7 +124,7 @@ const FeaturedProperties: React.FC = () => {
                     <PropertyCard
                       id={property.id}
                       price={property.price}
-                      marketPrice={property.marketPrice}
+                      marketPrice={property.market_price}  // Changed from property.marketPrice
                       image={property.image}
                       location={property.location}
                       address={property.title}

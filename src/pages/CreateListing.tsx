@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
@@ -94,10 +94,13 @@ const CreateListing: React.FC = () => {
     const uploadedUrls: string[] = [];
     
     try {
+      // Create a random folder name instead of using user.id which might not be a valid UUID
+      const folderName = `listing-${Math.random().toString(36).substring(2, 15)}`;
+      
       for (const file of files) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
-        const filePath = `${user?.id}/${fileName}`;
+        const filePath = `${folderName}/${fileName}`;
         
         const { data, error } = await supabase.storage
           .from('property_images')
@@ -155,6 +158,10 @@ const CreateListing: React.FC = () => {
       // Generate title from location and beds/baths
       const title = `${values.beds} bed, ${values.baths} bath home in ${values.city}, ${values.state}`;
       
+      // Create an actual UUID for the user_id if the user object doesn't provide one
+      // This is a workaround for development/testing purposes
+      const userId = user.id || crypto.randomUUID();
+      
       // Insert listing into Supabase
       const { data, error } = await supabase
         .from('property_listings')
@@ -168,7 +175,7 @@ const CreateListing: React.FC = () => {
           baths: parseInt(values.baths),
           sqft: parseInt(values.sqft),
           images: finalImages,
-          user_id: user.id
+          user_id: userId
         })
         .select();
       
@@ -519,4 +526,71 @@ const CreateListing: React.FC = () => {
       </motion.div>
     </div>;
 };
+
+const handleImageUpload = () => {
+  if (fileInputRef.current) {
+    fileInputRef.current.click();
+  }
+};
+
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files) return;
+
+  // Check if adding these files would exceed the limit
+  if (images.length + files.length > 15) {
+    toast.warning("Maximum 15 images allowed. Some images won't be uploaded.");
+  }
+
+  const newImageFiles: File[] = [];
+  const filesToProcess = Math.min(15 - images.length, files.length);
+
+  for (let i = 0; i < filesToProcess; i++) {
+    const file = files[i];
+    if (file.type.startsWith('image/')) {
+      newImageFiles.push(file);
+      
+      // Create a URL for the image preview
+      const imageUrl = URL.createObjectURL(file);
+      setImages(prev => [...prev, imageUrl]);
+    }
+  }
+
+  setImageFiles(prev => [...prev, ...newImageFiles]);
+  
+  if (newImageFiles.length > 0) {
+    toast.success(`${newImageFiles.length} image(s) uploaded successfully!`);
+  }
+  
+  // Reset the file input
+  if (fileInputRef.current) {
+    fileInputRef.current.value = '';
+  }
+};
+
+const removeImage = (index: number) => {
+  setImages(prev => prev.filter((_, i) => i !== index));
+  setImageFiles(prev => prev.filter((_, i) => i !== index));
+};
+
+// Calculate percent difference
+const calculateDiscountPercent = () => {
+  const price = Number(form.watch('price')) || 0;
+  const marketPrice = Number(form.watch('marketPrice')) || 0;
+  if (price && marketPrice && marketPrice > price) {
+    const discount = (marketPrice - price) / marketPrice * 100;
+    return discount.toFixed(1);
+  }
+  return "0";
+};
+
+// List of US states
+const usStates = [
+  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+  "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+  "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+  "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+];
+
 export default CreateListing;

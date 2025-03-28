@@ -40,7 +40,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             className="h-[240px] w-full object-cover"
           />
           {/* Below Market Tag as bookmarker on upper left - adjusted position */}
-          <div className="absolute top-6 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-r-3 border-b-3 border-black border-r-4 border-b-4">
+          <div className="absolute top-8 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-r-3 border-b-3 border-black border-r-4 border-b-4">
             {belowMarket}% OFF
           </div>
         </div>
