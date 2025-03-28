@@ -1,19 +1,16 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card } from "@/components/ui/card";
-import { BadgePercent, Bed, Bath, Square } from 'lucide-react';
+import { BadgePercent, Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
-import WaitlistButton from './WaitlistButton';
 
 interface PropertyCardProps {
   id: string;
-  title: string;
   price: number;
   marketPrice: number;
   image: string;
   location: string;
+  address?: string;
   beds: number;
   baths: number;
   sqft: number;
@@ -22,78 +19,75 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
   id,
-  title,
   price,
   marketPrice,
   image,
   location,
+  address,
   beds,
   baths,
   sqft,
   belowMarket,
 }) => {
-  const { accountType } = useAuth();
-  const isBuyer = accountType === 'buyer';
-
   return (
-    <div className="group transition-all border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-      <div className="relative">
-        <img
-          src={image}
-          alt={title}
-          className="h-[240px] w-full object-cover border-b-4 border-black"
-        />
-        <div className="absolute top-3 right-3 bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold flex items-center gap-1">
-          <BadgePercent size={16} />
-          <span>{belowMarket}% BELOW</span>
-        </div>
-      </div>
-      
-      <div className="p-5 bg-white">
-        <div className="space-y-2">
-          <div className="flex justify-between items-start">
-            <h3 className="font-bold text-xl text-black">{title}</h3>
-          </div>
-          
-          <p className="text-black font-medium">
-            {/* Show redacted address for buyers who haven't been approved */}
-            {isBuyer ? location.replace(/^[^,]+/, "123 XXXX Street") : location}
-          </p>
-          
-          <div className="flex justify-between items-center">
-            <div className="text-xl font-bold text-black">{formatCurrency(price)}</div>
-            <div className="text-gray-500 line-through text-sm">{formatCurrency(marketPrice)}</div>
-          </div>
-          
-          <div className="flex justify-between pt-3 border-t-2 border-black">
-            <div className="flex items-center">
-              <Bed size={18} className="mr-1" />
-              <span className="font-bold">{beds}</span>
-            </div>
-            <div className="flex items-center">
-              <Bath size={18} className="mr-1" />
-              <span className="font-bold">{baths}</span>
-            </div>
-            <div className="flex items-center">
-              <Square size={18} className="mr-1" />
-              <span className="font-bold">{sqft.toLocaleString()} sqft</span>
-            </div>
-          </div>
-          
-          <div className="pt-2">
-            {isBuyer ? (
-              <WaitlistButton propertyId={id} propertyTitle={title} />
-            ) : (
-              <Link to={`/property/${id}`}>
-                <button className="w-full bg-black text-white font-bold py-2 border-4 border-black hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  View Details
-                </button>
-              </Link>
-            )}
+    <Link to={`/property/${id}`} className="block">
+      <div className="relative bg-white shadow-lg overflow-hidden border-2 border-black">
+        {/* Main image */}
+        <div className="relative">
+          <img
+            src={image}
+            alt={location}
+            className="h-[240px] w-full object-cover"
+          />
+          {/* Below Market Tag as bookmarker on upper left */}
+          <div className="absolute top-0 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-r-2 border-b-2 border-black">
+            {belowMarket}% OFF
           </div>
         </div>
+        
+        <div className="p-6">
+          {/* Location and price info */}
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-2xl font-bold">{address || location.split(',')[0]}</h3>
+            <div className="text-right">
+              <div className="text-2xl font-bold">{formatCurrency(price)}</div>
+              <div className="text-gray-500 line-through">{formatCurrency(marketPrice)}</div>
+            </div>
+          </div>
+          
+          {/* Address with icon */}
+          <div className="flex items-center text-gray-700 mb-4">
+            <MapPin size={18} className="mr-1" />
+            <span>{location}</span>
+          </div>
+          
+          <div className="border-t border-gray-200 pt-4 mt-2">
+            <div className="flex justify-between items-center">
+              {/* Property details */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center">
+                  <Bed size={18} className="mr-1" />
+                  <span className="font-bold">{beds}</span>
+                </div>
+                <div className="flex items-center">
+                  <Bath size={18} className="mr-1" />
+                  <span className="font-bold">{baths}</span>
+                </div>
+                <div className="flex items-center">
+                  <Square size={18} className="mr-1" />
+                  <span className="font-bold">{sqft.toLocaleString()} sqft</span>
+                </div>
+              </div>
+              
+              {/* Arrow button */}
+              <div className="bg-[#d60013] text-white w-12 h-12 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+                <ArrowRight size={20} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

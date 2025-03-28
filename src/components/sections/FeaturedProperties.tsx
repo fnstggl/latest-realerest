@@ -14,11 +14,12 @@ const fadeInUp = {
 
 interface Listing {
   id: string;
-  title: string;
+  title?: string;
   price: number;
   marketPrice: number;
   image: string;
   location: string;
+  address?: string;
   beds: number;
   baths: number;
   sqft: number;
@@ -75,7 +76,7 @@ const FeaturedProperties: React.FC = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((_, index) => (
-              <div key={index} className="border-4 border-black p-4 h-[400px] animate-pulse">
+              <div key={index} className="border-2 border-black p-4 h-[400px] animate-pulse">
                 <div className="bg-gray-200 h-[240px] w-full mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>

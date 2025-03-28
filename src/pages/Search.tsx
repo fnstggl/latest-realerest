@@ -12,89 +12,28 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-// Mock data
-const mockProperties = [
-  {
-    id: "prop1",
-    title: "Modern Craftsman Home",
-    price: 425000,
-    marketPrice: 520000,
-    image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=roam-in-color-z3QZ6gjGKOA-unsplash.jpg",
-    location: "Portland, OR",
-    beds: 3,
-    baths: 2,
-    sqft: 1850,
-    belowMarket: 18,
-  },
-  {
-    id: "prop2",
-    title: "Downtown Luxury Condo",
-    price: 610000,
-    marketPrice: 750000,
-    image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=scott-webb-167099-unsplash.jpg",
-    location: "Seattle, WA",
-    beds: 2,
-    baths: 2,
-    sqft: 1200,
-    belowMarket: 19,
-  },
-  {
-    id: "prop3",
-    title: "Renovated Victorian",
-    price: 750000,
-    marketPrice: 900000,
-    image: "https://images.unsplash.com/photo-1496307653780-42ee777d4833?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=todd-kent-178j8tJrNlc-unsplash.jpg",
-    location: "San Francisco, CA",
-    beds: 4,
-    baths: 3,
-    sqft: 2400,
-    belowMarket: 17,
-  },
-  {
-    id: "prop4",
-    title: "Cozy Suburban Ranch",
-    price: 320000,
-    marketPrice: 380000,
-    image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=mike-b-SEZ1yh0I5Oo-unsplash.jpg",
-    location: "Denver, CO",
-    beds: 3,
-    baths: 2,
-    sqft: 1650,
-    belowMarket: 16,
-  },
-  {
-    id: "prop5",
-    title: "Urban Loft Apartment",
-    price: 520000,
-    marketPrice: 650000,
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=jon-nathon-stebbe-payless-images-UUZ-sg0sl_k-unsplash.jpg",
-    location: "Chicago, IL",
-    beds: 1,
-    baths: 1,
-    sqft: 950,
-    belowMarket: 20,
-  },
-  {
-    id: "prop6",
-    title: "Lakefront Cottage",
-    price: 485000,
-    marketPrice: 580000,
-    image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=levi-guzman-1081236-unsplash.jpg",
-    location: "Minneapolis, MN",
-    beds: 2,
-    baths: 1,
-    sqft: 1100,
-    belowMarket: 16,
-  },
-];
+// Interface for property
+interface Property {
+  id: string;
+  title?: string;
+  price: number;
+  marketPrice: number;
+  image: string;
+  location: string;
+  address?: string;
+  beds: number;
+  baths: number;
+  sqft: number;
+  belowMarket: number;
+}
 
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
   
   const [isGridView, setIsGridView] = useState(true);
-  const [properties, setProperties] = useState(mockProperties);
-  const [filteredProperties, setFilteredProperties] = useState(mockProperties);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [sortOption, setSortOption] = useState("recommended");
   
   // Demo filter function
@@ -114,13 +53,13 @@ const Search: React.FC = () => {
       // Apply property type filter
       if (filters.propertyType !== "any") {
         // This is mock filtering - would need real property type data
-        if (filters.propertyType === "house" && !property.title.toLowerCase().includes("home")) {
+        if (filters.propertyType === "house" && !property.title?.toLowerCase().includes("home")) {
           return false;
         }
-        if (filters.propertyType === "apartment" && !property.title.toLowerCase().includes("apartment")) {
+        if (filters.propertyType === "apartment" && !property.title?.toLowerCase().includes("apartment")) {
           return false;
         }
-        if (filters.propertyType === "condo" && !property.title.toLowerCase().includes("condo")) {
+        if (filters.propertyType === "condo" && !property.title?.toLowerCase().includes("condo")) {
           return false;
         }
       }
@@ -172,18 +111,30 @@ const Search: React.FC = () => {
   };
   
   useEffect(() => {
-    // This simulates a search filter
-    if (searchQuery) {
-      const results = mockProperties.filter(property => 
-        property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        property.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setProperties(results);
-      setFilteredProperties(results);
-    } else {
-      setProperties(mockProperties);
-      setFilteredProperties(mockProperties);
-    }
+    // Load properties from localStorage instead of using mock data
+    const loadProperties = () => {
+      const storedProperties = localStorage.getItem('propertyListings');
+      let loadedProperties: Property[] = [];
+      
+      if (storedProperties) {
+        loadedProperties = JSON.parse(storedProperties);
+      }
+      
+      setProperties(loadedProperties);
+      
+      // Apply search filter if search query exists
+      if (searchQuery) {
+        const results = loadedProperties.filter(property => 
+          property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+        setFilteredProperties(results);
+      } else {
+        setFilteredProperties(loadedProperties);
+      }
+    };
+
+    loadProperties();
   }, [searchQuery]);
   
   return (
@@ -296,7 +247,7 @@ const Search: React.FC = () => {
             ) : (
               <div className={isGridView 
                 ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" 
-                : "space-y-4"
+                : "space-y-6"
               }>
                 {filteredProperties.map((property) => (
                   <PropertyCard key={property.id} {...property} />
