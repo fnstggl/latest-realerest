@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 // Animation variants
 const fadeInUp = {
@@ -33,17 +34,21 @@ const CTASection: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild className="neo-button-primary font-bold">
-                <Link to="/search">Get Started</Link>
+                <Link to="/search">Find Homes</Link>
               </Button>
               <Button asChild variant="outline" className="neo-button font-bold">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
           </div>
-          <div>
-            <div className="border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
-              <h3 className="text-2xl font-bold">Join thousands of satisfied homebuyers who found their perfect property at the perfect price with DoneDeal.</h3>
-            </div>
+          <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden bg-white">
+            <AspectRatio ratio={16/9} className="w-full">
+              <img 
+                src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
+                alt="Modern home exterior at sunset with warm lighting" 
+                className="w-full h-full object-cover"
+              />
+            </AspectRatio>
           </div>
         </div>
       </div>
