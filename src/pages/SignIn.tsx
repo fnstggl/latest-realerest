@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -53,7 +54,17 @@ const SignIn: React.FC = () => {
       </div>
 
       {/* Right side - Sign In Form */}
-      <div className="flex-1 flex justify-center items-center p-6 md:p-10">
+      <div className="flex-1 flex justify-center items-center p-6 md:p-10 relative">
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          className="absolute top-4 left-4 p-2 text-donedeal-navy hover:bg-donedeal-blue/10"
+          onClick={() => navigate('/')}
+        >
+          <ArrowLeft className="mr-1" size={20} />
+          <span>Back</span>
+        </Button>
+
         <div className="w-full max-w-md space-y-6">
           <div className="text-center space-y-2">
             <Link to="/" className="inline-block">
