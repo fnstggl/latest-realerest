@@ -7,17 +7,14 @@ interface User {
   id: string;
   name: string;
   email: string;
-  accountType: 'buyer' | 'seller';
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  accountType: 'buyer' | 'seller';
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  setAccountType: (type: 'buyer' | 'seller') => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,13 +25,14 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [accountType, setAccountTypeState] = useState<'buyer' | 'seller'>('buyer');
   const [isLoading, setIsLoading] = useState(true);
   
   const isAuthenticated = !!user;
 
   // Set up auth state listener on mount and check for existing session
   useEffect(() => {
+    console.log("Setting up auth state listener");
+    
     // First set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -93,8 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const newUser: User = {
           id: supabaseUser.id,
           name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || '',
-          email: supabaseUser.email || '',
-          accountType: accountType
+          email: supabaseUser.email || ''
         };
         
         setUser(newUser);
@@ -109,11 +106,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           id: profile.id,
           name: profile.name || supabaseUser.user_metadata?.name || '',
           email: profile.email || supabaseUser.email || '',
-          accountType: profile.account_type as 'buyer' | 'seller' || accountType
         };
         
         setUser(profileUser);
-        setAccountTypeState(profileUser.accountType);
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
@@ -133,6 +128,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (error) {
         console.error('Supabase login error:', error);
+        
+        // Check for specific error cases
+        if (error.message.includes("Email not confirmed")) {
+          toast.error("Please confirm your email before logging in. Check your inbox for a confirmation link.");
+        } else {
+          toast.error(error.message || "Login failed. Please check your credentials.");
+        }
+        
         throw error;
       }
       
@@ -158,14 +161,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         password,
         options: {
           data: {
-            name: name,
-            accountType: accountType
+            name: name
           }
         }
       });
       
       if (error) {
         console.error('Supabase signup error:', error);
+        toast.error(error.message || "Signup failed. Please try again.");
         throw error;
       }
       
@@ -192,47 +195,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // State will be cleared by the auth state listener
   };
 
-  const setAccountType = async (type: 'buyer' | 'seller') => {
-    setAccountTypeState(type);
-    
-    // If user is logged in, update their account type in the profile
-    if (user) {
-      const updatedUser = {
-        ...user,
-        accountType: type
-      };
-      
-      setUser(updatedUser);
-      
-      // Update the profile in Supabase if we have a valid user ID
-      if (user.id) {
-        try {
-          const { error } = await supabase
-            .from('profiles')
-            .update({ account_type: type })
-            .eq('id', user.id);
-            
-          if (error) {
-            console.error('Error updating account type:', error);
-          }
-        } catch (error) {
-          console.error('Error updating profile:', error);
-        }
-      }
-    }
-  };
-
   return (
     <AuthContext.Provider value={{ 
       user, 
       isAuthenticated, 
-      accountType,
       login, 
       signup, 
-      logout,
-      setAccountType
+      logout
     }}>
-      {children}
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 };

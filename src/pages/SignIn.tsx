@@ -36,7 +36,7 @@ const SignIn: React.FC = () => {
       navigate(returnPath);
     } catch (error: any) {
       console.error("Login failed:", error);
-      toast.error("Login failed. Please check your credentials.");
+      // The toast error is already handled in the login function
     } finally {
       setIsLoading(false);
     }
