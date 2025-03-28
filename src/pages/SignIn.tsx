@@ -6,9 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { supabase } from '@/integrations/supabase/client';
+import { toast } from "sonner";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -20,8 +19,8 @@ const SignIn: React.FC = () => {
   const location = useLocation();
   const { login, isAuthenticated } = useAuth();
 
-  // Get the return path from location state if available
-  const returnPath = location.state?.returnPath || '/dashboard';
+  // Extract return path from location state, if present
+  const returnPath = (location.state as { returnPath?: string })?.returnPath || '/dashboard';
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -30,56 +29,26 @@ const SignIn: React.FC = () => {
     }
   }, [isAuthenticated, navigate, returnPath]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
     setIsLoading(true);
     
-    try {
-      // Validate input
-      if (!email || !password) {
-        setLoginError("Please enter both email and password");
-        setIsLoading(false);
-        return;
-      }
-      
-      // Attempt login
-      await login(email, password);
-      // Redirect is handled by the useEffect above
-    } catch (error: any) {
-      console.error("Login failed:", error);
-      
-      // Special handling for email confirmation errors
-      if (error.message && error.message.includes('Email not confirmed')) {
-        setLoginError("Your email address is not verified. Please check your inbox for a verification link.");
-      } else {
-        setLoginError(error.message || "An error occurred during login");
-      }
-    } finally {
+    // Basic validation
+    if (!email || !password) {
+      setLoginError("Email and password are required");
       setIsLoading(false);
-    }
-  };
-
-  const handleResendVerification = async () => {
-    if (!email) {
-      toast.error("Please enter your email address");
       return;
     }
     
     try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: email,
-      });
-      
-      if (error) {
-        toast.error("Failed to resend verification email: " + error.message);
-        return;
-      }
-      
-      toast.success("Verification email resent. Please check your inbox.");
+      await login(email, password);
+      // No need for navigation here; the useEffect will handle it
     } catch (error: any) {
-      toast.error("Failed to resend verification email: " + error.message);
+      setLoginError(error.message || "Failed to sign in");
+      // We don't need to call toast.error here since it's already called in the login function
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -97,38 +66,18 @@ const SignIn: React.FC = () => {
         
         <div className="mx-auto w-full max-w-md">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Log In</h1>
-            <p className="text-gray-600">
-              {returnPath !== '/dashboard' 
-                ? "Please log in to continue to the listing page" 
-                : "Welcome back! Please log in to continue."}
-            </p>
+            <h1 className="text-4xl font-bold mb-2">Welcome Back</h1>
+            <p className="text-gray-600">Sign in to continue to DoneDeal.</p>
           </div>
-          
-          {loginError && loginError.includes("Email not confirmed") && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Your email address is not verified. 
-                <Button
-                  variant="link"
-                  className="p-0 h-auto font-semibold text-white underline ml-1"
-                  onClick={handleResendVerification}
-                >
-                  Resend verification email
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
-          
-          {loginError && !loginError.includes("Email not confirmed") && (
+        
+          {loginError && (
             <Alert variant="destructive" className="mb-6">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{loginError}</AlertDescription>
             </Alert>
           )}
           
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleSignIn} className="space-y-6">
             <div>
               <Label htmlFor="email" className="font-bold">Email</Label>
               <Input 
@@ -141,7 +90,6 @@ const SignIn: React.FC = () => {
                 className="mt-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:border-black focus:ring-0"
               />
             </div>
-            
             <div>
               <Label htmlFor="password" className="font-bold">Password</Label>
               <Input 
@@ -154,17 +102,15 @@ const SignIn: React.FC = () => {
                 className="mt-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:border-black focus:ring-0"
               />
             </div>
-            
             <Button 
               type="submit"
               className="w-full bg-[#d60013] hover:bg-[#d60013]/90 text-white font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
               disabled={isLoading}
             >
-              {isLoading ? "Logging in..." : "Log In"}
+              {isLoading ? "Signing In..." : "Sign In"}
             </Button>
-            
-            <p className="text-sm text-center">
-              Don't have an account? <Link to="/signup" className="text-[#d60013] font-bold hover:underline">Sign up</Link>
+            <p className="text-sm text-gray-600 text-center">
+              Don't have an account? <Link to="/signup" className="text-[#d60013] font-bold hover:underline">Sign Up</Link>
             </p>
           </form>
         </div>

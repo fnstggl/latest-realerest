@@ -33,50 +33,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Set up auth state listener on mount and check for existing session
   useEffect(() => {
-    try {
-      console.log("Setting up auth state listener");
-      
-      // First set up the auth state listener
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          console.log('Auth state changed:', event, session?.user?.id);
-          
-          if (event === 'SIGNED_OUT') {
-            setUser(null);
-            return;
+    const setupAuth = async () => {
+      try {
+        console.log("Setting up auth state listener");
+        
+        // First set up the auth state listener
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            console.log('Auth state changed:', event, session?.user?.id);
+            
+            if (event === 'SIGNED_OUT') {
+              setUser(null);
+              return;
+            }
+            
+            if (session && session.user) {
+              await fetchUserProfile(session.user);
+            }
           }
-          
-          if (session && session.user) {
-            await fetchUserProfile(session.user);
-          }
-        }
-      );
+        );
 
-      // Then check for existing session
-      const fetchCurrentSession = async () => {
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
+        // Then check for existing session
+        const { data: { session } } = await supabase.auth.getSession();
           
-          if (session?.user) {
-            console.log('Found existing session:', session.user.id);
-            await fetchUserProfile(session.user);
-          }
-        } catch (error) {
-          console.error('Error fetching session:', error);
-        } finally {
-          setIsLoading(false);
+        if (session?.user) {
+          console.log('Found existing session:', session.user.id);
+          await fetchUserProfile(session.user);
         }
-      };
+        
+        setIsLoading(false);
+        
+        return () => {
+          subscription.unsubscribe();
+        };
+      } catch (error) {
+        console.error("Error in auth setup:", error);
+        setIsLoading(false);
+      }
+    };
 
-      fetchCurrentSession();
-      
-      return () => {
-        subscription.unsubscribe();
-      };
-    } catch (error) {
-      console.error("Error in auth setup:", error);
-      setIsLoading(false);
-    }
+    setupAuth();
   }, []);
 
   // Fetch user profile from the profiles table
@@ -135,7 +131,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     console.log('Attempting to log in with:', email);
-    setIsLoading(true);
     
     try {
       // Sign in with Supabase
@@ -157,14 +152,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: any) {
       console.error('Login error:', error);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const signup = async (name: string, email: string, password: string) => {
     console.log('Signing up with:', name, email);
-    setIsLoading(true);
     
     try {
       // Register with Supabase
@@ -192,8 +184,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: any) {
       console.error('Signup error:', error);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
