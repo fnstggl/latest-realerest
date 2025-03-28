@@ -39,7 +39,7 @@ const HeroSection: React.FC = () => {
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-black mb-4 whitespace-nowrap">
               Find your dream home...
             </h1>
-            <div className="bg-[#d60013] block mb-6 px-3 py-1 -rotate-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-3xl overflow-visible">
+            <div className="bg-[#d60013] block mb-6 px-3 py-1 -rotate-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-fit md:w-auto max-w-none overflow-visible">
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white whitespace-nowrap">
                 we'll find your dream price
               </h1>
