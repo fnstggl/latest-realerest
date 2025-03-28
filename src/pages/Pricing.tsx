@@ -42,7 +42,7 @@ const PricingTier = ({
     
     <Button 
       asChild
-      className={`w-full ${highlighted ? 'neo-button-primary' : 'neo-button bg-white'}`}
+      className={`w-full font-bold ${highlighted ? 'neo-button-primary' : 'neo-button bg-white'}`}
       variant={highlighted ? 'default' : 'outline'}
     >
       <Link to={buttonLink}>{buttonText}</Link>
@@ -112,7 +112,7 @@ const Pricing: React.FC = () => {
                 "Priority support",
                 "Transaction management tools"
               ]}
-              buttonText="Start Selling"
+              buttonText="List Your Property"
               buttonLink="/signup?plan=seller"
             />
           </div>

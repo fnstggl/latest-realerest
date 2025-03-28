@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import FlatIllustration from '@/components/FlatIllustration';
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState('');
@@ -41,10 +40,6 @@ const SignUp: React.FC = () => {
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-2">Create Account</h1>
             <p className="text-gray-600">Join DoneDeal to start finding your dream home.</p>
-          </div>
-        
-          <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mb-8 bg-white">
-            <FlatIllustration />
           </div>
         
           <form onSubmit={handleSignup} className="space-y-6">

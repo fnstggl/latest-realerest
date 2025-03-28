@@ -84,14 +84,14 @@ const Navbar: React.FC = () => {
               <>
                 <Button 
                   variant="outline" 
-                  className="w-full justify-center neo-button"
+                  className="w-full justify-center neo-button font-bold"
                   onClick={handleSignIn}
                 >
                   Log In
                 </Button>
                 
                 <Button 
-                  className="w-full justify-center neo-button-primary"
+                  className="w-full justify-center neo-button-primary font-bold"
                   onClick={handleSignUp}
                 >
                   Sign up
@@ -173,14 +173,14 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="outline" 
-                className="hidden md:flex neo-button"
+                className="hidden md:flex neo-button font-bold"
                 onClick={handleSignIn}
               >
                 Log In
               </Button>
               
               <Button 
-                className="neo-button-primary"
+                className="neo-button-primary font-bold"
                 onClick={handleSignUp}
               >
                 Sign up
