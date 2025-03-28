@@ -1,5 +1,4 @@
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Upload, Plus, X, Check, Image, Loader2 } from 'lucide-react';
+import { Upload, Plus, X, Check, Image, Loader2, AlertCircle } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
@@ -64,14 +63,21 @@ const formSchema = z.object({
 // Use a smaller default image size for faster loading
 const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
 
+// Maximum image size in bytes (3MB)
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
+// Maximum number of images allowed
+const MAX_IMAGES = 5;
+
 const CreateListing: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isProcessingImages, setIsProcessingImages] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -94,7 +100,32 @@ const CreateListing: React.FC = () => {
     }
   });
 
-  // Optimized image upload function using Promise.all for parallel uploads
+  // Check if user is authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast.error("You must be logged in to create a listing");
+      navigate('/signin', { state: { returnPath: '/sell/create' } });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Cleanup function for image processing
+  useEffect(() => {
+    return () => {
+      // Abort any ongoing uploads if component unmounts
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      
+      // Revoke any object URLs to prevent memory leaks
+      images.forEach(img => {
+        if (img.startsWith('blob:')) {
+          URL.revokeObjectURL(img);
+        }
+      });
+    };
+  }, [images]);
+
+  // Optimized image upload function with concurrency control
   const uploadImagesToSupabase = async (files: File[]): Promise<string[]> => {
     if (files.length === 0) return [DEFAULT_IMAGE];
     
@@ -102,52 +133,89 @@ const CreateListing: React.FC = () => {
     const folderName = `listing-${uuidv4()}`;
     
     try {
-      // Setup upload promises for parallel processing
-      const uploadPromises = files.map(async (file, index) => {
-        // Use image compression if available to reduce size
-        let fileToUpload = file;
-        
-        // Create a unique filename
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${uuidv4()}.${fileExt}`;
-        const filePath = `${folderName}/${fileName}`;
-        
-        // Upload the file
-        const { data, error } = await supabase.storage
-          .from('property_images')
-          .upload(filePath, fileToUpload);
-          
-        if (error) {
-          console.error('Error uploading image:', error);
-          return null;
-        }
-        
-        // Get public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from('property_images')
-          .getPublicUrl(filePath);
-        
-        // Update progress
-        setUploadProgress(prevProgress => 
-          Math.min(95, prevProgress + (95 / files.length)));
-          
-        return publicUrl;
-      });
+      // Create a new AbortController for this upload session
+      abortControllerRef.current = new AbortController();
       
-      // Wait for all uploads to complete
-      const results = await Promise.all(uploadPromises);
+      // Set up concurrency - process up to 2 images at a time
+      const concurrencyLimit = 2;
+      const results: string[] = [];
       
-      // Filter out any failed uploads
-      return results.filter(url => url !== null) as string[];
+      // Process files in batches to control concurrency
+      for (let i = 0; i < files.length; i += concurrencyLimit) {
+        const batch = files.slice(i, i + concurrencyLimit);
+        const batchPromises = batch.map(async (file) => {
+          try {
+            // Check if operation has been aborted
+            if (abortControllerRef.current?.signal.aborted) {
+              throw new Error('Upload aborted');
+            }
+            
+            // Create a unique filename
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${uuidv4()}.${fileExt}`;
+            const filePath = `${folderName}/${fileName}`;
+            
+            // Use optimized upload settings
+            const { data, error } = await supabase.storage
+              .from('property_images')
+              .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+              });
+              
+            if (error) {
+              console.error('Error uploading image:', error);
+              return null;
+            }
+            
+            // Get public URL with better caching
+            const { data: { publicUrl } } = supabase.storage
+              .from('property_images')
+              .getPublicUrl(filePath);
+            
+            // Update progress - distribute progress across batches
+            const progressIncrement = 80 / files.length;
+            setUploadProgress(prev => Math.min(90, prev + progressIncrement));
+              
+            return publicUrl;
+          } catch (err) {
+            if ((err as Error).message === 'Upload aborted') {
+              console.log('Upload was aborted');
+            } else {
+              console.error('Error processing file:', err);
+            }
+            return null;
+          }
+        });
+        
+        // Wait for current batch to complete before processing next batch
+        const batchResults = await Promise.all(batchPromises);
+        results.push(...batchResults.filter(Boolean) as string[]);
+      }
+      
+      setUploadProgress(95);
+      return results.length > 0 ? results : [DEFAULT_IMAGE];
+      
     } catch (error) {
       console.error('Error in image upload:', error);
       return [DEFAULT_IMAGE]; // Fallback to default image
     }
   };
 
+  // Cancel ongoing uploads and reset state
+  const cancelUploads = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsSubmitting(false);
+    setUploadProgress(0);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error("You must be logged in to create a listing");
+      navigate('/signin');
       return;
     }
     
@@ -226,6 +294,7 @@ const CreateListing: React.FC = () => {
     } catch (error: any) {
       console.error("Error creating listing:", error);
       toast.dismiss(loadingToastId);
+      cancelUploads();
       
       // Show more specific error messages
       if (error.message?.includes('invalid input syntax for type uuid')) {
@@ -246,50 +315,62 @@ const CreateListing: React.FC = () => {
     }
   };
 
-  // Optimized image handling to resize images before upload
+  // Optimized image handling with better validation and processing
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     // Check if adding these files would exceed the limit
-    if (images.length + files.length > 5) {
-      toast.warning("Maximum 5 images allowed for faster uploads.");
+    if (images.length + files.length > MAX_IMAGES) {
+      toast.warning(`Maximum ${MAX_IMAGES} images allowed.`);
     }
 
+    setIsProcessingImages(true);
     const newImageFiles: File[] = [];
-    // Limit to 5 images maximum for better performance
-    const filesToProcess = Math.min(5 - images.length, files.length);
+    // Limit to MAX_IMAGES images maximum
+    const filesToProcess = Math.min(MAX_IMAGES - images.length, files.length);
 
     // Show loading indicator for image processing
     const loadingToast = toast.loading(`Processing ${filesToProcess} images...`);
 
-    for (let i = 0; i < filesToProcess; i++) {
-      const file = files[i];
-      if (file.type.startsWith('image/')) {
-        // Check file size and type
-        if (file.size > 5 * 1024 * 1024) {
-          toast.warning(`Image "${file.name}" exceeds 5MB limit and was skipped.`);
+    try {
+      for (let i = 0; i < filesToProcess; i++) {
+        const file = files[i];
+        
+        // Verify file is an image
+        if (!file.type.startsWith('image/')) {
+          toast.error(`File "${file.name}" is not an image and was skipped.`);
+          continue;
+        }
+        
+        // Check file size
+        if (file.size > MAX_IMAGE_SIZE) {
+          toast.warning(`Image "${file.name}" exceeds ${MAX_IMAGE_SIZE/1024/1024}MB limit and was skipped.`);
           continue;
         }
         
         newImageFiles.push(file);
         
-        // Create a URL for the image preview
+        // Create a URL for the image preview (with memory management)
         const imageUrl = URL.createObjectURL(file);
         setImages(prev => [...prev, imageUrl]);
       }
-    }
 
-    setImageFiles(prev => [...prev, ...newImageFiles]);
-    
-    toast.dismiss(loadingToast);
-    if (newImageFiles.length > 0) {
-      toast.success(`${newImageFiles.length} image(s) added.`);
-    }
-    
-    // Reset the file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      setImageFiles(prev => [...prev, ...newImageFiles]);
+      
+      toast.dismiss(loadingToast);
+      if (newImageFiles.length > 0) {
+        toast.success(`${newImageFiles.length} image(s) added.`);
+      }
+    } catch (error) {
+      console.error("Error processing images:", error);
+      toast.error("Error processing images. Please try again.");
+    } finally {
+      setIsProcessingImages(false);
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -681,7 +762,7 @@ const CreateListing: React.FC = () => {
                 <div>
                   <h2 className="text-xl font-bold mb-4">Property Images</h2>
                   <p className="text-sm text-gray-600 mb-4">
-                    Recommended: Add up to 5 images (less than 5MB each) for faster upload times.
+                    Recommended: Add up to {MAX_IMAGES} images (less than {MAX_IMAGE_SIZE/1024/1024}MB each) for faster upload times.
                   </p>
                   <div className="mb-6">
                     <input
@@ -691,17 +772,27 @@ const CreateListing: React.FC = () => {
                       onChange={handleFileChange}
                       multiple
                       accept="image/*"
+                      disabled={isSubmitting || isProcessingImages || images.length >= MAX_IMAGES}
                     />
                     <Button 
                       type="button" 
                       className="h-32 w-full border-4 border-black rounded-none hover:bg-gray-50 flex flex-col items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
                       onClick={handleImageUpload}
-                      disabled={isSubmitting || images.length >= 5}
+                      disabled={isSubmitting || isProcessingImages || images.length >= MAX_IMAGES}
                     >
-                      <Upload size={24} />
-                      <span className="font-bold">Click to Upload Images (max 5)</span>
-                      {images.length >= 5 && (
-                        <span className="text-red-500 text-sm">Maximum images reached</span>
+                      {isProcessingImages ? (
+                        <>
+                          <Loader2 size={24} className="animate-spin" />
+                          <span className="font-bold">Processing images...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={24} />
+                          <span className="font-bold">Click to Upload Images (max {MAX_IMAGES})</span>
+                          {images.length >= MAX_IMAGES && (
+                            <span className="text-red-500 text-sm">Maximum images reached</span>
+                          )}
+                        </>
                       )}
                     </Button>
                   </div>
@@ -733,7 +824,7 @@ const CreateListing: React.FC = () => {
                   {isSubmitting && uploadProgress > 0 && (
                     <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
                       <div 
-                        className="bg-[#d60013] h-2.5 rounded-full" 
+                        className="bg-[#d60013] h-2.5 rounded-full transition-all duration-300" 
                         style={{ width: `${uploadProgress}%` }} 
                       />
                     </div>
@@ -746,14 +837,20 @@ const CreateListing: React.FC = () => {
                     type="button" 
                     variant="outline" 
                     className="font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
-                    onClick={() => navigate('/dashboard')}
-                    disabled={isSubmitting}
+                    onClick={() => {
+                      if (isSubmitting) {
+                        cancelUploads();
+                        toast.info("Upload canceled");
+                      } else {
+                        navigate('/dashboard');
+                      }
+                    }}
                   >
-                    Cancel
+                    {isSubmitting ? "Cancel Upload" : "Cancel"}
                   </Button>
                   <Button 
                     type="submit" 
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isProcessingImages}
                     className="text-white font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#d60013] disabled:bg-gray-400"
                   >
                     {isSubmitting ? (

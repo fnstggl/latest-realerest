@@ -24,6 +24,7 @@ import PropertyDetail from "./pages/PropertyDetail";
 import PropertyEdit from "./pages/PropertyEdit";
 import { AuthProvider } from "@/context/AuthContext";
 import { NotificationProvider } from "@/context/NotificationContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +42,14 @@ const App = () => (
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/sell/create" element={<CreateListing />} />
+              <Route 
+                path="/sell/create" 
+                element={
+                  <ProtectedRoute>
+                    <CreateListing />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/blog" element={<Blog />} />
@@ -52,7 +60,14 @@ const App = () => (
               <Route path="/cookies" element={<Cookies />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/property/:id" element={<PropertyDetail />} />
-              <Route path="/property/:id/edit" element={<PropertyEdit />} />
+              <Route 
+                path="/property/:id/edit" 
+                element={
+                  <ProtectedRoute>
+                    <PropertyEdit />
+                  </ProtectedRoute>
+                } 
+              />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
