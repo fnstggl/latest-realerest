@@ -330,9 +330,6 @@ const CreateListing: React.FC = () => {
     // Limit to MAX_IMAGES images maximum
     const filesToProcess = Math.min(MAX_IMAGES - images.length, files.length);
 
-    // Show loading indicator for image processing
-    const loadingToast = toast.loading(`Processing ${filesToProcess} images...`);
-
     try {
       for (let i = 0; i < filesToProcess; i++) {
         const file = files[i];
@@ -358,7 +355,6 @@ const CreateListing: React.FC = () => {
 
       setImageFiles(prev => [...prev, ...newImageFiles]);
       
-      toast.dismiss(loadingToast);
       if (newImageFiles.length > 0) {
         toast.success(`${newImageFiles.length} image(s) added.`);
       }

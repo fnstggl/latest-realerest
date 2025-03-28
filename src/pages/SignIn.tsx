@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,10 +14,17 @@ const SignIn: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
 
   // Get the return path from location state if available
   const returnPath = location.state?.returnPath || '/dashboard';
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(returnPath);
+    }
+  }, [isAuthenticated, navigate, returnPath]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +36,7 @@ const SignIn: React.FC = () => {
       navigate(returnPath);
     } catch (error: any) {
       console.error("Login failed:", error);
-      toast.error(error.message || "Login failed. Please check your credentials.");
+      toast.error("Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }

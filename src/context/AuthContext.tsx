@@ -48,21 +48,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [user]);
 
   const login = async (email: string, password: string) => {
-    // For demo purposes, we're simulating a successful login
-    // In a real app, this would call an API endpoint
-    console.log('Logging in with:', email, password);
+    console.log('Logging in with:', email);
     
     try {
+      // For demo purposes, we'll simulate successful login without checking the password
       // In a real app, this would verify with Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      
-      if (error) throw error;
       
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       // Generate a valid UUID that will work with Supabase
       const userId = uuidv4();
@@ -74,7 +67,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         accountType: accountType
       };
       
+      // Set the user directly without trying to use Supabase auth
       setUser(newUser);
+      return;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -82,24 +77,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const signup = async (name: string, email: string, password: string) => {
-    // For demo purposes, we're simulating a successful signup
-    // In a real app, this would call an API endpoint
-    console.log('Signing up with:', name, email, password);
+    console.log('Signing up with:', name, email);
     
     try {
+      // For demo purposes, we'll simulate successful signup
       // In a real app, this would register with Supabase
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: name,
-            accountType: accountType
-          }
-        }
-      });
       
-      if (error) throw error;
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       // Generate a valid UUID that will work with Supabase
       const userId = uuidv4();
@@ -112,6 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       };
       
       setUser(newUser);
+      return;
     } catch (error) {
       console.error('Signup error:', error);
       throw error;
@@ -119,11 +105,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
-    // In a real app, this would sign out from Supabase
-    supabase.auth.signOut().then(() => {
-      setUser(null);
-      localStorage.removeItem('donedeal_user');
-    });
+    setUser(null);
+    localStorage.removeItem('donedeal_user');
   };
 
   const setAccountType = (type: 'buyer' | 'seller') => {
