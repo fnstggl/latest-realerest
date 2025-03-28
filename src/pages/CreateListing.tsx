@@ -262,7 +262,7 @@ const CreateListing: React.FC = () => {
       toast.loading("Saving listing details...", { id: loadingToastId });
       setUploadProgress(97);
       
-      // Insert listing into Supabase
+      // Insert listing into Supabase - Ensure user_id is a string that matches the format in the database
       const { data, error } = await supabase
         .from('property_listings')
         .insert({
@@ -280,6 +280,7 @@ const CreateListing: React.FC = () => {
         .select();
       
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
       
@@ -847,7 +848,7 @@ const CreateListing: React.FC = () => {
                   <Button 
                     type="submit" 
                     disabled={isSubmitting || isProcessingImages}
-                    className="text-white font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#d60013] disabled:bg-gray-400"
+                    className="text-white font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#d60013] disabled:bg-gray-400"
                   >
                     {isSubmitting ? (
                       <>
