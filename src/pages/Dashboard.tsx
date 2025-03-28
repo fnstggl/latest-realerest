@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -19,6 +18,7 @@ import {
   Plus,
   Check,
   X,
+  Trash2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -191,6 +191,22 @@ const Dashboard: React.FC = () => {
     
     setShowAddForm(false);
     toast.success("Property added successfully!");
+  };
+
+  const handleUnlistProperty = (propertyId: string) => {
+    // Filter out the property to be removed
+    const updatedProperties = myProperties.filter(property => property.id !== propertyId);
+    
+    // Update state and localStorage
+    setMyProperties(updatedProperties);
+    localStorage.setItem("propertyListings", JSON.stringify(updatedProperties));
+    
+    // Remove associated waitlist entries
+    const updatedWaitlist = waitlistUsers.filter(user => user.propertyId !== propertyId);
+    setWaitlistUsers(updatedWaitlist);
+    
+    // Show success message
+    toast.success("Property unlisted successfully");
   };
 
   const handleUpdateWaitlistStatus = (userId: string, newStatus: "accepted" | "declined") => {
@@ -410,6 +426,14 @@ const Dashboard: React.FC = () => {
                                   </Button>
                                   <Button className="neo-button-primary">
                                     Edit
+                                  </Button>
+                                  <Button 
+                                    variant="destructive" 
+                                    className="border-2 border-black"
+                                    onClick={() => handleUnlistProperty(property.id)}
+                                  >
+                                    <Trash2 size={18} className="mr-2" />
+                                    Unlist
                                   </Button>
                                 </div>
                               )}
