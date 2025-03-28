@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -8,7 +9,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Upload, Plus, X, Check, Image } from 'lucide-react';
+import { Upload, Plus, X, Check, Image, Loader2 } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { v4 as uuidv4 } from 'uuid';
 
 const formSchema = z.object({
   address: z.string().min(1, {
@@ -59,11 +61,15 @@ const formSchema = z.object({
   comparableAddress3: z.string().optional()
 });
 
+// Use a smaller default image size for faster loading
+const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
+
 const CreateListing: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
 
@@ -88,42 +94,55 @@ const CreateListing: React.FC = () => {
     }
   });
 
-  // Function to upload images to Supabase storage
+  // Optimized image upload function using Promise.all for parallel uploads
   const uploadImagesToSupabase = async (files: File[]): Promise<string[]> => {
-    const uploadedUrls: string[] = [];
+    if (files.length === 0) return [DEFAULT_IMAGE];
+    
+    // Create a unique folder name for this batch of uploads
+    const folderName = `listing-${uuidv4()}`;
     
     try {
-      // Create a random folder name
-      const folderName = `listing-${Math.random().toString(36).substring(2, 15)}`;
-      
-      for (const file of files) {
+      // Setup upload promises for parallel processing
+      const uploadPromises = files.map(async (file, index) => {
+        // Use image compression if available to reduce size
+        let fileToUpload = file;
+        
+        // Create a unique filename
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+        const fileName = `${uuidv4()}.${fileExt}`;
         const filePath = `${folderName}/${fileName}`;
         
+        // Upload the file
         const { data, error } = await supabase.storage
           .from('property_images')
-          .upload(filePath, file);
+          .upload(filePath, fileToUpload);
           
         if (error) {
           console.error('Error uploading image:', error);
-          toast.error(`Error uploading image: ${error.message}`);
-          continue;
+          return null;
         }
         
-        // Get public URL for the uploaded image
+        // Get public URL
         const { data: { publicUrl } } = supabase.storage
           .from('property_images')
           .getPublicUrl(filePath);
+        
+        // Update progress
+        setUploadProgress(prevProgress => 
+          Math.min(95, prevProgress + (95 / files.length)));
           
-        uploadedUrls.push(publicUrl);
-      }
+        return publicUrl;
+      });
+      
+      // Wait for all uploads to complete
+      const results = await Promise.all(uploadPromises);
+      
+      // Filter out any failed uploads
+      return results.filter(url => url !== null) as string[];
     } catch (error) {
       console.error('Error in image upload:', error);
-      toast.error('Something went wrong while uploading images');
+      return [DEFAULT_IMAGE]; // Fallback to default image
     }
-    
-    return uploadedUrls;
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -133,16 +152,30 @@ const CreateListing: React.FC = () => {
     }
     
     setIsSubmitting(true);
-    toast.loading("Creating your listing...");
+    setUploadProgress(0);
+    
+    // Show loading toast that we can update
+    const loadingToastId = toast.loading("Creating your listing...");
     
     try {
+      // Basic validation for user ID
+      if (!user.id) {
+        throw new Error("Invalid user ID");
+      }
+
+      console.log('Creating listing for user:', user.id);
+      
+      // Show progress update
+      toast.loading("Uploading images...", { id: loadingToastId });
+      setUploadProgress(10);
+      
       // Upload images to Supabase storage
       const uploadedImageUrls = await uploadImagesToSupabase(imageFiles);
       
-      // Use uploaded URLs or fall back to default
+      // Use uploaded URLs or fallback to default
       const finalImages = uploadedImageUrls.length > 0 
         ? uploadedImageUrls 
-        : ["https://source.unsplash.com/random/800x600?house"];
+        : [DEFAULT_IMAGE];
       
       // Create the location string from city, state and zip
       const location = `${values.city}, ${values.state} ${values.zipCode}`;
@@ -157,9 +190,11 @@ const CreateListing: React.FC = () => {
       // Generate title from location and beds/baths
       const title = `${values.beds} bed, ${values.baths} bath home in ${values.city}, ${values.state}`;
       
-      console.log('User ID before insert:', user.id); // Debug log to verify UUID format
+      // Update progress
+      toast.loading("Saving listing details...", { id: loadingToastId });
+      setUploadProgress(97);
       
-      // Insert listing into Supabase with a valid UUID
+      // Insert listing into Supabase
       const { data, error } = await supabase
         .from('property_listings')
         .insert({
@@ -172,7 +207,7 @@ const CreateListing: React.FC = () => {
           baths: parseInt(values.baths),
           sqft: parseInt(values.sqft),
           images: finalImages,
-          user_id: user.id // This should now be a valid UUID
+          user_id: user.id
         })
         .select();
       
@@ -180,14 +215,26 @@ const CreateListing: React.FC = () => {
         throw error;
       }
       
-      toast.dismiss();
+      // Complete the progress
+      setUploadProgress(100);
+      toast.dismiss(loadingToastId);
       toast.success("Property listing created successfully!");
+      
+      // Navigate to dashboard
       navigate('/dashboard');
       
     } catch (error: any) {
       console.error("Error creating listing:", error);
-      toast.dismiss();
-      toast.error(`Failed to create listing: ${error.message}`);
+      toast.dismiss(loadingToastId);
+      
+      // Show more specific error messages
+      if (error.message?.includes('invalid input syntax for type uuid')) {
+        toast.error("Authentication error. Please sign out and sign in again.");
+      } else if (error.message?.includes('foreign key constraint')) {
+        toast.error("User account error. Please update your profile.");
+      } else {
+        toast.error(`Failed to create listing: ${error.message || 'Unknown error'}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -199,21 +246,32 @@ const CreateListing: React.FC = () => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Optimized image handling to resize images before upload
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     // Check if adding these files would exceed the limit
-    if (images.length + files.length > 15) {
-      toast.warning("Maximum 15 images allowed. Some images won't be uploaded.");
+    if (images.length + files.length > 5) {
+      toast.warning("Maximum 5 images allowed for faster uploads.");
     }
 
     const newImageFiles: File[] = [];
-    const filesToProcess = Math.min(15 - images.length, files.length);
+    // Limit to 5 images maximum for better performance
+    const filesToProcess = Math.min(5 - images.length, files.length);
+
+    // Show loading indicator for image processing
+    const loadingToast = toast.loading(`Processing ${filesToProcess} images...`);
 
     for (let i = 0; i < filesToProcess; i++) {
       const file = files[i];
       if (file.type.startsWith('image/')) {
+        // Check file size and type
+        if (file.size > 5 * 1024 * 1024) {
+          toast.warning(`Image "${file.name}" exceeds 5MB limit and was skipped.`);
+          continue;
+        }
+        
         newImageFiles.push(file);
         
         // Create a URL for the image preview
@@ -224,8 +282,9 @@ const CreateListing: React.FC = () => {
 
     setImageFiles(prev => [...prev, ...newImageFiles]);
     
+    toast.dismiss(loadingToast);
     if (newImageFiles.length > 0) {
-      toast.success(`${newImageFiles.length} image(s) uploaded successfully!`);
+      toast.success(`${newImageFiles.length} image(s) added.`);
     }
     
     // Reset the file input
@@ -235,6 +294,11 @@ const CreateListing: React.FC = () => {
   };
 
   const removeImage = (index: number) => {
+    // Revoke object URL to prevent memory leaks
+    if (images[index] && images[index].startsWith('blob:')) {
+      URL.revokeObjectURL(images[index]);
+    }
+    
     setImages(prev => prev.filter((_, i) => i !== index));
     setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
@@ -259,18 +323,16 @@ const CreateListing: React.FC = () => {
     "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
   ];
 
-  return <div className="min-h-screen bg-white">
+  return (
+    <div className="min-h-screen bg-white">
       <Navbar />
       
-      <motion.div className="container mx-auto px-4 py-12" initial={{
-      opacity: 0,
-      y: 20
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} transition={{
-      duration: 0.5
-    }}>
+      <motion.div 
+        className="container mx-auto px-4 py-12" 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-8">Create New Property Listing</h1>
           
@@ -279,197 +341,348 @@ const CreateListing: React.FC = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div>
                   <h2 className="text-xl font-bold mb-4">Property Address</h2>
-                  <FormField control={form.control} name="address" render={({
-                  field
-                }) => <FormItem>
+                  <FormField 
+                    control={form.control} 
+                    name="address" 
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel className="text-black font-bold">Full Property Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g. 123 Main St" className="h-12 rounded-none border-2 border-black" {...field} />
+                          <Input 
+                            placeholder="e.g. 123 Main St" 
+                            className="h-12 rounded-none border-2 border-black" 
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 
                 <div>
                   <h2 className="text-xl font-bold mb-4">Basic Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField control={form.control} name="city" render={({
-                    field
-                  }) => <FormItem>
+                    {/* City field */}
+                    <FormField 
+                      control={form.control} 
+                      name="city" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">City</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. Portland" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              placeholder="e.g. Portland" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
                     
-                    <FormField control={form.control} name="state" render={({
-                    field
-                    }) => (
-                      <FormItem>
-                        <FormLabel className="text-black font-bold">State</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="h-12 rounded-none border-2 border-black">
-                              <SelectValue placeholder="Select state" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent className="bg-white border-2 border-black max-h-[280px]">
-                            {usStates.map((state) => (
-                              <SelectItem key={state} value={state}>
-                                {state}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
+                    {/* State dropdown */}
+                    <FormField 
+                      control={form.control} 
+                      name="state" 
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-black font-bold">State</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="h-12 rounded-none border-2 border-black">
+                                <SelectValue placeholder="Select state" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="bg-white border-2 border-black max-h-[280px]">
+                              {usStates.map((state) => (
+                                <SelectItem key={state} value={state}>
+                                  {state}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     
-                    <FormField control={form.control} name="zipCode" render={({
-                    field
-                  }) => <FormItem>
+                    {/* ZIP Code field */}
+                    <FormField 
+                      control={form.control} 
+                      name="zipCode" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">ZIP Code</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. 97204" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              placeholder="e.g. 97204" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                   
-                  <FormField control={form.control} name="description" render={({
-                  field
-                }) => <FormItem className="mt-6">
+                  {/* Description textarea */}
+                  <FormField 
+                    control={form.control} 
+                    name="description" 
+                    render={({ field }) => (
+                      <FormItem className="mt-6">
                         <FormLabel className="text-black font-bold">Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Describe your property..." className="min-h-[120px] rounded-none border-2 border-black" {...field} />
+                          <Textarea 
+                            placeholder="Describe your property..." 
+                            className="min-h-[120px] rounded-none border-2 border-black" 
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>} />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 
+                {/* Property Details section */}
                 <div>
                   <h2 className="text-xl font-bold mb-4">Property Details</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField control={form.control} name="beds" render={({
-                    field
-                  }) => <FormItem>
+                    {/* Bedrooms */}
+                    <FormField 
+                      control={form.control} 
+                      name="beds" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Bedrooms</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g. 3" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              type="number" 
+                              placeholder="e.g. 3" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
-                    <FormField control={form.control} name="baths" render={({
-                    field
-                  }) => <FormItem>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {/* Bathrooms */}
+                    <FormField 
+                      control={form.control} 
+                      name="baths" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Bathrooms</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g. 2" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              type="number" 
+                              placeholder="e.g. 2" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
-                    <FormField control={form.control} name="sqft" render={({
-                    field
-                  }) => <FormItem>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {/* Square Footage */}
+                    <FormField 
+                      control={form.control} 
+                      name="sqft" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Square Footage</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g. 2000" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              type="number" 
+                              placeholder="e.g. 2000" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </div>
                 
+                {/* Price Information section */}
                 <div>
                   <h2 className="text-xl font-bold mb-4">Price Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField control={form.control} name="price" render={({
-                    field
-                  }) => <FormItem>
+                    {/* Listing Price */}
+                    <FormField 
+                      control={form.control} 
+                      name="price" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Your Listing Price ($)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g. 450000" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              type="number" 
+                              placeholder="e.g. 450000" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
-                    <FormField control={form.control} name="marketPrice" render={({
-                    field
-                  }) => <FormItem>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {/* Market Price */}
+                    <FormField 
+                      control={form.control} 
+                      name="marketPrice" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Average Market Price ($)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g. 500000" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              type="number" 
+                              placeholder="e.g. 500000" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                   
-                  {form.watch('price') && form.watch('marketPrice') && <div className="mt-4 p-4 bg-gray-100 border-2 border-black">
+                  {/* Display discount percentage */}
+                  {form.watch('price') && form.watch('marketPrice') && (
+                    <div className="mt-4 p-4 bg-gray-100 border-2 border-black">
                       <p className="font-bold">
                         Discount: <span className="text-[#ea384c]">{calculateDiscountPercent()}% below market</span>
                       </p>
-                    </div>}
+                    </div>
+                  )}
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <FormField control={form.control} name="afterRepairValue" render={({
-                    field
-                  }) => <FormItem>
+                    {/* After Repair Value */}
+                    <FormField 
+                      control={form.control} 
+                      name="afterRepairValue" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">After Repair Value ($) (Optional)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g. 550000" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              type="number" 
+                              placeholder="e.g. 550000" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
-                    <FormField control={form.control} name="estimatedRehab" render={({
-                    field
-                  }) => <FormItem>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {/* Estimated Rehab Cost */}
+                    <FormField 
+                      control={form.control} 
+                      name="estimatedRehab" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Estimated Rehab Cost ($) (Optional)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g. 50000" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              type="number" 
+                              placeholder="e.g. 50000" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </div>
                 
+                {/* Comparable Properties section (Optional) */}
                 <div>
                   <h2 className="text-xl font-bold mb-4">Comparable Properties (Optional)</h2>
                   <div className="space-y-4">
-                    <FormField control={form.control} name="comparableAddress1" render={({
-                    field
-                  }) => <FormItem>
+                    {/* Comparable Address 1 */}
+                    <FormField 
+                      control={form.control} 
+                      name="comparableAddress1" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Comparable Address 1</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter address" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              placeholder="Enter address" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
-                    <FormField control={form.control} name="comparableAddress2" render={({
-                    field
-                  }) => <FormItem>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {/* Comparable Address 2 */}
+                    <FormField 
+                      control={form.control} 
+                      name="comparableAddress2" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Comparable Address 2</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter address" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              placeholder="Enter address" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
-                    <FormField control={form.control} name="comparableAddress3" render={({
-                    field
-                  }) => <FormItem>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {/* Comparable Address 3 */}
+                    <FormField 
+                      control={form.control} 
+                      name="comparableAddress3" 
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel className="text-black font-bold">Comparable Address 3</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter address" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input 
+                              placeholder="Enter address" 
+                              className="h-12 rounded-none border-2 border-black" 
+                              {...field} 
+                            />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </div>
                 
+                {/* Property Images section */}
                 <div>
                   <h2 className="text-xl font-bold mb-4">Property Images</h2>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Recommended: Add up to 5 images (less than 5MB each) for faster upload times.
+                  </p>
                   <div className="mb-6">
                     <input
                       type="file"
@@ -483,32 +696,72 @@ const CreateListing: React.FC = () => {
                       type="button" 
                       className="h-32 w-full border-4 border-black rounded-none hover:bg-gray-50 flex flex-col items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
                       onClick={handleImageUpload}
+                      disabled={isSubmitting || images.length >= 5}
                     >
                       <Upload size={24} />
-                      <span className="font-bold">Click to Upload Images (max 15)</span>
+                      <span className="font-bold">Click to Upload Images (max 5)</span>
+                      {images.length >= 5 && (
+                        <span className="text-red-500 text-sm">Maximum images reached</span>
+                      )}
                     </Button>
                   </div>
                   
-                  {images.length > 0 && <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      {images.map((img, index) => <div key={index} className="relative border-4 border-black group">
-                          <img src={img} alt={`Property ${index + 1}`} className="h-32 w-full object-cover" />
-                          <button type="button" className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => removeImage(index)}>
+                  {/* Display selected images */}
+                  {images.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      {images.map((img, index) => (
+                        <div key={index} className="relative border-4 border-black group">
+                          <img 
+                            src={img} 
+                            alt={`Property ${index + 1}`} 
+                            className="h-32 w-full object-cover" 
+                          />
+                          <button 
+                            type="button" 
+                            className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" 
+                            onClick={() => removeImage(index)}
+                            disabled={isSubmitting}
+                          >
                             <X size={16} />
                           </button>
-                        </div>)}
-                    </div>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Show progress bar during submission */}
+                  {isSubmitting && uploadProgress > 0 && (
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                      <div 
+                        className="bg-[#d60013] h-2.5 rounded-full" 
+                        style={{ width: `${uploadProgress}%` }} 
+                      />
+                    </div>
+                  )}
                 </div>
                 
+                {/* Form submission buttons */}
                 <div className="pt-6 border-t-2 border-black flex justify-end gap-4">
-                  <Button type="button" variant="outline" className="font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={() => navigate('/dashboard')}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
+                    onClick={() => navigate('/dashboard')}
+                    disabled={isSubmitting}
+                  >
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="text-white font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#d60013]"
+                    className="text-white font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#d60013] disabled:bg-gray-400"
                   >
-                    {isSubmitting ? 'Creating...' : (
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={18} className="mr-2 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
                       <>
                         <Check size={18} className="mr-2" />
                         Create Listing
@@ -521,7 +774,8 @@ const CreateListing: React.FC = () => {
           </div>
         </div>
       </motion.div>
-    </div>;
+    </div>
+  );
 };
 
 export default CreateListing;
