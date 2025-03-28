@@ -12,6 +12,7 @@ import { ArrowUpRight, Home, Settings, Package, ChevronRight, Plus, Bell } from 
 import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import PropertyCard from '@/components/PropertyCard';
+import { useNotifications } from '@/context/NotificationContext';
 
 // Mock data for listings - this will be replaced with real data
 const mockListings = [
@@ -29,8 +30,8 @@ const mockListings = [
   }
 ];
 
-// Mock waitlist data - this will be connected to real data
-const mockWaitlistUsers = [
+// Mock waitlist data with correct status types
+const mockWaitlistUsers: WaitlistUser[] = [
   { id: 'user1', name: 'John Smith', email: 'john@example.com', phone: '555-123-4567', propertyId: 'prop1', status: 'pending' },
   { id: 'user2', name: 'Jane Doe', email: 'jane@example.com', phone: '555-987-6543', propertyId: 'prop1', status: 'pending' }
 ];
