@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
@@ -9,14 +10,19 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Upload, Plus, X, Check } from 'lucide-react';
+import { Upload, Plus, X, Check, Image } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 const formSchema = z.object({
-  title: z.string().min(5, {
-    message: "Title must be at least 5 characters"
-  }),
   description: z.string().min(20, {
     message: "Description must be at least 20 characters"
   }),
@@ -26,8 +32,14 @@ const formSchema = z.object({
   marketPrice: z.string().min(1, {
     message: "Market price is required"
   }),
-  location: z.string().min(3, {
-    message: "Location is required"
+  city: z.string().min(2, {
+    message: "City is required"
+  }),
+  state: z.string().min(2, {
+    message: "State is required"
+  }),
+  zipCode: z.string().min(5, {
+    message: "ZIP code is required"
   }),
   beds: z.string().min(1, {
     message: "Beds info is required"
@@ -44,20 +56,23 @@ const formSchema = z.object({
   comparableAddress2: z.string().optional(),
   comparableAddress3: z.string().optional()
 });
+
 const CreateListing: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
-  const {
-    user
-  } = useAuth();
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user } = useAuth();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
       description: "",
       price: "",
       marketPrice: "",
-      location: "",
+      city: "",
+      state: "",
+      zipCode: "",
       beds: "",
       baths: "",
       sqft: "",
@@ -68,22 +83,29 @@ const CreateListing: React.FC = () => {
       comparableAddress3: ""
     }
   });
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     // Generate a unique ID for the property
     const propertyId = `property-${Date.now()}`;
+
+    // Create the location string from city, state and zip
+    const location = `${values.city}, ${values.state} ${values.zipCode}`;
 
     // Calculate below market percentage
     const price = Number(values.price);
     const marketPrice = Number(values.marketPrice);
     const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
 
+    // Generate title from location and beds/baths
+    const title = `${values.beds} bed, ${values.baths} bath home in ${values.city}, ${values.state}`;
+
     // Prepare the listing data
     const newListing = {
       id: propertyId,
-      title: values.title,
+      title: title, // Auto-generated title
       price: Number(values.price),
       marketPrice: Number(values.marketPrice),
-      location: values.location,
+      location: location,
       description: values.description,
       beds: Number(values.beds),
       baths: Number(values.baths),
@@ -123,14 +145,51 @@ const CreateListing: React.FC = () => {
       toast.error("Failed to create listing. Please try again.");
     }
   };
+
   const handleImageUpload = () => {
-    // Simulate image upload - would be replaced with actual upload logic
-    const mockImage = `https://source.unsplash.com/random/800x600?house&${Date.now()}`;
-    setImages(prev => [...prev, mockImage]);
-    toast.success("Image uploaded successfully!");
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    // Check if adding these files would exceed the limit
+    if (images.length + files.length > 15) {
+      toast.warning("Maximum 15 images allowed. Some images won't be uploaded.");
+    }
+
+    const newImageFiles: File[] = [];
+    const filesToProcess = Math.min(15 - images.length, files.length);
+
+    for (let i = 0; i < filesToProcess; i++) {
+      const file = files[i];
+      if (file.type.startsWith('image/')) {
+        newImageFiles.push(file);
+        
+        // Create a URL for the image preview
+        const imageUrl = URL.createObjectURL(file);
+        setImages(prev => [...prev, imageUrl]);
+      }
+    }
+
+    setImageFiles(prev => [...prev, ...newImageFiles]);
+    
+    if (newImageFiles.length > 0) {
+      toast.success(`${newImageFiles.length} image(s) uploaded successfully!`);
+    }
+    
+    // Reset the file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const removeImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   // Calculate percent difference
@@ -143,6 +202,16 @@ const CreateListing: React.FC = () => {
     }
     return "0";
   };
+
+  // List of US states
+  const usStates = [
+    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+    "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+    "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+    "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+    "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+  ];
+
   return <div className="min-h-screen bg-white">
       <Navbar />
       
@@ -163,22 +232,49 @@ const CreateListing: React.FC = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div>
                   <h2 className="text-xl font-bold mb-4">Basic Information</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField control={form.control} name="title" render={({
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <FormField control={form.control} name="city" render={({
                     field
                   }) => <FormItem>
-                          <FormLabel className="text-black font-bold">Property Title</FormLabel>
+                          <FormLabel className="text-black font-bold">City</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. Modern Craftsman Home" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input placeholder="e.g. Portland" className="h-12 rounded-none border-2 border-black" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>} />
-                    <FormField control={form.control} name="location" render={({
+                    
+                    <FormField control={form.control} name="state" render={({
+                    field
+                    }) => (
+                      <FormItem>
+                        <FormLabel className="text-black font-bold">State</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-12 rounded-none border-2 border-black">
+                              <SelectValue placeholder="Select state" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="bg-white border-2 border-black max-h-[280px]">
+                            {usStates.map((state) => (
+                              <SelectItem key={state} value={state}>
+                                {state}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    
+                    <FormField control={form.control} name="zipCode" render={({
                     field
                   }) => <FormItem>
-                          <FormLabel className="text-black font-bold">Location</FormLabel>
+                          <FormLabel className="text-black font-bold">ZIP Code</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. Portland, OR" className="h-12 rounded-none border-2 border-black" {...field} />
+                            <Input placeholder="e.g. 97204" className="h-12 rounded-none border-2 border-black" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>} />
@@ -315,9 +411,22 @@ const CreateListing: React.FC = () => {
                 <div>
                   <h2 className="text-xl font-bold mb-4">Property Images</h2>
                   <div className="mb-6">
-                    <Button type="button" className="h-32 w-full border-2 border-dashed border-black rounded-none hover:bg-gray-50 flex flex-col items-center justify-center gap-2" onClick={handleImageUpload}>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      onChange={handleFileChange}
+                      multiple
+                      accept="image/*"
+                    />
+                    <Button 
+                      type="button" 
+                      className="h-32 w-full border-2 border-black rounded-none hover:bg-gray-50 flex flex-col items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
+                      onClick={handleImageUpload}
+                    >
                       <Upload size={24} />
-                      <span className="font-bold">Click to Upload Images</span>
+                      <span className="font-bold">Click to Upload Images (max 15)</span>
+                      <span className="text-sm text-gray-500">{images.length}/15 uploaded</span>
                     </Button>
                   </div>
                   
