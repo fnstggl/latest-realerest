@@ -180,7 +180,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="outline" 
-                className="hidden md:flex neo-button font-bold border-4"
+                className="hidden md:flex neo-button font-bold"
                 onClick={handleSignIn}
               >
                 <LogIn size={18} className="mr-2" />
