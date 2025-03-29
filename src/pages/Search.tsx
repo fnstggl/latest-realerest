@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -146,7 +147,7 @@ const Search: React.FC = () => {
           <div className="lg:hidden mb-4">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" className="w-full flex justify-between items-center">
+                <Button variant="outline" className="w-full flex justify-between items-center neo-button">
                   <div className="flex items-center">
                     <Sliders size={18} className="mr-2" />
                     Filters
@@ -162,10 +163,10 @@ const Search: React.FC = () => {
           
           {/* Results */}
           <div className="flex-1">
-            <div className="bg-white rounded-xl p-4 mb-6 shadow-sm">
+            <div className="bg-white rounded-xl p-4 mb-6 neo-container">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-xl font-semibold text-donedeal-navy">
+                  <h1 className="text-xl font-semibold">
                     {filteredProperties.length} properties
                     {searchQuery ? ` for "${searchQuery}"` : ''}
                   </h1>
@@ -178,7 +179,7 @@ const Search: React.FC = () => {
                 
                 <div className="flex items-center gap-4 w-full sm:w-auto">
                   <select
-                    className="flex-1 sm:flex-none border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-donedeal-orange"
+                    className="flex-1 sm:flex-none border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary neo-input"
                     value={sortOption}
                     onChange={(e) => handleSortChange(e.target.value)}
                   >
@@ -189,7 +190,7 @@ const Search: React.FC = () => {
                     <option value="newest">Newest</option>
                   </select>
                   
-                  <div className="hidden sm:flex border rounded-md">
+                  <div className="hidden sm:flex border rounded-md neo-border">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -219,8 +220,8 @@ const Search: React.FC = () => {
                 </div>
               </div>
             ) : filteredProperties.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-                <h2 className="text-xl font-semibold text-donedeal-navy mb-2">No properties found</h2>
+              <div className="text-center py-16 bg-white rounded-xl neo-container">
+                <h2 className="text-xl font-semibold mb-2">No properties found</h2>
                 <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
                 <Button onClick={() => handleFilterChange({
                   propertyType: "any",
@@ -229,7 +230,7 @@ const Search: React.FC = () => {
                   bathrooms: "any",
                   belowMarket: 0,
                   furnished: "any",
-                })}>
+                })} className="neo-button-primary">
                   Reset Filters
                 </Button>
               </div>

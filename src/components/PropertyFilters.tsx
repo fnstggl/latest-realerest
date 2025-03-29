@@ -40,16 +40,18 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md">
+    <div className="bg-white p-6 neo-container">
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-donedeal-navy mb-3">Property Type</h3>
+          <h3 className="text-lg font-semibold mb-3">Property Type</h3>
           <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-2">
             {["Any", "House", "Apartment", "Condo", "Duplex"].map((type) => (
               <Button
                 key={type}
                 variant={filters.propertyType === type.toLowerCase() ? "default" : "outline"}
-                className={filters.propertyType === type.toLowerCase() ? "bg-donedeal-orange hover:bg-donedeal-orange/90" : ""}
+                className={filters.propertyType === type.toLowerCase() 
+                  ? "neo-button-primary" 
+                  : "neo-button"}
                 onClick={() => handleFilterChange("propertyType", type.toLowerCase())}
               >
                 {type}
@@ -59,7 +61,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold text-donedeal-navy mb-3">Price Range</h3>
+          <h3 className="text-lg font-semibold mb-3">Price Range</h3>
           <div className="mt-2 px-2">
             <Slider
               defaultValue={[100000, 1000000]}
@@ -77,7 +79,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold text-donedeal-navy mb-3">Below Market Value</h3>
+          <h3 className="text-lg font-semibold mb-3">Below Market Value</h3>
           <div className="px-2">
             <Slider
               defaultValue={[0]}
@@ -96,12 +98,12 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <h3 className="text-md font-semibold text-donedeal-navy mb-2">Bedrooms</h3>
+            <h3 className="text-md font-semibold mb-2">Bedrooms</h3>
             <Select
               value={filters.bedrooms}
               onValueChange={(value) => handleFilterChange("bedrooms", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="neo-input">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
@@ -116,12 +118,12 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </div>
 
           <div>
-            <h3 className="text-md font-semibold text-donedeal-navy mb-2">Bathrooms</h3>
+            <h3 className="text-md font-semibold mb-2">Bathrooms</h3>
             <Select
               value={filters.bathrooms}
               onValueChange={(value) => handleFilterChange("bathrooms", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="neo-input">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
@@ -136,13 +138,15 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         </div>
 
         <div>
-          <h3 className="text-md font-semibold text-donedeal-navy mb-2">Furnished</h3>
+          <h3 className="text-md font-semibold mb-2">Furnished</h3>
           <div className="flex gap-2">
             {["Any", "Furnished", "Unfurnished"].map((option) => (
               <Button
                 key={option}
                 variant={filters.furnished === option.toLowerCase() ? "default" : "outline"}
-                className={`flex-1 ${filters.furnished === option.toLowerCase() ? "bg-donedeal-orange hover:bg-donedeal-orange/90" : ""}`}
+                className={`flex-1 ${filters.furnished === option.toLowerCase() 
+                  ? "neo-button-primary" 
+                  : "neo-button"}`}
                 onClick={() => handleFilterChange("furnished", option.toLowerCase())}
               >
                 {option}
@@ -171,7 +175,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             });
           }}
           variant="link"
-          className="w-full text-donedeal-navy"
+          className="w-full text-primary neo-button-primary"
         >
           Reset Filters
         </Button>
