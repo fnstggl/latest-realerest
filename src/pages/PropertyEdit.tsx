@@ -24,6 +24,8 @@ interface Property {
   baths: number;
   sqft: number;
   belowMarket: number;
+  afterRepairValue?: number;
+  estimatedRehab?: number;
 }
 
 const PropertyEdit: React.FC = () => {
@@ -42,6 +44,8 @@ const PropertyEdit: React.FC = () => {
     baths: "",
     sqft: "",
     description: "",
+    afterRepairValue: "",
+    estimatedRehab: "",
   });
 
   useEffect(() => {
@@ -65,6 +69,8 @@ const PropertyEdit: React.FC = () => {
               baths: foundProperty.baths.toString(),
               sqft: foundProperty.sqft.toString(),
               description: foundProperty.description || "",
+              afterRepairValue: foundProperty.afterRepairValue?.toString() || "",
+              estimatedRehab: foundProperty.estimatedRehab?.toString() || "",
             });
           }
         }
@@ -103,6 +109,8 @@ const PropertyEdit: React.FC = () => {
       const price = parseFloat(formData.price);
       const marketPrice = parseFloat(formData.marketPrice) || price * 1.2;
       const belowMarket = Math.round(((marketPrice - price) / marketPrice) * 100);
+      const afterRepairValue = parseFloat(formData.afterRepairValue) || marketPrice * 1.2;
+      const estimatedRehab = parseFloat(formData.estimatedRehab) || marketPrice * 0.1;
       
       const updatedProperty = {
         ...property,
@@ -115,6 +123,8 @@ const PropertyEdit: React.FC = () => {
         sqft: parseInt(formData.sqft) || 0,
         belowMarket: belowMarket,
         description: formData.description,
+        afterRepairValue: afterRepairValue,
+        estimatedRehab: estimatedRehab,
       };
       
       // Update in localStorage
@@ -140,6 +150,8 @@ const PropertyEdit: React.FC = () => {
           baths: parseInt(formData.baths) || 0,
           sqft: parseInt(formData.sqft) || 0,
           description: formData.description,
+          after_repair_value: afterRepairValue,
+          estimated_rehab: estimatedRehab,
         })
         .eq('id', id);
         
@@ -285,6 +297,30 @@ const PropertyEdit: React.FC = () => {
                   name="sqft"
                   type="number"
                   value={formData.sqft}
+                  onChange={handleInputChange}
+                  className="mt-2 border-2 border-black"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="afterRepairValue" className="font-bold">After Repair Value ($)</Label>
+                <Input
+                  id="afterRepairValue"
+                  name="afterRepairValue"
+                  type="number"
+                  value={formData.afterRepairValue}
+                  onChange={handleInputChange}
+                  className="mt-2 border-2 border-black"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="estimatedRehab" className="font-bold">Estimated Rehab Cost ($)</Label>
+                <Input
+                  id="estimatedRehab"
+                  name="estimatedRehab"
+                  type="number"
+                  value={formData.estimatedRehab}
                   onChange={handleInputChange}
                   className="mt-2 border-2 border-black"
                 />

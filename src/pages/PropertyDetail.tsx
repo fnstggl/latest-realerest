@@ -128,9 +128,9 @@ const PropertyDetail: React.FC = () => {
             sellerName: sellerData?.name || 'Property Owner',
             sellerPhone: sellerData?.phone || 'No phone number provided',
             sellerEmail: sellerData?.email,
-            // Default values for ARV and rehab estimate
-            afterRepairValue: Number(propertyData.market_price) * 1.2,
-            estimatedRehab: Number(propertyData.market_price) * 0.1
+            // Use actual ARV and rehab values if provided, otherwise calculate defaults
+            afterRepairValue: propertyData.after_repair_value || Number(propertyData.market_price) * 1.2,
+            estimatedRehab: propertyData.estimated_rehab || Number(propertyData.market_price) * 0.1
           };
           
           setProperty(transformedProperty);
@@ -282,6 +282,11 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
+  // Helper function to determine if user should see detailed property info
+  const canSeeDetailedInfo = () => {
+    return isOwner || isApproved || (user && user.id);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -387,17 +392,19 @@ const PropertyDetail: React.FC = () => {
                         onOpenChange={setShowWaitlistDialog}
                       />
                       
-                      {/* ARV and Rehab boxes */}
-                      <div className="grid grid-cols-2 gap-4 mt-4">
-                        <div className="border-2 border-black p-3">
-                          <div className="text-lg font-bold text-black">{property.afterRepairValue && formatCurrency(property.afterRepairValue)}</div>
-                          <div className="text-xs">After Repair Value</div>
+                      {/* Only show ARV and Rehab boxes for signed-in users or the owner */}
+                      {canSeeDetailedInfo() && (
+                        <div className="grid grid-cols-2 gap-4 mt-4">
+                          <div className="border-2 border-black p-3">
+                            <div className="text-lg font-bold text-black">{property.afterRepairValue && formatCurrency(property.afterRepairValue)}</div>
+                            <div className="text-xs">After Repair Value</div>
+                          </div>
+                          <div className="border-2 border-black p-3">
+                            <div className="text-lg font-bold text-black">{property.estimatedRehab && formatCurrency(property.estimatedRehab)}</div>
+                            <div className="text-xs">Est. Rehab Cost</div>
+                          </div>
                         </div>
-                        <div className="border-2 border-black p-3">
-                          <div className="text-lg font-bold text-black">{property.estimatedRehab && formatCurrency(property.estimatedRehab)}</div>
-                          <div className="text-xs">Est. Rehab Cost</div>
-                        </div>
-                      </div>
+                      )}
                     </>
                   )
                 ))
@@ -463,14 +470,15 @@ const PropertyDetail: React.FC = () => {
                   <span>2-Car Garage</span>
                 </div>
                 
-                {property?.afterRepairValue && (
+                {/* Show ARV and rehab estimates to all signed-in users */}
+                {canSeeDetailedInfo() && property?.afterRepairValue && (
                   <div className="flex justify-between">
                     <span className="font-bold">ARV:</span>
                     <span>{formatCurrency(property.afterRepairValue)}</span>
                   </div>
                 )}
                 
-                {property?.estimatedRehab && (
+                {canSeeDetailedInfo() && property?.estimatedRehab && (
                   <div className="flex justify-between">
                     <span className="font-bold">Est. Rehab Cost:</span>
                     <span>{formatCurrency(property.estimatedRehab)}</span>
