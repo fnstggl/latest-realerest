@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Bell, Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface Notification {
   id: string;
@@ -25,11 +26,21 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
   markAsRead,
   clearAll
 }) => {
-  // Handle property link click
-  const handlePropertyClick = (notification: Notification) => {
-    if (notification.properties?.propertyId) {
-      markAsRead(notification.id);
-      window.location.href = `/property/${notification.properties.propertyId}`;
+  const navigate = useNavigate();
+  
+  // Handle notification click with context-aware navigation
+  const handleNotificationClick = (notification: Notification) => {
+    markAsRead(notification.id);
+    
+    if (!notification.properties) return;
+    
+    // Navigate based on notification type
+    if (notification.type === 'new_listing' && notification.properties.propertyId) {
+      // For property owners - go to the waitlist tab to review requests
+      navigate('/dashboard', { state: { activeTab: 'waitlist' } });
+    } else if (notification.properties.propertyId) {
+      // For buyers or general property notifications - go to the property page
+      navigate(`/property/${notification.properties.propertyId}`);
     }
   };
 
@@ -51,7 +62,11 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
       {notifications.length > 0 ? (
         <div className="divide-y-2 divide-gray-200">
           {notifications.map(notification => (
-            <div key={notification.id} className={`p-4 ${!notification.read ? 'bg-blue-50' : ''}`}>
+            <div 
+              key={notification.id} 
+              className={`p-4 ${!notification.read ? 'bg-blue-50' : ''} cursor-pointer hover:bg-gray-50 transition-colors`}
+              onClick={() => handleNotificationClick(notification)}
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-bold text-lg">{notification.title}</h3>
@@ -59,18 +74,6 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
                   <p className="text-sm text-gray-500">
                     {notification.timestamp.toLocaleString()}
                   </p>
-                  
-                  {/* Show view property button if it's a property-related notification */}
-                  {notification.properties?.propertyId && (
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="mt-2 text-sm"
-                      onClick={() => handlePropertyClick(notification)}
-                    >
-                      View Property
-                    </Button>
-                  )}
                 </div>
                 {!notification.read && (
                   <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded">NEW</div>

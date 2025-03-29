@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Bell } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   Popover,
   PopoverContent,
@@ -19,6 +20,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Show a toast for new notifications
   useEffect(() => {
@@ -76,6 +78,23 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
     }
   }, [unreadCount, handleMarkAllAsRead]);
 
+  // Handle notification click with context-aware navigation
+  const handleNotificationClick = (notification: any) => {
+    markAsRead(notification.id);
+    setIsOpen(false);
+    
+    if (!notification.properties) return;
+    
+    // Navigate based on notification type
+    if (notification.type === 'new_listing' && notification.properties.propertyId) {
+      // For property owners - go to the waitlist tab to review requests
+      navigate('/dashboard', { state: { activeTab: 'waitlist' } });
+    } else if (notification.properties.propertyId) {
+      // For buyers or general property notifications - go to the property page
+      navigate(`/property/${notification.properties.propertyId}`);
+    }
+  };
+
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
@@ -123,7 +142,8 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
               {notifications.map((notification) => (
                 <div 
                   key={notification.id} 
-                  className={`p-4 ${!notification.read ? 'bg-blue-50' : ''}`}
+                  className={`p-4 ${!notification.read ? 'bg-blue-50' : ''} cursor-pointer hover:bg-gray-50 transition-colors`}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex justify-between items-start">
                     <div>

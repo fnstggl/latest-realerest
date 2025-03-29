@@ -15,6 +15,7 @@ interface WaitlistUser {
     title: string;
   };
   status: "pending" | "accepted" | "declined";
+  createdAt: string; // Added for sorting
 }
 
 interface WaitlistTabProps {
@@ -96,9 +97,16 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
     }
   };
 
+  // Sort waitlist users by created_at in descending order (newest first)
+  const sortedWaitlistUsers = [...waitlistUsers].sort((a, b) => {
+    const dateA = new Date(a.createdAt || 0).getTime();
+    const dateB = new Date(b.createdAt || 0).getTime();
+    return dateB - dateA; // Descending order (newest first)
+  });
+
   return (
     <>
-      {waitlistUsers.length > 0 ? (
+      {sortedWaitlistUsers.length > 0 ? (
         <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
           <div className="border-b-4 border-black p-4 bg-gray-50">
             <h2 className="text-xl font-bold">Waitlist Requests</h2>
@@ -115,7 +123,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
               </tr>
             </thead>
             <tbody>
-              {waitlistUsers.map((user) => (
+              {sortedWaitlistUsers.map((user) => (
                 <tr key={user.id} className="border-b-2 border-gray-200">
                   <td className="p-4 font-bold">{user.name}</td>
                   <td className="p-4">

@@ -27,6 +27,7 @@ export interface WaitlistUser {
     title: string;
   };
   status: "pending" | "accepted" | "declined";
+  createdAt: string; // Added for sorting
 }
 
 export const useProperties = (userId: string | undefined) => {
@@ -129,7 +130,7 @@ export const useProperties = (userId: string | undefined) => {
       // Get array of property IDs
       const propertyIds = properties.map(p => p.id);
       
-      // Fetch waitlist requests for these properties
+      // Fetch waitlist requests for these properties including created_at for sorting
       const { data: requests, error: reqError } = await supabase
         .from('waitlist_requests')
         .select('*')
@@ -150,7 +151,8 @@ export const useProperties = (userId: string | undefined) => {
           phone: req.phone || '',
           propertyId: req.property_id,
           property: matchedProperty ? { title: matchedProperty.title } : undefined,
-          status: req.status as "pending" | "accepted" | "declined"
+          status: req.status as "pending" | "accepted" | "declined",
+          createdAt: req.created_at // Include created_at for sorting
         };
       });
       

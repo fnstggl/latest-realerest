@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Home, User, Bell, ClipboardCheck, Plus } from "lucide-react";
 import { motion } from "framer-motion";
@@ -16,6 +16,7 @@ import { useProperties } from "@/hooks/useProperties";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -29,6 +30,15 @@ const Dashboard: React.FC = () => {
     isLoading,
     setIsLoading
   } = useProperties(user?.id);
+
+  // Set active tab based on navigation state if provided
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+      // Clear the state to avoid persisting it
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   return (
     <div className="min-h-screen bg-white">

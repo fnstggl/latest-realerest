@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { Bed, Bath, Square, ArrowLeft, MapPin, Phone, Mail, Home, Cog, Hammer } from 'lucide-react';
@@ -38,6 +39,7 @@ const PropertyDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState('');
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const [isOwner, setIsOwner] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
@@ -91,6 +93,7 @@ const PropertyDetail: React.FC = () => {
         
         console.log("Property data from Supabase:", propertyData);
         
+        // Get seller details using the property's user_id
         const { data: sellerData, error: sellerError } = await supabase
           .from('profiles')
           .select('name, email, phone')
@@ -123,7 +126,7 @@ const PropertyDetail: React.FC = () => {
             sellerId: propertyData.user_id,
             sellerName: sellerData?.name || 'Property Owner',
             sellerPhone: sellerData?.phone || 'No phone number provided',
-            sellerEmail: sellerData?.email,
+            sellerEmail: sellerData?.email || 'No email provided',
             afterRepairValue: propertyData.after_repair_value !== null 
               ? Number(propertyData.after_repair_value) 
               : undefined,
@@ -201,12 +204,14 @@ const PropertyDetail: React.FC = () => {
   const renderLocation = () => {
     if (!property) return null;
     
+    // If owner or approved, show full address
     if (isOwner || isApproved) {
       return (
         <span className="font-medium">{property.location}</span>
       );
     }
     
+    // For non-approved users, hide street address but show city/state/zip
     const parts = property.location.split(',');
     const streetAddress = parts[0];
     const restOfAddress = parts.slice(1).join(',');
@@ -383,17 +388,17 @@ const PropertyDetail: React.FC = () => {
               )}
             </div>
             
-            {property && (isOwner || isApproved) && property.sellerName && (
+            {property && (isOwner || isApproved) && (
               <div className="border-2 border-black p-4 mt-6">
                 <h3 className="font-bold mb-2">Contact Seller</h3>
-                <p className="mb-1">{property.sellerName}</p>
+                <p className="mb-1">{property.sellerName || 'Property Owner'}</p>
                 {property.sellerPhone && property.sellerPhone !== 'No phone number provided' && (
                   <div className="flex items-center">
                     <Phone size={16} className="mr-2" />
                     <span>{property.sellerPhone}</span>
                   </div>
                 )}
-                {property.sellerEmail && (
+                {property.sellerEmail && property.sellerEmail !== 'No email provided' && (
                   <div className="flex items-center mt-1">
                     <Mail size={16} className="mr-2" />
                     <span>{property.sellerEmail}</span>
