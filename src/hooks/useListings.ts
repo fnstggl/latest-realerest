@@ -64,6 +64,7 @@ export const useListings = (limit?: number) => {
             beds: item.beds || 0,
             baths: item.baths || 0,
             sqft: item.sqft || 0,
+            // Safely get property_type or use a default
             propertyType: item.property_type || 'House',
             // Use the first image from the array if available
             image: item.images && item.images.length > 0 ? item.images[0] : 'https://source.unsplash.com/random/800x600?house',
