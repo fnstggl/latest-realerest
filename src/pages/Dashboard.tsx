@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -605,7 +604,7 @@ const Dashboard: React.FC = () => {
                       <Label htmlFor="name" className="font-bold">Full Name</Label>
                       <Input
                         id="name"
-                        defaultValue={user?.user_metadata?.name || ""}
+                        defaultValue={user?.name || ""}
                         className="mt-2 border-2 border-black"
                       />
                     </div>
@@ -624,7 +623,7 @@ const Dashboard: React.FC = () => {
                       <Label htmlFor="phone" className="font-bold">Phone Number</Label>
                       <Input
                         id="phone"
-                        defaultValue={user?.user_metadata?.phone || ""}
+                        defaultValue=""
                         className="mt-2 border-2 border-black"
                       />
                     </div>
