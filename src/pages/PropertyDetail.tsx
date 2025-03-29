@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ const PropertyDetail: React.FC = () => {
   
   // Check if this buyer has been approved to view this property
   const [isApproved, setIsApproved] = useState(false);
+  const waitlistButtonRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     if (user?.id && id) {
@@ -230,12 +231,17 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
-  // Helper function to mask the address for users who aren't approved
-  const getDisplayLocation = () => {
-    if (isOwner || isApproved) {
-      return property.location;
+  const handleAddressClick = () => {
+    if (!isOwner && !isApproved && waitlistButtonRef.current) {
+      // Scroll to waitlist button and add a brief highlight effect
+      waitlistButtonRef.current.scrollIntoView({ behavior: 'smooth' });
+      waitlistButtonRef.current.classList.add('pulse-animation');
+      setTimeout(() => {
+        if (waitlistButtonRef.current) {
+          waitlistButtonRef.current.classList.remove('pulse-animation');
+        }
+      }, 1500);
     }
-    return property.location.replace(/^[^,]+/, "[Join Waitlist For Address]");
   };
 
   return (
@@ -283,7 +289,6 @@ const PropertyDetail: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold inline-flex items-center">
-                  <DollarSign size={16} className="mr-1" />
                   {property?.belowMarket}% BELOW MARKET
                 </div>
               </div>
@@ -292,7 +297,21 @@ const PropertyDetail: React.FC = () => {
               
               <div className="flex items-center mb-4">
                 <MapPin size={18} className="mr-2 text-[#d60013]" />
-                <span className="font-medium">{property && getDisplayLocation()}</span>
+                <span className="font-medium">
+                  {property && (isOwner || isApproved ? (
+                    property.location
+                  ) : (
+                    <span>
+                      <span 
+                        className="cursor-pointer text-[#d60013] hover:underline"
+                        onClick={handleAddressClick}
+                      >
+                        [Join Waitlist For Address]
+                      </span>
+                      {property.location.substring(property.location.indexOf(','))}
+                    </span>
+                  ))}
+                </span>
               </div>
               
               <div className="grid grid-cols-2 gap-4 mb-6">
@@ -335,7 +354,9 @@ const PropertyDetail: React.FC = () => {
                     <p>You now have access to view the full property details and contact the seller directly.</p>
                   </div>
                 ) : (
-                  property && <WaitlistButton propertyId={property.id} propertyTitle={property.title} />
+                  <div ref={waitlistButtonRef}>
+                    {property && <WaitlistButton propertyId={property.id} propertyTitle={property.title} />}
+                  </div>
                 ))
               )}
             </div>
