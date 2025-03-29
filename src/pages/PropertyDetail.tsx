@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
-import { Bed, Bath, Square, ArrowLeft, MapPin, Phone, Mail, Home, DollarSign, Cog } from 'lucide-react';
+import { Bed, Bath, Square, ArrowLeft, MapPin, Phone, Mail, Home, Cog, Hammer } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import WaitlistButton from '@/components/WaitlistButton';
 import { useAuth } from '@/context/AuthContext';
@@ -44,6 +44,9 @@ const PropertyDetail: React.FC = () => {
   
   // Check if this buyer has been approved to view this property
   const [isApproved, setIsApproved] = useState(false);
+  
+  // Dialog state for waitlist
+  const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
   
   useEffect(() => {
     if (user?.id && id) {
@@ -124,7 +127,10 @@ const PropertyDetail: React.FC = () => {
             sellerId: propertyData.user_id,
             sellerName: sellerData?.name || 'Property Owner',
             sellerPhone: sellerData?.phone || 'No phone number provided',
-            sellerEmail: sellerData?.email
+            sellerEmail: sellerData?.email,
+            // Default values for ARV and rehab estimate
+            afterRepairValue: Number(propertyData.market_price) * 1.2,
+            estimatedRehab: Number(propertyData.market_price) * 0.1
           };
           
           setProperty(transformedProperty);
@@ -194,6 +200,52 @@ const PropertyDetail: React.FC = () => {
     fetchProperty();
   }, [id, user?.id]);
 
+  // Helper function to mask the address for users who aren't approved
+  const getDisplayLocation = () => {
+    if (isOwner || isApproved) {
+      return property?.location;
+    }
+    // Create a clickable masked location that opens the waitlist dialog
+    return property?.location.replace(
+      /^[^,]+/, 
+      "<span class='cursor-pointer text-blue-600 hover:underline' onClick={() => setShowWaitlistDialog(true)}>[Join Waitlist For Address]</span>"
+    );
+  };
+
+  // Function to handle the address click for non-approved users
+  const handleAddressClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowWaitlistDialog(true);
+  };
+
+  // This will safely render HTML or plain text based on whether the user is approved
+  const renderLocation = () => {
+    if (!property) return null;
+    
+    if (isOwner || isApproved) {
+      return (
+        <span className="font-medium">{property.location}</span>
+      );
+    }
+    
+    // Extract the address part for masking
+    const parts = property.location.split(',');
+    const maskedAddress = "[Join Waitlist For Address]";
+    const restOfAddress = parts.slice(1).join(',');
+    
+    return (
+      <span className="font-medium">
+        <span 
+          className="cursor-pointer text-blue-600 hover:underline"
+          onClick={handleAddressClick}
+        >
+          {maskedAddress}
+        </span>
+        {restOfAddress ? `,${restOfAddress}` : ''}
+      </span>
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -229,14 +281,6 @@ const PropertyDetail: React.FC = () => {
       </div>
     );
   }
-
-  // Helper function to mask the address for users who aren't approved
-  const getDisplayLocation = () => {
-    if (isOwner || isApproved) {
-      return property.location;
-    }
-    return property.location.replace(/^[^,]+/, "[Join Waitlist For Address]");
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -283,7 +327,6 @@ const PropertyDetail: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold inline-flex items-center">
-                  <DollarSign size={16} className="mr-1" />
                   {property?.belowMarket}% BELOW MARKET
                 </div>
               </div>
@@ -292,7 +335,7 @@ const PropertyDetail: React.FC = () => {
               
               <div className="flex items-center mb-4">
                 <MapPin size={18} className="mr-2 text-[#d60013]" />
-                <span className="font-medium">{property && getDisplayLocation()}</span>
+                {renderLocation()}
               </div>
               
               <div className="grid grid-cols-2 gap-4 mb-6">
@@ -335,7 +378,28 @@ const PropertyDetail: React.FC = () => {
                     <p>You now have access to view the full property details and contact the seller directly.</p>
                   </div>
                 ) : (
-                  property && <WaitlistButton propertyId={property.id} propertyTitle={property.title} />
+                  property && (
+                    <>
+                      <WaitlistButton 
+                        propertyId={property.id} 
+                        propertyTitle={property.title} 
+                        open={showWaitlistDialog}
+                        onOpenChange={setShowWaitlistDialog}
+                      />
+                      
+                      {/* ARV and Rehab boxes */}
+                      <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div className="border-2 border-black p-3">
+                          <div className="text-lg font-bold text-black">{property.afterRepairValue && formatCurrency(property.afterRepairValue)}</div>
+                          <div className="text-xs">After Repair Value</div>
+                        </div>
+                        <div className="border-2 border-black p-3">
+                          <div className="text-lg font-bold text-black">{property.estimatedRehab && formatCurrency(property.estimatedRehab)}</div>
+                          <div className="text-xs">Est. Rehab Cost</div>
+                        </div>
+                      </div>
+                    </>
+                  )
                 ))
               )}
             </div>

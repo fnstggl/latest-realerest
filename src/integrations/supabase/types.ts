@@ -9,7 +9,191 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      blog_posts: {
+        Row: {
+          author: string | null
+          content: string
+          created_at: string
+          excerpt: string | null
+          id: string
+          image: string | null
+          read_time: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author?: string | null
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image?: string | null
+          read_time?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author?: string | null
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image?: string | null
+          read_time?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          properties: Json | null
+          read: boolean | null
+          title: string
+          type: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          properties?: Json | null
+          read?: boolean | null
+          title: string
+          type?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          properties?: Json | null
+          read?: boolean | null
+          title?: string
+          type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          email: string | null
+          id: string
+          name: string | null
+          phone: string | null
+        }
+        Insert: {
+          email?: string | null
+          id: string
+          name?: string | null
+          phone?: string | null
+        }
+        Update: {
+          email?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      property_listings: {
+        Row: {
+          baths: number | null
+          beds: number | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          location: string
+          market_price: number
+          price: number
+          sqft: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          baths?: number | null
+          beds?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          location: string
+          market_price: number
+          price: number
+          sqft?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          baths?: number | null
+          beds?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          location?: string
+          market_price?: number
+          price?: number
+          sqft?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      waitlist_requests: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          property_id: string
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          property_id: string
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          property_id?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlist_requests_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "property_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

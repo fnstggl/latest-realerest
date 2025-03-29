@@ -13,15 +13,29 @@ import { useNotifications } from '@/context/NotificationContext';
 interface WaitlistButtonProps {
   propertyId: string;
   propertyTitle: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTitle }) => {
+const WaitlistButton: React.FC<WaitlistButtonProps> = ({ 
+  propertyId, 
+  propertyTitle, 
+  open: externalOpen, 
+  onOpenChange: externalOnOpenChange 
+}) => {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [phone, setPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [waitlistStatus, setWaitlistStatus] = useState<'pending' | 'accepted' | 'declined' | null>(null);
+
+  // Sync external and internal dialog state
+  useEffect(() => {
+    if (externalOpen !== undefined) {
+      setDialogOpen(externalOpen);
+    }
+  }, [externalOpen]);
 
   // Check if user is already in waitlist for this property from database
   const checkWaitlistStatus = useCallback(async () => {
@@ -58,11 +72,17 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
 
   const handleJoinWaitlist = () => {
     setDialogOpen(true);
+    if (externalOnOpenChange) {
+      externalOnOpenChange(true);
+    }
   };
 
   const handleDialogClose = () => {
     setDialogOpen(false);
     setSubmitting(false);
+    if (externalOnOpenChange) {
+      externalOnOpenChange(false);
+    }
   };
 
   // Create notifications for both the property owner and the user joining the waitlist
@@ -173,6 +193,9 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
       toast.error("Failed to join waitlist. Please try again.");
     } finally {
       setDialogOpen(false);
+      if (externalOnOpenChange) {
+        externalOnOpenChange(false);
+      }
       setSubmitting(false);
     }
   };
