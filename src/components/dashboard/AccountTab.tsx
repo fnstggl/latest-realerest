@@ -1,10 +1,12 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface AccountTabProps {
   user: any;
@@ -13,6 +15,85 @@ interface AccountTabProps {
 
 const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
   const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: ""
+  });
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+          
+        if (error) {
+          console.error("Error fetching profile:", error);
+          return;
+        }
+        
+        if (data) {
+          setFormData({
+            name: user?.name || data.name || "",
+            email: user?.email || data.email || "",
+            phone: data.phone || ""
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [user]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!user?.id) {
+      toast.error("You must be logged in to update your profile");
+      return;
+    }
+    
+    setSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          name: formData.name,
+          phone: formData.phone
+        })
+        .eq('id', user.id);
+        
+      if (error) {
+        console.error("Error updating profile:", error);
+        toast.error("Failed to update profile");
+        return;
+      }
+      
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Exception updating profile:", error);
+      toast.error("Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -21,13 +102,14 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
           <h2 className="text-2xl font-bold">Account Information</h2>
         </div>
         
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <Label htmlFor="name" className="font-bold">Full Name</Label>
               <Input
                 id="name"
-                defaultValue={user?.name || ""}
+                value={formData.name}
+                onChange={handleInputChange}
                 className="mt-2 border-2 border-black"
               />
             </div>
@@ -36,7 +118,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
               <Label htmlFor="email" className="font-bold">Email Address</Label>
               <Input
                 id="email"
-                defaultValue={user?.email || ""}
+                value={formData.email}
                 className="mt-2 border-2 border-black"
                 disabled
               />
@@ -46,14 +128,16 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
               <Label htmlFor="phone" className="font-bold">Phone Number</Label>
               <Input
                 id="phone"
-                defaultValue=""
+                value={formData.phone}
+                onChange={handleInputChange}
                 className="mt-2 border-2 border-black"
+                placeholder="Enter your phone number"
               />
             </div>
           </div>
           
-          <Button className="neo-button-primary">
-            Save Changes
+          <Button className="neo-button-primary" disabled={saving} type="submit">
+            {saving ? "Saving Changes..." : "Save Changes"}
           </Button>
         </form>
       </div>

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from './AuthContext';
@@ -12,6 +11,7 @@ export interface Notification {
   read: boolean;
   timestamp: Date;
   type?: 'info' | 'success' | 'warning' | 'error' | 'new_listing';
+  properties?: any;
 }
 
 interface NotificationContextType {
@@ -47,7 +47,48 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       setLoading(true);
       
       try {
-        const storageKey = `notifications_${user.id}`;
+        // First try to load from Supabase (primary source)
+        const { data: dbNotifications, error } = await supabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+          
+        if (error) {
+          console.error('Error fetching notifications from DB:', error);
+          // Fall back to localStorage if DB fetch fails
+          loadFromLocalStorage();
+          return;
+        }
+        
+        if (dbNotifications && dbNotifications.length > 0) {
+          // Transform the data to match our Notification interface
+          const transformedNotifications: Notification[] = dbNotifications.map(notification => ({
+            id: notification.id,
+            title: notification.title,
+            message: notification.message,
+            read: notification.read || false,
+            timestamp: new Date(notification.created_at || Date.now()),
+            type: notification.type as 'info' | 'success' | 'warning' | 'error' | 'new_listing',
+            properties: notification.properties
+          }));
+          
+          setNotifications(transformedNotifications);
+        } else {
+          // If no notifications in DB, try localStorage
+          loadFromLocalStorage();
+        }
+      } catch (error) {
+        console.error('Error loading notifications from Supabase', error);
+        loadFromLocalStorage();
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    const loadFromLocalStorage = () => {
+      try {
+        const storageKey = `notifications_${user!.id}`;
         const savedNotifications = localStorage.getItem(storageKey);
         
         if (savedNotifications) {
@@ -69,8 +110,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       } catch (error) {
         console.error('Error loading notifications from localStorage', error);
         setNotifications([]);
-      } finally {
-        setLoading(false);
       }
     };
     
@@ -85,34 +124,63 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       .channel('public:notifications')
       .on('postgres_changes', 
         { 
-          event: 'INSERT', 
+          event: '*', 
           schema: 'public', 
-          table: 'notifications' 
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`
         }, 
         (payload) => {
-          console.log('New notification received:', payload);
+          console.log('Notification change received:', payload);
           
-          // Create a notification from the payload
-          if (payload.new) {
-            const { title, message, type } = payload.new;
-            
-            // Add the notification to the state
-            const newNotification: Notification = {
-              id: uuidv4(),
-              title: title || 'New Notification',
-              message: message || 'You have a new notification',
-              read: false,
-              timestamp: new Date(),
-              type: type || 'info'
-            };
-            
-            setNotifications(prev => [newNotification, ...prev]);
-            
-            // Show a toast for real-time notification
-            toast(title || 'New Notification', {
-              description: message || 'You have a new notification',
-              duration: 5000
-            });
+          if (payload.eventType === 'INSERT') {
+            // Create a notification from the payload
+            if (payload.new) {
+              const { id, title, message, type, properties, created_at, read } = payload.new;
+              
+              // Add the notification to the state
+              const newNotification: Notification = {
+                id,
+                title: title || 'New Notification',
+                message: message || 'You have a new notification',
+                read: read || false,
+                timestamp: new Date(created_at || Date.now()),
+                type: type || 'info',
+                properties: properties
+              };
+              
+              setNotifications(prev => {
+                // Check if we already have this notification to avoid duplicates
+                const exists = prev.some(n => n.id === id);
+                if (exists) return prev;
+                return [newNotification, ...prev];
+              });
+              
+              // Show a toast for real-time notification
+              toast(title || 'New Notification', {
+                description: message || 'You have a new notification',
+                duration: 5000
+              });
+            }
+          } else if (payload.eventType === 'UPDATE') {
+            // Update existing notification
+            setNotifications(prev => 
+              prev.map(notification => 
+                notification.id === payload.new.id 
+                  ? { 
+                      ...notification, 
+                      read: payload.new.read,
+                      title: payload.new.title,
+                      message: payload.new.message,
+                      properties: payload.new.properties
+                    } 
+                  : notification
+              )
+            );
+          } else if (payload.eventType === 'DELETE') {
+            // Remove deleted notification
+            setNotifications(prev => 
+              prev.filter(notification => notification.id !== payload.old.id)
+            );
           }
         }
       )
@@ -160,7 +228,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
   }, []);
   
-  const markAsRead = useCallback((id: string) => {
+  // Improved markAsRead function
+  const markAsRead = useCallback(async (id: string) => {
+    // Update the local state immediately for UI responsiveness
     setNotifications(prev => 
       prev.map(notification => 
         notification.id === id 
@@ -168,13 +238,47 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           : notification
       )
     );
-  }, []);
+    
+    // Update the database if the user is logged in
+    if (user?.id) {
+      try {
+        const { error } = await supabase
+          .from('notifications')
+          .update({ read: true })
+          .eq('id', id);
+          
+        if (error) {
+          console.error('Error marking notification as read in database:', error);
+        }
+      } catch (error) {
+        console.error('Exception marking notification as read:', error);
+      }
+    }
+  }, [user?.id]);
   
-  const clearAll = useCallback(() => {
+  const clearAll = useCallback(async () => {
+    // Update local state
     setNotifications(prev => 
       prev.map(notification => ({ ...notification, read: true }))
     );
-  }, []);
+    
+    // Update database if user is logged in
+    if (user?.id) {
+      try {
+        const { error } = await supabase
+          .from('notifications')
+          .update({ read: true })
+          .eq('user_id', user.id)
+          .eq('read', false);
+          
+        if (error) {
+          console.error('Error marking all notifications as read in database:', error);
+        }
+      } catch (error) {
+        console.error('Exception marking all notifications as read:', error);
+      }
+    }
+  }, [user?.id]);
   
   const removeNotification = useCallback((id: string) => {
     setNotifications(prev => 

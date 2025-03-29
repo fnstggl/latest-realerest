@@ -28,6 +28,8 @@ interface Property {
   estimatedRehab?: number;
   comparables?: string[];
   createdAt?: string;
+  sellerPhone?: string;
+  sellerEmail?: string;
 }
 
 const PropertyDetail: React.FC = () => {
@@ -45,17 +47,30 @@ const PropertyDetail: React.FC = () => {
   
   useEffect(() => {
     if (user?.id && id) {
-      const waitlistDataJSON = localStorage.getItem('waitlistData');
-      if (waitlistDataJSON) {
-        const waitlistData = JSON.parse(waitlistDataJSON);
-        const userEntry = waitlistData.find(
-          (entry: any) => entry.id === user.id && entry.propertyId === id
-        );
-        setIsApproved(userEntry?.status === 'accepted');
-      }
+      // Check if this buyer has been approved to view this property
+      const checkWaitlistStatus = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('waitlist_requests')
+            .select('status')
+            .eq('property_id', id)
+            .eq('user_id', user.id)
+            .single();
+            
+          if (error && error.code !== 'PGRST116') {
+            console.error("Error checking waitlist status:", error);
+            return;
+          }
+          
+          if (data) {
+            setIsApproved(data.status === 'accepted');
+          }
+        } catch (error) {
+          console.error("Error checking waitlist approval:", error);
+        }
+      };
       
-      // Check if the user is the owner of this property
-      // We'll update this check when we fetch the property
+      checkWaitlistStatus();
     }
   }, [user?.id, id]);
 
@@ -68,7 +83,7 @@ const PropertyDetail: React.FC = () => {
         // First try to fetch from Supabase
         const { data: propertyData, error } = await supabase
           .from('property_listings')
-          .select('*')
+          .select('*, profiles:user_id(*)')
           .eq('id', id)
           .single();
           
@@ -94,7 +109,10 @@ const PropertyDetail: React.FC = () => {
             baths: propertyData.baths || 0,
             sqft: propertyData.sqft || 0,
             belowMarket: calculateBelowMarket(Number(propertyData.market_price), Number(propertyData.price)),
-            sellerId: propertyData.user_id
+            sellerId: propertyData.user_id,
+            sellerName: propertyData.profiles?.name || 'Property Owner',
+            sellerPhone: propertyData.profiles?.phone || 'No phone number provided',
+            sellerEmail: propertyData.profiles?.email
           };
           
           setProperty(transformedProperty);
@@ -314,14 +332,18 @@ const PropertyDetail: React.FC = () => {
               <div className="border-2 border-black p-4 mt-6">
                 <h3 className="font-bold mb-2">Contact Seller</h3>
                 <p className="mb-1">{property.sellerName}</p>
-                <div className="flex items-center">
-                  <Phone size={16} className="mr-2" />
-                  <span>(555) 123-4567</span>
-                </div>
-                <div className="flex items-center mt-1">
-                  <Mail size={16} className="mr-2" />
-                  <span>seller@example.com</span>
-                </div>
+                {property.sellerPhone && (
+                  <div className="flex items-center">
+                    <Phone size={16} className="mr-2" />
+                    <span>{property.sellerPhone}</span>
+                  </div>
+                )}
+                {property.sellerEmail && (
+                  <div className="flex items-center mt-1">
+                    <Mail size={16} className="mr-2" />
+                    <span>{property.sellerEmail}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>

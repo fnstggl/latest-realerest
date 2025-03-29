@@ -23,7 +23,7 @@ interface WaitlistTabProps {
 }
 
 const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUsers }) => {
-  const handleUpdateWaitlistStatus = async (userId: string, newStatus: "accepted" | "declined") => {
+  const handleUpdateWaitlistStatus = async (userId: string, newStatus: "accepted" | "declined", propertyId: string, propertyTitle: string, requesterName: string, userEmail: string) => {
     try {
       const { error } = await supabase
         .from('waitlist_requests')
@@ -43,10 +43,52 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
       
       setWaitlistUsers(updatedUsers);
       
+      // Send notification to the user about their waitlist status
+      try {
+        // First get the user's actual user_id from the waitlist request
+        const { data: userData, error: userError } = await supabase
+          .from('waitlist_requests')
+          .select('user_id')
+          .eq('id', userId)
+          .single();
+          
+        if (userError) {
+          console.error("Error fetching user data:", userError);
+          throw userError;
+        }
+        
+        // Create notification with appropriate message based on status
+        const notificationTitle = newStatus === "accepted" ? 
+          "Waitlist Request Approved!" : 
+          "Waitlist Request Declined";
+          
+        const notificationMessage = newStatus === "accepted" ? 
+          `Great news! Your waitlist request for ${propertyTitle} has been approved. You can now view the full property details.` : 
+          `Unfortunately, your waitlist request for ${propertyTitle} has been declined.`;
+          
+        await supabase
+          .from('notifications')
+          .insert({
+            user_id: userData.user_id,
+            title: notificationTitle,
+            message: notificationMessage,
+            type: newStatus === "accepted" ? "success" : "error",
+            properties: {
+              propertyId,
+              propertyTitle,
+              status: newStatus
+            },
+            read: false
+          });
+          
+      } catch (error) {
+        console.error("Error sending notification to user:", error);
+      }
+      
       if (newStatus === "accepted") {
-        toast.success("User accepted to waitlist!");
+        toast.success(`${requesterName} accepted to waitlist! A notification has been sent to ${userEmail}.`);
       } else {
-        toast.success("User declined from waitlist.");
+        toast.success(`${requesterName} declined from waitlist. A notification has been sent to ${userEmail}.`);
       }
     } catch (error) {
       console.error("Error updating waitlist status:", error);
@@ -97,7 +139,14 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                           <Button 
                             size="sm" 
                             className="bg-green-600 hover:bg-green-700 border-2 border-black"
-                            onClick={() => handleUpdateWaitlistStatus(user.id, 'accepted')}
+                            onClick={() => handleUpdateWaitlistStatus(
+                              user.id, 
+                              'accepted', 
+                              user.propertyId, 
+                              user.property?.title || 'Property', 
+                              user.name,
+                              user.email
+                            )}
                           >
                             <Check size={16} className="mr-1" />
                             Accept
@@ -105,7 +154,14 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                           <Button 
                             size="sm" 
                             className="bg-red-600 hover:bg-red-700 border-2 border-black"
-                            onClick={() => handleUpdateWaitlistStatus(user.id, 'declined')}
+                            onClick={() => handleUpdateWaitlistStatus(
+                              user.id, 
+                              'declined', 
+                              user.propertyId, 
+                              user.property?.title || 'Property', 
+                              user.name,
+                              user.email
+                            )}
                           >
                             <X size={16} className="mr-1" />
                             Decline

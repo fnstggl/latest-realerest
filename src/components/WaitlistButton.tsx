@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
+import { useNotifications } from '@/context/NotificationContext';
 
 interface WaitlistButtonProps {
   propertyId: string;
@@ -16,39 +17,40 @@ interface WaitlistButtonProps {
 
 const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTitle }) => {
   const { user } = useAuth();
+  const { addNotification } = useNotifications();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [phone, setPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [isInWaitlist, setIsInWaitlist] = useState(false);
+  const [waitlistStatus, setWaitlistStatus] = useState<'pending' | 'accepted' | 'declined' | null>(null);
 
   // Check if user is already in waitlist for this property from database
   const checkWaitlistStatus = useCallback(async () => {
-    if (!user?.id) return false;
+    if (!user?.id) return null;
     
     try {
       const { data, error } = await supabase
         .from('waitlist_requests')
-        .select('id')
+        .select('status')
         .eq('property_id', propertyId)
         .eq('user_id', user.id)
         .single();
         
       if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
         console.error("Error checking waitlist status:", error);
-        return false;
+        return null;
       }
       
-      return !!data;
+      return data ? data.status as 'pending' | 'accepted' | 'declined' : null;
     } catch (error) {
       console.error("Exception checking waitlist status:", error);
-      return false;
+      return null;
     }
   }, [user?.id, propertyId]);
 
   useEffect(() => {
     const checkStatus = async () => {
       const status = await checkWaitlistStatus();
-      setIsInWaitlist(status);
+      setWaitlistStatus(status);
     };
     
     checkStatus();
@@ -63,8 +65,10 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
     setSubmitting(false);
   };
 
-  const createNotification = async (propertyOwnerId: string) => {
+  // Create notifications for both the property owner and the user joining the waitlist
+  const createNotifications = async (propertyOwnerId: string, propertyTitle: string) => {
     try {
+      // Notification for property owner
       await supabase
         .from('notifications')
         .insert({
@@ -72,18 +76,40 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
           title: 'New Waitlist Request',
           message: `${user?.name || 'Someone'} is interested in your property: ${propertyTitle}`,
           type: 'new_listing',
-          read: false,
           properties: {
             propertyId,
             propertyTitle,
             requesterId: user?.id,
             requesterName: user?.name
-          }
+          },
+          read: false
         });
       
-      console.log('Notification created for property owner');
+      // Notification for the user joining the waitlist
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: user?.id,
+          title: 'Waitlist Request Submitted',
+          message: `You've successfully joined the waitlist for: ${propertyTitle}`,
+          type: 'success',
+          properties: {
+            propertyId,
+            propertyTitle
+          },
+          read: false
+        });
+      
+      // Add local notification for immediate feedback
+      addNotification(
+        'Waitlist Request Submitted',
+        `You've successfully joined the waitlist for: ${propertyTitle}`,
+        'success'
+      );
+      
+      console.log('Notifications created for both parties');
     } catch (error) {
-      console.error('Error creating notification:', error);
+      console.error('Error creating notifications:', error);
     }
   };
 
@@ -136,10 +162,10 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
           throw new Error("Failed to join waitlist");
         }
       } else {
-        // Create notification for property owner
-        await createNotification(propertyOwnerId);
+        // Create notifications for property owner and user
+        await createNotifications(propertyOwnerId, propertyTitle);
         
-        setIsInWaitlist(true);
+        setWaitlistStatus('pending');
         toast.success("Successfully joined the waitlist!");
       }
     } catch (error) {
@@ -151,25 +177,54 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
     }
   };
 
+  const getWaitlistButtonContent = () => {
+    switch (waitlistStatus) {
+      case 'accepted':
+        return (
+          <Button 
+            className="w-full bg-green-500 text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+            onClick={() => window.location.reload()}
+          >
+            <Check size={18} className="mr-2" />
+            Waitlist Approved - View Details
+          </Button>
+        );
+      case 'declined':
+        return (
+          <Button 
+            className="w-full bg-red-500 text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center cursor-not-allowed"
+            disabled
+          >
+            <X size={18} className="mr-2" />
+            Waitlist Declined
+          </Button>
+        );
+      case 'pending':
+        return (
+          <Button 
+            className="w-full bg-gray-200 text-black font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center cursor-not-allowed"
+            disabled
+          >
+            <Check size={18} className="mr-2" />
+            In Waitlist - Pending Review
+          </Button>
+        );
+      default:
+        return (
+          <Button 
+            className="w-full bg-[#d60013] text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+            onClick={handleJoinWaitlist}
+          >
+            <ClipboardList size={18} className="mr-2" />
+            Join Waitlist
+          </Button>
+        );
+    }
+  };
+
   return (
     <>
-      {isInWaitlist ? (
-        <Button 
-          className="w-full bg-gray-200 text-black font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center cursor-not-allowed"
-          disabled
-        >
-          <Check size={18} className="mr-2" />
-          In Waitlist
-        </Button>
-      ) : (
-        <Button 
-          className="w-full bg-[#d60013] text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
-          onClick={handleJoinWaitlist}
-        >
-          <ClipboardList size={18} className="mr-2" />
-          Join Waitlist
-        </Button>
-      )}
+      {getWaitlistButtonContent()}
       
       <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">

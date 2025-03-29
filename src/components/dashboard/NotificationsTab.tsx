@@ -1,7 +1,8 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Bell } from "lucide-react";
+import { Bell, Check, X } from "lucide-react";
+import { toast } from "sonner";
 
 interface Notification {
   id: string;
@@ -9,6 +10,8 @@ interface Notification {
   message: string;
   read: boolean;
   timestamp: Date;
+  type?: 'info' | 'success' | 'warning' | 'error' | 'new_listing';
+  properties?: any;
 }
 
 interface NotificationsTabProps {
@@ -17,7 +20,7 @@ interface NotificationsTabProps {
   clearAll: () => void;
 }
 
-const NotificationsTab: React.FC<NotificationsTabProps> = ({ 
+const NotificationCenter: React.FC<NotificationsTabProps> = ({ 
   notifications, 
   markAsRead,
   clearAll
@@ -44,10 +47,25 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-bold text-lg">{notification.title}</h3>
-                  <p>{notification.message}</p>
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="mb-2">{notification.message}</p>
+                  <p className="text-sm text-gray-500">
                     {notification.timestamp.toLocaleString()}
                   </p>
+                  
+                  {/* Show view property button if it's a property-related notification */}
+                  {notification.properties?.propertyId && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="mt-2 text-sm"
+                      onClick={() => {
+                        markAsRead(notification.id);
+                        window.location.href = `/property/${notification.properties.propertyId}`;
+                      }}
+                    >
+                      View Property
+                    </Button>
+                  )}
                 </div>
                 {!notification.read && (
                   <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded">NEW</div>
@@ -67,4 +85,4 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
   );
 };
 
-export default NotificationsTab;
+export default NotificationCenter;
