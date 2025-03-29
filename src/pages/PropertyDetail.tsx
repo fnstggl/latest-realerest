@@ -290,6 +290,8 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
+  const shouldShowSellerInfo = isOwner || isApproved;
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -413,7 +415,7 @@ const PropertyDetail: React.FC = () => {
               )}
             </div>
             
-            {property && (isOwner || isApproved) && (
+            {property && shouldShowSellerInfo && (
               <div className="border-2 border-black p-4 mt-6">
                 <h3 className="font-bold mb-2">Contact Seller</h3>
                 <p className="mb-1">{property.sellerName || 'Property Owner'}</p>
@@ -500,7 +502,7 @@ const PropertyDetail: React.FC = () => {
           </div>
         </div>
         
-        {property && (isOwner || isApproved) && property.comparables && property.comparables.length > 0 && (
+        {property && shouldShowSellerInfo && property.comparables && property.comparables.length > 0 && (
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 mb-12">
             <h2 className="text-2xl font-bold mb-4">Comparable Properties</h2>
             <ul className="space-y-2">
