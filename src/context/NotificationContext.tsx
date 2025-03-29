@@ -1,47 +1,77 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { toast } from "@/components/ui/use-toast";
+import { v4 as uuidv4 } from 'uuid';
+import { useAuth } from './AuthContext';
 
-interface Notification {
+export interface Notification {
   id: string;
+  title: string;
   message: string;
   read: boolean;
   timestamp: Date;
-  type: 'waitlist' | 'system' | 'acceptance';
-  actionId?: string;
+  type?: 'info' | 'success' | 'warning' | 'error';
 }
 
 interface NotificationContextType {
   notifications: Notification[];
-  addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => void;
+  unreadCount: number;
+  addNotification: (title: string, message: string, type?: 'info' | 'success' | 'warning' | 'error') => void;
   markAsRead: (id: string) => void;
   clearAll: () => void;
-  unreadCount: number;
+  removeNotification: (id: string) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { user } = useAuth();
+  
+  // Calculate unread count
   const unreadCount = notifications.filter(n => !n.read).length;
-
-  const addNotification = (newNotification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    const notification = {
-      ...newNotification,
-      id: `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date(),
+  
+  // Load notifications from localStorage on initial mount and when user changes
+  useEffect(() => {
+    if (user) {
+      try {
+        const savedNotifications = localStorage.getItem(`notifications_${user.id}`);
+        if (savedNotifications) {
+          // Parse stored notifications and convert timestamp strings back to Date objects
+          const parsedNotifications = JSON.parse(savedNotifications).map((notification: any) => ({
+            ...notification,
+            timestamp: new Date(notification.timestamp)
+          }));
+          setNotifications(parsedNotifications);
+        }
+      } catch (error) {
+        console.error('Error loading notifications from localStorage', error);
+      }
+    } else {
+      // Clear notifications when user logs out
+      setNotifications([]);
+    }
+  }, [user]);
+  
+  // Save notifications to localStorage whenever they change
+  useEffect(() => {
+    if (user && notifications.length > 0) {
+      localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
+    }
+  }, [notifications, user]);
+  
+  const addNotification = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+    const newNotification: Notification = {
+      id: uuidv4(),
+      title,
+      message,
       read: false,
+      timestamp: new Date(),
+      type
     };
     
-    setNotifications(prev => [notification, ...prev]);
-    
-    // Show toast for new notification
-    toast({
-      title: "New Notification",
-      description: notification.message,
-    });
+    setNotifications(prev => [newNotification, ...prev]);
   };
-
+  
   const markAsRead = (id: string) => {
     setNotifications(prev => 
       prev.map(notification => 
@@ -51,18 +81,27 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       )
     );
   };
-
+  
   const clearAll = () => {
-    setNotifications([]);
+    setNotifications(prev => 
+      prev.map(notification => ({ ...notification, read: true }))
+    );
   };
-
+  
+  const removeNotification = (id: string) => {
+    setNotifications(prev => 
+      prev.filter(notification => notification.id !== id)
+    );
+  };
+  
   return (
-    <NotificationContext.Provider value={{ 
-      notifications, 
-      addNotification, 
-      markAsRead, 
-      clearAll,
+    <NotificationContext.Provider value={{
+      notifications,
       unreadCount,
+      addNotification,
+      markAsRead,
+      clearAll,
+      removeNotification
     }}>
       {children}
     </NotificationContext.Provider>

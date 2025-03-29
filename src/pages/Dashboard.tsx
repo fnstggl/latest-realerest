@@ -27,6 +27,7 @@ import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNotifications } from "@/context/NotificationContext";
 import NotificationCenter from "@/components/NotificationCenter";
+import { supabase } from "@/integrations/supabase/client";
 
 // Types
 interface WaitlistUser {
@@ -43,7 +44,7 @@ interface Property {
   title: string;
   price: number;
   marketPrice: number;
-  image: string;
+  image?: string;
   location: string;
   beds: number;
   baths: number;
@@ -51,41 +52,14 @@ interface Property {
   belowMarket: number;
 }
 
-// Mock data
-const mockProperties: Property[] = [
-  {
-    id: "prop1",
-    title: "Modern Townhouse",
-    price: 350000,
-    marketPrice: 420000,
-    image: "https://placehold.co/600x400?text=Property+Image",
-    location: "123 Main St, San Francisco, CA",
-    beds: 3,
-    baths: 2,
-    sqft: 1800,
-    belowMarket: 17,
-  },
-  {
-    id: "prop2",
-    title: "Downtown Condo",
-    price: 275000,
-    marketPrice: 325000,
-    image: "https://placehold.co/600x400?text=Property+Image",
-    location: "456 Market St, San Francisco, CA",
-    beds: 2,
-    baths: 2,
-    sqft: 1200,
-    belowMarket: 15,
-  },
-];
-
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [myProperties, setMyProperties] = useState<Property[]>([]);
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { notifications, markAsRead, clearAll } = useNotifications();
   
   // Form fields
@@ -100,48 +74,53 @@ const Dashboard: React.FC = () => {
   });
 
   useEffect(() => {
-    // Load properties from localStorage
-    const storedProperties = localStorage.getItem("propertyListings");
-    if (storedProperties) {
-      const parsedProperties = JSON.parse(storedProperties);
-      setMyProperties(parsedProperties);
-    } else {
-      // No properties in localStorage, set mock data
-      setMyProperties(mockProperties);
-      // Save mock data to localStorage
-      localStorage.setItem("propertyListings", JSON.stringify(mockProperties));
-    }
-
-    // Set mock waitlist data
-    const mockWaitlistUsers: WaitlistUser[] = [
-      {
-        id: "user1",
-        name: "John Doe",
-        email: "john@example.com",
-        phone: "555-123-4567",
-        propertyId: "prop1",
-        status: "pending"
-      },
-      {
-        id: "user2",
-        name: "Jane Smith",
-        email: "jane@example.com",
-        phone: "555-987-6543",
-        propertyId: "prop2",
-        status: "accepted"
-      },
-      {
-        id: "user3",
-        name: "Bob Johnson",
-        email: "bob@example.com",
-        phone: "555-555-5555",
-        propertyId: "prop1",
-        status: "declined"
-      },
-    ];
+    if (!user) return;
     
-    setWaitlistUsers(mockWaitlistUsers);
-  }, []);
+    const fetchUserProperties = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('*')
+          .eq('user_id', user.id);
+          
+        if (error) {
+          console.error("Error fetching properties:", error);
+          toast.error("Failed to load your properties");
+          return;
+        }
+        
+        if (data && data.length > 0) {
+          // Transform data to match our Property interface
+          const formattedProperties = data.map(prop => ({
+            id: prop.id,
+            title: prop.title,
+            price: Number(prop.price),
+            marketPrice: Number(prop.market_price),
+            image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://placehold.co/600x400?text=Property+Image",
+            location: prop.location,
+            beds: prop.beds || 0,
+            baths: prop.baths || 0,
+            sqft: prop.sqft || 0,
+            belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100)
+          }));
+          
+          setMyProperties(formattedProperties);
+        } else {
+          setMyProperties([]);
+        }
+      } catch (error) {
+        console.error("Exception fetching properties:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchUserProperties();
+    
+    // Initialize empty waitlist instead of mock data
+    setWaitlistUsers([]);
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -151,8 +130,13 @@ const Dashboard: React.FC = () => {
     });
   };
 
-  const handleAddProperty = (e: React.FormEvent) => {
+  const handleAddProperty = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      toast.error("You must be logged in to add a property");
+      return;
+    }
     
     // Validate form
     if (!newProperty.title || !newProperty.price || !newProperty.location) {
@@ -160,60 +144,104 @@ const Dashboard: React.FC = () => {
       return;
     }
     
-    // Create new property
-    const price = parseFloat(newProperty.price);
-    const marketPrice = parseFloat(newProperty.marketPrice) || price * 1.2;
-    const belowMarket = Math.round(((marketPrice - price) / marketPrice) * 100);
+    setIsLoading(true);
     
-    const newPropertyObj: Property = {
-      id: `prop${Date.now()}`,
-      title: newProperty.title,
-      price: price,
-      marketPrice: marketPrice,
-      image: "https://placehold.co/600x400?text=New+Property",
-      location: newProperty.location,
-      beds: parseInt(newProperty.beds) || 0,
-      baths: parseInt(newProperty.baths) || 0,
-      sqft: parseInt(newProperty.sqft) || 0,
-      belowMarket: belowMarket,
-    };
-    
-    // Add to properties list
-    const updatedProperties = [...myProperties, newPropertyObj];
-    setMyProperties(updatedProperties);
-    
-    // Save to localStorage
-    localStorage.setItem("propertyListings", JSON.stringify(updatedProperties));
-    
-    // Reset form
-    setNewProperty({
-      title: "",
-      price: "",
-      marketPrice: "",
-      location: "",
-      beds: "",
-      baths: "",
-      sqft: "",
-    });
-    
-    setShowAddForm(false);
-    toast.success("Property added successfully!");
+    try {
+      // Create new property
+      const price = parseFloat(newProperty.price);
+      const marketPrice = parseFloat(newProperty.marketPrice) || price * 1.2;
+      
+      const { data, error } = await supabase
+        .from('property_listings')
+        .insert([
+          {
+            title: newProperty.title,
+            price: price,
+            market_price: marketPrice,
+            location: newProperty.location,
+            beds: parseInt(newProperty.beds) || 0,
+            baths: parseInt(newProperty.baths) || 0,
+            sqft: parseInt(newProperty.sqft) || 0,
+            user_id: user.id,
+            images: ["https://placehold.co/600x400?text=New+Property"]
+          }
+        ])
+        .select();
+        
+      if (error) {
+        console.error("Error adding property:", error);
+        toast.error("Failed to add property");
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        // Calculate below market percentage
+        const belowMarket = Math.round(((marketPrice - price) / marketPrice) * 100);
+        
+        // Add to the UI
+        const newPropertyObj: Property = {
+          id: data[0].id,
+          title: newProperty.title,
+          price: price,
+          marketPrice: marketPrice,
+          image: "https://placehold.co/600x400?text=New+Property",
+          location: newProperty.location,
+          beds: parseInt(newProperty.beds) || 0,
+          baths: parseInt(newProperty.baths) || 0,
+          sqft: parseInt(newProperty.sqft) || 0,
+          belowMarket: belowMarket,
+        };
+        
+        setMyProperties([...myProperties, newPropertyObj]);
+        
+        // Reset form
+        setNewProperty({
+          title: "",
+          price: "",
+          marketPrice: "",
+          location: "",
+          beds: "",
+          baths: "",
+          sqft: "",
+        });
+        
+        setShowAddForm(false);
+        toast.success("Property added successfully!");
+      }
+    } catch (error) {
+      console.error("Exception adding property:", error);
+      toast.error("Failed to add property");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleUnlistProperty = (propertyId: string) => {
-    // Filter out the property to be removed
-    const updatedProperties = myProperties.filter(property => property.id !== propertyId);
+  const handleUnlistProperty = async (propertyId: string) => {
+    if (!user) return;
     
-    // Update state and localStorage
-    setMyProperties(updatedProperties);
-    localStorage.setItem("propertyListings", JSON.stringify(updatedProperties));
-    
-    // Remove associated waitlist entries
-    const updatedWaitlist = waitlistUsers.filter(user => user.propertyId !== propertyId);
-    setWaitlistUsers(updatedWaitlist);
-    
-    // Show success message
-    toast.success("Property unlisted successfully");
+    try {
+      const { error } = await supabase
+        .from('property_listings')
+        .delete()
+        .eq('id', propertyId)
+        .eq('user_id', user.id);
+        
+      if (error) {
+        console.error("Error deleting property:", error);
+        toast.error("Failed to unlist property");
+        return;
+      }
+      
+      // Update UI
+      const updatedProperties = myProperties.filter(property => property.id !== propertyId);
+      setMyProperties(updatedProperties);
+      
+      // Show success message
+      toast.success("Property unlisted successfully");
+    } catch (error) {
+      console.error("Exception unlisting property:", error);
+      toast.error("Failed to unlist property");
+    }
   };
 
   const handleUpdateWaitlistStatus = (userId: string, newStatus: "accepted" | "declined") => {
@@ -385,14 +413,22 @@ const Dashboard: React.FC = () => {
                       </div>
                     </div>
                     
-                    <Button type="submit" className="neo-button-primary">
-                      Add Property
+                    <Button 
+                      type="submit" 
+                      className="neo-button-primary"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Adding Property..." : "Add Property"}
                     </Button>
                   </form>
                 </div>
               ) : (
                 <>
-                  {myProperties.length > 0 ? (
+                  {isLoading ? (
+                    <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                      <p className="mb-6">Loading your properties...</p>
+                    </div>
+                  ) : myProperties.length > 0 ? (
                     <div className="grid md:grid-cols-1 gap-6">
                       {myProperties.map((property) => (
                         <div key={property.id} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
@@ -428,8 +464,8 @@ const Dashboard: React.FC = () => {
                                 <Button asChild className="neo-button" variant="outline">
                                   <Link to={`/property/${property.id}`}>View Listing</Link>
                                 </Button>
-                                <Button className="neo-button-primary">
-                                  Edit
+                                <Button asChild className="neo-button-primary">
+                                  <Link to={`/property/${property.id}/edit`}>Edit</Link>
                                 </Button>
                                 <Button 
                                   variant="destructive" 
@@ -569,7 +605,7 @@ const Dashboard: React.FC = () => {
                       <Label htmlFor="name" className="font-bold">Full Name</Label>
                       <Input
                         id="name"
-                        defaultValue="John Doe"
+                        defaultValue={user?.user_metadata?.name || ""}
                         className="mt-2 border-2 border-black"
                       />
                     </div>
@@ -578,8 +614,9 @@ const Dashboard: React.FC = () => {
                       <Label htmlFor="email" className="font-bold">Email Address</Label>
                       <Input
                         id="email"
-                        defaultValue="john@example.com"
+                        defaultValue={user?.email || ""}
                         className="mt-2 border-2 border-black"
+                        disabled
                       />
                     </div>
                     
@@ -587,7 +624,7 @@ const Dashboard: React.FC = () => {
                       <Label htmlFor="phone" className="font-bold">Phone Number</Label>
                       <Input
                         id="phone"
-                        defaultValue="555-123-4567"
+                        defaultValue={user?.user_metadata?.phone || ""}
                         className="mt-2 border-2 border-black"
                       />
                     </div>
@@ -677,38 +714,32 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
                 
-                <div className="divide-y-2 divide-gray-200">
-                  <div className="p-4 bg-blue-50">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-lg">New waitlist request</h3>
-                        <p>John Doe has requested to join the waitlist for Modern Townhouse.</p>
-                        <p className="text-sm text-gray-500 mt-2">2 hours ago</p>
+                {notifications.length > 0 ? (
+                  <div className="divide-y-2 divide-gray-200">
+                    {notifications.map(notification => (
+                      <div key={notification.id} className={`p-4 ${!notification.read ? 'bg-blue-50' : ''}`}>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-bold text-lg">{notification.title}</h3>
+                            <p>{notification.message}</p>
+                            <p className="text-sm text-gray-500 mt-2">
+                              {notification.timestamp.toLocaleString()}
+                            </p>
+                          </div>
+                          {!notification.read && (
+                            <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded">NEW</div>
+                          )}
+                        </div>
                       </div>
-                      <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded">NEW</div>
-                    </div>
+                    ))}
                   </div>
-                  
-                  <div className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-lg">Price update</h3>
-                        <p>The market price for Downtown Condo has been updated.</p>
-                        <p className="text-sm text-gray-500 mt-2">1 day ago</p>
-                      </div>
-                    </div>
+                ) : (
+                  <div className="p-12 text-center">
+                    <Bell size={48} className="mx-auto mb-4 text-gray-400" />
+                    <h3 className="text-xl font-bold mb-2">No Notifications</h3>
+                    <p className="text-gray-500">You don't have any notifications yet.</p>
                   </div>
-                  
-                  <div className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-lg">Waitlist status</h3>
-                        <p>Your request to join the waitlist for Suburban House has been accepted.</p>
-                        <p className="text-sm text-gray-500 mt-2">3 days ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>
