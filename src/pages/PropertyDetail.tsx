@@ -133,23 +133,6 @@ const PropertyDetail: React.FC = () => {
             sellerData = seller;
             console.log("Seller data from Supabase:", sellerData);
           }
-          
-          if (!sellerData || (!sellerData.phone && !sellerData.email)) {
-            console.log("Attempting to fetch seller from auth users");
-            
-            const { data: authUser, error: authError } = await supabase
-              .from('users')
-              .select('email')
-              .eq('id', propertyData.user_id)
-              .single();
-              
-            if (!authError && authUser) {
-              sellerData = {
-                ...sellerData,
-                email: authUser.email
-              };
-            }
-          }
         }
         
         if (propertyData) {
