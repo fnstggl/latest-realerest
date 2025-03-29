@@ -93,6 +93,8 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            {/* Redirect the /pricing route to the home page */}
+            <Route path="/pricing" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

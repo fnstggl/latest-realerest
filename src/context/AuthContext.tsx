@@ -12,11 +12,11 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean; // Add this property to the interface
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  accountType: string; // Will be removed in future refactoring
+  accountType: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,6 +54,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         );
 
+        // Add a timeout to prevent infinite loading
+        const timeoutId = setTimeout(() => {
+          if (isLoading) {
+            console.log('Auth loading timeout reached, forcing completion');
+            setIsLoading(false);
+          }
+        }, 5000); // 5 second timeout
+
         // Then check for existing session
         const { data: { session } } = await supabase.auth.getSession();
           
@@ -63,9 +71,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         
         setIsLoading(false);
+        clearTimeout(timeoutId); // Clear timeout if auth completes normally
         
         return () => {
           subscription.unsubscribe();
+          clearTimeout(timeoutId);
         };
       } catch (error) {
         console.error("Error in auth setup:", error);
@@ -214,7 +224,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     <AuthContext.Provider value={{ 
       user, 
       isAuthenticated, 
-      isLoading, // Expose isLoading to consumers
+      isLoading,
       login, 
       signup, 
       logout,
