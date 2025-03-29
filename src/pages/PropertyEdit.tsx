@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -20,6 +19,7 @@ interface Property {
   image: string;
   images?: string[];
   location: string;
+  full_address?: string;
   beds: number;
   baths: number;
   sqft: number;
@@ -40,6 +40,7 @@ const PropertyEdit: React.FC = () => {
     price: "",
     marketPrice: "",
     location: "",
+    full_address: "",
     beds: "",
     baths: "",
     sqft: "",
@@ -52,7 +53,6 @@ const PropertyEdit: React.FC = () => {
     const fetchProperty = async () => {
       setLoading(true);
       try {
-        // Get from localStorage first for immediate display
         const allListingsJSON = localStorage.getItem('propertyListings');
         if (allListingsJSON) {
           const allListings = JSON.parse(allListingsJSON);
@@ -65,6 +65,7 @@ const PropertyEdit: React.FC = () => {
               price: foundProperty.price.toString(),
               marketPrice: foundProperty.marketPrice.toString(),
               location: foundProperty.location,
+              full_address: foundProperty.full_address || foundProperty.location,
               beds: foundProperty.beds.toString(),
               baths: foundProperty.baths.toString(),
               sqft: foundProperty.sqft.toString(),
@@ -118,6 +119,7 @@ const PropertyEdit: React.FC = () => {
         price: price,
         marketPrice: marketPrice,
         location: formData.location,
+        full_address: formData.full_address,
         beds: parseInt(formData.beds) || 0,
         baths: parseInt(formData.baths) || 0,
         sqft: parseInt(formData.sqft) || 0,
@@ -127,7 +129,6 @@ const PropertyEdit: React.FC = () => {
         estimatedRehab: estimatedRehab,
       };
       
-      // Update in localStorage
       const allListingsJSON = localStorage.getItem('propertyListings');
       if (allListingsJSON) {
         const allListings = JSON.parse(allListingsJSON);
@@ -138,7 +139,6 @@ const PropertyEdit: React.FC = () => {
         localStorage.setItem("propertyListings", JSON.stringify(updatedListings));
       }
       
-      // Update in Supabase (assuming a property_listings table exists)
       const { error } = await supabase
         .from('property_listings')
         .update({
@@ -146,6 +146,7 @@ const PropertyEdit: React.FC = () => {
           price: price,
           market_price: marketPrice,
           location: formData.location,
+          full_address: formData.full_address,
           beds: parseInt(formData.beds) || 0,
           baths: parseInt(formData.baths) || 0,
           sqft: parseInt(formData.sqft) || 0,
@@ -230,7 +231,19 @@ const PropertyEdit: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="location" className="font-bold">Location</Label>
+                <Label htmlFor="full_address" className="font-bold">Full Address</Label>
+                <Input
+                  id="full_address"
+                  name="full_address"
+                  value={formData.full_address}
+                  onChange={handleInputChange}
+                  className="mt-2 border-2 border-black"
+                  required
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="location" className="font-bold">Display Location</Label>
                 <Input
                   id="location"
                   name="location"

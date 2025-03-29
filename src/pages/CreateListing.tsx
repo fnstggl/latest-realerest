@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -162,6 +161,9 @@ const CreateListing: React.FC = () => {
       // Create the location string from city, state and zip
       const location = `${values.city}, ${values.state} ${values.zipCode}`;
       
+      // Store the full address separately from the display location
+      const fullAddress = values.address;
+      
       // Calculate below market percentage
       const price = Number(values.price);
       const marketPrice = Number(values.marketPrice);
@@ -189,6 +191,7 @@ const CreateListing: React.FC = () => {
           price: price,
           market_price: marketPrice,
           location: location,
+          full_address: fullAddress,
           description: values.description,
           beds: parseInt(values.beds),
           baths: parseInt(values.baths),

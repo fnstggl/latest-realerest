@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -19,6 +18,7 @@ interface Property {
   image: string;
   images?: string[];
   location: string;
+  full_address?: string;
   beds: number;
   baths: number;
   sqft: number;
@@ -119,6 +119,7 @@ const PropertyDetail: React.FC = () => {
               : '/placeholder.svg',
             images: propertyData.images || [],
             location: propertyData.location || 'Unknown location',
+            full_address: propertyData.full_address || propertyData.location,
             beds: propertyData.beds || 0,
             baths: propertyData.baths || 0,
             sqft: propertyData.sqft || 0,
@@ -207,15 +208,11 @@ const PropertyDetail: React.FC = () => {
     // If owner or approved, show full address
     if (isOwner || isApproved) {
       return (
-        <span className="font-medium">{property.location}</span>
+        <span className="font-medium">{property.full_address || property.location}</span>
       );
     }
     
     // For non-approved users, hide street address but show city/state/zip
-    const parts = property.location.split(',');
-    const streetAddress = parts[0];
-    const restOfAddress = parts.slice(1).join(',');
-    
     return (
       <span className="font-medium">
         <span 
@@ -224,7 +221,7 @@ const PropertyDetail: React.FC = () => {
         >
           Join Waitlist For Address
         </span>
-        {restOfAddress ? `,${restOfAddress}` : ''}
+        {property.location.includes(',') ? `, ${property.location.split(',').slice(1).join(',')}` : ''}
       </span>
     );
   };
@@ -395,13 +392,17 @@ const PropertyDetail: React.FC = () => {
                 {property.sellerPhone && property.sellerPhone !== 'No phone number provided' && (
                   <div className="flex items-center">
                     <Phone size={16} className="mr-2" />
-                    <span>{property.sellerPhone}</span>
+                    <a href={`tel:${property.sellerPhone}`} className="text-blue-600 hover:underline">
+                      {property.sellerPhone}
+                    </a>
                   </div>
                 )}
                 {property.sellerEmail && property.sellerEmail !== 'No email provided' && (
                   <div className="flex items-center mt-1">
                     <Mail size={16} className="mr-2" />
-                    <span>{property.sellerEmail}</span>
+                    <a href={`mailto:${property.sellerEmail}`} className="text-blue-600 hover:underline">
+                      {property.sellerEmail}
+                    </a>
                   </div>
                 )}
               </div>

@@ -110,6 +110,7 @@ export type Database = {
           created_at: string
           description: string | null
           estimated_rehab: number | null
+          full_address: string | null
           id: string
           images: string[] | null
           location: string
@@ -127,6 +128,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           estimated_rehab?: number | null
+          full_address?: string | null
           id?: string
           images?: string[] | null
           location: string
@@ -144,6 +146,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           estimated_rehab?: number | null
+          full_address?: string | null
           id?: string
           images?: string[] | null
           location?: string
