@@ -6,6 +6,7 @@ import PropertyCard from '@/components/PropertyCard';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Animation variants
 const fadeInUp = {
@@ -32,11 +33,10 @@ const FeaturedProperties: React.FC = () => {
   const navigate = useNavigate();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchListings = async () => {
-      setLoading(true);
-      
       try {
         const { data, error } = await supabase
           .from('property_listings')
@@ -54,11 +54,11 @@ const FeaturedProperties: React.FC = () => {
             id: item.id,
             title: item.title,
             price: item.price,
-            market_price: item.market_price,  // Changed from marketPrice to match Listing interface
+            market_price: item.market_price,
             location: item.location,
-            beds: item.beds,
-            baths: item.baths,
-            sqft: item.sqft,
+            beds: item.beds || 0,
+            baths: item.baths || 0,
+            sqft: item.sqft || 0,
             // Use the first image from the array if available
             image: item.images && item.images.length > 0 ? item.images[0] : 'https://source.unsplash.com/random/800x600?house',
             // Calculate below market percentage
@@ -71,8 +71,12 @@ const FeaturedProperties: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching listings:", error);
+        setError("Failed to load properties. Please try again later.");
       } finally {
-        setLoading(false);
+        // Add a small minimum delay to prevent flash of loading state
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       }
     };
 
@@ -98,14 +102,29 @@ const FeaturedProperties: React.FC = () => {
           Discover properties below market value, exclusively available through DoneDeal.
         </p>
         
-        {loading ? (
+        {error ? (
+          <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <h3 className="text-xl font-bold text-red-600 mb-4">{error}</h3>
+            <Button
+              className="neo-button"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </Button>
+          </div>
+        ) : loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((_, index) => (
-              <div key={index} className="border-4 border-black p-4 h-[400px] animate-pulse">
-                <div className="bg-gray-200 h-[240px] w-full mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+              <div key={index} className="border-4 border-black p-4 h-[400px]">
+                <Skeleton className="h-[240px] w-full mb-4" />
+                <Skeleton className="h-6 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-1/2 mb-4" />
+                <div className="flex gap-4 mb-4">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+                <Skeleton className="h-10 w-full" />
               </div>
             ))}
           </div>
@@ -124,7 +143,7 @@ const FeaturedProperties: React.FC = () => {
                     <PropertyCard
                       id={property.id}
                       price={property.price}
-                      marketPrice={property.market_price}  // Changed from property.marketPrice
+                      marketPrice={property.market_price}
                       image={property.image}
                       location={property.location}
                       address={property.title}

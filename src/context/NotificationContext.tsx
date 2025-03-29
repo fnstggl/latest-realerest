@@ -25,6 +25,7 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   
   // Calculate unread count
@@ -32,32 +33,49 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   
   // Load notifications from localStorage on initial mount and when user changes
   useEffect(() => {
-    if (user) {
-      try {
-        const savedNotifications = localStorage.getItem(`notifications_${user.id}`);
-        if (savedNotifications) {
-          // Parse stored notifications and convert timestamp strings back to Date objects
-          const parsedNotifications = JSON.parse(savedNotifications).map((notification: any) => ({
-            ...notification,
-            timestamp: new Date(notification.timestamp)
-          }));
-          setNotifications(parsedNotifications);
+    const loadNotifications = async () => {
+      setLoading(true);
+      
+      if (user) {
+        try {
+          const savedNotifications = localStorage.getItem(`notifications_${user.id}`);
+          if (savedNotifications) {
+            // Parse stored notifications and convert timestamp strings back to Date objects
+            const parsedNotifications = JSON.parse(savedNotifications).map((notification: any) => ({
+              ...notification,
+              timestamp: new Date(notification.timestamp)
+            }));
+            setNotifications(parsedNotifications);
+          }
+        } catch (error) {
+          console.error('Error loading notifications from localStorage', error);
         }
-      } catch (error) {
-        console.error('Error loading notifications from localStorage', error);
+      } else {
+        // Clear notifications when user logs out
+        setNotifications([]);
       }
-    } else {
-      // Clear notifications when user logs out
-      setNotifications([]);
-    }
+      
+      // Small delay to ensure we don't show loading indicators for too short a time
+      setTimeout(() => {
+        setLoading(false);
+      }, 200);
+    };
+    
+    loadNotifications();
   }, [user]);
   
-  // Save notifications to localStorage whenever they change
+  // Save notifications to localStorage whenever they change, but throttle the saves
   useEffect(() => {
-    if (user && notifications.length > 0) {
-      localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
-    }
-  }, [notifications, user]);
+    if (!user || loading) return;
+    
+    const saveTimer = setTimeout(() => {
+      if (user && notifications.length > 0) {
+        localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
+      }
+    }, 300); // Throttle saves to reduce performance impact
+    
+    return () => clearTimeout(saveTimer);
+  }, [notifications, user, loading]);
   
   const addNotification = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
     const newNotification: Notification = {
