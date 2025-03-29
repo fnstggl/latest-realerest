@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -7,38 +6,37 @@ import PropertyCard from '@/components/PropertyCard';
 import PropertyFilters from '@/components/PropertyFilters';
 import { Button } from "@/components/ui/button";
 import { Sliders, Grid, List, ChevronDown } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useListings, Listing } from '@/hooks/useListings';
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-// Interface for property
-interface Property {
-  id: string;
-  title?: string;
-  price: number;
-  marketPrice: number;
-  image: string;
-  location: string;
-  address?: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  belowMarket: number;
-}
-
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
   
   const [isGridView, setIsGridView] = useState(true);
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Listing[]>([]);
   const [sortOption, setSortOption] = useState("recommended");
-  const [loading, setLoading] = useState(true);
+  
+  // Use our custom hook to fetch listings
+  const { listings: properties, loading, error } = useListings();
+  
+  // Apply search filter when properties or search query changes
+  useEffect(() => {
+    if (searchQuery && properties.length > 0) {
+      const results = properties.filter(property => 
+        property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+      setFilteredProperties(results);
+    } else {
+      setFilteredProperties(properties);
+    }
+  }, [properties, searchQuery]);
   
   // Demo filter function
   const handleFilterChange = (filters: any) => {
@@ -114,113 +112,12 @@ const Search: React.FC = () => {
     setFilteredProperties(sorted);
   };
   
-  // Function to transform Supabase data to our Property interface
-  const transformProperty = (listing: any): Property => {
-    const marketPrice = parseFloat(listing.market_price);
-    const price = parseFloat(listing.price);
-    const belowMarket = Math.round(((marketPrice - price) / marketPrice) * 100);
-    
-    return {
-      id: listing.id,
-      title: listing.title,
-      price: price,
-      marketPrice: marketPrice,
-      image: listing.images && listing.images.length > 0 ? listing.images[0] : '/placeholder.svg',
-      location: listing.location,
-      beds: listing.beds || 0,
-      baths: listing.baths || 0,
-      sqft: listing.sqft || 0,
-      belowMarket: belowMarket
-    };
-  };
-  
+  // Show error toast if there's an error loading properties
   useEffect(() => {
-    // Fetch properties from Supabase first, and fall back to localStorage if that fails
-    const fetchProperties = async () => {
-      setLoading(true);
-      try {
-        // Try to fetch from Supabase first
-        const { data: supabaseListings, error } = await supabase
-          .from('property_listings')
-          .select('*');
-          
-        if (error) {
-          throw error;
-        }
-        
-        if (supabaseListings && supabaseListings.length > 0) {
-          // Transform Supabase data
-          const transformedListings = supabaseListings.map(transformProperty);
-          setProperties(transformedListings);
-          
-          // Apply search filter if search query exists
-          if (searchQuery) {
-            const results = transformedListings.filter(property => 
-              property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
-            );
-            setFilteredProperties(results);
-          } else {
-            setFilteredProperties(transformedListings);
-          }
-        } else {
-          // Fallback to localStorage if no data in Supabase
-          fallbackToLocalStorage();
-        }
-      } catch (error) {
-        console.error("Error fetching from Supabase:", error);
-        // Fallback to localStorage
-        fallbackToLocalStorage();
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    const fallbackToLocalStorage = () => {
-      try {
-        const storedProperties = localStorage.getItem('propertyListings');
-        let loadedProperties: Property[] = [];
-        
-        if (storedProperties) {
-          loadedProperties = JSON.parse(storedProperties);
-          
-          // Make sure each property has the required fields
-          loadedProperties = loadedProperties.map(p => ({
-            id: p.id,
-            title: p.title || 'Property Listing',
-            price: p.price || 0,
-            marketPrice: p.marketPrice || 0,
-            image: p.image || '/placeholder.svg',
-            location: p.location || 'Unknown location',
-            beds: p.beds || 0,
-            baths: p.baths || 0,
-            sqft: p.sqft || 0,
-            belowMarket: p.belowMarket || 0
-          }));
-        }
-        
-        setProperties(loadedProperties);
-        
-        // Apply search filter if search query exists
-        if (searchQuery) {
-          const results = loadedProperties.filter(property => 
-            property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
-          );
-          setFilteredProperties(results);
-        } else {
-          setFilteredProperties(loadedProperties);
-        }
-      } catch (err) {
-        console.error("Error loading from localStorage:", err);
-        toast.error("Unable to load property listings");
-        setProperties([]);
-        setFilteredProperties([]);
-      }
-    };
-
-    fetchProperties();
-  }, [searchQuery]);
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
   
   return (
     <div className="min-h-screen bg-gray-50">

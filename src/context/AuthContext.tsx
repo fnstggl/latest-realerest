@@ -34,49 +34,52 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Set up auth state listener on mount and check for existing session
   useEffect(() => {
+    let timeoutId: number | undefined;
+    let unsubscribe: (() => void) | undefined;
+
     const setupAuth = async () => {
       try {
         console.log("Setting up auth state listener");
         
         // First set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, session) => {
+          (event, session) => {
             console.log('Auth state changed:', event, session?.user?.id);
             
             if (event === 'SIGNED_OUT') {
               setUser(null);
+              setIsLoading(false);
               return;
             }
             
             if (session && session.user) {
-              await fetchUserProfile(session.user);
+              // Instead of awaiting here, which can cause issues,
+              // we trigger the profile fetch asynchronously
+              fetchUserProfile(session.user);
             }
           }
         );
 
-        // Add a timeout to prevent infinite loading
-        const timeoutId = setTimeout(() => {
+        unsubscribe = () => subscription.unsubscribe();
+
+        // Add a timeout to prevent infinite loading (reduced from 5s to 3s)
+        timeoutId = window.setTimeout(() => {
           if (isLoading) {
             console.log('Auth loading timeout reached, forcing completion');
             setIsLoading(false);
           }
-        }, 5000); // 5 second timeout
+        }, 3000); // 3 second timeout
 
         // Then check for existing session
         const { data: { session } } = await supabase.auth.getSession();
           
         if (session?.user) {
           console.log('Found existing session:', session.user.id);
-          await fetchUserProfile(session.user);
+          fetchUserProfile(session.user);
+        } else {
+          // No session found, we can stop loading
+          setIsLoading(false);
         }
-        
-        setIsLoading(false);
-        clearTimeout(timeoutId); // Clear timeout if auth completes normally
-        
-        return () => {
-          subscription.unsubscribe();
-          clearTimeout(timeoutId);
-        };
       } catch (error) {
         console.error("Error in auth setup:", error);
         setIsLoading(false);
@@ -84,6 +87,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     setupAuth();
+    
+    return () => {
+      unsubscribe?.();
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
   // Fetch user profile from the profiles table
@@ -98,45 +106,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .eq('id', supabaseUser.id)
         .maybeSingle();
 
+      // Create user object from available data
+      const newUser: User = {
+        id: supabaseUser.id,
+        name: profile?.name || supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || '',
+        email: profile?.email || supabaseUser.email || ''
+      };
+      
+      setUser(newUser);
+      setIsLoading(false);
+      
+      // If there was an error fetching the profile, log it but don't block auth
       if (error) {
         console.error('Error fetching profile:', error);
-        
-        // If no profile exists, create a fallback user object from auth
-        const newUser: User = {
-          id: supabaseUser.id,
-          name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || '',
-          email: supabaseUser.email || ''
-        };
-        
-        setUser(newUser);
-        return;
-      }
-
-      if (profile) {
-        console.log('Found profile:', profile);
-        
-        // Create user object from profile data
-        const profileUser: User = {
-          id: profile.id,
-          name: profile.name || supabaseUser.user_metadata?.name || '',
-          email: profile.email || supabaseUser.email || '',
-        };
-        
-        setUser(profileUser);
-      } else {
-        console.log('No profile found, creating from auth data');
-        
-        // Create user object directly from auth data if no profile found
-        const newUser: User = {
-          id: supabaseUser.id,
-          name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || '',
-          email: supabaseUser.email || ''
-        };
-        
-        setUser(newUser);
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
+      setIsLoading(false);
     }
   };
 
