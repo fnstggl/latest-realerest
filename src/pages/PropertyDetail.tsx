@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -8,6 +7,7 @@ import { formatCurrency } from '@/lib/utils';
 import WaitlistButton from '@/components/WaitlistButton';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Property {
   id: string;
@@ -55,21 +55,75 @@ const PropertyDetail: React.FC = () => {
       }
       
       // Check if the user is the owner of this property
-      const allListingsJSON = localStorage.getItem('propertyListings');
-      if (allListingsJSON) {
-        const allListings = JSON.parse(allListingsJSON);
-        const propertyObj = allListings.find((p: Property) => p.id === id);
-        
-        if (propertyObj && propertyObj.sellerId === user.id) {
-          setIsOwner(true);
-        }
-      }
+      // We'll update this check when we fetch the property
     }
   }, [user?.id, id]);
 
   useEffect(() => {
-    const fetchProperty = () => {
+    const fetchProperty = async () => {
+      if (!id) return;
+      
       setLoading(true);
+      try {
+        // First try to fetch from Supabase
+        const { data: propertyData, error } = await supabase
+          .from('property_listings')
+          .select('*')
+          .eq('id', id)
+          .single();
+          
+        if (error) {
+          console.error("Error fetching from Supabase:", error);
+          throw error;
+        }
+        
+        if (propertyData) {
+          // Transform the property data
+          const transformedProperty: Property = {
+            id: propertyData.id,
+            title: propertyData.title || 'Property Listing',
+            price: Number(propertyData.price) || 0,
+            marketPrice: Number(propertyData.market_price) || 0,
+            description: propertyData.description,
+            image: propertyData.images && propertyData.images.length > 0 
+              ? propertyData.images[0] 
+              : '/placeholder.svg',
+            images: propertyData.images || [],
+            location: propertyData.location || 'Unknown location',
+            beds: propertyData.beds || 0,
+            baths: propertyData.baths || 0,
+            sqft: propertyData.sqft || 0,
+            belowMarket: calculateBelowMarket(Number(propertyData.market_price), Number(propertyData.price)),
+            sellerId: propertyData.user_id
+          };
+          
+          setProperty(transformedProperty);
+          
+          // Check if user is the owner
+          if (user?.id && user.id === propertyData.user_id) {
+            setIsOwner(true);
+          }
+          
+          // Set the active image
+          if (transformedProperty.images && transformedProperty.images.length > 0) {
+            setActiveImage(transformedProperty.images[0]);
+          } else {
+            setActiveImage(transformedProperty.image);
+          }
+        } else {
+          // Fallback to localStorage if not found in Supabase
+          fallbackToLocalStorage();
+        }
+      } catch (error) {
+        console.error("Error fetching property:", error);
+        // Fallback to localStorage
+        fallbackToLocalStorage();
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    const fallbackToLocalStorage = () => {
       try {
         // Get from localStorage
         const allListingsJSON = localStorage.getItem('propertyListings');
@@ -79,25 +133,36 @@ const PropertyDetail: React.FC = () => {
           
           if (foundProperty) {
             setProperty(foundProperty);
+            
+            // Check if user is the owner
+            if (user?.id && foundProperty.sellerId === user.id) {
+              setIsOwner(true);
+            }
+            
             if (foundProperty.images && foundProperty.images.length > 0) {
               setActiveImage(foundProperty.images[0]);
             } else {
               setActiveImage(foundProperty.image);
             }
+          } else {
+            toast.error("Property not found");
           }
+        } else {
+          toast.error("No property listings found");
         }
       } catch (error) {
-        console.error("Error fetching property:", error);
+        console.error("Error fetching property from localStorage:", error);
         toast.error("Failed to load property details");
-      } finally {
-        setLoading(false);
       }
     };
+    
+    const calculateBelowMarket = (marketPrice: number, listingPrice: number): number => {
+      if (!marketPrice || !listingPrice || marketPrice <= 0) return 0;
+      return Math.round(((marketPrice - listingPrice) / marketPrice) * 100);
+    };
 
-    if (id) {
-      fetchProperty();
-    }
-  }, [id]);
+    fetchProperty();
+  }, [id, user?.id]);
 
   if (loading) {
     return (
