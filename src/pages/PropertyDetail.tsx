@@ -189,13 +189,7 @@ const PropertyDetail: React.FC = () => {
   }, [id, user?.id]);
 
   const getDisplayLocation = () => {
-    if (isOwner || isApproved) {
-      return property?.location;
-    }
-    return property?.location.replace(
-      /^[^,]+/, 
-      "<span class='cursor-pointer text-blue-600 hover:underline' onClick={() => setShowWaitlistDialog(true)}>[Join Waitlist For Address]</span>"
-    );
+    return property?.location;
   };
 
   const handleAddressClick = (e: React.MouseEvent) => {

@@ -44,6 +44,9 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
             email: user?.email || data.email || "",
             phone: data.phone || ""
           });
+          
+          // Debug log to see what's being retrieved
+          console.log("Retrieved profile data:", data);
         }
       } catch (error) {
         console.error("Error fetching user profile:", error);
@@ -72,6 +75,14 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
     setSaving(true);
     
     try {
+      // Debug log to see what we're sending
+      console.log("Updating profile with data:", {
+        id: user.id,
+        name: formData.name,
+        phone: formData.phone,
+        email: user.email
+      });
+      
       const { error } = await supabase
         .from('profiles')
         .upsert({
@@ -88,6 +99,16 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
       }
       
       toast.success("Profile updated successfully");
+      
+      // Verify the update was successful
+      const { data: updatedProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+        
+      console.log("Profile after update:", updatedProfile);
+      
     } catch (error) {
       console.error("Exception updating profile:", error);
       toast.error("Failed to update profile");
