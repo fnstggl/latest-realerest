@@ -15,6 +15,7 @@ import NotificationsTab from "@/components/dashboard/NotificationsTab";
 import { useProperties } from "@/hooks/useProperties";
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -47,7 +48,7 @@ const Dashboard: React.FC = () => {
             
             <Button 
               className="neo-button-primary"
-              onClick={() => setShowAddForm(true)}
+              onClick={() => navigate('/sell/create')}
             >
               <Plus size={18} className="mr-2" />
               Add Property

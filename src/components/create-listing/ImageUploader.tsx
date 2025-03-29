@@ -17,7 +17,7 @@ interface ImageUploaderProps {
 // Maximum image size in bytes (3MB)
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 // Maximum number of images allowed
-const MAX_IMAGES = 5;
+const MAX_IMAGES = 10; // Changed from 5 to 10
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
   images,

@@ -15,8 +15,10 @@ export const uploadImagesToSupabase = async (files: File[], onProgress?: (progre
   const folderName = `listing-${uuidv4()}`;
   
   try {
-    // Set up concurrency - process up to 2 images at a time
-    const concurrencyLimit = 2;
+    // Adjust concurrency based on file count for optimal performance
+    // For 1-5 files, process 2 at a time
+    // For 6-10 files, process 3 at a time
+    const concurrencyLimit = files.length > 5 ? 3 : 2;
     const results: string[] = [];
     
     // Process files in batches to control concurrency
