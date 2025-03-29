@@ -22,7 +22,6 @@ const SiteFooter: React.FC = () => {
             <ul className="space-y-2">
               <li><Link to="/search" className="text-black hover:text-[#d60013] font-bold">Search Homes</Link></li>
               <li><Link to="/sell/create" className="text-black hover:text-[#d60013] font-bold">List Property</Link></li>
-              <li><Link to="/pricing" className="text-black hover:text-[#d60013] font-bold">Pricing</Link></li>
               <li><Link to="/faq" className="text-black hover:text-[#d60013] font-bold">FAQ</Link></li>
             </ul>
           </div>
