@@ -25,6 +25,14 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
   markAsRead,
   clearAll
 }) => {
+  // Handle property link click
+  const handlePropertyClick = (notification: Notification) => {
+    if (notification.properties?.propertyId) {
+      markAsRead(notification.id);
+      window.location.href = `/property/${notification.properties.propertyId}`;
+    }
+  };
+
   return (
     <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
       <div className="border-b-4 border-black p-4 bg-gray-50">
@@ -58,10 +66,7 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
                       variant="outline" 
                       size="sm"
                       className="mt-2 text-sm"
-                      onClick={() => {
-                        markAsRead(notification.id);
-                        window.location.href = `/property/${notification.properties.propertyId}`;
-                      }}
+                      onClick={() => handlePropertyClick(notification)}
                     >
                       View Property
                     </Button>

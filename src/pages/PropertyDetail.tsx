@@ -119,12 +119,12 @@ const PropertyDetail: React.FC = () => {
             sellerName: sellerData?.name || 'Property Owner',
             sellerPhone: sellerData?.phone || 'No phone number provided',
             sellerEmail: sellerData?.email,
-            afterRepairValue: propertyData.after_repair_value 
+            afterRepairValue: propertyData.after_repair_value !== null 
               ? Number(propertyData.after_repair_value) 
-              : Number(propertyData.market_price) * 1.2,
-            estimatedRehab: propertyData.estimated_rehab 
+              : undefined,
+            estimatedRehab: propertyData.estimated_rehab !== null 
               ? Number(propertyData.estimated_rehab) 
-              : Number(propertyData.market_price) * 0.1
+              : undefined
           };
           
           setProperty(transformedProperty);
@@ -213,7 +213,6 @@ const PropertyDetail: React.FC = () => {
     }
     
     const parts = property.location.split(',');
-    const maskedAddress = "[Join Waitlist For Address]";
     const restOfAddress = parts.slice(1).join(',');
     
     return (
@@ -222,15 +221,15 @@ const PropertyDetail: React.FC = () => {
           className="cursor-pointer text-[#d60013] hover:underline"
           onClick={handleAddressClick}
         >
-          {maskedAddress}
+          [Join Waitlist For Address]
         </span>
         {restOfAddress ? `,${restOfAddress}` : ''}
       </span>
     );
   };
 
-  const canSeeDetailedInfo = () => {
-    return isOwner || isApproved || (user && user.id);
+  const shouldShowDetailedInfo = () => {
+    return true;
   };
 
   if (loading) {
@@ -373,22 +372,22 @@ const PropertyDetail: React.FC = () => {
                         open={showWaitlistDialog}
                         onOpenChange={setShowWaitlistDialog}
                       />
-                      
-                      {canSeeDetailedInfo() && (
-                        <div className="grid grid-cols-2 gap-4 mt-4">
-                          <div className="border-2 border-black p-3">
-                            <div className="text-lg font-bold text-black">{property.afterRepairValue && formatCurrency(property.afterRepairValue)}</div>
-                            <div className="text-xs">After Repair Value</div>
-                          </div>
-                          <div className="border-2 border-black p-3">
-                            <div className="text-lg font-bold text-black">{property.estimatedRehab && formatCurrency(property.estimatedRehab)}</div>
-                            <div className="text-xs">Est. Rehab Cost</div>
-                          </div>
-                        </div>
-                      )}
                     </>
                   )
                 ))
+              )}
+              
+              {property && property.afterRepairValue !== undefined && property.estimatedRehab !== undefined && (
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="border-2 border-black p-3">
+                    <div className="text-lg font-bold text-black">{formatCurrency(property.afterRepairValue)}</div>
+                    <div className="text-xs">After Repair Value</div>
+                  </div>
+                  <div className="border-2 border-black p-3">
+                    <div className="text-lg font-bold text-black">{formatCurrency(property.estimatedRehab)}</div>
+                    <div className="text-xs">Est. Rehab Cost</div>
+                  </div>
+                </div>
               )}
             </div>
             
@@ -451,14 +450,14 @@ const PropertyDetail: React.FC = () => {
                   <span>2-Car Garage</span>
                 </div>
                 
-                {canSeeDetailedInfo() && property?.afterRepairValue && (
+                {property?.afterRepairValue !== undefined && (
                   <div className="flex justify-between">
                     <span className="font-bold">ARV:</span>
                     <span>{formatCurrency(property.afterRepairValue)}</span>
                   </div>
                 )}
                 
-                {canSeeDetailedInfo() && property?.estimatedRehab && (
+                {property?.estimatedRehab !== undefined && (
                   <div className="flex justify-between">
                     <span className="font-bold">Est. Rehab Cost:</span>
                     <span>{formatCurrency(property.estimatedRehab)}</span>

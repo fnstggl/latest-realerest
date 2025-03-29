@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useNotifications } from '@/context/NotificationContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 
 interface NotificationCenterProps {
   showIndicator?: boolean;
@@ -18,6 +19,27 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Show a toast for new notifications
+  useEffect(() => {
+    // Show toast for the most recent unread notification when it appears
+    const getLatestUnread = () => {
+      const unreadNotifications = notifications.filter(n => !n.read);
+      if (unreadNotifications.length > 0) {
+        return unreadNotifications[0]; // Latest is at the top
+      }
+      return null;
+    };
+
+    const latestUnread = getLatestUnread();
+    if (latestUnread && !isOpen) {
+      // Only show toast if notification popup is not open
+      toast(latestUnread.title, {
+        description: latestUnread.message,
+        duration: 5000,
+      });
+    }
+  }, [notifications, isOpen]);
 
   // Safer function to mark all as read with error handling
   const handleMarkAllAsRead = useCallback(() => {
