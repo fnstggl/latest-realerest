@@ -74,11 +74,12 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          id: user.id,
           name: formData.name,
-          phone: formData.phone
-        })
-        .eq('id', user.id);
+          phone: formData.phone,
+          email: user.email
+        }, { onConflict: 'id' });
         
       if (error) {
         console.error("Error updating profile:", error);
