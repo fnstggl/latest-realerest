@@ -17,19 +17,19 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 interface BlogPost {
   id: string;
   title: string;
   excerpt: string;
+  content: string;
   author: string;
-  date: string; // formatted date
-  read_time: string; // formatted read time
-  image: string;
   user_id: string;
+  image: string;
+  read_time: number;
   created_at: string;
+  date?: string; // formatted date
 }
 
 const Blog: React.FC = () => {
@@ -63,7 +63,6 @@ const Blog: React.FC = () => {
             month: 'long',
             day: 'numeric'
           }),
-          read_time: `${post.read_time} min read`
         }));
         setBlogPosts(formattedPosts);
       }
@@ -183,7 +182,7 @@ const Blog: React.FC = () => {
                       </div>
                       <div className="flex items-center">
                         <Clock size={14} className="mr-1" />
-                        <span>{post.read_time}</span>
+                        <span>{post.read_time} min read</span>
                       </div>
                     </div>
                     
@@ -236,7 +235,7 @@ const Blog: React.FC = () => {
             </div>
           )}
           
-          {filteredPosts.length > 0 && (
+          {filteredPosts.length > 6 && (
             <div className="text-center mt-12">
               <Button className="neo-button-primary">
                 Load More Articles
