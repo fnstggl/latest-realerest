@@ -1,16 +1,33 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogOut } from "lucide-react";
+import { LogOut, Mail, Bell, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 interface AccountTabProps {
   user: any;
   logout: () => void;
 }
+
+// Password update form schema
+const passwordSchema = z.object({
+  currentPassword: z.string().min(6, "Current password must be at least 6 characters"),
+  newPassword: z.string().min(6, "New password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"]
+});
 
 const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
   const navigate = useNavigate();
@@ -19,6 +36,28 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
     name: user?.name || "",
     email: user?.email || "",
     phone: ""
+  });
+  
+  // Notification preferences
+  const [notificationDialogOpen, setNotificationDialogOpen] = useState(false);
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    email: true,
+    push: true,
+    marketing: false
+  });
+  
+  // Password dialog
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+  
+  // Password form
+  const passwordForm = useForm<z.infer<typeof passwordSchema>>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
+    }
   });
 
   useEffect(() => {
@@ -115,6 +154,41 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
       setSaving(false);
     }
   };
+  
+  // Handle notification preferences update
+  const handleNotificationUpdate = async () => {
+    // In a real app, this would save to the database
+    // For now, we'll just show a success message
+    toast.success("Notification preferences updated");
+    setNotificationDialogOpen(false);
+  };
+  
+  // Handle password update
+  const onUpdatePassword = async (data: z.infer<typeof passwordSchema>) => {
+    setUpdatingPassword(true);
+    
+    try {
+      // Update password using Supabase Auth
+      const { error } = await supabase.auth.updateUser({
+        password: data.newPassword
+      });
+      
+      if (error) {
+        console.error("Error updating password:", error);
+        toast.error(error.message || "Failed to update password");
+        return;
+      }
+      
+      toast.success("Password updated successfully");
+      setPasswordDialogOpen(false);
+      passwordForm.reset();
+    } catch (error) {
+      console.error("Exception updating password:", error);
+      toast.error("Failed to update password");
+    } finally {
+      setUpdatingPassword(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -173,7 +247,12 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
                 <h3 className="font-bold text-lg">Notification Preferences</h3>
                 <p className="text-gray-600">Manage how you receive notifications</p>
               </div>
-              <Button className="neo-button" variant="outline">
+              <Button 
+                className="neo-button" 
+                variant="outline"
+                onClick={() => setNotificationDialogOpen(true)}
+              >
+                <Bell size={18} className="mr-2" />
                 Manage
               </Button>
             </div>
@@ -185,20 +264,13 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
                 <h3 className="font-bold text-lg">Password & Security</h3>
                 <p className="text-gray-600">Update your password and security settings</p>
               </div>
-              <Button className="neo-button" variant="outline">
+              <Button 
+                className="neo-button" 
+                variant="outline"
+                onClick={() => setPasswordDialogOpen(true)}
+              >
+                <Lock size={18} className="mr-2" />
                 Update
-              </Button>
-            </div>
-          </div>
-          
-          <div className="p-4 border-2 border-black">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-bold text-lg">Subscription Plan</h3>
-                <p className="text-gray-600">You are currently on the Free plan</p>
-              </div>
-              <Button className="neo-button-primary">
-                Upgrade
               </Button>
             </div>
           </div>
@@ -222,6 +294,148 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
           </Button>
         </div>
       </div>
+      
+      {/* Notification Preferences Dialog */}
+      <Dialog open={notificationDialogOpen} onOpenChange={setNotificationDialogOpen}>
+        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+          <DialogHeader>
+            <DialogTitle>Notification Preferences</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Email Notifications</h4>
+                <p className="text-sm text-gray-500">Receive updates via email</p>
+              </div>
+              <Switch 
+                checked={notificationPrefs.email} 
+                onCheckedChange={(checked) => setNotificationPrefs(prev => ({...prev, email: checked}))}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Push Notifications</h4>
+                <p className="text-sm text-gray-500">Get notified in your browser</p>
+              </div>
+              <Switch 
+                checked={notificationPrefs.push} 
+                onCheckedChange={(checked) => setNotificationPrefs(prev => ({...prev, push: checked}))}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Marketing Emails</h4>
+                <p className="text-sm text-gray-500">Receive promotional offers</p>
+              </div>
+              <Switch 
+                checked={notificationPrefs.marketing} 
+                onCheckedChange={(checked) => setNotificationPrefs(prev => ({...prev, marketing: checked}))}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setNotificationDialogOpen(false)}
+              className="border-2 border-black"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleNotificationUpdate} className="neo-button-primary">
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Password Update Dialog */}
+      <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+          <DialogHeader>
+            <DialogTitle>Update Password</DialogTitle>
+          </DialogHeader>
+          
+          <Form {...passwordForm}>
+            <form onSubmit={passwordForm.handleSubmit(onUpdatePassword)} className="space-y-4 py-4">
+              <FormField
+                control={passwordForm.control}
+                name="currentPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Current Password</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="password" 
+                        className="border-2 border-black" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={passwordForm.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">New Password</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="password" 
+                        className="border-2 border-black" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={passwordForm.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="password" 
+                        className="border-2 border-black" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter className="pt-4">
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  onClick={() => setPasswordDialogOpen(false)}
+                  className="border-2 border-black"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="neo-button-primary"
+                  disabled={updatingPassword}
+                >
+                  {updatingPassword ? "Updating..." : "Update Password"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

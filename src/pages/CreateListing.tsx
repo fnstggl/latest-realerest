@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { z } from "zod";
@@ -9,21 +9,31 @@ import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
-// Import refactored components
+// Import formSchema (small import)
 import { formSchema } from '@/components/create-listing/formSchema';
-import PropertyTypeSection from '@/components/create-listing/PropertyTypeSection';
-import AddressSection from '@/components/create-listing/AddressSection';
-import PropertyDetailsSection from '@/components/create-listing/PropertyDetailsSection';
-import PriceSection from '@/components/create-listing/PriceSection';
-import ComparableSection from '@/components/create-listing/ComparableSection';
-import ImageUploader from '@/components/create-listing/ImageUploader';
-import SubmitSection from '@/components/create-listing/SubmitSection';
-import { uploadImagesToSupabase, createNotification } from '@/components/create-listing/UploadService';
+
+// Lazy load heavier components
+const PropertyTypeSection = lazy(() => import('@/components/create-listing/PropertyTypeSection'));
+const AddressSection = lazy(() => import('@/components/create-listing/AddressSection'));
+const PropertyDetailsSection = lazy(() => import('@/components/create-listing/PropertyDetailsSection'));
+const PriceSection = lazy(() => import('@/components/create-listing/PriceSection'));
+const ComparableSection = lazy(() => import('@/components/create-listing/ComparableSection'));
+const ImageUploader = lazy(() => import('@/components/create-listing/ImageUploader'));
+const SubmitSection = lazy(() => import('@/components/create-listing/SubmitSection'));
+const { uploadImagesToSupabase, createNotification } = await import('@/components/create-listing/UploadService');
 
 // Use a smaller default image size for faster loading
 const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
+
+// Loading fallback component
+const LoadingFallback = () => (
+  <div className="flex justify-center items-center p-8">
+    <Loader2 className="h-8 w-8 animate-spin text-[#d60013]" />
+  </div>
+);
 
 const CreateListing: React.FC = () => {
   const navigate = useNavigate();
@@ -32,6 +42,7 @@ const CreateListing: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { user, isAuthenticated, logout } = useAuth();
 
@@ -56,6 +67,14 @@ const CreateListing: React.FC = () => {
       comparableAddress3: ""
     }
   });
+
+  // Mark page as loaded after initial render
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPageLoaded(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -254,6 +273,21 @@ const CreateListing: React.FC = () => {
     }
   };
 
+  // If page is not fully loaded, show a more pleasant loading state
+  if (!isPageLoaded) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="container mx-auto px-4 py-12 flex justify-center items-center">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin mx-auto text-[#d60013]" />
+            <h2 className="text-xl font-medium mt-4">Loading form...</h2>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -270,34 +304,42 @@ const CreateListing: React.FC = () => {
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                {/* Property Type Dropdown Section */}
-                <PropertyTypeSection form={form} />
+                {/* Use Suspense to lazy-load components */}
+                <Suspense fallback={<LoadingFallback />}>
+                  <PropertyTypeSection form={form} />
+                </Suspense>
                 
-                {/* Property Address Section */}
-                <AddressSection form={form} />
+                <Suspense fallback={<LoadingFallback />}>
+                  <AddressSection form={form} />
+                </Suspense>
                 
-                {/* Property Details Section */}
-                <PropertyDetailsSection form={form} />
+                <Suspense fallback={<LoadingFallback />}>
+                  <PropertyDetailsSection form={form} />
+                </Suspense>
                 
-                {/* Price Information Section */}
-                <PriceSection form={form} />
+                <Suspense fallback={<LoadingFallback />}>
+                  <PriceSection form={form} />
+                </Suspense>
                 
-                {/* Comparable Properties Section */}
-                <ComparableSection form={form} />
+                <Suspense fallback={<LoadingFallback />}>
+                  <ComparableSection form={form} />
+                </Suspense>
                 
-                {/* Property Images Section */}
-                <ImageUploader 
-                  images={images}
-                  setImages={setImages}
-                  imageFiles={imageFiles}
-                  setImageFiles={setImageFiles}
-                  isSubmitting={isSubmitting}
-                  uploadProgress={uploadProgress}
-                  isProcessingImages={isProcessingImages}
-                />
+                <Suspense fallback={<LoadingFallback />}>
+                  <ImageUploader 
+                    images={images}
+                    setImages={setImages}
+                    imageFiles={imageFiles}
+                    setImageFiles={setImageFiles}
+                    isSubmitting={isSubmitting}
+                    uploadProgress={uploadProgress}
+                    isProcessingImages={isProcessingImages}
+                  />
+                </Suspense>
                 
-                {/* Submit Button Section */}
-                <SubmitSection isSubmitting={isSubmitting} />
+                <Suspense fallback={<LoadingFallback />}>
+                  <SubmitSection isSubmitting={isSubmitting} />
+                </Suspense>
               </form>
             </Form>
           </div>

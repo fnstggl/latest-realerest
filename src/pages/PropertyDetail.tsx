@@ -33,6 +33,24 @@ interface Property {
   sellerEmail?: string;
 }
 
+const formatPhoneNumber = (phoneNumber: string | null | undefined): string | null => {
+  if (!phoneNumber) return null;
+  
+  const cleaned = phoneNumber.replace(/\D/g, '');
+  
+  if (cleaned.length < 10) return phoneNumber;
+  
+  if (cleaned.length === 10) {
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+  }
+  
+  if (cleaned.length === 11 && cleaned[0] === '1') {
+    return `+1 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
+  }
+  
+  return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+};
+
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<Property | null>(null);
@@ -106,11 +124,31 @@ const PropertyDetail: React.FC = () => {
             .eq('id', propertyData.user_id)
             .single();
           
-          if (sellerError && sellerError.code !== 'PGRST116') {
+          if (sellerError) {
             console.error("Error fetching seller profile:", sellerError);
+            if (sellerError.code === 'PGRST116') {
+              console.log("No profile found for user ID:", propertyData.user_id);
+            }
           } else {
             sellerData = seller;
             console.log("Seller data from Supabase:", sellerData);
+          }
+          
+          if (!sellerData || (!sellerData.phone && !sellerData.email)) {
+            console.log("Attempting to fetch seller from auth users");
+            
+            const { data: authUser, error: authError } = await supabase
+              .from('users')
+              .select('email')
+              .eq('id', propertyData.user_id)
+              .single();
+              
+            if (!authError && authUser) {
+              sellerData = {
+                ...sellerData,
+                email: authUser.email
+              };
+            }
           }
         }
         
@@ -396,14 +434,16 @@ const PropertyDetail: React.FC = () => {
               <div className="border-2 border-black p-4 mt-6">
                 <h3 className="font-bold mb-2">Contact Seller</h3>
                 <p className="mb-1">{property.sellerName || 'Property Owner'}</p>
+                
                 {property.sellerPhone && (
                   <div className="flex items-center">
                     <Phone size={16} className="mr-2" />
                     <a href={`tel:${property.sellerPhone}`} className="text-blue-600 hover:underline">
-                      {property.sellerPhone}
+                      {formatPhoneNumber(property.sellerPhone)}
                     </a>
                   </div>
                 )}
+                
                 {property.sellerEmail && (
                   <div className="flex items-center mt-1">
                     <Mail size={16} className="mr-2" />
@@ -412,6 +452,7 @@ const PropertyDetail: React.FC = () => {
                     </a>
                   </div>
                 )}
+                
                 {(!property.sellerPhone && !property.sellerEmail) && (
                   <p className="text-gray-500 italic">No contact information available</p>
                 )}
