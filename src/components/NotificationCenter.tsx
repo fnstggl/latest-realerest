@@ -10,7 +10,11 @@ import { Button } from "@/components/ui/button";
 import { useNotifications } from '@/context/NotificationContext';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const NotificationCenter: React.FC = () => {
+interface NotificationCenterProps {
+  showIndicator?: boolean;
+}
+
+const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator = false }) => {
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

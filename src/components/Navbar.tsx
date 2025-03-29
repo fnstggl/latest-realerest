@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -150,7 +149,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <div className="flex gap-4 items-center">
-              <NotificationCenter showIndicator={unreadCount > 0} />
+              <NotificationCenter />
               
               <Button 
                 variant="ghost" 
