@@ -182,8 +182,6 @@ const CreateListing: React.FC = () => {
       console.log("Inserting listing with user_id:", user.id, "Type:", typeof user.id);
       
       // Insert listing into Supabase with explicit type handling
-      // Note: We removed the property_type field as it doesn't exist in the database
-      // Instead, we include the property type in the title
       const { data, error } = await supabase
         .from('property_listings')
         .insert({

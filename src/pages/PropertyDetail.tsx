@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -94,18 +93,25 @@ const PropertyDetail: React.FC = () => {
         
         console.log("Property data from Supabase:", propertyData);
         
-        // Get seller details using the property's user_id
-        const { data: sellerData, error: sellerError } = await supabase
-          .from('profiles')
-          .select('name, email, phone')
-          .eq('id', propertyData.user_id)
-          .single();
+        if (!propertyData.user_id) {
+          console.error("No user_id found for this property listing");
+          toast.error("Seller information not available for this listing");
+        }
         
-        console.log("Seller data from Supabase:", sellerData);
-        
-        if (sellerError && sellerError.code !== 'PGRST116') {
-          console.error("Error fetching seller profile:", sellerError);
-          // Continue without seller data
+        let sellerData = null;
+        if (propertyData.user_id) {
+          const { data: seller, error: sellerError } = await supabase
+            .from('profiles')
+            .select('name, email, phone')
+            .eq('id', propertyData.user_id)
+            .single();
+          
+          if (sellerError && sellerError.code !== 'PGRST116') {
+            console.error("Error fetching seller profile:", sellerError);
+          } else {
+            sellerData = seller;
+            console.log("Seller data from Supabase:", sellerData);
+          }
         }
         
         if (propertyData) {
@@ -120,12 +126,12 @@ const PropertyDetail: React.FC = () => {
               : '/placeholder.svg',
             images: propertyData.images || [],
             location: propertyData.location || 'Unknown location',
-            full_address: propertyData.full_address || propertyData.location,
+            full_address: propertyData.full_address || '',
             beds: propertyData.beds || 0,
             baths: propertyData.baths || 0,
             sqft: propertyData.sqft || 0,
             belowMarket: calculateBelowMarket(Number(propertyData.market_price), Number(propertyData.price)),
-            sellerId: propertyData.user_id,
+            sellerId: propertyData.user_id || null,
             sellerName: sellerData?.name || 'Property Owner',
             sellerPhone: sellerData?.phone || null,
             sellerEmail: sellerData?.email || null,
@@ -206,7 +212,6 @@ const PropertyDetail: React.FC = () => {
   const renderLocation = () => {
     if (!property) return null;
     
-    // If owner or approved, show full address
     if (isOwner || isApproved) {
       return (
         <span className="font-medium">
@@ -215,7 +220,6 @@ const PropertyDetail: React.FC = () => {
       );
     }
     
-    // For non-approved users, hide street address but show city/state/zip
     return (
       <span className="font-medium">
         <span 
