@@ -218,10 +218,10 @@ const PropertyDetail: React.FC = () => {
     return (
       <span className="font-medium">
         <span 
-          className="cursor-pointer text-[#d60013] hover:underline"
+          className="cursor-pointer text-black font-bold hover:underline"
           onClick={handleAddressClick}
         >
-          Request Full Address
+          Join Waitlist For Address
         </span>
         {restOfAddress ? `,${restOfAddress}` : ''}
       </span>
