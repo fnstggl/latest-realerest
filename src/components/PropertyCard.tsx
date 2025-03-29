@@ -39,10 +39,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             alt={location}
             className="h-[240px] w-full object-cover"
           />
-          {/* Below Market Tag as bookmarker on upper left - adjusted position */}
-          <div className="absolute top-12 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-black border-r-[6px] border-b-[6px]">
-            {belowMarket}% OFF
-          </div>
+          {/* Below Market Tag - enhanced with full border and shadow */}
+          {belowMarket > 0 && (
+            <div className="absolute top-12 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+              {belowMarket}% OFF
+            </div>
+          )}
+          
+          {/* Black divider line between image and content */}
+          <div className="h-[6px] w-full bg-black"></div>
         </div>
         
         <div className="p-6">

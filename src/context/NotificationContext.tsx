@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from './AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface Notification {
   id: string;
@@ -9,13 +11,13 @@ export interface Notification {
   message: string;
   read: boolean;
   timestamp: Date;
-  type?: 'info' | 'success' | 'warning' | 'error';
+  type?: 'info' | 'success' | 'warning' | 'error' | 'new_listing';
 }
 
 interface NotificationContextType {
   notifications: Notification[];
   unreadCount: number;
-  addNotification: (title: string, message: string, type?: 'info' | 'success' | 'warning' | 'error') => void;
+  addNotification: (title: string, message: string, type?: 'info' | 'success' | 'warning' | 'error' | 'new_listing') => void;
   markAsRead: (id: string) => void;
   clearAll: () => void;
   removeNotification: (id: string) => void;
@@ -75,6 +77,53 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     loadNotifications();
   }, [user?.id]);
   
+  // Set up Supabase real-time subscription for notifications
+  useEffect(() => {
+    if (!user) return;
+    
+    const channel = supabase
+      .channel('public:notifications')
+      .on('postgres_changes', 
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'notifications' 
+        }, 
+        (payload) => {
+          console.log('New notification received:', payload);
+          
+          // Create a notification from the payload
+          if (payload.new) {
+            const { title, message, type } = payload.new;
+            
+            // Add the notification to the state
+            const newNotification: Notification = {
+              id: uuidv4(),
+              title: title || 'New Notification',
+              message: message || 'You have a new notification',
+              read: false,
+              timestamp: new Date(),
+              type: type || 'info'
+            };
+            
+            setNotifications(prev => [newNotification, ...prev]);
+            
+            // Show a toast for real-time notification
+            toast(title || 'New Notification', {
+              description: message || 'You have a new notification',
+              duration: 5000
+            });
+          }
+        }
+      )
+      .subscribe();
+      
+    // Cleanup subscription on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+  
   // Debounced save to localStorage with error handling
   useEffect(() => {
     if (!user || loading || notifications.length === 0) return;
@@ -92,7 +141,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [notifications, user, loading]);
   
   // Memoize functions to avoid re-renders
-  const addNotification = useCallback((title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+  const addNotification = useCallback((title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' | 'new_listing' = 'info') => {
     const newNotification: Notification = {
       id: uuidv4(),
       title,
@@ -103,6 +152,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     };
     
     setNotifications(prev => [newNotification, ...prev]);
+    
+    // Also show a toast for immediate feedback
+    toast(title, {
+      description: message,
+      duration: 5000
+    });
   }, []);
   
   const markAsRead = useCallback((id: string) => {

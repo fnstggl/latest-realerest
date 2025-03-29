@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -54,6 +53,9 @@ const formSchema = z.object({
   sqft: z.string().min(1, {
     message: "Square footage is required"
   }),
+  propertyType: z.string().min(1, {
+    message: "Property type is required"
+  }),
   afterRepairValue: z.string().optional(),
   estimatedRehab: z.string().optional(),
   comparableAddress1: z.string().optional(),
@@ -93,6 +95,7 @@ const CreateListing: React.FC = () => {
       beds: "",
       baths: "",
       sqft: "",
+      propertyType: "",
       afterRepairValue: "",
       estimatedRehab: "",
       comparableAddress1: "",
@@ -287,8 +290,8 @@ const CreateListing: React.FC = () => {
         ? ((marketPrice - price) / marketPrice * 100).toFixed(1) 
         : "0";
       
-      // Generate title from location and beds/baths
-      const title = `${values.beds} bed, ${values.baths} bath home in ${values.city}, ${values.state}`;
+      // Generate title with property type and location
+      const title = `${values.propertyType} in ${values.city}, ${values.state}`;
       
       // Update progress
       toast.loading("Saving listing details...", { id: loadingToastId });
@@ -310,6 +313,7 @@ const CreateListing: React.FC = () => {
           baths: parseInt(values.baths),
           sqft: parseInt(values.sqft),
           images: finalImages,
+          property_type: values.propertyType,
           user_id: user.id
         })
         .select();
@@ -323,6 +327,27 @@ const CreateListing: React.FC = () => {
       setUploadProgress(100);
       toast.dismiss(loadingToastId);
       toast.success("Property listing created successfully!");
+      
+      // Trigger a notification for all users when a new property is listed
+      if (data?.[0]?.id) {
+        try {
+          // Import and use the notification context to add a global notification
+          const { addNotification } = await import('@/context/NotificationContext');
+          // Notify interested users about the new listing
+          // This will be picked up by the notification system
+          await supabase
+            .from('notifications')
+            .insert({
+              type: 'new_listing',
+              title: 'New Property Listed',
+              message: `A new ${values.propertyType} was just listed in ${values.city}, ${values.state}`,
+              property_id: data[0].id
+            });
+          console.log("Notification created for new property");
+        } catch (notifyError) {
+          console.error("Could not create notification:", notifyError);
+        }
+      }
       
       // Navigate to dashboard
       navigate('/dashboard');
@@ -460,6 +485,39 @@ const CreateListing: React.FC = () => {
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                {/* Property Type Dropdown - New Addition */}
+                <div>
+                  <h2 className="text-xl font-bold mb-4">Property Type</h2>
+                  <FormField 
+                    control={form.control} 
+                    name="propertyType" 
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-black font-bold">Select Property Type</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-12 rounded-none border-2 border-black">
+                              <SelectValue placeholder="Select property type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="bg-white border-2 border-black">
+                            {propertyTypes.map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
+                {/* Property Address */}
                 <div>
                   <h2 className="text-xl font-bold mb-4">Property Address</h2>
                   <FormField 
@@ -865,54 +923,4 @@ const CreateListing: React.FC = () => {
                     <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
                       <div 
                         className="bg-[#d60013] h-2.5 rounded-full transition-all duration-300" 
-                        style={{ width: `${uploadProgress}%` }} 
-                      />
-                    </div>
-                  )}
-                </div>
-                
-                {/* Form submission buttons */}
-                <div className="pt-6 border-t-2 border-black flex justify-end gap-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    className="font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
-                    onClick={() => {
-                      if (isSubmitting) {
-                        cancelUploads();
-                        toast.info("Upload canceled");
-                      } else {
-                        navigate('/dashboard');
-                      }
-                    }}
-                  >
-                    {isSubmitting ? "Cancel Upload" : "Cancel"}
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={isSubmitting || isProcessingImages}
-                    className="text-white font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none px-6 py-3 hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#d60013] disabled:bg-gray-400"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 size={18} className="mr-2 animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <Check size={18} className="mr-2" />
-                        Create Listing
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-export default CreateListing;
+                        style={{ width: `${uploadProgress}%` }}
