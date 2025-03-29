@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -40,18 +39,12 @@ const PropertyDetail: React.FC = () => {
   const [activeImage, setActiveImage] = useState('');
   const { user } = useAuth();
   
-  // User role flags
   const [isOwner, setIsOwner] = useState(false);
-  
-  // Check if this buyer has been approved to view this property
   const [isApproved, setIsApproved] = useState(false);
-  
-  // Dialog state for waitlist
   const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
-  
+
   useEffect(() => {
     if (user?.id && id) {
-      // Check if this buyer has been approved to view this property
       const checkWaitlistStatus = async () => {
         try {
           const { data, error } = await supabase
@@ -84,7 +77,6 @@ const PropertyDetail: React.FC = () => {
       
       setLoading(true);
       try {
-        // First try to fetch property data from Supabase
         const { data: propertyData, error: propertyError } = await supabase
           .from('property_listings')
           .select('*')
@@ -96,7 +88,6 @@ const PropertyDetail: React.FC = () => {
           throw propertyError;
         }
         
-        // Separately fetch seller profile data to avoid type issues
         const { data: sellerData, error: sellerError } = await supabase
           .from('profiles')
           .select('name, email, phone')
@@ -109,7 +100,6 @@ const PropertyDetail: React.FC = () => {
         }
         
         if (propertyData) {
-          // Transform the property data
           const transformedProperty: Property = {
             id: propertyData.id,
             title: propertyData.title || 'Property Listing',
@@ -129,7 +119,6 @@ const PropertyDetail: React.FC = () => {
             sellerName: sellerData?.name || 'Property Owner',
             sellerPhone: sellerData?.phone || 'No phone number provided',
             sellerEmail: sellerData?.email,
-            // Use actual ARV and rehab values if provided, otherwise calculate defaults
             afterRepairValue: propertyData.after_repair_value 
               ? Number(propertyData.after_repair_value) 
               : Number(propertyData.market_price) * 1.2,
@@ -140,24 +129,20 @@ const PropertyDetail: React.FC = () => {
           
           setProperty(transformedProperty);
           
-          // Check if user is the owner
           if (user?.id && user.id === propertyData.user_id) {
             setIsOwner(true);
           }
           
-          // Set the active image
           if (transformedProperty.images && transformedProperty.images.length > 0) {
             setActiveImage(transformedProperty.images[0]);
           } else {
             setActiveImage(transformedProperty.image);
           }
         } else {
-          // Fallback to localStorage if not found in Supabase
           fallbackToLocalStorage();
         }
       } catch (error) {
         console.error("Error fetching property:", error);
-        // Fallback to localStorage
         fallbackToLocalStorage();
       } finally {
         setLoading(false);
@@ -166,7 +151,6 @@ const PropertyDetail: React.FC = () => {
     
     const fallbackToLocalStorage = () => {
       try {
-        // Get from localStorage
         const allListingsJSON = localStorage.getItem('propertyListings');
         if (allListingsJSON) {
           const allListings = JSON.parse(allListingsJSON);
@@ -175,7 +159,6 @@ const PropertyDetail: React.FC = () => {
           if (foundProperty) {
             setProperty(foundProperty);
             
-            // Check if user is the owner
             if (user?.id && foundProperty.sellerId === user.id) {
               setIsOwner(true);
             }
@@ -205,25 +188,21 @@ const PropertyDetail: React.FC = () => {
     fetchProperty();
   }, [id, user?.id]);
 
-  // Helper function to mask the address for users who aren't approved
   const getDisplayLocation = () => {
     if (isOwner || isApproved) {
       return property?.location;
     }
-    // Create a clickable masked location that opens the waitlist dialog
     return property?.location.replace(
       /^[^,]+/, 
       "<span class='cursor-pointer text-blue-600 hover:underline' onClick={() => setShowWaitlistDialog(true)}>[Join Waitlist For Address]</span>"
     );
   };
 
-  // Function to handle the address click for non-approved users
   const handleAddressClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setShowWaitlistDialog(true);
   };
 
-  // This will safely render HTML or plain text based on whether the user is approved
   const renderLocation = () => {
     if (!property) return null;
     
@@ -233,7 +212,6 @@ const PropertyDetail: React.FC = () => {
       );
     }
     
-    // Extract the address part for masking
     const parts = property.location.split(',');
     const maskedAddress = "[Join Waitlist For Address]";
     const restOfAddress = parts.slice(1).join(',');
@@ -241,7 +219,7 @@ const PropertyDetail: React.FC = () => {
     return (
       <span className="font-medium">
         <span 
-          className="cursor-pointer text-blue-600 hover:underline"
+          className="cursor-pointer text-[#d60013] hover:underline"
           onClick={handleAddressClick}
         >
           {maskedAddress}
@@ -251,7 +229,6 @@ const PropertyDetail: React.FC = () => {
     );
   };
 
-  // Helper function to determine if user should see detailed property info
   const canSeeDetailedInfo = () => {
     return isOwner || isApproved || (user && user.id);
   };
@@ -397,7 +374,6 @@ const PropertyDetail: React.FC = () => {
                         onOpenChange={setShowWaitlistDialog}
                       />
                       
-                      {/* Show ARV and Rehab boxes for signed-in users or the owner */}
                       {canSeeDetailedInfo() && (
                         <div className="grid grid-cols-2 gap-4 mt-4">
                           <div className="border-2 border-black p-3">
@@ -475,7 +451,6 @@ const PropertyDetail: React.FC = () => {
                   <span>2-Car Garage</span>
                 </div>
                 
-                {/* Show ARV and rehab estimates to all signed-in users */}
                 {canSeeDetailedInfo() && property?.afterRepairValue && (
                   <div className="flex justify-between">
                     <span className="font-bold">ARV:</span>
