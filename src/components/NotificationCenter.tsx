@@ -14,23 +14,27 @@ interface NotificationCenterProps {
   showIndicator?: boolean;
 }
 
-const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator = false }) => {
+const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator = true }) => {
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Start with false to avoid unnecessary loading state
 
+  // Only show loading state when actually fetching data
   useEffect(() => {
-    // Simulate a shorter loading time for notifications
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    if (isOpen && notifications.length === 0) {
+      setIsLoading(true);
+      // Set a shorter timeout for loading indicator
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, notifications.length]);
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    // Mark all as read when opening the notification panel
+    // Mark all as read only when opening and there are unread notifications
     if (open && unreadCount > 0) {
       clearAll();
     }
@@ -45,7 +49,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
           className="relative"
         >
           <Bell size={20} className="text-black" />
-          {unreadCount > 0 && (
+          {unreadCount > 0 && showIndicator && (
             <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
@@ -69,13 +73,12 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
         
         <div className="max-h-[400px] overflow-y-auto">
           {isLoading ? (
-            // Loading skeleton
+            // Loading skeleton - simplified with fewer items
             <div className="space-y-4 p-4">
-              {[1, 2, 3].map((i) => (
+              {[1, 2].map((i) => (
                 <div key={i} className="flex flex-col space-y-2">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-full" />
-                  <Skeleton className="h-3 w-1/2" />
                 </div>
               ))}
             </div>

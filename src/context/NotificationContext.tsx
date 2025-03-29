@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from './AuthContext';
 
@@ -25,59 +25,58 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   
-  // Calculate unread count
+  // Calculate unread count only when needed
   const unreadCount = notifications.filter(n => !n.read).length;
   
-  // Load notifications from localStorage on initial mount and when user changes
+  // Load notifications only once on initial mount or when user changes
   useEffect(() => {
     const loadNotifications = async () => {
-      setLoading(true);
-      
-      if (user) {
-        try {
-          const savedNotifications = localStorage.getItem(`notifications_${user.id}`);
-          if (savedNotifications) {
-            // Parse stored notifications and convert timestamp strings back to Date objects
-            const parsedNotifications = JSON.parse(savedNotifications).map((notification: any) => ({
-              ...notification,
-              timestamp: new Date(notification.timestamp)
-            }));
-            setNotifications(parsedNotifications);
-          }
-        } catch (error) {
-          console.error('Error loading notifications from localStorage', error);
-        }
-      } else {
-        // Clear notifications when user logs out
+      if (!user) {
         setNotifications([]);
+        return;
       }
       
-      // Small delay to ensure we don't show loading indicators for too short a time
-      setTimeout(() => {
+      setLoading(true);
+      
+      try {
+        const storageKey = `notifications_${user.id}`;
+        const savedNotifications = localStorage.getItem(storageKey);
+        
+        if (savedNotifications) {
+          // Parse stored notifications and convert timestamp strings back to Date objects
+          const parsedNotifications = JSON.parse(savedNotifications).map((notification: any) => ({
+            ...notification,
+            timestamp: new Date(notification.timestamp)
+          }));
+          setNotifications(parsedNotifications);
+        }
+      } catch (error) {
+        console.error('Error loading notifications from localStorage', error);
+      } finally {
         setLoading(false);
-      }, 200);
+      }
     };
     
     loadNotifications();
-  }, [user]);
+  }, [user?.id]);
   
-  // Save notifications to localStorage whenever they change, but throttle the saves
+  // Debounced save to localStorage
   useEffect(() => {
-    if (!user || loading) return;
+    if (!user || loading || notifications.length === 0) return;
     
+    const storageKey = `notifications_${user.id}`;
     const saveTimer = setTimeout(() => {
-      if (user && notifications.length > 0) {
-        localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
-      }
-    }, 300); // Throttle saves to reduce performance impact
+      localStorage.setItem(storageKey, JSON.stringify(notifications));
+    }, 500);
     
     return () => clearTimeout(saveTimer);
   }, [notifications, user, loading]);
   
-  const addNotification = (title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+  // Memoize functions to avoid re-renders
+  const addNotification = useCallback((title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
     const newNotification: Notification = {
       id: uuidv4(),
       title,
@@ -88,9 +87,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     };
     
     setNotifications(prev => [newNotification, ...prev]);
-  };
+  }, []);
   
-  const markAsRead = (id: string) => {
+  const markAsRead = useCallback((id: string) => {
     setNotifications(prev => 
       prev.map(notification => 
         notification.id === id 
@@ -98,29 +97,31 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           : notification
       )
     );
-  };
+  }, []);
   
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     setNotifications(prev => 
       prev.map(notification => ({ ...notification, read: true }))
     );
-  };
+  }, []);
   
-  const removeNotification = (id: string) => {
+  const removeNotification = useCallback((id: string) => {
     setNotifications(prev => 
       prev.filter(notification => notification.id !== id)
     );
+  }, []);
+  
+  const contextValue = {
+    notifications,
+    unreadCount,
+    addNotification,
+    markAsRead,
+    clearAll,
+    removeNotification
   };
   
   return (
-    <NotificationContext.Provider value={{
-      notifications,
-      unreadCount,
-      addNotification,
-      markAsRead,
-      clearAll,
-      removeNotification
-    }}>
+    <NotificationContext.Provider value={contextValue}>
       {children}
     </NotificationContext.Provider>
   );
