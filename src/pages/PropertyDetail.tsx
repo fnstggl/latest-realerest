@@ -61,6 +61,7 @@ const PropertyDetail: React.FC = () => {
           
           if (data) {
             setIsApproved(data.status === 'accepted');
+            console.log("Waitlist status:", data.status);
           }
         } catch (error) {
           console.error("Error checking waitlist approval:", error);
@@ -88,11 +89,15 @@ const PropertyDetail: React.FC = () => {
           throw propertyError;
         }
         
+        console.log("Property data from Supabase:", propertyData);
+        
         const { data: sellerData, error: sellerError } = await supabase
           .from('profiles')
           .select('name, email, phone')
           .eq('id', propertyData.user_id)
           .single();
+        
+        console.log("Seller data from Supabase:", sellerData);
         
         if (sellerError && sellerError.code !== 'PGRST116') {
           console.error("Error fetching seller profile:", sellerError);
@@ -188,10 +193,6 @@ const PropertyDetail: React.FC = () => {
     fetchProperty();
   }, [id, user?.id]);
 
-  const getDisplayLocation = () => {
-    return property?.location;
-  };
-
   const handleAddressClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setShowWaitlistDialog(true);
@@ -207,6 +208,7 @@ const PropertyDetail: React.FC = () => {
     }
     
     const parts = property.location.split(',');
+    const streetAddress = parts[0];
     const restOfAddress = parts.slice(1).join(',');
     
     return (
@@ -220,10 +222,6 @@ const PropertyDetail: React.FC = () => {
         {restOfAddress ? `,${restOfAddress}` : ''}
       </span>
     );
-  };
-
-  const shouldShowDetailedInfo = () => {
-    return true;
   };
 
   if (loading) {
@@ -389,7 +387,7 @@ const PropertyDetail: React.FC = () => {
               <div className="border-2 border-black p-4 mt-6">
                 <h3 className="font-bold mb-2">Contact Seller</h3>
                 <p className="mb-1">{property.sellerName}</p>
-                {property.sellerPhone && (
+                {property.sellerPhone && property.sellerPhone !== 'No phone number provided' && (
                   <div className="flex items-center">
                     <Phone size={16} className="mr-2" />
                     <span>{property.sellerPhone}</span>
