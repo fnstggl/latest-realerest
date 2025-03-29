@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -126,8 +127,8 @@ const PropertyDetail: React.FC = () => {
             belowMarket: calculateBelowMarket(Number(propertyData.market_price), Number(propertyData.price)),
             sellerId: propertyData.user_id,
             sellerName: sellerData?.name || 'Property Owner',
-            sellerPhone: sellerData?.phone || 'No phone number provided',
-            sellerEmail: sellerData?.email || 'No email provided',
+            sellerPhone: sellerData?.phone || null,
+            sellerEmail: sellerData?.email || null,
             afterRepairValue: propertyData.after_repair_value !== null 
               ? Number(propertyData.after_repair_value) 
               : undefined,
@@ -208,7 +209,9 @@ const PropertyDetail: React.FC = () => {
     // If owner or approved, show full address
     if (isOwner || isApproved) {
       return (
-        <span className="font-medium">{property.full_address || property.location}</span>
+        <span className="font-medium">
+          {property.full_address}{property.location ? `, ${property.location}` : ''}
+        </span>
       );
     }
     
@@ -389,7 +392,7 @@ const PropertyDetail: React.FC = () => {
               <div className="border-2 border-black p-4 mt-6">
                 <h3 className="font-bold mb-2">Contact Seller</h3>
                 <p className="mb-1">{property.sellerName || 'Property Owner'}</p>
-                {property.sellerPhone && property.sellerPhone !== 'No phone number provided' && (
+                {property.sellerPhone && (
                   <div className="flex items-center">
                     <Phone size={16} className="mr-2" />
                     <a href={`tel:${property.sellerPhone}`} className="text-blue-600 hover:underline">
@@ -397,13 +400,16 @@ const PropertyDetail: React.FC = () => {
                     </a>
                   </div>
                 )}
-                {property.sellerEmail && property.sellerEmail !== 'No email provided' && (
+                {property.sellerEmail && (
                   <div className="flex items-center mt-1">
                     <Mail size={16} className="mr-2" />
                     <a href={`mailto:${property.sellerEmail}`} className="text-blue-600 hover:underline">
                       {property.sellerEmail}
                     </a>
                   </div>
+                )}
+                {(!property.sellerPhone && !property.sellerEmail) && (
+                  <p className="text-gray-500 italic">No contact information available</p>
                 )}
               </div>
             )}
