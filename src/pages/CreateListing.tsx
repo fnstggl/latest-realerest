@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -70,6 +71,9 @@ const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 // Maximum number of images allowed
 const MAX_IMAGES = 5;
+
+// Property types for the dropdown
+const propertyTypes = ["House", "Apartment", "Condo", "Townhouse", "Studio", "Land"];
 
 const CreateListing: React.FC = () => {
   const navigate = useNavigate();
@@ -924,3 +928,41 @@ const CreateListing: React.FC = () => {
                       <div 
                         className="bg-[#d60013] h-2.5 rounded-full transition-all duration-300" 
                         style={{ width: `${uploadProgress}%` }}
+                      ></div>
+                    </div>
+                  )}
+                  
+                  {/* Submit Button */}
+                  <div className="pt-6 border-t-2 border-gray-200">
+                    <Button 
+                      type="submit" 
+                      className="w-full py-6 bg-[#d60013] hover:bg-[#c20012] text-white font-bold text-xl rounded-none border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center justify-center">
+                          <Loader2 size={24} className="animate-spin mr-2" />
+                          <span>Creating Listing...</span>
+                        </div>
+                      ) : (
+                        "Create Listing"
+                      )}
+                    </Button>
+                    
+                    {isSubmitting && (
+                      <p className="text-center text-sm text-gray-600 mt-4">
+                        Please wait, your listing is being created...
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default CreateListing;
