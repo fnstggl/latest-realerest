@@ -76,6 +76,14 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            <Route 
+              path="/sell/create-blog" 
+              element={
+                <ProtectedRoute>
+                  <NotFound />
+                </ProtectedRoute>
+              } 
+            />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/blog" element={<Blog />} />

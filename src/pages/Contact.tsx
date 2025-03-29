@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Mail, Phone, MapPin } from 'lucide-react';
+import { Send, Mail, Phone } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
+import SiteFooter from '@/components/sections/SiteFooter';
 
 const Contact: React.FC = () => {
   const [name, setName] = useState('');
@@ -125,8 +126,7 @@ const Contact: React.FC = () => {
                     <Mail size={24} className="mr-4 mt-1" />
                     <div>
                       <h3 className="font-bold">Email Us</h3>
-                      <p>info@donedeal.com</p>
-                      <p>support@donedeal.com</p>
+                      <p>info@donedealhome.com</p>
                     </div>
                   </div>
                   
@@ -134,17 +134,8 @@ const Contact: React.FC = () => {
                     <Phone size={24} className="mr-4 mt-1" />
                     <div>
                       <h3 className="font-bold">Call Us</h3>
-                      <p>(555) 123-4567</p>
+                      <p>(929) 949-5634</p>
                       <p>Monday-Friday, 9am-5pm EST</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <MapPin size={24} className="mr-4 mt-1" />
-                    <div>
-                      <h3 className="font-bold">Visit Us</h3>
-                      <p>123 Real Estate Blvd</p>
-                      <p>San Francisco, CA 94101</p>
                     </div>
                   </div>
                 </div>
@@ -156,12 +147,7 @@ const Contact: React.FC = () => {
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-bold">How does DoneDeal work?</h3>
-                    <p className="text-gray-700">We connect buyers directly with sellers offering properties below market value. No middlemen, no high fees.</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-bold">Is there a fee to use DoneDeal?</h3>
-                    <p className="text-gray-700">Basic accounts are free. Premium features available for a small subscription fee.</p>
+                    <p className="text-gray-700">We connect buyers directly with sellers offering properties below market value. No middlemen, just direct connections.</p>
                   </div>
                   
                   <div>
@@ -174,6 +160,8 @@ const Contact: React.FC = () => {
           </div>
         </motion.div>
       </div>
+      
+      <SiteFooter />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import SiteFooter from '@/components/sections/SiteFooter';
 
 const About: React.FC = () => {
   return (
@@ -82,7 +83,7 @@ const About: React.FC = () => {
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
             <h2 className="text-2xl font-bold mb-4">Our Story</h2>
             <p className="text-lg mb-4">
-              DoneDeal was founded in 2023 by a team of real estate and technology professionals who saw a broken system that wasn't serving everyday Americans.
+              DoneDeal was founded by two students looking to make buying a home actually affordable for everyday Americans.
             </p>
             <p className="text-lg mb-4">
               After witnessing countless buyers priced out of the market and sellers losing thousands to commissions and fees, we knew there had to be a better way. We created DoneDeal to directly connect motivated sellers with qualified buyers, benefiting both sides of the transaction.
@@ -105,6 +106,8 @@ const About: React.FC = () => {
           </div>
         </motion.div>
       </div>
+      
+      <SiteFooter />
     </div>
   );
 };

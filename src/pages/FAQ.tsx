@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Search } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { motion } from 'framer-motion';
+import SiteFooter from '@/components/sections/SiteFooter';
 
 interface FAQItem {
   question: string;
@@ -16,17 +17,12 @@ interface FAQItem {
 const faqs: FAQItem[] = [
   {
     question: "What is DoneDeal?",
-    answer: "DoneDeal is a platform that connects buyers with sellers offering properties below market value. We eliminate traditional barriers and high fees that typically exist in real estate transactions, creating a more direct and affordable way to buy and sell properties.",
+    answer: "DoneDeal is a platform that connects buyers with sellers offering properties below market value. We eliminate traditional barriers that typically exist in real estate transactions, creating a more direct and affordable way to buy and sell properties.",
     category: 'general'
   },
   {
     question: "How does DoneDeal differ from traditional real estate platforms?",
     answer: "Unlike traditional platforms, DoneDeal specializes in below-market properties and direct seller-to-buyer connections. We have a unique waitlist system that helps serious buyers connect with sellers, and sellers can control who views their property details.",
-    category: 'general'
-  },
-  {
-    question: "Is there a fee to use DoneDeal?",
-    answer: "Basic accounts are free for both buyers and sellers. We offer premium features and enhanced visibility options for a small subscription fee, but you can successfully use the platform without any paid upgrades.",
     category: 'general'
   },
   {
@@ -66,7 +62,7 @@ const faqs: FAQItem[] = [
   },
   {
     question: "How long do listings stay active on DoneDeal?",
-    answer: "Standard listings remain active for 90 days, after which you can easily renew them if the property hasn't sold. Premium listings have longer active periods based on your subscription level.",
+    answer: "Standard listings remain active for 90 days, after which you can easily renew them if the property hasn't sold.",
     category: 'listings'
   },
   {
@@ -208,6 +204,8 @@ const FAQ: React.FC = () => {
           </div>
         </motion.div>
       </div>
+      
+      <SiteFooter />
     </div>
   );
 };

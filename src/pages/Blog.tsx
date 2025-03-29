@@ -3,8 +3,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, User, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, User, ArrowRight, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Input } from "@/components/ui/input";
+import SiteFooter from '@/components/sections/SiteFooter';
 
 const blogPosts = [
   {
@@ -65,9 +67,27 @@ const Blog: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h1 className="text-5xl font-bold mb-4">DoneDeal Blog</h1>
-            <p className="text-xl max-w-2xl mx-auto">Tips, strategies, and insights to help you navigate the real estate market and find exceptional deals.</p>
+            <p className="text-xl max-w-2xl mx-auto">Boost your property's visibility with SEO-optimized blog posts that help buyers find your listings.</p>
+          </div>
+          
+          <div className="max-w-3xl mx-auto mb-10">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search blog posts..."
+                className="pl-10 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:border-black"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            </div>
+          </div>
+          
+          <div className="text-center mb-10">
+            <Button asChild className="neo-button-primary">
+              <Link to="/sell/create-blog">Create Your SEO Blog Post</Link>
+            </Button>
+            <p className="mt-4 text-sm text-gray-600">Write articles that link to your property listings to boost visibility on search engines!</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -133,6 +153,8 @@ const Blog: React.FC = () => {
           </div>
         </motion.div>
       </div>
+      
+      <SiteFooter />
     </div>
   );
 };
