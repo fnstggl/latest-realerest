@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -80,8 +81,9 @@ const PropertyDetail: React.FC = () => {
           }
           
           if (data) {
-            setIsApproved(data.status === 'accepted');
-            console.log("Waitlist status:", data.status);
+            const isUserApproved = data.status === 'accepted';
+            setIsApproved(isUserApproved);
+            console.log("Waitlist status:", data.status, "isApproved set to:", isUserApproved);
           }
         } catch (error) {
           console.error("Error checking waitlist approval:", error);
@@ -118,6 +120,7 @@ const PropertyDetail: React.FC = () => {
         
         let sellerData = null;
         if (propertyData.user_id) {
+          // Fetch seller information from profiles table
           const { data: seller, error: sellerError } = await supabase
             .from('profiles')
             .select('name, email, phone')
@@ -291,6 +294,12 @@ const PropertyDetail: React.FC = () => {
   }
 
   const shouldShowSellerInfo = isOwner || isApproved;
+  console.log("Debug - isOwner:", isOwner, "isApproved:", isApproved, "shouldShowSellerInfo:", shouldShowSellerInfo);
+  console.log("Debug - Seller data to display:", {
+    name: property.sellerName,
+    phone: property.sellerPhone,
+    email: property.sellerEmail
+  });
 
   return (
     <div className="min-h-screen bg-white">
