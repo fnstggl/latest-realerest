@@ -104,10 +104,12 @@ export type Database = {
       }
       property_listings: {
         Row: {
+          after_repair_value: number | null
           baths: number | null
           beds: number | null
           created_at: string
           description: string | null
+          estimated_rehab: number | null
           id: string
           images: string[] | null
           location: string
@@ -119,10 +121,12 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
           created_at?: string
           description?: string | null
+          estimated_rehab?: number | null
           id?: string
           images?: string[] | null
           location: string
@@ -134,10 +138,12 @@ export type Database = {
           user_id: string
         }
         Update: {
+          after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
           created_at?: string
           description?: string | null
+          estimated_rehab?: number | null
           id?: string
           images?: string[] | null
           location?: string

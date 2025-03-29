@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -129,8 +130,12 @@ const PropertyDetail: React.FC = () => {
             sellerPhone: sellerData?.phone || 'No phone number provided',
             sellerEmail: sellerData?.email,
             // Use actual ARV and rehab values if provided, otherwise calculate defaults
-            afterRepairValue: propertyData.after_repair_value || Number(propertyData.market_price) * 1.2,
-            estimatedRehab: propertyData.estimated_rehab || Number(propertyData.market_price) * 0.1
+            afterRepairValue: propertyData.after_repair_value 
+              ? Number(propertyData.after_repair_value) 
+              : Number(propertyData.market_price) * 1.2,
+            estimatedRehab: propertyData.estimated_rehab 
+              ? Number(propertyData.estimated_rehab) 
+              : Number(propertyData.market_price) * 0.1
           };
           
           setProperty(transformedProperty);
@@ -246,6 +251,11 @@ const PropertyDetail: React.FC = () => {
     );
   };
 
+  // Helper function to determine if user should see detailed property info
+  const canSeeDetailedInfo = () => {
+    return isOwner || isApproved || (user && user.id);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -281,11 +291,6 @@ const PropertyDetail: React.FC = () => {
       </div>
     );
   }
-
-  // Helper function to determine if user should see detailed property info
-  const canSeeDetailedInfo = () => {
-    return isOwner || isApproved || (user && user.id);
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -392,7 +397,7 @@ const PropertyDetail: React.FC = () => {
                         onOpenChange={setShowWaitlistDialog}
                       />
                       
-                      {/* Only show ARV and Rehab boxes for signed-in users or the owner */}
+                      {/* Show ARV and Rehab boxes for signed-in users or the owner */}
                       {canSeeDetailedInfo() && (
                         <div className="grid grid-cols-2 gap-4 mt-4">
                           <div className="border-2 border-black p-3">
