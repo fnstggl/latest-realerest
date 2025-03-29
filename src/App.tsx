@@ -30,6 +30,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Blog = lazy(() => import("./pages/Blog"));
+const CreateBlog = lazy(() => import("./pages/CreateBlog"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -80,7 +81,7 @@ const App = () => (
               path="/sell/create-blog" 
               element={
                 <ProtectedRoute>
-                  <NotFound />
+                  <CreateBlog />
                 </ProtectedRoute>
               } 
             />
