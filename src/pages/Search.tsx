@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -6,6 +7,8 @@ import PropertyCard from '@/components/PropertyCard';
 import PropertyFilters from '@/components/PropertyFilters';
 import { Button } from "@/components/ui/button";
 import { Sliders, Grid, List, ChevronDown } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import {
   Sheet,
   SheetContent,
@@ -35,6 +38,7 @@ const Search: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [sortOption, setSortOption] = useState("recommended");
+  const [loading, setLoading] = useState(true);
   
   // Demo filter function
   const handleFilterChange = (filters: any) => {
@@ -110,31 +114,112 @@ const Search: React.FC = () => {
     setFilteredProperties(sorted);
   };
   
+  // Function to transform Supabase data to our Property interface
+  const transformProperty = (listing: any): Property => {
+    const marketPrice = parseFloat(listing.market_price);
+    const price = parseFloat(listing.price);
+    const belowMarket = Math.round(((marketPrice - price) / marketPrice) * 100);
+    
+    return {
+      id: listing.id,
+      title: listing.title,
+      price: price,
+      marketPrice: marketPrice,
+      image: listing.images && listing.images.length > 0 ? listing.images[0] : '/placeholder.svg',
+      location: listing.location,
+      beds: listing.beds || 0,
+      baths: listing.baths || 0,
+      sqft: listing.sqft || 0,
+      belowMarket: belowMarket
+    };
+  };
+  
   useEffect(() => {
-    // Load properties from localStorage instead of using mock data
-    const loadProperties = () => {
-      const storedProperties = localStorage.getItem('propertyListings');
-      let loadedProperties: Property[] = [];
-      
-      if (storedProperties) {
-        loadedProperties = JSON.parse(storedProperties);
+    // Fetch properties from Supabase first, and fall back to localStorage if that fails
+    const fetchProperties = async () => {
+      setLoading(true);
+      try {
+        // Try to fetch from Supabase first
+        const { data: supabaseListings, error } = await supabase
+          .from('property_listings')
+          .select('*');
+          
+        if (error) {
+          throw error;
+        }
+        
+        if (supabaseListings && supabaseListings.length > 0) {
+          // Transform Supabase data
+          const transformedListings = supabaseListings.map(transformProperty);
+          setProperties(transformedListings);
+          
+          // Apply search filter if search query exists
+          if (searchQuery) {
+            const results = transformedListings.filter(property => 
+              property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
+            );
+            setFilteredProperties(results);
+          } else {
+            setFilteredProperties(transformedListings);
+          }
+        } else {
+          // Fallback to localStorage if no data in Supabase
+          fallbackToLocalStorage();
+        }
+      } catch (error) {
+        console.error("Error fetching from Supabase:", error);
+        // Fallback to localStorage
+        fallbackToLocalStorage();
+      } finally {
+        setLoading(false);
       }
-      
-      setProperties(loadedProperties);
-      
-      // Apply search filter if search query exists
-      if (searchQuery) {
-        const results = loadedProperties.filter(property => 
-          property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
-        );
-        setFilteredProperties(results);
-      } else {
-        setFilteredProperties(loadedProperties);
+    };
+    
+    const fallbackToLocalStorage = () => {
+      try {
+        const storedProperties = localStorage.getItem('propertyListings');
+        let loadedProperties: Property[] = [];
+        
+        if (storedProperties) {
+          loadedProperties = JSON.parse(storedProperties);
+          
+          // Make sure each property has the required fields
+          loadedProperties = loadedProperties.map(p => ({
+            id: p.id,
+            title: p.title || 'Property Listing',
+            price: p.price || 0,
+            marketPrice: p.marketPrice || 0,
+            image: p.image || '/placeholder.svg',
+            location: p.location || 'Unknown location',
+            beds: p.beds || 0,
+            baths: p.baths || 0,
+            sqft: p.sqft || 0,
+            belowMarket: p.belowMarket || 0
+          }));
+        }
+        
+        setProperties(loadedProperties);
+        
+        // Apply search filter if search query exists
+        if (searchQuery) {
+          const results = loadedProperties.filter(property => 
+            property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
+          );
+          setFilteredProperties(results);
+        } else {
+          setFilteredProperties(loadedProperties);
+        }
+      } catch (err) {
+        console.error("Error loading from localStorage:", err);
+        toast.error("Unable to load property listings");
+        setProperties([]);
+        setFilteredProperties([]);
       }
     };
 
-    loadProperties();
+    fetchProperties();
   }, [searchQuery]);
   
   return (
@@ -229,7 +314,14 @@ const Search: React.FC = () => {
               </div>
             </div>
             
-            {filteredProperties.length === 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center py-16">
+                <div className="text-center">
+                  <div className="w-12 h-12 border-4 border-t-[#d60013] border-r-[#d60013] border-b-transparent border-l-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+                  <p className="text-lg font-medium text-gray-700">Loading properties...</p>
+                </div>
+              </div>
+            ) : filteredProperties.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-xl shadow-sm">
                 <h2 className="text-xl font-semibold text-donedeal-navy mb-2">No properties found</h2>
                 <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
