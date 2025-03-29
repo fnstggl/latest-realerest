@@ -64,8 +64,8 @@ export const useListings = (limit?: number) => {
             beds: item.beds || 0,
             baths: item.baths || 0,
             sqft: item.sqft || 0,
-            // Safely get property_type or use a default
-            propertyType: item.property_type || 'House',
+            // Extract property type from title if available (since it's not in the database)
+            propertyType: extractPropertyTypeFromTitle(item.title),
             // Use the first image from the array if available
             image: item.images && item.images.length > 0 ? item.images[0] : 'https://source.unsplash.com/random/800x600?house',
             // Calculate below market percentage
@@ -93,6 +93,27 @@ export const useListings = (limit?: number) => {
         if (!isMounted) return;
         setLoading(false);
       }
+    };
+    
+    // Helper function to extract property type from title
+    const extractPropertyTypeFromTitle = (title: string): string => {
+      // Default property type
+      const defaultType = "House";
+      
+      // If there's no title, return default
+      if (!title) return defaultType;
+      
+      // Common property types to check for
+      const propertyTypes = ["House", "Apartment", "Condo", "Townhouse", "Studio", "Land"];
+      
+      // Check if any property type is in the title
+      for (const type of propertyTypes) {
+        if (title.includes(type)) {
+          return type;
+        }
+      }
+      
+      return defaultType;
     };
     
     const fallbackToLocalStorage = () => {
