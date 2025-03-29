@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from './AuthContext';
 
@@ -28,8 +28,11 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   
-  // Calculate unread count only when needed
-  const unreadCount = notifications.filter(n => !n.read).length;
+  // Calculate unread count only when needed using useMemo
+  const unreadCount = useMemo(() => 
+    notifications.filter(n => !n.read).length, 
+    [notifications]
+  );
   
   // Load notifications only once on initial mount or when user changes
   useEffect(() => {
@@ -46,15 +49,24 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const savedNotifications = localStorage.getItem(storageKey);
         
         if (savedNotifications) {
-          // Parse stored notifications and convert timestamp strings back to Date objects
-          const parsedNotifications = JSON.parse(savedNotifications).map((notification: any) => ({
-            ...notification,
-            timestamp: new Date(notification.timestamp)
-          }));
-          setNotifications(parsedNotifications);
+          try {
+            // Parse stored notifications and convert timestamp strings back to Date objects
+            const parsedNotifications = JSON.parse(savedNotifications).map((notification: any) => ({
+              ...notification,
+              timestamp: new Date(notification.timestamp)
+            }));
+            setNotifications(parsedNotifications);
+          } catch (parseError) {
+            console.error('Failed to parse notifications from localStorage', parseError);
+            // Reset to empty array if data is corrupted
+            setNotifications([]);
+            // Clear corrupted data
+            localStorage.removeItem(storageKey);
+          }
         }
       } catch (error) {
         console.error('Error loading notifications from localStorage', error);
+        setNotifications([]);
       } finally {
         setLoading(false);
       }
@@ -63,13 +75,17 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     loadNotifications();
   }, [user?.id]);
   
-  // Debounced save to localStorage
+  // Debounced save to localStorage with error handling
   useEffect(() => {
     if (!user || loading || notifications.length === 0) return;
     
     const storageKey = `notifications_${user.id}`;
     const saveTimer = setTimeout(() => {
-      localStorage.setItem(storageKey, JSON.stringify(notifications));
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(notifications));
+      } catch (error) {
+        console.error('Error saving notifications to localStorage', error);
+      }
     }, 500);
     
     return () => clearTimeout(saveTimer);
@@ -111,14 +127,15 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     );
   }, []);
   
-  const contextValue = {
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
     notifications,
     unreadCount,
     addNotification,
     markAsRead,
     clearAll,
     removeNotification
-  };
+  }), [notifications, unreadCount, addNotification, markAsRead, clearAll, removeNotification]);
   
   return (
     <NotificationContext.Provider value={contextValue}>

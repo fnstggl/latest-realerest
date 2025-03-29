@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Bell } from 'lucide-react';
 import {
   Popover,
@@ -17,7 +17,16 @@ interface NotificationCenterProps {
 const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator = true }) => {
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Start with false to avoid unnecessary loading state
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Safer function to mark all as read with error handling
+  const handleMarkAllAsRead = useCallback(() => {
+    try {
+      clearAll();
+    } catch (error) {
+      console.error('Error marking notifications as read:', error);
+    }
+  }, [clearAll]);
 
   // Only show loading state when actually fetching data
   useEffect(() => {
@@ -32,13 +41,18 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
     }
   }, [isOpen, notifications.length]);
 
-  const handleOpenChange = (open: boolean) => {
+  const handleOpenChange = useCallback((open: boolean) => {
     setIsOpen(open);
+    
     // Mark all as read only when opening and there are unread notifications
     if (open && unreadCount > 0) {
-      clearAll();
+      try {
+        handleMarkAllAsRead();
+      } catch (error) {
+        console.error('Failed to mark notifications as read:', error);
+      }
     }
-  };
+  }, [unreadCount, handleMarkAllAsRead]);
 
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
@@ -63,7 +77,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={clearAll}
+              onClick={handleMarkAllAsRead}
               className="text-xs"
             >
               Mark all as read

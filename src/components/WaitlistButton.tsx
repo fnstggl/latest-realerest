@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { ClipboardList, X, Check } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -21,21 +21,34 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
   const [isInWaitlist, setIsInWaitlist] = useState(false);
 
   // Check if user is already in waitlist for this property
-  React.useEffect(() => {
-    if (user?.id) {
+  const checkWaitlistStatus = useCallback(() => {
+    if (!user?.id) return false;
+    
+    try {
       const waitlistDataJSON = localStorage.getItem('waitlistData');
-      if (waitlistDataJSON) {
-        const waitlistData = JSON.parse(waitlistDataJSON);
-        const isInList = waitlistData.some(
-          (entry: any) => entry.id === user.id && entry.propertyId === propertyId
-        );
-        setIsInWaitlist(isInList);
-      }
+      if (!waitlistDataJSON) return false;
+      
+      const waitlistData = JSON.parse(waitlistDataJSON);
+      return waitlistData.some(
+        (entry: any) => entry.id === user.id && entry.propertyId === propertyId
+      );
+    } catch (error) {
+      console.error("Error checking waitlist status:", error);
+      return false;
     }
   }, [user?.id, propertyId]);
 
+  useEffect(() => {
+    setIsInWaitlist(checkWaitlistStatus());
+  }, [user?.id, propertyId, checkWaitlistStatus]);
+
   const handleJoinWaitlist = () => {
     setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSubmitting(false);
   };
 
   const handleSubmit = () => {
@@ -51,38 +64,39 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
     
     setSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      try {
-        // Get existing waitlist data
-        const waitlistDataJSON = localStorage.getItem('waitlistData');
-        const waitlistData = waitlistDataJSON ? JSON.parse(waitlistDataJSON) : [];
-        
-        // Add new entry
-        const newEntry = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: phone,
-          propertyId: propertyId,
-          propertyTitle: propertyTitle,
-          status: 'pending',
-          timestamp: new Date().toISOString()
-        };
-        
-        // Save back to localStorage
-        localStorage.setItem('waitlistData', JSON.stringify([...waitlistData, newEntry]));
-        
-        setIsInWaitlist(true);
-        setDialogOpen(false);
-        toast.success("Successfully joined the waitlist!");
-      } catch (error) {
-        console.error("Error joining waitlist:", error);
-        toast.error("Failed to join waitlist. Please try again.");
-      } finally {
-        setSubmitting(false);
+    try {
+      // Get existing waitlist data
+      let waitlistData: any[] = [];
+      const waitlistDataJSON = localStorage.getItem('waitlistData');
+      
+      if (waitlistDataJSON) {
+        waitlistData = JSON.parse(waitlistDataJSON);
       }
-    }, 1000);
+      
+      // Add new entry
+      const newEntry = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: phone,
+        propertyId: propertyId,
+        propertyTitle: propertyTitle,
+        status: 'pending',
+        timestamp: new Date().toISOString()
+      };
+      
+      // Save back to localStorage
+      localStorage.setItem('waitlistData', JSON.stringify([...waitlistData, newEntry]));
+      
+      setIsInWaitlist(true);
+      setDialogOpen(false);
+      toast.success("Successfully joined the waitlist!");
+    } catch (error) {
+      console.error("Error joining waitlist:", error);
+      toast.error("Failed to join waitlist. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -105,7 +119,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
         </Button>
       )}
       
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Join Property Waitlist</DialogTitle>
@@ -136,7 +150,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
             <Button 
               type="button" 
               variant="outline" 
-              onClick={() => setDialogOpen(false)}
+              onClick={handleDialogClose}
               className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <X size={18} className="mr-2" />
