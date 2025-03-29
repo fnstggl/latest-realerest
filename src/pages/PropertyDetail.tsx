@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -236,7 +235,7 @@ const PropertyDetail: React.FC = () => {
     if (isOwner || isApproved) {
       return property.location;
     }
-    return property.location.replace(/^[^,]+/, "123 XXXX Street");
+    return property.location.replace(/^[^,]+/, "[Join Waitlist For Address]");
   };
 
   return (
