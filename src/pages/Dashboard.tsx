@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -35,6 +36,9 @@ interface WaitlistUser {
   email: string;
   phone: string;
   propertyId: string;
+  property?: {
+    title: string;
+  };
   status: "pending" | "accepted" | "declined";
 }
 
@@ -49,6 +53,7 @@ interface Property {
   baths: number;
   sqft: number;
   belowMarket: number;
+  waitlistCount?: number;
 }
 
 const Dashboard: React.FC = () => {
@@ -101,10 +106,14 @@ const Dashboard: React.FC = () => {
             beds: prop.beds || 0,
             baths: prop.baths || 0,
             sqft: prop.sqft || 0,
-            belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100)
+            belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100),
+            waitlistCount: 0 // Will be updated in the next step
           }));
           
           setMyProperties(formattedProperties);
+          
+          // Fetch waitlist counts for each property
+          fetchWaitlistCounts(formattedProperties);
         } else {
           setMyProperties([]);
         }
@@ -115,10 +124,107 @@ const Dashboard: React.FC = () => {
       }
     };
     
-    fetchUserProperties();
+    const fetchWaitlistCounts = async (properties: Property[]) => {
+      try {
+        // For each property, get the count of waitlist requests
+        const propertiesWithCounts = await Promise.all(properties.map(async (property) => {
+          const { count, error } = await supabase
+            .from('waitlist_requests')
+            .select('*', { count: 'exact', head: true })
+            .eq('property_id', property.id);
+            
+          if (error) {
+            console.error(`Error counting waitlist for property ${property.id}:`, error);
+            return property;
+          }
+          
+          return {
+            ...property,
+            waitlistCount: count || 0
+          };
+        }));
+        
+        setMyProperties(propertiesWithCounts);
+      } catch (error) {
+        console.error("Error fetching waitlist counts:", error);
+      }
+    };
     
-    // Initialize empty waitlist instead of mock data
-    setWaitlistUsers([]);
+    const fetchWaitlistRequests = async () => {
+      try {
+        // Fetch properties owned by user
+        const { data: properties, error: propError } = await supabase
+          .from('property_listings')
+          .select('id,title')
+          .eq('user_id', user.id);
+          
+        if (propError) {
+          console.error("Error fetching user properties:", propError);
+          return;
+        }
+        
+        if (!properties || properties.length === 0) {
+          setWaitlistUsers([]);
+          return;
+        }
+        
+        // Get array of property IDs
+        const propertyIds = properties.map(p => p.id);
+        
+        // Fetch waitlist requests for these properties
+        const { data: requests, error: reqError } = await supabase
+          .from('waitlist_requests')
+          .select('*')
+          .in('property_id', propertyIds);
+          
+        if (reqError) {
+          console.error("Error fetching waitlist requests:", reqError);
+          return;
+        }
+        
+        // Transform the data to match our interface
+        const formattedRequests: WaitlistUser[] = requests.map(req => {
+          const matchedProperty = properties.find(p => p.id === req.property_id);
+          return {
+            id: req.id,
+            name: req.name,
+            email: req.email,
+            phone: req.phone || '',
+            propertyId: req.property_id,
+            property: matchedProperty ? { title: matchedProperty.title } : undefined,
+            status: req.status as "pending" | "accepted" | "declined"
+          };
+        });
+        
+        setWaitlistUsers(formattedRequests);
+      } catch (error) {
+        console.error("Error fetching waitlist data:", error);
+      }
+    };
+    
+    fetchUserProperties();
+    fetchWaitlistRequests();
+    
+    // Set up a subscription for realtime waitlist updates
+    const waitlistSubscription = supabase
+      .channel('public:waitlist_requests')
+      .on('postgres_changes', 
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'waitlist_requests' 
+        },
+        (payload) => {
+          console.log('New waitlist request:', payload);
+          fetchWaitlistRequests();
+          fetchUserProperties(); // Refresh property list to update counts
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(waitlistSubscription);
+    };
   }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -189,6 +295,7 @@ const Dashboard: React.FC = () => {
           baths: parseInt(newProperty.baths) || 0,
           sqft: parseInt(newProperty.sqft) || 0,
           belowMarket: belowMarket,
+          waitlistCount: 0
         };
         
         setMyProperties([...myProperties, newPropertyObj]);
@@ -243,17 +350,34 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleUpdateWaitlistStatus = (userId: string, newStatus: "accepted" | "declined") => {
-    const updatedUsers = waitlistUsers.map(user => 
-      user.id === userId ? { ...user, status: newStatus } : user
-    );
-    
-    setWaitlistUsers(updatedUsers);
-    
-    if (newStatus === "accepted") {
-      toast.success("User accepted to waitlist!");
-    } else {
-      toast.success("User declined from waitlist.");
+  const handleUpdateWaitlistStatus = async (userId: string, newStatus: "accepted" | "declined") => {
+    try {
+      const { error } = await supabase
+        .from('waitlist_requests')
+        .update({ status: newStatus })
+        .eq('id', userId);
+        
+      if (error) {
+        console.error("Error updating waitlist status:", error);
+        toast.error("Failed to update waitlist status");
+        return;
+      }
+      
+      // Update UI
+      const updatedUsers = waitlistUsers.map(user => 
+        user.id === userId ? { ...user, status: newStatus } : user
+      );
+      
+      setWaitlistUsers(updatedUsers);
+      
+      if (newStatus === "accepted") {
+        toast.success("User accepted to waitlist!");
+      } else {
+        toast.success("User declined from waitlist.");
+      }
+    } catch (error) {
+      console.error("Error updating waitlist status:", error);
+      toast.error("Failed to update status");
     }
   };
 
@@ -533,52 +657,49 @@ const Dashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {waitlistUsers.map((user) => {
-                        const property = myProperties.find(p => p.id === user.propertyId);
-                        return (
-                          <tr key={user.id} className="border-b-2 border-gray-200">
-                            <td className="p-4 font-bold">{user.name}</td>
-                            <td className="p-4">
-                              <div>{user.email}</div>
-                              <div>{user.phone}</div>
-                            </td>
-                            <td className="p-4">{property?.title || 'Unknown Property'}</td>
-                            <td className="p-4">
-                              <span className={`px-2 py-1 font-bold ${
-                                user.status === 'accepted' ? 'bg-green-100 text-green-800' : 
-                                user.status === 'declined' ? 'bg-red-100 text-red-800' : 
-                                'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {user.status.toUpperCase()}
-                              </span>
-                            </td>
-                            <td className="p-4">
-                              <div className="flex gap-2">
-                                {user.status === 'pending' && (
-                                  <>
-                                    <Button 
-                                      size="sm" 
-                                      className="bg-green-600 hover:bg-green-700 border-2 border-black"
-                                      onClick={() => handleUpdateWaitlistStatus(user.id, 'accepted')}
-                                    >
-                                      <Check size={16} className="mr-1" />
-                                      Accept
-                                    </Button>
-                                    <Button 
-                                      size="sm" 
-                                      className="bg-red-600 hover:bg-red-700 border-2 border-black"
-                                      onClick={() => handleUpdateWaitlistStatus(user.id, 'declined')}
-                                    >
-                                      <X size={16} className="mr-1" />
-                                      Decline
-                                    </Button>
-                                  </>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                      {waitlistUsers.map((user) => (
+                        <tr key={user.id} className="border-b-2 border-gray-200">
+                          <td className="p-4 font-bold">{user.name}</td>
+                          <td className="p-4">
+                            <div>{user.email}</div>
+                            <div>{user.phone}</div>
+                          </td>
+                          <td className="p-4">{user.property?.title || 'Unknown Property'}</td>
+                          <td className="p-4">
+                            <span className={`px-2 py-1 font-bold ${
+                              user.status === 'accepted' ? 'bg-green-100 text-green-800' : 
+                              user.status === 'declined' ? 'bg-red-100 text-red-800' : 
+                              'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {user.status.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex gap-2">
+                              {user.status === 'pending' && (
+                                <>
+                                  <Button 
+                                    size="sm" 
+                                    className="bg-green-600 hover:bg-green-700 border-2 border-black"
+                                    onClick={() => handleUpdateWaitlistStatus(user.id, 'accepted')}
+                                  >
+                                    <Check size={16} className="mr-1" />
+                                    Accept
+                                  </Button>
+                                  <Button 
+                                    size="sm" 
+                                    className="bg-red-600 hover:bg-red-700 border-2 border-black"
+                                    onClick={() => handleUpdateWaitlistStatus(user.id, 'declined')}
+                                  >
+                                    <X size={16} className="mr-1" />
+                                    Decline
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>

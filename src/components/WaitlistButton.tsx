@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
 
 interface WaitlistButtonProps {
   propertyId: string;
@@ -20,26 +21,37 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
   const [submitting, setSubmitting] = useState(false);
   const [isInWaitlist, setIsInWaitlist] = useState(false);
 
-  // Check if user is already in waitlist for this property
-  const checkWaitlistStatus = useCallback(() => {
+  // Check if user is already in waitlist for this property from database
+  const checkWaitlistStatus = useCallback(async () => {
     if (!user?.id) return false;
     
     try {
-      const waitlistDataJSON = localStorage.getItem('waitlistData');
-      if (!waitlistDataJSON) return false;
+      const { data, error } = await supabase
+        .from('waitlist_requests')
+        .select('id')
+        .eq('property_id', propertyId)
+        .eq('user_id', user.id)
+        .single();
+        
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
+        console.error("Error checking waitlist status:", error);
+        return false;
+      }
       
-      const waitlistData = JSON.parse(waitlistDataJSON);
-      return waitlistData.some(
-        (entry: any) => entry.id === user.id && entry.propertyId === propertyId
-      );
+      return !!data;
     } catch (error) {
-      console.error("Error checking waitlist status:", error);
+      console.error("Exception checking waitlist status:", error);
       return false;
     }
   }, [user?.id, propertyId]);
 
   useEffect(() => {
-    setIsInWaitlist(checkWaitlistStatus());
+    const checkStatus = async () => {
+      const status = await checkWaitlistStatus();
+      setIsInWaitlist(status);
+    };
+    
+    checkStatus();
   }, [user?.id, propertyId, checkWaitlistStatus]);
 
   const handleJoinWaitlist = () => {
@@ -51,7 +63,31 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
     setSubmitting(false);
   };
 
-  const handleSubmit = () => {
+  const createNotification = async (propertyOwnerId: string) => {
+    try {
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: propertyOwnerId,
+          title: 'New Waitlist Request',
+          message: `${user?.name || 'Someone'} is interested in your property: ${propertyTitle}`,
+          type: 'new_listing',
+          read: false,
+          properties: {
+            propertyId,
+            propertyTitle,
+            requesterId: user?.id,
+            requesterName: user?.name
+          }
+        });
+      
+      console.log('Notification created for property owner');
+    } catch (error) {
+      console.error('Error creating notification:', error);
+    }
+  };
+
+  const handleSubmit = async () => {
     if (!phone) {
       toast.error("Please enter your phone number");
       return;
@@ -65,36 +101,52 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({ propertyId, propertyTit
     setSubmitting(true);
     
     try {
-      // Get existing waitlist data
-      let waitlistData: any[] = [];
-      const waitlistDataJSON = localStorage.getItem('waitlistData');
+      // First, get the property owner's user_id
+      const { data: propertyData, error: propertyError } = await supabase
+        .from('property_listings')
+        .select('user_id')
+        .eq('id', propertyId)
+        .single();
       
-      if (waitlistDataJSON) {
-        waitlistData = JSON.parse(waitlistDataJSON);
+      if (propertyError) {
+        console.error("Error fetching property data:", propertyError);
+        throw new Error("Failed to fetch property data");
       }
       
-      // Add new entry
-      const newEntry = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: phone,
-        propertyId: propertyId,
-        propertyTitle: propertyTitle,
-        status: 'pending',
-        timestamp: new Date().toISOString()
-      };
+      const propertyOwnerId = propertyData.user_id;
       
-      // Save back to localStorage
-      localStorage.setItem('waitlistData', JSON.stringify([...waitlistData, newEntry]));
+      // Add request to waitlist_requests table
+      const { error: insertError } = await supabase
+        .from('waitlist_requests')
+        .insert({
+          property_id: propertyId,
+          user_id: user.id,
+          name: user.name || 'Anonymous User',
+          email: user.email || 'No Email',
+          phone: phone,
+          status: 'pending'
+        });
       
-      setIsInWaitlist(true);
-      setDialogOpen(false);
-      toast.success("Successfully joined the waitlist!");
+      if (insertError) {
+        // Check if it's a unique constraint violation (user already in waitlist)
+        if (insertError.code === '23505') {
+          toast.error("You're already on the waitlist for this property");
+        } else {
+          console.error("Error joining waitlist:", insertError);
+          throw new Error("Failed to join waitlist");
+        }
+      } else {
+        // Create notification for property owner
+        await createNotification(propertyOwnerId);
+        
+        setIsInWaitlist(true);
+        toast.success("Successfully joined the waitlist!");
+      }
     } catch (error) {
       console.error("Error joining waitlist:", error);
       toast.error("Failed to join waitlist. Please try again.");
     } finally {
+      setDialogOpen(false);
       setSubmitting(false);
     }
   };
