@@ -20,7 +20,6 @@ interface FilterState {
   bedrooms: string;
   bathrooms: string;
   belowMarket: number;
-  furnished: string;
 }
 
 const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
@@ -30,7 +29,6 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
     bedrooms: "any",
     bathrooms: "any",
     belowMarket: 0,
-    furnished: "any",
   });
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
@@ -137,24 +135,6 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </div>
         </div>
 
-        <div>
-          <h3 className="text-md font-semibold mb-2">Furnished</h3>
-          <div className="flex gap-2">
-            {["Any", "Furnished", "Unfurnished"].map((option) => (
-              <Button
-                key={option}
-                variant={filters.furnished === option.toLowerCase() ? "default" : "outline"}
-                className={`flex-1 ${filters.furnished === option.toLowerCase() 
-                  ? "neo-button-primary" 
-                  : "neo-button"}`}
-                onClick={() => handleFilterChange("furnished", option.toLowerCase())}
-              >
-                {option}
-              </Button>
-            ))}
-          </div>
-        </div>
-
         <Button
           onClick={() => {
             setFilters({
@@ -163,7 +143,6 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
               bedrooms: "any",
               bathrooms: "any",
               belowMarket: 0,
-              furnished: "any",
             });
             onFilterChange({
               propertyType: "any",
@@ -171,7 +150,6 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
               bedrooms: "any",
               bathrooms: "any",
               belowMarket: 0,
-              furnished: "any",
             });
           }}
           variant="link"

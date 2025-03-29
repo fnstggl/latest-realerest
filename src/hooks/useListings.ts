@@ -17,6 +17,20 @@ export interface Listing {
   propertyType?: string;
 }
 
+// Cache for storing listings
+const listingsCache: {
+  data: Listing[] | null;
+  timestamp: number;
+  limit?: number;
+} = {
+  data: null,
+  timestamp: 0,
+  limit: undefined
+};
+
+// Cache expiry time in milliseconds (5 minutes)
+const CACHE_EXPIRY = 5 * 60 * 1000;
+
 /**
  * Custom hook to fetch property listings from Supabase with fallback to localStorage
  */
@@ -32,6 +46,38 @@ export const useListings = (limit?: number) => {
       try {
         setLoading(true);
         setError(null);
+        
+        // Check if we have a valid cache for the same limit
+        const now = Date.now();
+        if (
+          listingsCache.data && 
+          listingsCache.timestamp > now - CACHE_EXPIRY &&
+          listingsCache.limit === limit
+        ) {
+          setListings(listingsCache.data);
+          setLoading(false);
+          return;
+        }
+        
+        // Try first to load from localStorage for instant feedback
+        const storedProperties = localStorage.getItem('propertyListings');
+        if (storedProperties) {
+          try {
+            const loadedProperties = JSON.parse(storedProperties);
+            // Show cached data immediately while fresh data loads
+            if (loadedProperties && loadedProperties.length > 0) {
+              if (!isMounted) return;
+              
+              // Apply limit if provided
+              const limitedProperties = limit ? loadedProperties.slice(0, limit) : loadedProperties;
+              setListings(limitedProperties);
+              
+              // Don't set loading to false yet as we still want to fetch fresh data
+            }
+          } catch (err) {
+            console.error("Error parsing localStorage data:", err);
+          }
+        }
         
         // Create a query that we can modify based on limit
         let query = supabase
@@ -76,19 +122,28 @@ export const useListings = (limit?: number) => {
           
           setListings(transformedListings);
           
+          // Update the cache
+          listingsCache.data = transformedListings;
+          listingsCache.timestamp = Date.now();
+          listingsCache.limit = limit;
+          
           // Also store in localStorage as a backup
           localStorage.setItem('propertyListings', JSON.stringify(transformedListings));
-        } else {
-          // If no data from Supabase, try from localStorage
+        } else if (!listings.length) {
+          // Only fall back to localStorage if we haven't already shown localStorage data
           fallbackToLocalStorage();
         }
       } catch (error) {
         console.error("Error fetching listings:", error);
         if (!isMounted) return;
-        setError("Failed to load properties from the database");
         
-        // Try from localStorage as a fallback
-        fallbackToLocalStorage();
+        if (!listings.length) {
+          // Only show error if we haven't already shown cached data
+          setError("Failed to load properties from the database");
+          
+          // Try from localStorage as a fallback
+          fallbackToLocalStorage();
+        }
       } finally {
         if (!isMounted) return;
         setLoading(false);
@@ -121,8 +176,9 @@ export const useListings = (limit?: number) => {
         const storedProperties = localStorage.getItem('propertyListings');
         if (storedProperties) {
           const loadedProperties = JSON.parse(storedProperties);
-          setListings(loadedProperties);
-          console.log("Loaded properties from localStorage", loadedProperties.length);
+          const limitedProperties = limit ? loadedProperties.slice(0, limit) : loadedProperties;
+          setListings(limitedProperties);
+          console.log("Loaded properties from localStorage", limitedProperties.length);
         }
       } catch (err) {
         console.error("Error loading from localStorage:", err);

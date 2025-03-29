@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -229,7 +228,6 @@ const Search: React.FC = () => {
                   bedrooms: "any",
                   bathrooms: "any",
                   belowMarket: 0,
-                  furnished: "any",
                 })} className="neo-button-primary">
                   Reset Filters
                 </Button>
