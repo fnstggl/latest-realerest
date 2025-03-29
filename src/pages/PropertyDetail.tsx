@@ -221,7 +221,7 @@ const PropertyDetail: React.FC = () => {
           className="cursor-pointer text-[#d60013] hover:underline"
           onClick={handleAddressClick}
         >
-          [Join Waitlist For Address]
+          Request Full Address
         </span>
         {restOfAddress ? `,${restOfAddress}` : ''}
       </span>
