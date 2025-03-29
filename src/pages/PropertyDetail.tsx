@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -80,16 +81,28 @@ const PropertyDetail: React.FC = () => {
       
       setLoading(true);
       try {
-        // First try to fetch from Supabase
-        const { data: propertyData, error } = await supabase
+        // First try to fetch property data from Supabase
+        const { data: propertyData, error: propertyError } = await supabase
           .from('property_listings')
-          .select('*, profiles:user_id(*)')
+          .select('*')
           .eq('id', id)
           .single();
           
-        if (error) {
-          console.error("Error fetching from Supabase:", error);
-          throw error;
+        if (propertyError) {
+          console.error("Error fetching property:", propertyError);
+          throw propertyError;
+        }
+        
+        // Separately fetch seller profile data to avoid type issues
+        const { data: sellerData, error: sellerError } = await supabase
+          .from('profiles')
+          .select('name, email, phone')
+          .eq('id', propertyData.user_id)
+          .single();
+        
+        if (sellerError && sellerError.code !== 'PGRST116') {
+          console.error("Error fetching seller profile:", sellerError);
+          // Continue without seller data
         }
         
         if (propertyData) {
@@ -110,9 +123,9 @@ const PropertyDetail: React.FC = () => {
             sqft: propertyData.sqft || 0,
             belowMarket: calculateBelowMarket(Number(propertyData.market_price), Number(propertyData.price)),
             sellerId: propertyData.user_id,
-            sellerName: propertyData.profiles?.name || 'Property Owner',
-            sellerPhone: propertyData.profiles?.phone || 'No phone number provided',
-            sellerEmail: propertyData.profiles?.email
+            sellerName: sellerData?.name || 'Property Owner',
+            sellerPhone: sellerData?.phone || 'No phone number provided',
+            sellerEmail: sellerData?.email
           };
           
           setProperty(transformedProperty);
@@ -242,13 +255,13 @@ const PropertyDetail: React.FC = () => {
           <div>
             <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-4">
               <img 
-                src={activeImage || property.image} 
-                alt={property.title} 
+                src={activeImage || property?.image} 
+                alt={property?.title} 
                 className="w-full h-[400px] object-cover"
               />
             </div>
             
-            {property.images && property.images.length > 1 && (
+            {property?.images && property.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
                 {property.images.map((img, index) => (
                   <div 
@@ -272,24 +285,24 @@ const PropertyDetail: React.FC = () => {
               <div className="flex items-center gap-2 mb-2">
                 <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold inline-flex items-center">
                   <DollarSign size={16} className="mr-1" />
-                  {property.belowMarket}% BELOW MARKET
+                  {property?.belowMarket}% BELOW MARKET
                 </div>
               </div>
               
-              <h1 className="text-3xl font-bold mb-2">{property.title}</h1>
+              <h1 className="text-3xl font-bold mb-2">{property?.title}</h1>
               
               <div className="flex items-center mb-4">
                 <MapPin size={18} className="mr-2 text-[#d60013]" />
-                <span className="font-medium">{getDisplayLocation()}</span>
+                <span className="font-medium">{property && getDisplayLocation()}</span>
               </div>
               
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="border-2 border-black p-4">
-                  <div className="text-2xl font-bold text-[#d60013]">{formatCurrency(property.price)}</div>
+                  <div className="text-2xl font-bold text-[#d60013]">{property && formatCurrency(property.price)}</div>
                   <div className="text-sm">Listing Price</div>
                 </div>
                 <div className="border-2 border-black p-4">
-                  <div className="text-xl font-bold line-through text-gray-500">{formatCurrency(property.marketPrice)}</div>
+                  <div className="text-xl font-bold line-through text-gray-500">{property && formatCurrency(property.marketPrice)}</div>
                   <div className="text-sm">Market Value</div>
                 </div>
               </div>
@@ -297,19 +310,19 @@ const PropertyDetail: React.FC = () => {
               <div className="flex justify-between pt-3 border-t-2 border-black mb-6">
                 <div className="flex items-center">
                   <Bed size={18} className="mr-1" />
-                  <span className="font-bold">{property.beds}</span>
+                  <span className="font-bold">{property?.beds}</span>
                 </div>
                 <div className="flex items-center">
                   <Bath size={18} className="mr-1" />
-                  <span className="font-bold">{property.baths}</span>
+                  <span className="font-bold">{property?.baths}</span>
                 </div>
                 <div className="flex items-center">
                   <Square size={18} className="mr-1" />
-                  <span className="font-bold">{property.sqft.toLocaleString()} sqft</span>
+                  <span className="font-bold">{property?.sqft?.toLocaleString()} sqft</span>
                 </div>
               </div>
               
-              {isOwner ? (
+              {property && isOwner ? (
                 <Link to={`/property/${property.id}/edit`}>
                   <Button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 neo-shadow-sm transition-colors">
                     <Cog size={18} className="mr-2" />
@@ -317,18 +330,18 @@ const PropertyDetail: React.FC = () => {
                   </Button>
                 </Link>
               ) : (
-                isApproved ? (
+                property && (isApproved ? (
                   <div className="border-2 border-green-600 p-4 mb-6">
                     <div className="font-bold text-green-600 mb-2">Your waitlist request has been approved!</div>
                     <p>You now have access to view the full property details and contact the seller directly.</p>
                   </div>
                 ) : (
-                  <WaitlistButton propertyId={property.id} propertyTitle={property.title} />
-                )
+                  property && <WaitlistButton propertyId={property.id} propertyTitle={property.title} />
+                ))
               )}
             </div>
             
-            {(isOwner || isApproved) && property.sellerName && (
+            {property && (isOwner || isApproved) && property.sellerName && (
               <div className="border-2 border-black p-4 mt-6">
                 <h3 className="font-bold mb-2">Contact Seller</h3>
                 <p className="mb-1">{property.sellerName}</p>
@@ -354,8 +367,8 @@ const PropertyDetail: React.FC = () => {
             <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
               <h2 className="text-2xl font-bold mb-4">Property Description</h2>
               <p className="whitespace-pre-line">
-                {property.description || 
-                  `This beautiful property offers great value at ${property.belowMarket}% below market price. 
+                {property?.description || 
+                  property && `This beautiful property offers great value at ${property.belowMarket}% below market price. 
                   With ${property.beds} bedrooms and ${property.baths} bathrooms across ${property.sqft.toLocaleString()} square feet, 
                   it's perfect for families looking for their dream home.
                   
@@ -387,14 +400,14 @@ const PropertyDetail: React.FC = () => {
                   <span>2-Car Garage</span>
                 </div>
                 
-                {property.afterRepairValue && (
+                {property?.afterRepairValue && (
                   <div className="flex justify-between">
                     <span className="font-bold">ARV:</span>
                     <span>{formatCurrency(property.afterRepairValue)}</span>
                   </div>
                 )}
                 
-                {property.estimatedRehab && (
+                {property?.estimatedRehab && (
                   <div className="flex justify-between">
                     <span className="font-bold">Est. Rehab Cost:</span>
                     <span>{formatCurrency(property.estimatedRehab)}</span>
@@ -405,7 +418,7 @@ const PropertyDetail: React.FC = () => {
           </div>
         </div>
         
-        {(isOwner || isApproved) && property.comparables && property.comparables.length > 0 && (
+        {property && (isOwner || isApproved) && property.comparables && property.comparables.length > 0 && (
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 mb-12">
             <h2 className="text-2xl font-bold mb-4">Comparable Properties</h2>
             <ul className="space-y-2">
