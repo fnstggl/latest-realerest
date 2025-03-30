@@ -30,34 +30,6 @@ serve(async (req) => {
     try {
       // Try to use Anthropic API if available
       if (ANTHROPIC_API_KEY) {
-        // Construct a prompt that instructs Claude to generate a blog post about the property
-        const systemPrompt = `You are a real estate marketing expert who specializes in creating SEO-optimized blog content. 
-You're writing an article about an below-market property to generate interest.
-
-Important guidelines:
-- Do NOT include the exact address - use general location only (city/neighborhood)
-- Focus on the value proposition (${property.belowMarket}% below market)
-- Highlight key features: ${property.beds} bedrooms, ${property.baths} bathrooms, ${property.sqft} square feet
-- Create an engaging title that mentions "below market opportunity"
-- Write in a professional but conversational tone
-- Include 3-5 paragraphs of content
-- Finish with a call to action to join the waitlist to see the property
-- Format the content properly with HTML tags (<h2>, <p>, etc.)
-- Total length should be 300-500 words`;
-
-        const userPrompt = `Please write an SEO-optimized blog post about this property:
-- Title: ${property.title}
-- Price: $${property.price}
-- Market Price: $${property.marketPrice}
-- Below Market: ${property.belowMarket}%
-- Location: ${property.location}
-- Beds: ${property.beds}
-- Baths: ${property.baths}
-- Square Feet: ${property.sqft}
-- Description: ${property.description || "A great investment opportunity below market value."}
-
-The blog post should highlight the below-market opportunity without revealing the exact address.`;
-        
         // Call the Anthropic API
         const response = await fetch(ANTHROPIC_API_URL, {
           method: "POST",
@@ -69,9 +41,36 @@ The blog post should highlight the below-market opportunity without revealing th
           body: JSON.stringify({
             model: "claude-3-haiku-20240307",
             max_tokens: 1000,
+            system: `You are a real estate marketing expert who specializes in creating SEO-optimized blog content. 
+You're writing an article about a below-market property to generate interest.
+
+Important guidelines:
+- Do NOT include the exact address - use general location only (city/neighborhood)
+- Focus on the value proposition (${property.belowMarket}% below market)
+- Highlight key features: ${property.beds} bedrooms, ${property.baths} bathrooms, ${property.sqft} square feet
+- Create an engaging title that mentions "below market opportunity"
+- Write in a professional but conversational tone
+- Include 3-5 paragraphs of content
+- Finish with a call to action to join the waitlist to see the property
+- Format the content properly with HTML tags like <h2> and <p> but do NOT include these tags in your response
+- Total length should be 300-500 words`,
             messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userPrompt }
+              { 
+                role: "user", 
+                content: `Please write an SEO-optimized blog post about this property:
+- Title: ${property.title}
+- Price: $${property.price}
+- Market Price: $${property.marketPrice}
+- Below Market: ${property.belowMarket}%
+- Location: ${property.location}
+- Beds: ${property.beds}
+- Baths: ${property.baths}
+- Square Feet: ${property.sqft}
+- Description: ${property.description || "A great investment opportunity below market value."}
+
+The blog post should highlight the below-market opportunity without revealing the exact address.
+Do NOT include HTML tags like <h1>, <h2>, <p> etc. in your response. Write clean text only.`
+              }
             ]
           })
         });
@@ -88,23 +87,25 @@ The blog post should highlight the below-market opportunity without revealing th
         
         // Parse out a good title from the generated text
         let title = "Below Market Property Opportunity";
-        const titleMatch = generatedText.match(/<h1[^>]*>(.*?)<\/h1>/i) || 
-                          generatedText.match(/^#\s+(.*?)$/m) ||
-                          generatedText.match(/^(.+?)(?:\n|$)/);
+        const titleMatch = generatedText.match(/^(.+?)(?:\n|$)/);
         
         if (titleMatch && titleMatch[1]) {
-          title = titleMatch[1].replace(/<[^>]+>/g, '').trim();
+          title = titleMatch[1].trim();
+        }
+        
+        // Get the content without the title
+        let content = generatedText;
+        if (titleMatch) {
+          content = generatedText.substring(titleMatch[0].length).trim();
         }
         
         // Extract a short excerpt
-        let excerpt = "";
-        const contentWithoutTags = generatedText.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-        excerpt = contentWithoutTags.substring(0, 150) + "...";
+        const excerpt = content.substring(0, 150) + "...";
         
         // Return the generated content, title and excerpt
         return new Response(
           JSON.stringify({ 
-            content: generatedText,
+            content: content,
             title: title,
             excerpt: excerpt 
           }),
@@ -123,22 +124,21 @@ The blog post should highlight the below-market opportunity without revealing th
       const title = `Incredible Value: ${property.belowMarket}% Below Market in ${property.location}`;
       
       const content = `
-<h1>${title}</h1>
+Incredible Value: ${property.belowMarket}% Below Market in ${property.location}
 
-<p>We're excited to present an exceptional investment opportunity in ${property.location}. This ${property.beds}-bedroom, ${property.baths}-bathroom property with ${property.sqft} square feet of living space is currently available at <strong>${formattedPrice}</strong>, which is <strong>${property.belowMarket}%</strong> below the estimated market value of ${formattedMarketPrice}!</p>
+We're excited to present an exceptional investment opportunity in ${property.location}. This ${property.beds}-bedroom, ${property.baths}-bathroom property with ${property.sqft} square feet of living space is currently available at ${formattedPrice}, which is ${property.belowMarket}% below the estimated market value of ${formattedMarketPrice}!
 
-<h2>Property Highlights</h2>
-<p>This spacious home features ${property.beds} comfortable bedrooms and ${property.baths} well-appointed bathrooms. With ${property.sqft} square feet of living space, there's plenty of room for family and entertaining. Located in the desirable area of ${property.location}, this property combines value with an excellent location.</p>
+Property Highlights
+This spacious home features ${property.beds} comfortable bedrooms and ${property.baths} well-appointed bathrooms. With ${property.sqft} square feet of living space, there's plenty of room for family and entertaining. Located in the desirable area of ${property.location}, this property combines value with an excellent location.
 
-<h2>Amazing Value Opportunity</h2>
-<p>Priced at just ${formattedPrice}, this property represents an incredible ${property.belowMarket}% discount from its estimated market value of ${formattedMarketPrice}. Whether you're looking for a primary residence, a rental property, or an investment opportunity, the significant below-market pricing makes this an option worth serious consideration.</p>
+Amazing Value Opportunity
+Priced at just ${formattedPrice}, this property represents an incredible ${property.belowMarket}% discount from its estimated market value of ${formattedMarketPrice}. Whether you're looking for a primary residence, a rental property, or an investment opportunity, the significant below-market pricing makes this an option worth serious consideration.
 
-<h2>Why Below Market?</h2>
-<p>${property.description || "The seller is motivated and needs to close quickly, creating this rare below-market opportunity for savvy buyers. Properties like this don't stay available for long, especially with such attractive pricing."}</p>
+Why Below Market?
+${property.description || "The seller is motivated and needs to close quickly, creating this rare below-market opportunity for savvy buyers. Properties like this don't stay available for long, especially with such attractive pricing."}
 
-<h2>Take Action Now</h2>
-<p>To schedule a viewing or learn more about this below-market property, join our waitlist today. Our below-market properties typically sell quickly, so don't miss your chance to secure this exceptional value opportunity in ${property.location}.</p>
-`;
+Take Action Now
+To schedule a viewing or learn more about this below-market property, join our waitlist today. Our below-market properties typically sell quickly, so don't miss your chance to secure this exceptional value opportunity in ${property.location}.`;
       
       const excerpt = `Discover an exceptional investment opportunity in ${property.location}. This ${property.beds}-bedroom, ${property.baths}-bathroom property is available at ${property.belowMarket}% below market value. Don't miss this rare chance to secure...`;
 

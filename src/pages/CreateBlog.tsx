@@ -179,6 +179,13 @@ const CreateBlog: React.FC = () => {
     return null;
   }
 
+  // Format the blog content for preview (without HTML tags)
+  const formattedContent = formData.content
+    .split('\n\n')
+    .map((paragraph, i) => (
+      <p key={i} className="mb-4">{paragraph}</p>
+    ));
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -314,13 +321,39 @@ const CreateBlog: React.FC = () => {
                   <label htmlFor="content" className="block text-lg font-medium mb-2">
                     Blog Content <span className="text-red-600">*</span>
                   </label>
+                  
+                  {formData.content ? (
+                    <div className="mb-4">
+                      <div className="border-2 border-gray-300 rounded-md p-4 bg-gray-50">
+                        <div className="prose max-w-none">
+                          {formattedContent}
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="text-sm"
+                          onClick={() => {
+                            const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                            textarea.focus();
+                          }}
+                        >
+                          Edit content
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
+                  
                   <Textarea
                     id="content"
                     name="content"
                     placeholder="Write your blog post content here..."
                     value={formData.content}
                     onChange={handleChange}
-                    className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-h-[300px]"
+                    className={`border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-h-[300px] ${
+                      formData.content ? "sr-only" : ""
+                    }`}
                     required
                   />
                 </div>
