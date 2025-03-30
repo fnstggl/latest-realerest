@@ -118,14 +118,23 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
             } else {
               console.warn("No profile found in profiles table, trying to fetch from auth.users");
               
-              // As a fallback, try to get the email from auth.users via a server function
-              // Ideally we would use a server function here, but for now we'll use what we have
+              // If no profile found, try to directly fetch auth user's email using a custom query
+              // This is the key addition to fix the issue
+              const { data: userData, error: userError } = await supabase
+                .rpc('get_user_email', { user_id_param: propertyData.user_id });
+                
+              if (userError) {
+                console.error("Error fetching user email:", userError);
+              } else if (userData) {
+                console.log("Found user email from auth:", userData);
+                sellerEmail = userData;
+              }
               
               // If the property owner is the current user, use their info
               if (user && user.id === propertyData.user_id) {
                 console.log("Property owner is the current user, using their info");
                 sellerName = user.name || 'Property Owner';
-                sellerEmail = user.email;
+                sellerEmail = user.email || sellerEmail;
               }
             }
           } catch (error) {
