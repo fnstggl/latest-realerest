@@ -132,8 +132,8 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
             belowMarket: calculateBelowMarket(Number(propertyData.market_price), Number(propertyData.price)),
             sellerId: propertyData.user_id || null,
             sellerName: sellerData?.name || 'Property Owner',
-            sellerPhone: sellerData?.phone,
-            sellerEmail: sellerData?.email,
+            sellerPhone: sellerData?.phone || null,
+            sellerEmail: sellerData?.email || null,
             afterRepairValue: propertyData.after_repair_value !== null 
               ? Number(propertyData.after_repair_value) 
               : undefined,
