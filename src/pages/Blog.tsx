@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Helmet } from 'react-helmet-async';
 
 interface BlogPost {
   id: string;
@@ -121,6 +122,15 @@ const Blog: React.FC = () => {
     <div className="min-h-screen bg-white">
       <Navbar />
       
+      <Helmet>
+        <title>DoneDeal Blog | Property Investment Articles</title>
+        <meta name="description" content="Read our latest articles on property investment, real estate opportunities, and below market deals." />
+        <meta property="og:title" content="DoneDeal Blog | Property Investment Articles" />
+        <meta property="og:description" content="Read our latest articles on property investment, real estate opportunities, and below market deals." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={window.location.href} />
+      </Helmet>
+      
       <div className="container mx-auto px-4 py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -166,13 +176,15 @@ const Blog: React.FC = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden group"
                 >
-                  <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={post.image} 
-                      alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </div>
+                  <Link to={`/blog/${post.id}`} className="block">
+                    <div className="relative h-48 overflow-hidden">
+                      <img 
+                        src={post.image} 
+                        alt={post.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    </div>
+                  </Link>
                   
                   <div className="p-6">
                     <div className="flex items-center text-sm text-gray-600 mb-2">
@@ -186,9 +198,11 @@ const Blog: React.FC = () => {
                       </div>
                     </div>
                     
-                    <h2 className="text-xl font-bold mb-2 hover:text-[#d60013] transition-colors">
-                      {post.title}
-                    </h2>
+                    <Link to={`/blog/${post.id}`} className="block">
+                      <h2 className="text-xl font-bold mb-2 hover:text-[#d60013] transition-colors">
+                        {post.title}
+                      </h2>
+                    </Link>
                     
                     <p className="text-gray-700 mb-4">
                       {post.excerpt}
@@ -215,9 +229,12 @@ const Blog: React.FC = () => {
                         <Button 
                           variant="link" 
                           className="text-[#d60013] p-0 hover:text-[#d60013]/80 font-bold flex items-center"
+                          asChild
                         >
-                          Read More
-                          <ArrowRight size={14} className="ml-1" />
+                          <Link to={`/blog/${post.id}`}>
+                            Read More
+                            <ArrowRight size={14} className="ml-1" />
+                          </Link>
                         </Button>
                       </div>
                     </div>
