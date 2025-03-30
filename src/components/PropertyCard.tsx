@@ -32,15 +32,26 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   // Round the percentage up if .5 or above
   const roundedBelowMarket = Math.round(belowMarket);
   
+  // Fallback for image to prevent errors
+  const validImage = image || '/placeholder.svg';
+  
+  // Error handler for images
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.onerror = null; // Prevent infinite loops
+    e.currentTarget.src = '/placeholder.svg';
+  };
+  
   return (
     <Link to={`/property/${id}`} className="block">
       <div className="relative bg-white shadow-lg overflow-hidden border-[6px] border-black">
         {/* Main image */}
         <div className="relative">
           <img
-            src={image}
+            src={validImage}
             alt={location}
             className="h-[240px] w-full object-cover"
+            onError={handleImageError}
+            loading="lazy" // Add lazy loading
           />
           {/* Below Market Tag - enhanced with full border and shadow */}
           {belowMarket > 0 && (
