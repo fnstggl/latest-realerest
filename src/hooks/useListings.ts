@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
@@ -114,9 +113,9 @@ export const useListings = (limit?: number) => {
             propertyType: extractPropertyTypeFromTitle(item.title),
             // Use the first image from the array if available
             image: item.images && item.images.length > 0 ? item.images[0] : 'https://source.unsplash.com/random/800x600?house',
-            // Calculate below market percentage
+            // Calculate below market percentage and round it
             belowMarket: item.market_price > item.price 
-              ? parseFloat(((item.market_price - item.price) / item.market_price * 100).toFixed(1)) 
+              ? Math.round((item.market_price - item.price) / item.market_price * 100)
               : 0
           }));
           

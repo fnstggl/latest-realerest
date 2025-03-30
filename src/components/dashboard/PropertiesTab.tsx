@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -90,7 +91,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-2xl font-bold">{property.title}</h3>
                         <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold">
-                          {property.belowMarket}% BELOW MARKET
+                          {Math.round(property.belowMarket)}% BELOW MARKET
                         </div>
                       </div>
                       <p className="text-lg mb-4">{property.location}</p>

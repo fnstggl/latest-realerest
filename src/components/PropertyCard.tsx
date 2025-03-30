@@ -29,6 +29,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   sqft,
   belowMarket,
 }) => {
+  // Round the percentage up if .5 or above
+  const roundedBelowMarket = Math.round(belowMarket);
+  
   return (
     <Link to={`/property/${id}`} className="block">
       <div className="relative bg-white shadow-lg overflow-hidden border-[6px] border-black">
@@ -42,7 +45,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           {/* Below Market Tag - enhanced with full border and shadow */}
           {belowMarket > 0 && (
             <div className="absolute top-12 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
-              {belowMarket}% OFF
+              {roundedBelowMarket}% OFF
             </div>
           )}
           
