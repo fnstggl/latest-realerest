@@ -17,6 +17,7 @@ export type Database = {
           excerpt: string | null
           id: string
           image: string | null
+          property_id: string | null
           read_time: number | null
           title: string
           updated_at: string
@@ -29,6 +30,7 @@ export type Database = {
           excerpt?: string | null
           id?: string
           image?: string | null
+          property_id?: string | null
           read_time?: number | null
           title: string
           updated_at?: string
@@ -41,12 +43,21 @@ export type Database = {
           excerpt?: string | null
           id?: string
           image?: string | null
+          property_id?: string | null
           read_time?: number | null
           title?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "property_listings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
