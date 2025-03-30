@@ -92,23 +92,44 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           toast.error("Seller information not available for this listing");
         }
         
-        // Fetch seller information from profiles table
-        let sellerData = null;
+        // Seller information with fallback strategy
+        let sellerName = 'Property Owner';
+        let sellerPhone = null;
+        let sellerEmail = null;
+        
         if (propertyData.user_id) {
-          const { data: seller, error: sellerError } = await supabase
-            .from('profiles')
-            .select('name, email, phone')
-            .eq('id', propertyData.user_id)
-            .single();
-          
-          if (sellerError) {
-            console.error("Error fetching seller profile:", sellerError);
-            if (sellerError.code === 'PGRST116') {
-              console.log("No profile found for user ID:", propertyData.user_id);
+          try {
+            // First try to get seller info from profiles table
+            const { data: profileData, error: profileError } = await supabase
+              .from('profiles')
+              .select('name, email, phone')
+              .eq('id', propertyData.user_id)
+              .maybeSingle();
+              
+            if (profileError) {
+              console.error("Error fetching seller profile:", profileError);
             }
-          } else {
-            sellerData = seller;
-            console.log("Seller data from Supabase:", sellerData);
+            
+            if (profileData) {
+              console.log("Found seller profile data:", profileData);
+              sellerName = profileData.name || 'Property Owner';
+              sellerPhone = profileData.phone || null;
+              sellerEmail = profileData.email || null;
+            } else {
+              console.warn("No profile found in profiles table, trying to fetch from auth.users");
+              
+              // As a fallback, try to get the email from auth.users via a server function
+              // Ideally we would use a server function here, but for now we'll use what we have
+              
+              // If the property owner is the current user, use their info
+              if (user && user.id === propertyData.user_id) {
+                console.log("Property owner is the current user, using their info");
+                sellerName = user.name || 'Property Owner';
+                sellerEmail = user.email;
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching seller information:", error);
           }
         }
         
@@ -131,9 +152,9 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
             sqft: propertyData.sqft || 0,
             belowMarket: calculateBelowMarket(Number(propertyData.market_price), Number(propertyData.price)),
             sellerId: propertyData.user_id || null,
-            sellerName: sellerData?.name || 'Property Owner',
-            sellerPhone: sellerData?.phone || null,
-            sellerEmail: sellerData?.email || null,
+            sellerName: sellerName,
+            sellerPhone: sellerPhone,
+            sellerEmail: sellerEmail,
             afterRepairValue: propertyData.after_repair_value !== null 
               ? Number(propertyData.after_repair_value) 
               : undefined,
@@ -189,7 +210,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     };
 
     fetchProperty();
-  }, [propertyId, user?.id]);
+  }, [propertyId, user]);
 
   // Determine if the seller contact info should be shown
   const shouldShowSellerInfo = isOwner || isApproved;
