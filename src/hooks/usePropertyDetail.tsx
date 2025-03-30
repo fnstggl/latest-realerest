@@ -121,7 +121,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
               // If no profile found, try to directly fetch auth user's email using a custom query
               // This is the key addition to fix the issue
               const { data: userData, error: userError } = await supabase
-                .rpc('get_user_email', { user_id_param: propertyData.user_id });
+                .rpc('get_user_email', { user_id_param: propertyData.user_id }) as { data: string | null, error: any };
                 
               if (userError) {
                 console.error("Error fetching user email:", userError);
