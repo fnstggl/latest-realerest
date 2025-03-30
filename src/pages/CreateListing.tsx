@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Import formSchema (small import)
 import { formSchema } from '@/components/create-listing/formSchema';
+import { uploadImagesToSupabase, createNotification } from '@/components/create-listing/UploadService';
 
 // Lazy load heavier components
 const PropertyTypeSection = lazy(() => import('@/components/create-listing/PropertyTypeSection'));
@@ -23,7 +24,6 @@ const PriceSection = lazy(() => import('@/components/create-listing/PriceSection
 const ComparableSection = lazy(() => import('@/components/create-listing/ComparableSection'));
 const ImageUploader = lazy(() => import('@/components/create-listing/ImageUploader'));
 const SubmitSection = lazy(() => import('@/components/create-listing/SubmitSection'));
-const { uploadImagesToSupabase, createNotification } = await import('@/components/create-listing/UploadService');
 
 // Use a smaller default image size for faster loading
 const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
