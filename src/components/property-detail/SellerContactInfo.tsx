@@ -34,7 +34,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   email, 
   showContact 
 }) => {
-  console.log("SellerContactInfo - showContact:", showContact, "name:", name, "phone:", phone, "email:", email);
+  console.log("SellerContactInfo rendering with:", { name, phone, email, showContact });
   
   if (!showContact) {
     return null;

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -17,8 +16,7 @@ const PropertyDetail: React.FC = () => {
   const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
   const { property, loading, isOwner, isApproved, shouldShowSellerInfo } = usePropertyDetail(id);
 
-  const handleAddressClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleAddressClick = () => {
     setShowWaitlistDialog(true);
   };
 
@@ -58,6 +56,13 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
+  console.log("PropertyDetail rendering with shouldShowSellerInfo:", shouldShowSellerInfo);
+  console.log("Property seller details:", {
+    sellerName: property.sellerName,
+    sellerPhone: property.sellerPhone,
+    sellerEmail: property.sellerEmail
+  });
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -71,13 +76,11 @@ const PropertyDetail: React.FC = () => {
         </div>
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {/* Left column - Property images */}
           <PropertyImages 
             mainImage={property.image} 
             images={property.images} 
           />
           
-          {/* Right column - Property info and actions */}
           <div className="flex flex-col justify-between">
             <div>
               <PropertyHeader 
@@ -131,7 +134,6 @@ const PropertyDetail: React.FC = () => {
               )}
             </div>
             
-            {/* Seller contact information */}
             <SellerContactInfo 
               name={property.sellerName}
               phone={property.sellerPhone}
