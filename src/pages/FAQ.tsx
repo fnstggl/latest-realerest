@@ -26,6 +26,16 @@ const faqs: FAQItem[] = [
     category: 'general'
   },
   {
+    question: "How can you offer properties below market value?",
+    answer: "We work with distressed sellers who are motivated to sell their properties quickly, even if it means pricing them below market value. These sellers may be facing situations like pre-foreclosure, pre-probate sales, property liens, job relocations, or simply need a fast sale. By connecting these motivated sellers with ready buyers, we create opportunities for buyers to find great deals while helping sellers achieve their goal of a quick sale.",
+    category: 'general'
+  },
+  {
+    question: "How long do properties typically stay available on DoneDeal?",
+    answer: "Due to the high demand for below-market properties, listings on our platform may sell quickly. The supply of these opportunities is naturally limited, so we encourage serious buyers to act promptly when they find a property they're interested in. This is why we've designed our platform to facilitate fast, efficient transactions between motivated sellers and ready buyers.",
+    category: 'general'
+  },
+  {
     question: "How do I find properties below market value?",
     answer: "You can browse our listings directly or use our search function to filter properties by location, price range, and percentage below market value. Each listing clearly shows how much below market value the property is priced.",
     category: 'buyers'
@@ -41,6 +51,11 @@ const faqs: FAQItem[] = [
     category: 'buyers'
   },
   {
+    question: "Why should I act quickly when I see a property I like?",
+    answer: "Below-market properties are in high demand with limited supply. Distressed sellers are often looking for quick transactions, and properties priced significantly below market value don't typically stay available for long. We recommend acting promptly when you find a property that meets your criteria.",
+    category: 'buyers'
+  },
+  {
     question: "How do I list my property on DoneDeal?",
     answer: "Simply create a seller account, click on 'List Your Property' and follow the step-by-step process. You'll need to provide details about your property, set your price, upload photos, and provide comparable properties to verify the market value.",
     category: 'sellers'
@@ -48,6 +63,11 @@ const faqs: FAQItem[] = [
   {
     question: "Why should I list my property below market value?",
     answer: "Listing below market value can attract more potential buyers, lead to faster sales, and often results in simpler transactions with fewer contingencies. By pricing strategically, you can save money on carrying costs and potentially avoid months of your property sitting on the market.",
+    category: 'sellers'
+  },
+  {
+    question: "I'm in a distressed selling situation. Can DoneDeal help me sell quickly?",
+    answer: "Yes, DoneDeal is specifically designed to help sellers who need to move their properties quickly, even at below-market prices. Whether you're facing pre-foreclosure, dealing with an inherited property, have liens, need to relocate for a job, or simply need liquid capital fast, our platform connects you directly with buyers who are ready to move quickly on below-market opportunities.",
     category: 'sellers'
   },
   {
