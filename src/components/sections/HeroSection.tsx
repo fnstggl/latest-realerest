@@ -1,35 +1,77 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import FlatIllustration from '@/components/FlatIllustration';
+import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import SearchBar from '@/components/SearchBar';
 
-export default function HeroSection() {
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const stagger = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const HeroSection: React.FC = () => {
   return (
-    <section className="relative w-full overflow-hidden bg-white py-12 md:py-16 lg:py-20">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-          <div className="flex flex-col space-y-4 text-center md:text-left md:w-1/2">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-5xl">
-              Find Your Dream Home At A Price You Can Actually Afford
+    <section className="py-16 bg-white">
+      <div className="container px-4 lg:px-8 mx-auto">
+        <motion.div 
+          className="grid md:grid-cols-2 gap-12 items-center"
+          initial="hidden"
+          animate="visible"
+          variants={stagger}
+        >
+          <motion.div 
+            className="order-2 md:order-1"
+            variants={fadeInUp}
+          >
+            {/* Single-line header text layout */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-black mb-4 whitespace-nowrap">
+              Find your dream home...
             </h1>
-            <p className="max-w-[600px] text-gray-500 md:text-xl">
-              Browse affordable listings directly from homeowners, cutting out the middleman and saving you money.
+            <div className="bg-[#d60013] block mb-6 px-3 py-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-auto inline-block">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white whitespace-nowrap">
+                we'll find your dream price
+              </h1>
+            </div>
+            <p className="text-xl text-black mb-8">
+              Connecting families to affordable housing—fast. Discover properties below market value through DoneDeal's exclusive platform.
             </p>
-            <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0 md:justify-start justify-center">
-              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-                <Link to="/search">Browse Homes</Link>
+            <SearchBar className="mb-8" />
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button asChild 
+                className="neo-button-primary font-bold"
+              >
+                <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to="/create-listing">List Your Property</Link>
+              <Button asChild 
+                variant="outline" 
+                className="neo-button font-bold"
+              >
+                <Link to="/about">Learn More</Link>
               </Button>
             </div>
-          </div>
-          <div className="md:w-1/2 w-full max-w-lg">
-            <FlatIllustration />
-          </div>
-        </div>
+          </motion.div>
+          <motion.div 
+            className="order-1 md:order-2"
+            variants={fadeInUp}
+          >
+            {/* Intentionally left empty per user request */}
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
-}
+};
+
+export default HeroSection;
