@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BadgePercent, Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-
 interface PropertyCardProps {
   id: string;
   price: number;
@@ -16,7 +14,6 @@ interface PropertyCardProps {
   sqft: number;
   belowMarket: number;
 }
-
 const PropertyCard: React.FC<PropertyCardProps> = ({
   id,
   price,
@@ -27,38 +24,29 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   beds,
   baths,
   sqft,
-  belowMarket,
+  belowMarket
 }) => {
   // Round the percentage up if .5 or above
   const roundedBelowMarket = Math.round(belowMarket);
-  
+
   // Fallback for image to prevent errors
   const validImage = image || '/placeholder.svg';
-  
+
   // Error handler for images
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.onerror = null; // Prevent infinite loops
     e.currentTarget.src = '/placeholder.svg';
   };
-  
-  return (
-    <Link to={`/property/${id}`} className="block">
+  return <Link to={`/property/${id}`} className="block">
       <div className="relative bg-white shadow-lg overflow-hidden border-[6px] border-black">
         {/* Main image */}
         <div className="relative">
-          <img
-            src={validImage}
-            alt={location}
-            className="h-[240px] w-full object-cover"
-            onError={handleImageError}
-            loading="lazy" // Add lazy loading
-          />
+          <img src={validImage} alt={location} className="h-[240px] w-full object-cover" onError={handleImageError} loading="lazy" // Add lazy loading
+        />
           {/* Below Market Tag - enhanced with full border and shadow */}
-          {belowMarket > 0 && (
-            <div className="absolute top-12 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
+          {belowMarket > 0 && <div className="absolute top-12 left-0 bg-[#d60013] text-white py-2 px-4 font-bold border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]">
               {roundedBelowMarket}% OFF
-            </div>
-          )}
+            </div>}
           
           {/* Black divider line between image and content */}
           <div className="h-[6px] w-full bg-black"></div>
@@ -67,7 +55,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         <div className="p-6">
           {/* Location and price info */}
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-2xl font-bold">{address || location.split(',')[0]}</h3>
+            <h3 className="font-bold text-xl">{address || location.split(',')[0]}</h3>
             <div className="text-right">
               <div className="text-2xl font-bold">{formatCurrency(price)}</div>
               <div className="text-gray-500 line-through">{formatCurrency(marketPrice)}</div>
@@ -106,8 +94,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
         </div>
       </div>
-    </Link>
-  );
+    </Link>;
 };
-
 export default PropertyCard;
