@@ -43,9 +43,7 @@ const HeroSection: React.FC = () => {
                 we'll find your dream price
               </h1>
             </div>
-            <p className="text-xl text-black mb-8">
-              Connecting families to affordable housing—fast. Discover properties below market value through DoneDeal's exclusive platform.
-            </p>
+            <p className="text-black mb-8 text-lg">Connecting families with affordable housing—fast. Discover below-market homes without compromising on size, location or safety.</p>
             <SearchBar className="mb-8" />
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild className="neo-button-primary font-bold">
