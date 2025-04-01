@@ -35,11 +35,11 @@ const HeroSection: React.FC = () => {
         <motion.div className="grid md:grid-cols-2 gap-12 items-center" initial="hidden" animate="visible" variants={stagger}>
           <motion.div className="order-2 md:order-1" variants={fadeInUp}>
             {/* Single-line header text layout */}
-            <h1 className="text-5xl lg:text-7xl font-bold text-black mb-4 whitespace-nowrap md:text-4xl">
+            <h1 className="text-5xl lg:text-7xl font-bold text-black mb-4 whitespace-nowrap md:text-5xl">
               Find your dream home...
             </h1>
             <div className="bg-[#d60013] block mb-6 px-3 py-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-auto inline-block">
-              <h1 className="text-5xl lg:text-7xl font-bold text-white whitespace-nowrap md:text-4xl">
+              <h1 className="text-5xl lg:text-7xl font-bold text-white whitespace-nowrap md:text-5xl">
                 we'll find your dream price
               </h1>
             </div>
