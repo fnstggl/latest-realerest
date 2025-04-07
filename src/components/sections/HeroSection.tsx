@@ -50,7 +50,7 @@ const HeroSection: React.FC = () => {
               <Button asChild className="neo-button-primary font-bold">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="outline" className="neo-button font-bold">
+              <Button asChild variant="outline" className="neo-button font-bold border-4 border-black">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
