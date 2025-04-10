@@ -1,10 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Check, CreditCard, Upload } from 'lucide-react';
+import { Check, CreditCard, Upload, AlertCircle } from 'lucide-react';
 import { Label } from "@/components/ui/label";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -36,6 +36,9 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   const [proofOfFunds, setProofOfFunds] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [offerSubmitted, setOfferSubmitted] = useState(false);
+  const [offerError, setOfferError] = useState<string | null>(null);
+
+  const minimumOfferAmount = Math.max(currentPrice - 5000, 0);
 
   const handleMakeOffer = () => {
     setDialogOpen(true);
@@ -50,7 +53,20 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         setOfferAmount(currentPrice);
         setIsInterested(true);
         setProofOfFunds(null);
+        setOfferError(null);
       }
+    }
+  };
+
+  const handleOfferAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    setOfferAmount(value);
+    
+    // Validate the offer amount
+    if (value < minimumOfferAmount) {
+      setOfferError(`Offer cannot be less than $${minimumOfferAmount.toLocaleString()} (listing price minus $5,000)`);
+    } else {
+      setOfferError(null);
     }
   };
 
@@ -68,6 +84,13 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
     
     if (offerAmount <= 0) {
       toast.error("Please enter a valid offer amount");
+      return;
+    }
+    
+    // Validate offer amount isn't less than $5,000 below listing price
+    if (offerAmount < minimumOfferAmount) {
+      setOfferError(`Offer cannot be less than $${minimumOfferAmount.toLocaleString()} (listing price minus $5,000)`);
+      toast.error(`Offer must be at least $${minimumOfferAmount.toLocaleString()}`);
       return;
     }
     
@@ -161,9 +184,18 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
             id="offerAmount" 
             type="number" 
             value={offerAmount} 
-            onChange={(e) => setOfferAmount(Number(e.target.value))}
-            className="mt-2 border-2 border-black focus:ring-0"
+            onChange={handleOfferAmountChange}
+            className={`mt-2 border-2 ${offerError ? 'border-red-500' : 'border-black'} focus:ring-0`}
           />
+          {offerError && (
+            <div className="flex items-center gap-1 text-red-500 text-sm mt-1">
+              <AlertCircle size={14} />
+              <span>{offerError}</span>
+            </div>
+          )}
+          <div className="text-xs text-gray-500 mt-1">
+            Minimum offer: ${minimumOfferAmount.toLocaleString()} (listing price minus $5,000)
+          </div>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -219,7 +251,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           type="button" 
           className="bg-[#d60013] hover:bg-[#d60013]/90 text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
           onClick={handleSubmit}
-          disabled={submitting}
+          disabled={submitting || !!offerError}
         >
           <CreditCard size={18} className="mr-2" />
           {submitting ? "Submitting..." : "Submit Offer"}
@@ -270,7 +302,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   return (
     <>
       <Button 
-        className="w-full bg-green-600 text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+        className="w-full bg-[#0d2f72] text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
         onClick={handleMakeOffer}
       >
         <CreditCard size={18} className="mr-2" />

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -108,8 +109,8 @@ const PropertyDetail: React.FC = () => {
               ) : (
                 isApproved ? (
                   <div className="space-y-4">
-                    <div className="border-2 border-green-600 p-4 mb-2">
-                      <div className="font-bold text-green-600 mb-2">Your waitlist request has been approved!</div>
+                    <div className="border-2 border-[#0d2f72] p-4 mb-2">
+                      <div className="font-bold text-[#0d2f72] mb-2">Your waitlist request has been approved!</div>
                       <p>You now have access to view the full property details and contact the seller directly.</p>
                     </div>
                     

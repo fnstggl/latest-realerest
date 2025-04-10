@@ -257,7 +257,7 @@ const OffersTab: React.FC = () => {
                   <td className="p-4">
                     <div className="font-bold">${offer.offerAmount.toLocaleString()}</div>
                     {offer.property?.price && (
-                      <div className={`text-sm ${getOfferPercentage(offer.offerAmount, offer.property.price) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <div className={`text-sm ${getOfferPercentage(offer.offerAmount, offer.property.price) >= 0 ? 'text-[#d60013]' : 'text-[#0d2f72]'}`}>
                         {getOfferPercentage(offer.offerAmount, offer.property.price) >= 0 ? '+' : ''}
                         {getOfferPercentage(offer.offerAmount, offer.property.price)}% from listing
                       </div>
@@ -270,7 +270,8 @@ const OffersTab: React.FC = () => {
                     <div className="flex gap-2">
                       <Button 
                         size="sm" 
-                        className="bg-blue-600 hover:bg-blue-700 border-2 border-black"
+                        variant="navy"
+                        className="border-2 border-black"
                         onClick={() => handleViewOffer(offer)}
                       >
                         <Eye size={16} className="mr-1" />
@@ -281,7 +282,7 @@ const OffersTab: React.FC = () => {
                         <>
                           <Button 
                             size="sm" 
-                            className="bg-green-600 hover:bg-green-700 border-2 border-black"
+                            className="bg-[#0d2f72] hover:bg-[#0d2f72]/90 text-white border-2 border-black"
                             onClick={() => handleUpdateOfferStatus(offer.id, 'accepted')}
                             disabled={updatingStatus}
                           >
@@ -290,7 +291,7 @@ const OffersTab: React.FC = () => {
                           </Button>
                           <Button 
                             size="sm" 
-                            className="bg-red-600 hover:bg-red-700 border-2 border-black"
+                            className="bg-[#d60013] hover:bg-[#d60013]/90 text-white border-2 border-black"
                             onClick={() => handleUpdateOfferStatus(offer.id, 'declined')}
                             disabled={updatingStatus}
                           >
@@ -332,7 +333,7 @@ const OffersTab: React.FC = () => {
                     <p><span className="font-bold">Listing Price:</span> ${selectedOffer.property?.price.toLocaleString() || 'N/A'}</p>
                     
                     <div className="mt-4">
-                      <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 border-2 border-black">
+                      <Button asChild size="sm" variant="navy" className="border-2 border-black">
                         <Link to={`/property/${selectedOffer.propertyId}`}>
                           View Property
                         </Link>
@@ -363,7 +364,7 @@ const OffersTab: React.FC = () => {
                       <p className="text-sm">Offer Amount</p>
                       
                       {selectedOffer.property?.price && (
-                        <p className={`mt-2 ${getOfferPercentage(selectedOffer.offerAmount, selectedOffer.property.price) >= 0 ? 'text-green-600' : 'text-red-600'} font-bold`}>
+                        <p className={`mt-2 ${getOfferPercentage(selectedOffer.offerAmount, selectedOffer.property.price) >= 0 ? 'text-[#d60013]' : 'text-[#0d2f72]'} font-bold`}>
                           {getOfferPercentage(selectedOffer.offerAmount, selectedOffer.property.price) >= 0 ? '+' : ''}
                           {getOfferPercentage(selectedOffer.offerAmount, selectedOffer.property.price)}% from listing price
                         </p>
@@ -386,7 +387,8 @@ const OffersTab: React.FC = () => {
                         <Button 
                           asChild
                           size="sm" 
-                          className="bg-blue-600 hover:bg-blue-700 border-2 border-black"
+                          variant="navy"
+                          className="border-2 border-black"
                         >
                           <a href={selectedOffer.proofOfFundsUrl} target="_blank" rel="noopener noreferrer">
                             <FileText size={16} className="mr-1" />
@@ -405,7 +407,8 @@ const OffersTab: React.FC = () => {
                       {selectedOffer.status === 'pending' && (
                         <div className="flex gap-2">
                           <Button 
-                            className="bg-green-600 hover:bg-green-700 border-2 border-black"
+                            variant="navy"
+                            className="border-2 border-black"
                             onClick={() => handleUpdateOfferStatus(selectedOffer.id, 'accepted')}
                             disabled={updatingStatus}
                           >
@@ -413,7 +416,7 @@ const OffersTab: React.FC = () => {
                             Accept Offer
                           </Button>
                           <Button 
-                            className="bg-red-600 hover:bg-red-700 border-2 border-black"
+                            className="bg-[#d60013] hover:bg-[#d60013]/90 text-white border-2 border-black"
                             onClick={() => handleUpdateOfferStatus(selectedOffer.id, 'declined')}
                             disabled={updatingStatus}
                           >

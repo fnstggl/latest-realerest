@@ -68,11 +68,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				donedeal: {
-					'navy': '#0A2342',
-					'orange': '#F9A826',
+					'navy': '#0d2f72',
+					'red': '#C42924',
 					'pink': '#FFDEE2',
 					'blue': '#D3E4FD',
-					'green': '#F2FCE2',
 					'light-gray': '#F8F9FA',
 					'dark-gray': '#343A40'
 				}
