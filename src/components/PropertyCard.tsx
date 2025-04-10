@@ -87,7 +87,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               </div>
               
               {/* Arrow button */}
-              <div className="text-white w-12 h-12 flex items-center justify-center border-[6px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] bg-[#011f5b]">
+              <div className="text-white w-12 h-12 flex items-center justify-center border-[6px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] bg-donedeal-navy">
                 <ArrowRight size={20} />
               </div>
             </div>
