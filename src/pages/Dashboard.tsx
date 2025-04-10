@@ -5,11 +5,12 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Home, User, Bell, ClipboardCheck, Plus } from "lucide-react";
+import { Home, User, Bell, ClipboardCheck, Plus, CreditCard } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNotifications } from "@/context/NotificationContext";
 import PropertiesTab from "@/components/dashboard/PropertiesTab";
 import WaitlistTab from "@/components/dashboard/WaitlistTab";
+import OffersTab from "@/components/dashboard/OffersTab";
 import AccountTab from "@/components/dashboard/AccountTab";
 import NotificationsTab from "@/components/dashboard/NotificationsTab";
 import { useProperties } from "@/hooks/useProperties";
@@ -75,6 +76,10 @@ const Dashboard: React.FC = () => {
                 <ClipboardCheck size={18} className="mr-2" />
                 Waitlist
               </TabsTrigger>
+              <TabsTrigger value="offers" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+                <CreditCard size={18} className="mr-2" />
+                Offers
+              </TabsTrigger>
               <TabsTrigger value="account" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
                 <User size={18} className="mr-2" />
                 Account
@@ -105,6 +110,11 @@ const Dashboard: React.FC = () => {
                 waitlistUsers={waitlistUsers}
                 setWaitlistUsers={setWaitlistUsers}
               />
+            </TabsContent>
+            
+            {/* Offers Tab */}
+            <TabsContent value="offers" className="space-y-6">
+              <OffersTab />
             </TabsContent>
             
             {/* Account Tab */}

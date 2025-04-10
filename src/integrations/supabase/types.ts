@@ -170,6 +170,53 @@ export type Database = {
         }
         Relationships: []
       }
+      property_offers: {
+        Row: {
+          created_at: string
+          id: string
+          is_interested: boolean
+          offer_amount: number
+          proof_of_funds_url: string | null
+          property_id: string
+          seller_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_interested?: boolean
+          offer_amount: number
+          proof_of_funds_url?: string | null
+          property_id: string
+          seller_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_interested?: boolean
+          offer_amount?: number
+          proof_of_funds_url?: string | null
+          property_id?: string
+          seller_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_offers_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "property_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       waitlist_requests: {
         Row: {
           created_at: string
