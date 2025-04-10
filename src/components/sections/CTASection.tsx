@@ -25,7 +25,7 @@ const CTASection: React.FC = () => {
           <div>
             <h2 className="text-4xl font-bold mb-4">
               Ready to find your 
-              <span className="bg-[#C42924] text-white px-2 mx-2 font-bold border-2 border-black">
+              <span className="bg-[#d0161a] text-white px-2 mx-2 font-bold border-2 border-black">
                 dream home?
               </span>
             </h2>

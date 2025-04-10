@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
 
-    --primary: 355 81% 46%;  /* #C42924 (Red) */
+    --primary: 358 83% 45%;  /* #d0161a (Red) */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 78% 25%;  /* #0d2f72 (Navy) */
@@ -31,7 +31,7 @@
 
     --border: 0 0% 0%;
     --input: 0 0% 0%;
-    --ring: 355 81% 46%;
+    --ring: 358 83% 45%;
 
     --radius: 0rem;  /* No rounded corners for neobrutalism */
   }
@@ -117,7 +117,7 @@
   }
 
   .neo-shadow-red {
-    @apply shadow-[8px_8px_0px_0px_rgba(196,41,36,1)];
+    @apply shadow-[8px_8px_0px_0px_rgba(208,22,26,1)];
   }
 
   .neo-shadow-navy {
@@ -133,7 +133,7 @@
   }
 
   .neo-button-primary {
-    @apply font-bold bg-[#C42924] text-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
+    @apply font-bold bg-[#d0161a] text-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
   }
 
   .neo-button-secondary {
@@ -149,7 +149,7 @@
   }
 
   .neo-highlight {
-    @apply bg-[#C42924] text-white px-2 py-1 -rotate-1 border-2 border-black;
+    @apply bg-[#d0161a] text-white px-2 py-1 -rotate-1 border-2 border-black;
   }
 }
 

@@ -34,7 +34,7 @@ const toastVariants = cva(
         navy:
           "navy group bg-[#0d2f72] text-white",
         red:
-          "red group bg-[#C42924] text-white",
+          "red group bg-[#d0161a] text-white",
       },
     },
     defaultVariants: {

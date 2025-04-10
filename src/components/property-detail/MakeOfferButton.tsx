@@ -188,7 +188,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
             className={`mt-2 border-2 ${offerError ? 'border-red-500' : 'border-black'} focus:ring-0`}
           />
           {offerError && (
-            <div className="flex items-center gap-1 text-[#C42924] text-sm mt-1">
+            <div className="flex items-center gap-1 text-[#d0161a] text-sm mt-1">
               <AlertCircle size={14} />
               <span>{offerError}</span>
             </div>
@@ -249,7 +249,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         </Button>
         <Button 
           type="button" 
-          variant="red"
+          variant="navy"
           className="text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
           onClick={handleSubmit}
           disabled={submitting || !!offerError}
@@ -268,8 +268,8 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       </DialogHeader>
       
       <div className="py-8 text-center">
-        <div className="mx-auto w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <Check size={24} className="text-[#0d2f72]" />
+        <div className="mx-auto w-12 h-12 bg-[#0d2f72] rounded-none flex items-center justify-center mb-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <Check size={24} className="text-white" />
         </div>
         
         <p className="mb-6">

@@ -12,6 +12,8 @@ import SellerContactInfo from '@/components/property-detail/SellerContactInfo';
 import PropertyDescription from '@/components/property-detail/PropertyDescription';
 import PropertyDetails from '@/components/property-detail/PropertyDetails';
 import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
+import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
+import SiteFooter from '@/components/sections/SiteFooter';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -58,24 +60,26 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
-  console.log("PropertyDetail rendering with shouldShowSellerInfo:", shouldShowSellerInfo);
-  console.log("Property seller details:", {
-    sellerName: property?.sellerName,
-    sellerPhone: property?.sellerPhone,
-    sellerEmail: property?.sellerEmail
-  });
-
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <Link to="/search" className="flex items-center text-black hover:text-[#d60013] font-bold transition-colors">
+          <Link to="/search" className="flex items-center text-black hover:text-[#d0161a] font-bold transition-colors">
             <ArrowLeft size={18} className="mr-2" />
             Back to Search
           </Link>
         </div>
+        
+        {!isOwner && isApproved && (
+          <OfferStatusBanner 
+            propertyId={property.id} 
+            sellerName={property.sellerName || 'Property Owner'} 
+            sellerEmail={property.sellerEmail} 
+            sellerPhone={property.sellerPhone} 
+          />
+        )}
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <PropertyImages 
@@ -184,7 +188,7 @@ const PropertyDetail: React.FC = () => {
             <ul className="space-y-2">
               {property?.comparables.map((address, index) => (
                 <li key={index} className="flex items-start">
-                  <Home size={18} className="mr-2 mt-1 text-[#d60013]" />
+                  <Home size={18} className="mr-2 mt-1 text-[#d0161a]" />
                   <span>{address}</span>
                 </li>
               ))}
@@ -192,6 +196,8 @@ const PropertyDetail: React.FC = () => {
           </div>
         )}
       </div>
+      
+      <SiteFooter />
     </div>
   );
 };

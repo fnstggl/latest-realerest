@@ -69,7 +69,7 @@ export default {
 				},
 				donedeal: {
 					'navy': '#0d2f72',
-					'red': '#C42924',
+					'red': '#d0161a',
 					'pink': '#FFDEE2',
 					'blue': '#D3E4FD',
 					'light-gray': '#F8F9FA',
