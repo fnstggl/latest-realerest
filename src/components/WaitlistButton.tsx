@@ -205,7 +205,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       case 'accepted':
         return (
           <Button 
-            className="w-full bg-green-500 text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+            className="w-full bg-[#0d2f72] text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
             onClick={() => window.location.reload()}
           >
             <Check size={18} className="mr-2" />
@@ -235,7 +235,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       default:
         return (
           <Button 
-            className="w-full bg-[#d60013] text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+            className="w-full bg-[#C42924] text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
             onClick={handleJoinWaitlist}
           >
             <ClipboardList size={18} className="mr-2" />

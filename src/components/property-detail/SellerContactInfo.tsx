@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Phone, Mail } from 'lucide-react';
 interface SellerContactInfoProps {
@@ -40,15 +41,15 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
       <p className="mb-1">{name}</p>
       
       {phone && <div className="flex items-center">
-          <Phone size={16} className="mr-2" />
-          <a href={`tel:${phone}`} className="text-blue-600 hover:underline">
+          <Phone size={16} className="mr-2 text-[#0d2f72]" />
+          <a href={`tel:${phone}`} className="text-[#0d2f72] hover:underline">
             {formatPhoneNumber(phone)}
           </a>
         </div>}
       
       {email && <div className="flex items-center mt-1">
-          <Mail size={16} className="mr-2" />
-          <a href={`mailto:${email}`} className="text-blue-900 hover:underline">
+          <Mail size={16} className="mr-2 text-[#0d2f72]" />
+          <a href={`mailto:${email}`} className="text-[#0d2f72] hover:underline">
             {email}
           </a>
         </div>}

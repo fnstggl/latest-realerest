@@ -267,8 +267,8 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       </DialogHeader>
       
       <div className="py-8 text-center">
-        <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-          <Check size={24} className="text-green-600" />
+        <div className="mx-auto w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <Check size={24} className="text-[#0d2f72]" />
         </div>
         
         <p className="mb-6">
@@ -290,7 +290,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       <DialogFooter>
         <Button 
           type="button" 
-          className="w-full bg-black text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+          className="w-full bg-[#0d2f72] text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
           onClick={handleDialogClose}
         >
           Close
