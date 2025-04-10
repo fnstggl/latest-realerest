@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -37,38 +38,38 @@ const Navbar: React.FC = () => {
       <SheetContent side="left" className="w-[300px] border-r-4 border-black p-0">
         <div className="flex flex-col gap-6 p-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-[#d60013] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black">DD</div>
+            <div className="w-12 h-12 bg-[#0d2f72] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black">DD</div>
             <span className="font-bold text-black text-2xl">DoneDeal</span>
           </Link>
           
           <nav className="flex flex-col space-y-2">
             <Link 
               to="/" 
-              className="text-black hover:text-[#d60013] transition-colors font-bold text-xl py-3 border-b-2 border-black"
+              className="text-[#0d2f72] hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black"
             >
               Home
             </Link>
             <Link 
               to="/search" 
-              className="text-black hover:text-[#d60013] transition-colors font-bold text-xl py-3 border-b-2 border-black"
+              className="text-black hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black"
             >
               Browse
             </Link>
             <Link 
               to="/sell/create" 
-              className="text-black hover:text-[#d60013] transition-colors font-bold text-xl py-3 border-b-2 border-black"
+              className="text-black hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black"
             >
               Sell
             </Link>
             <Link 
               to="/about" 
-              className="text-black hover:text-[#d60013] transition-colors font-bold text-xl py-3 border-b-2 border-black"
+              className="text-black hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black"
             >
               About
             </Link>
             <Link 
               to="/contact" 
-              className="text-black hover:text-[#d60013] transition-colors font-bold text-xl py-3 border-b-2 border-black"
+              className="text-black hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black"
             >
               Contact
             </Link>
@@ -77,7 +78,7 @@ const Navbar: React.FC = () => {
           <div className="flex flex-col gap-3 mt-4">
             {isAuthenticated ? (
               <Button 
-                className="w-full justify-center font-bold bg-black text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(214,0,19,1)]"
+                className="w-full justify-center font-bold bg-black text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(196,41,36,1)]"
                 onClick={() => navigate('/dashboard')}
               >
                 Dashboard
@@ -93,6 +94,7 @@ const Navbar: React.FC = () => {
                 </Button>
                 
                 <Button 
+                  variant="red"
                   className="w-full justify-center neo-button-primary font-bold"
                   onClick={handleSignUp}
                 >
@@ -118,31 +120,31 @@ const Navbar: React.FC = () => {
           {isMobile && <MobileNavigation />}
           
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-[#d60013] rounded-full text-white flex items-center justify-center font-bold text-xl border-2 border-black">DD</div>
+            <div className="w-12 h-12 bg-[#0d2f72] rounded-full text-white flex items-center justify-center font-bold text-xl border-2 border-black">DD</div>
             <span className="font-bold text-black text-2xl hidden md:block">DoneDeal</span>
           </Link>
         </div>
         
         <div className="hidden md:flex space-x-6 text-lg">
-          <Link to="/" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
-            <span className="text-[#d60013]">Home</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
+          <Link to="/" className="text-[#0d2f72] hover:text-[#C42924] transition-colors font-bold relative group">
+            <span>Home</span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/search" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
+          <Link to="/search" className="text-black hover:text-[#C42924] transition-colors font-bold relative group">
             <span>Browse</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/sell/create" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
+          <Link to="/sell/create" className="text-black hover:text-[#C42924] transition-colors font-bold relative group">
             <span>Sell</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/about" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
+          <Link to="/about" className="text-black hover:text-[#C42924] transition-colors font-bold relative group">
             <span>About</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/contact" className="text-black hover:text-[#d60013] transition-colors font-bold relative group">
+          <Link to="/contact" className="text-black hover:text-[#C42924] transition-colors font-bold relative group">
             <span>Contact</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#d60013] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
           </Link>
         </div>
         
@@ -152,7 +154,7 @@ const Navbar: React.FC = () => {
               <NotificationCenter />
               
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 className="p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none relative"
                 onClick={() => navigate('/dashboard')}
               >
@@ -160,7 +162,7 @@ const Navbar: React.FC = () => {
                 <span className="font-bold">{user?.name || 'Account'}</span>
                 
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-[#C42924] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {unreadCount}
                   </span>
                 )}
@@ -179,8 +181,8 @@ const Navbar: React.FC = () => {
               </Link>
               
               <Button 
-                variant="outline" 
-                className="hidden md:flex neo-button font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+                variant="navy" 
+                className="hidden md:flex neo-button-secondary font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
                 onClick={handleSignIn}
               >
                 <LogIn size={18} className="mr-2" />
@@ -188,6 +190,7 @@ const Navbar: React.FC = () => {
               </Button>
               
               <Button 
+                variant="red"
                 className="neo-button-primary font-bold"
                 onClick={handleSignUp}
               >

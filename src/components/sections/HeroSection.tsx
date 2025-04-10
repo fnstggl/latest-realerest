@@ -39,7 +39,7 @@ const HeroSection: React.FC = () => {
             <h1 className="text-5xl lg:text-7xl font-bold text-black mb-4 whitespace-nowrap md:text-5xl">
               Find your dream home...
             </h1>
-            <div className="bg-[#d60013] block mb-6 px-3 py-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-auto inline-block">
+            <div className="bg-[#C42924] block mb-6 px-3 py-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-auto inline-block">
               <h1 className="text-5xl lg:text-7xl font-bold text-white whitespace-nowrap md:text-5xl">
                 we'll find your dream price
               </h1>
@@ -47,10 +47,10 @@ const HeroSection: React.FC = () => {
             <p className="text-black mb-8 text-lg">Connecting families with affordable housing—fast. Discover below-market homes without compromising on size, location or safety.</p>
             <SearchBar className="mb-8" />
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild className="neo-button-primary font-bold">
+              <Button asChild variant="red" className="neo-button-primary font-bold">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="outline" className="neo-button font-bold border-4 border-black">
+              <Button asChild variant="navy" className="neo-button-secondary font-bold">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>

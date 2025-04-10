@@ -55,7 +55,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
-        <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold inline-flex items-center">
+        <div className="bg-[#C42924] text-white px-3 py-1 border-2 border-black font-bold inline-flex items-center">
           {belowMarket}% BELOW MARKET
         </div>
       </div>
@@ -63,13 +63,13 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       <h1 className="text-3xl font-bold mb-2">{title}</h1>
       
       <div className="flex items-center mb-4">
-        <MapPin size={18} className="mr-2 text-[#d60013]" />
+        <MapPin size={18} className="mr-2 text-[#C42924]" />
         {renderLocation()}
       </div>
       
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="border-2 border-black p-4">
-          <div className="text-2xl font-bold text-[#d60013]">{formatCurrency(price)}</div>
+          <div className="text-2xl font-bold text-[#C42924]">{formatCurrency(price)}</div>
           <div className="text-sm">Listing Price</div>
         </div>
         <div className="border-2 border-black p-4">

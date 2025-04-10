@@ -25,7 +25,7 @@ const CTASection: React.FC = () => {
           <div>
             <h2 className="text-4xl font-bold mb-4">
               Ready to find your 
-              <span className="bg-[#d60013] text-white px-2 mx-2 font-bold">
+              <span className="bg-[#C42924] text-white px-2 mx-2 font-bold border-2 border-black">
                 dream home?
               </span>
             </h2>
@@ -33,10 +33,10 @@ const CTASection: React.FC = () => {
               Get started today and discover properties below market value in your desired location.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild className="neo-button-primary font-bold">
+              <Button asChild variant="red" className="neo-button-primary font-bold">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="outline" className="neo-button font-bold">
+              <Button asChild variant="navy" className="neo-button-secondary font-bold">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
