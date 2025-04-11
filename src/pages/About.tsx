@@ -116,7 +116,7 @@ const About: React.FC = () => {
               <Button asChild className="neo-button-primary">
                 <Link to="/search">Find Properties</Link>
               </Button>
-              <Button asChild className="neo-button">
+              <Button asChild variant="navy" className="neo-button">
                 <Link to="/sell/create">List Your Property</Link>
               </Button>
             </div>
