@@ -59,6 +59,38 @@ export type Database = {
           },
         ]
       }
+      counter_offers: {
+        Row: {
+          amount: number
+          created_at: string
+          from_seller: boolean
+          id: string
+          offer_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          from_seller?: boolean
+          id?: string
+          offer_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          from_seller?: boolean
+          id?: string
+          offer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "counter_offers_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "property_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string

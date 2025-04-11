@@ -10,6 +10,14 @@ import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+interface CounterOffer {
+  id: string;
+  offer_id: string;
+  amount: number;
+  from_seller: boolean;
+  created_at: string;
+}
+
 interface Offer {
   id: string;
   propertyId: string;
@@ -27,14 +35,6 @@ interface Offer {
   status: "pending" | "accepted" | "declined" | "countered";
   createdAt: string;
   counterOffers?: CounterOffer[];
-}
-
-interface CounterOffer {
-  id: string;
-  offerId: string;
-  amount: number;
-  fromSeller: boolean;
-  created_at: string;
 }
 
 const OffersTab: React.FC = () => {
@@ -78,7 +78,7 @@ const OffersTab: React.FC = () => {
         }
         
         // Transform the data
-        const transformedOffers: Offer[] = await Promise.all((data || []).map(async (offer) => {
+        const offersWithoutCounters: Offer[] = await Promise.all((data || []).map(async (offer) => {
           // Get buyer information
           let buyerName = "Anonymous Buyer";
           let buyerEmail = null;
@@ -108,13 +108,6 @@ const OffersTab: React.FC = () => {
             console.error("Error fetching buyer information:", error);
           }
           
-          // Fetch counter offers for this offer
-          const { data: counterOffers } = await supabase
-            .from('counter_offers')
-            .select('*')
-            .eq('offer_id', offer.id)
-            .order('created_at', { ascending: true });
-          
           return {
             id: offer.id,
             propertyId: offer.property_id,
@@ -131,11 +124,35 @@ const OffersTab: React.FC = () => {
             proofOfFundsUrl: offer.proof_of_funds_url,
             status: offer.status as "pending" | "accepted" | "declined" | "countered",
             createdAt: offer.created_at,
-            counterOffers: counterOffers || []
+            counterOffers: []
           };
         }));
         
-        setOffers(transformedOffers);
+        // Now fetch counter offers for each offer and add them
+        const offersWithCounters = await Promise.all(offersWithoutCounters.map(async (offer) => {
+          try {
+            const { data: counterOffers, error: counterError } = await supabase
+              .from('counter_offers')
+              .select('*')
+              .eq('offer_id', offer.id)
+              .order('created_at', { ascending: true });
+            
+            if (counterError) {
+              console.error(`Error fetching counter offers for offer ${offer.id}:`, counterError);
+              return offer;
+            }
+            
+            return {
+              ...offer,
+              counterOffers: counterOffers || []
+            };
+          } catch (error) {
+            console.error(`Error processing counter offers for offer ${offer.id}:`, error);
+            return offer;
+          }
+        }));
+        
+        setOffers(offersWithCounters);
       } catch (error) {
         console.error("Error fetching offers:", error);
         toast.error("Failed to load offers");
@@ -313,9 +330,9 @@ const OffersTab: React.FC = () => {
         if (o.id === activeOfferId) {
           const newCounterOffers = [...(o.counterOffers || []), {
             id: counterOffer.id,
-            offerId: activeOfferId,
+            offer_id: activeOfferId,
             amount: counterOfferAmount,
-            fromSeller: true,
+            from_seller: true,
             created_at: new Date().toISOString()
           }];
           
@@ -332,9 +349,9 @@ const OffersTab: React.FC = () => {
       if (selectedOffer && selectedOffer.id === activeOfferId) {
         const newCounterOffers = [...(selectedOffer.counterOffers || []), {
           id: counterOffer.id,
-          offerId: activeOfferId,
+          offer_id: activeOfferId,
           amount: counterOfferAmount,
-          fromSeller: true,
+          from_seller: true,
           created_at: new Date().toISOString()
         }];
         
@@ -567,10 +584,10 @@ const OffersTab: React.FC = () => {
                             .map((counterOffer, index) => (
                               <div 
                                 key={counterOffer.id} 
-                                className={`flex justify-between items-center p-2 ${counterOffer.fromSeller ? 'bg-blue-50' : 'bg-green-50'}`}
+                                className={`flex justify-between items-center p-2 ${counterOffer.from_seller ? 'bg-blue-50' : 'bg-green-50'}`}
                               >
                                 <div>
-                                  <strong>{counterOffer.fromSeller ? 'You' : 'Buyer'}:</strong> ${counterOffer.amount.toLocaleString()}
+                                  <strong>{counterOffer.from_seller ? 'You' : 'Buyer'}:</strong> ${counterOffer.amount.toLocaleString()}
                                 </div>
                                 <div className="text-xs text-gray-500">
                                   {new Date(counterOffer.created_at).toLocaleString()}
