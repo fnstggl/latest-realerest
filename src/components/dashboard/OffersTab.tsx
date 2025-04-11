@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useMessages } from "@/hooks/useMessages";
+import { Link } from "react-router-dom";
+
 interface CounterOffer {
   id: string;
   offer_id: string;
@@ -36,6 +38,7 @@ interface Offer {
   createdAt: string;
   counterOffers: CounterOffer[];
 }
+
 const OffersTab: React.FC = () => {
   const {
     user
@@ -50,6 +53,7 @@ const OffersTab: React.FC = () => {
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [counterOfferAmount, setCounterOfferAmount] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     const fetchOffers = async () => {
       if (!user?.id) return;
@@ -71,29 +75,39 @@ const OffersTab: React.FC = () => {
           `).eq('seller_id', user.id).order('created_at', {
           ascending: false
         });
+
         if (error) {
           console.error("Error fetching offers:", error);
           return;
         }
 
-        // For each offer, fetch property details and user profile
         const offersWithDetails = await Promise.all(propertyOffers.map(async offer => {
-          // Fetch property details
           const {
             data: property
           } = await supabase.from('property_listings').select('title, price').eq('id', offer.property_id).single();
 
-          // Fetch buyer profile
           const {
-            data: buyerProfile
+            data: buyerProfile,
+            error: profileError
           } = await supabase.from('profiles').select('name, email, phone').eq('id', offer.user_id).single();
 
-          // Fetch counter offers if any
+          if (profileError) {
+            console.error("Error fetching buyer profile:", profileError, "for user ID:", offer.user_id);
+          }
+
           const {
             data: counterOffers
           } = await supabase.from('counter_offers').select('*').eq('offer_id', offer.id).order('created_at', {
             ascending: true
           });
+
+          let buyerName = 'Anonymous Buyer';
+          if (buyerProfile?.name) {
+            buyerName = buyerProfile.name;
+          } else if (buyerProfile?.email) {
+            buyerName = buyerProfile.email;
+          }
+
           return {
             id: offer.id,
             propertyId: offer.property_id,
@@ -102,7 +116,7 @@ const OffersTab: React.FC = () => {
               price: property?.price || 0
             },
             userId: offer.user_id,
-            buyerName: buyerProfile?.name || 'Anonymous Buyer',
+            buyerName: buyerName,
             buyerEmail: buyerProfile?.email,
             buyerPhone: buyerProfile?.phone,
             offerAmount: offer.offer_amount,
@@ -113,6 +127,8 @@ const OffersTab: React.FC = () => {
             counterOffers: counterOffers || []
           };
         }));
+
+        console.log("Processed offers with buyer names:", offersWithDetails);
         setOffers(offersWithDetails);
       } catch (error) {
         console.error("Error processing offers:", error);
@@ -120,9 +136,9 @@ const OffersTab: React.FC = () => {
         setLoading(false);
       }
     };
+
     fetchOffers();
 
-    // Set up real-time subscription for new offers
     const channel = supabase.channel('property_offers_changes').on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -130,10 +146,8 @@ const OffersTab: React.FC = () => {
       filter: `seller_id=eq.${user?.id}`
     }, payload => {
       console.log("New offer received:", payload);
-      // Refresh offers when a new one is received
       fetchOffers();
 
-      // Show a notification toast
       toast.success("New Offer Received", {
         description: "You have received a new offer on one of your properties."
       });
@@ -143,40 +157,37 @@ const OffersTab: React.FC = () => {
       table: 'property_offers',
       filter: `seller_id=eq.${user?.id}`
     }, () => {
-      // Refresh offers when one is updated
       fetchOffers();
     }).subscribe();
 
-    // Set up subscription for counter offers
     const counterOffersChannel = supabase.channel('counter_offers_changes').on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
       table: 'counter_offers'
     }, payload => {
       if (payload.new) {
-        // Only refresh if this counter offer is related to one of our offers
         const offerIds = offers.map(o => o.id);
         if (offerIds.includes(payload.new.offer_id)) {
           fetchOffers();
         }
       }
     }).subscribe();
+
     return () => {
       supabase.removeChannel(channel);
       supabase.removeChannel(counterOffersChannel);
     };
   }, [user?.id]);
+
   const handleOfferAction = async (offerId: string, action: "accepted" | "declined" | "countered") => {
     if (!user?.id) return;
     try {
-      // First, get the offer to access its details
       const offerToUpdate = offers.find(o => o.id === offerId);
       if (!offerToUpdate) {
         toast.error("Offer not found");
         return;
       }
 
-      // Update the offer status
       const {
         error
       } = await supabase.from('property_offers').update({
@@ -188,13 +199,11 @@ const OffersTab: React.FC = () => {
         return;
       }
 
-      // Update local state
       setOffers(prev => prev.map(offer => offer.id === offerId ? {
         ...offer,
         status: action
       } : offer));
 
-      // Create a notification for the buyer
       const notificationTitle = action === "accepted" ? "Offer Accepted!" : action === "declined" ? "Offer Declined" : "Counter Offer Received";
       const notificationMessage = action === "accepted" ? `Your offer of $${offerToUpdate.offerAmount.toLocaleString()} for ${offerToUpdate.property.title} has been accepted.` : action === "declined" ? `Your offer of $${offerToUpdate.offerAmount.toLocaleString()} for ${offerToUpdate.property.title} has been declined.` : `The seller has made a counter offer for ${offerToUpdate.property.title}.`;
       await supabase.from('notifications').insert({
@@ -208,7 +217,6 @@ const OffersTab: React.FC = () => {
         }
       });
 
-      // Show success message
       toast.success(`Offer ${action}`, {
         description: `The offer has been marked as ${action}.`
       });
@@ -217,16 +225,17 @@ const OffersTab: React.FC = () => {
       toast.error("An error occurred while processing the offer");
     }
   };
+
   const handleCounterOffer = (offer: Offer) => {
     setSelectedOffer(offer);
-    setCounterOfferAmount(offer.offerAmount); // Start with the current offer amount
+    setCounterOfferAmount(offer.offerAmount);
     setCounterOfferDialogOpen(true);
   };
+
   const submitCounterOffer = async () => {
     if (!selectedOffer || !user?.id) return;
     setSubmitting(true);
     try {
-      // 1. Insert the counter offer
       const {
         data: counterOffer,
         error: counterOfferError
@@ -241,7 +250,6 @@ const OffersTab: React.FC = () => {
         return;
       }
 
-      // 2. Update the offer status to "countered"
       const {
         error: offerUpdateError
       } = await supabase.from('property_offers').update({
@@ -253,7 +261,6 @@ const OffersTab: React.FC = () => {
         return;
       }
 
-      // 3. Create a notification for the buyer
       await supabase.from('notifications').insert({
         user_id: selectedOffer.userId,
         title: "Counter Offer Received",
@@ -267,7 +274,6 @@ const OffersTab: React.FC = () => {
         }
       });
 
-      // 4. Update local state
       setOffers(prev => prev.map(offer => offer.id === selectedOffer.id ? {
         ...offer,
         status: 'countered',
@@ -282,19 +288,19 @@ const OffersTab: React.FC = () => {
       setSubmitting(false);
     }
   };
+
   const getLatestOfferAmount = (offer: Offer) => {
     if (offer.counterOffers.length === 0) {
       return offer.offerAmount;
     }
 
-    // Sort counter offers by date and get the latest
     const sortedCounterOffers = [...offer.counterOffers].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     return sortedCounterOffers[0].amount;
   };
+
   const handleMessageBuyer = async (offer: Offer) => {
     if (!user?.id) return;
     try {
-      // Get or create a conversation with this buyer
       const conversationId = await getOrCreateConversation(offer.userId);
       if (conversationId) {
         navigate(`/messages/${conversationId}`);
@@ -306,6 +312,7 @@ const OffersTab: React.FC = () => {
       toast.error("Failed to create conversation");
     }
   };
+
   if (loading) {
     return <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-8">
         <h2 className="text-xl font-bold mb-6">Loading Offers...</h2>
@@ -318,6 +325,7 @@ const OffersTab: React.FC = () => {
         </div>
       </div>;
   }
+
   return <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
       <div className="border-b-4 border-black p-4 bg-gray-50">
         <h2 className="text-xl font-bold">Property Offers</h2>
@@ -328,7 +336,11 @@ const OffersTab: React.FC = () => {
               <CardHeader className="p-4 pb-2">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg">{offer.property.title}</CardTitle>
+                    <CardTitle className="text-lg">
+                      <Link to={`/property/${offer.propertyId}`} className="text-blue-600 hover:underline">
+                        {offer.property.title}
+                      </Link>
+                    </CardTitle>
                     <p className="text-sm text-gray-500">
                       From: {offer.buyerName} • {new Date(offer.createdAt).toLocaleString()}
                     </p>
@@ -396,11 +408,6 @@ const OffersTab: React.FC = () => {
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
                       </Button>
-                      
-                      <Button onClick={() => handleOfferAction(offer.id, "declined")} variant="destructive" className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
-                        <XCircle size={16} className="mr-2" />
-                        Decline
-                      </Button>
                     </>}
                   
                   {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && <>
@@ -412,11 +419,6 @@ const OffersTab: React.FC = () => {
                       <Button onClick={() => handleCounterOffer(offer)} className="bg-blue-600 hover:bg-blue-700 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all text-white">
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter Again
-                      </Button>
-                      
-                      <Button onClick={() => handleOfferAction(offer.id, "declined")} variant="destructive" className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
-                        <XCircle size={16} className="mr-2" />
-                        Decline
                       </Button>
                     </>}
                   
@@ -447,7 +449,6 @@ const OffersTab: React.FC = () => {
           <p className="text-gray-500">You haven't received any offers on your properties yet.</p>
         </div>}
       
-      {/* Counter Offer Dialog */}
       <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
         <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
           <DialogHeader>
@@ -477,4 +478,5 @@ const OffersTab: React.FC = () => {
       </Dialog>
     </div>;
 };
+
 export default OffersTab;
