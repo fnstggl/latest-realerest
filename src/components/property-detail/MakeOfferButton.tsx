@@ -232,7 +232,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       </DialogFooter>
     </>;
   return <>
-      <Button variant="navy" onClick={handleMakeOffer} className="w-full font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center text-white bg-gray-300 hover:bg-gray-200 bg-[d0161a]">
+      <Button variant="navy" onClick={handleMakeOffer} className="w-full font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center text-white bg-[d0161a] bg-donedeal-red">
         <CreditCard size={18} className="mr-2" />
         Make an Offer
       </Button>
