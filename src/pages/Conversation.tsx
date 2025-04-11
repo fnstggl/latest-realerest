@@ -1,17 +1,17 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Message, useMessages } from '@/hooks/useMessages';
-import { formatDistanceToNow } from 'date-fns';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import MessageGroup from '@/components/conversation/MessageGroup';
+import MessageInput from '@/components/conversation/MessageInput';
 
 const Conversation: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +19,6 @@ const Conversation: React.FC = () => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [otherUser, setOtherUser] = useState<{ id: string; name: string; } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -129,26 +128,16 @@ const Conversation: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (!id || !newMessage.trim() || !user?.id) return;
+  const handleSendMessage = async (message: string) => {
+    if (!id || !message.trim() || !user?.id) return;
     
     setSending(true);
     try {
-      const sentMessage = await sendMessage(id, newMessage);
-      if (sentMessage) {
-        setNewMessage('');
-      }
+      await sendMessage(id, message);
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
       setSending(false);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
     }
   };
 
@@ -203,31 +192,12 @@ const Conversation: React.FC = () => {
               ) : messages.length > 0 ? (
                 <div className="space-y-6">
                   {Object.entries(groupedMessages).map(([date, dateMessages]) => (
-                    <div key={date} className="space-y-4">
-                      <div className="flex justify-center">
-                        <div className="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
-                          {new Date().toDateString() === date ? 'Today' : date}
-                        </div>
-                      </div>
-                      
-                      {dateMessages.map((message) => {
-                        const isCurrentUser = message.senderId === user?.id;
-                        return (
-                          <div key={message.id} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[70%] ${
-                              isCurrentUser 
-                                ? 'bg-[#0d2f72] text-white neo-shadow-sm' 
-                                : 'border-4 border-black bg-white neo-shadow-sm'
-                            } rounded-none p-3`}>
-                              <p className="whitespace-pre-wrap">{message.content}</p>
-                              <p className={`text-xs mt-1 ${isCurrentUser ? 'text-blue-200' : 'text-gray-500'}`}>
-                                {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                    <MessageGroup 
+                      key={date} 
+                      date={date} 
+                      messages={dateMessages} 
+                      currentUserId={user?.id} 
+                    />
                   ))}
                   <div ref={messagesEndRef} />
                 </div>
@@ -240,25 +210,10 @@ const Conversation: React.FC = () => {
               )}
             </div>
             
-            <div className="border-t-4 border-black p-4">
-              <div className="flex items-end space-x-2">
-                <Textarea
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Type a message..."
-                  className="resize-none border-2 border-black focus:ring-0"
-                  rows={2}
-                />
-                <Button 
-                  onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || sending}
-                  className="h-20 w-20 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#0d2f72] text-white flex items-center justify-center"
-                >
-                  <Send size={20} />
-                </Button>
-              </div>
-            </div>
+            <MessageInput 
+              onSendMessage={handleSendMessage}
+              sending={sending}
+            />
           </Card>
         </motion.div>
       </div>

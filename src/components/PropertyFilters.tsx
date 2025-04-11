@@ -157,6 +157,13 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         >
           Reset Filters
         </Button>
+        
+        <Button
+          onClick={() => onFilterChange(filters)}
+          className="w-full neo-button-primary"
+        >
+          Search
+        </Button>
       </div>
     </div>
   );

@@ -22,10 +22,8 @@ const Search: React.FC = () => {
   const [filteredProperties, setFilteredProperties] = useState<Listing[]>([]);
   const [sortOption, setSortOption] = useState("recommended");
   
-  // Use our custom hook to fetch listings
   const { listings: properties, loading, error } = useListings();
   
-  // Apply search filter when properties or search query changes
   useEffect(() => {
     if (searchQuery && properties.length > 0) {
       const results = properties.filter(property => 
@@ -38,23 +36,17 @@ const Search: React.FC = () => {
     }
   }, [properties, searchQuery]);
   
-  // Demo filter function
   const handleFilterChange = (filters: any) => {
-    // In a real app, this would fetch from an API
     const filtered = properties.filter(property => {
-      // Apply price filter
       if (property.price < filters.priceRange[0] || property.price > filters.priceRange[1]) {
         return false;
       }
       
-      // Apply below market filter
       if (property.belowMarket < filters.belowMarket) {
         return false;
       }
       
-      // Apply property type filter
       if (filters.propertyType !== "any") {
-        // This is mock filtering - would need real property type data
         if (filters.propertyType === "house" && !property.title?.toLowerCase().includes("home")) {
           return false;
         }
@@ -66,14 +58,12 @@ const Search: React.FC = () => {
         }
       }
       
-      // Apply bedrooms filter
       if (filters.bedrooms !== "any") {
         if (property.beds < parseInt(filters.bedrooms)) {
           return false;
         }
       }
       
-      // Apply bathrooms filter
       if (filters.bathrooms !== "any") {
         if (property.baths < parseInt(filters.bathrooms)) {
           return false;
@@ -86,7 +76,6 @@ const Search: React.FC = () => {
     setFilteredProperties(filtered);
   };
   
-  // Demo sort function
   const handleSortChange = (option: string) => {
     setSortOption(option);
     let sorted = [...filteredProperties];
@@ -102,17 +91,14 @@ const Search: React.FC = () => {
         sorted.sort((a, b) => b.belowMarket - a.belowMarket);
         break;
       case "newest":
-        // In a real app, this would sort by date added
         break;
       default:
-        // Keep current order for "recommended"
         break;
     }
     
     setFilteredProperties(sorted);
   };
   
-  // Show error toast if there's an error loading properties
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -123,7 +109,6 @@ const Search: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      {/* Search Section */}
       <section className="py-8 bg-white border-b">
         <div className="container px-4 lg:px-8 mx-auto">
           <div className="max-w-3xl mx-auto">
@@ -132,17 +117,14 @@ const Search: React.FC = () => {
         </div>
       </section>
       
-      {/* Main Content */}
       <div className="container px-4 lg:px-8 mx-auto py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters - Desktop */}
           <div className="hidden lg:block w-72 shrink-0">
             <div className="sticky top-8">
               <PropertyFilters onFilterChange={handleFilterChange} />
             </div>
           </div>
           
-          {/* Mobile Filters */}
           <div className="lg:hidden mb-4">
             <Sheet>
               <SheetTrigger asChild>
@@ -160,7 +142,6 @@ const Search: React.FC = () => {
             </Sheet>
           </div>
           
-          {/* Results */}
           <div className="flex-1">
             <div className="bg-white rounded-xl p-4 mb-6 neo-container">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -246,7 +227,6 @@ const Search: React.FC = () => {
         </div>
       </div>
       
-      {/* Footer */}
       <footer className="bg-white py-10 border-t border-gray-200 mt-8">
         <div className="container px-4 lg:px-8 mx-auto text-center text-gray-500 text-sm">
           © {new Date().getFullYear()} DoneDeal. All rights reserved.

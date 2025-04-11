@@ -1,32 +1,16 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Conversation, useMessages } from '@/hooks/useMessages';
-import { formatDistanceToNow } from 'date-fns';
-import { MessageSquare } from 'lucide-react';
+import { useMessages } from '@/hooks/useMessages';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/context/AuthContext';
+import MessageList from '@/components/MessageList';
 
 const Messages: React.FC = () => {
   const { conversations, loading, refreshConversations } = useMessages();
-  const navigate = useNavigate();
-  const { user } = useAuth();
 
   useEffect(() => {
     refreshConversations();
   }, [refreshConversations]);
-
-  const handleConversationClick = (conversation: Conversation) => {
-    navigate(`/messages/${conversation.id}`);
-  };
-
-  const truncateMessage = (message: string, maxLength: number = 50) => {
-    if (message.length <= maxLength) return message;
-    return message.substring(0, maxLength) + '...';
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -50,66 +34,10 @@ const Messages: React.FC = () => {
               <h2 className="text-xl font-bold">Conversations</h2>
             </div>
             
-            {loading ? (
-              <div className="p-4 space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center space-x-4 p-4 border-b border-gray-200">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="space-y-2 flex-1">
-                      <Skeleton className="h-4 w-1/4" />
-                      <Skeleton className="h-3 w-3/4" />
-                    </div>
-                    <Skeleton className="h-3 w-16" />
-                  </div>
-                ))}
-              </div>
-            ) : conversations.length > 0 ? (
-              <div className="divide-y divide-gray-200">
-                {conversations.map((conversation) => {
-                  const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
-                  return (
-                    <div 
-                      key={conversation.id} 
-                      className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''}`}
-                      onClick={() => handleConversationClick(conversation)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-bold text-lg">{conversation.otherUserName}</h3>
-                          <p className={`text-sm ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
-                            {conversation.latestMessage.senderId === user?.id ? 'You: ' : ''}
-                            {truncateMessage(conversation.latestMessage.content)}
-                          </p>
-                        </div>
-                        
-                        <div className="text-right">
-                          <p className="text-xs text-gray-500">
-                            {formatDistanceToNow(new Date(conversation.latestMessage.timestamp), { addSuffix: true })}
-                          </p>
-                          {isUnread && (
-                            <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded mt-1 inline-block">
-                              NEW
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="p-12 text-center">
-                <MessageSquare size={48} className="mx-auto mb-4 text-gray-400" />
-                <h3 className="text-xl font-bold mb-2">No Messages Yet</h3>
-                <p className="text-gray-500 mb-4">You haven't messaged anyone yet.</p>
-                <Button 
-                  onClick={() => navigate('/search')}
-                  className="neo-button-primary"
-                >
-                  Find Properties
-                </Button>
-              </div>
-            )}
+            <MessageList 
+              conversations={conversations}
+              loading={loading}
+            />
           </div>
         </motion.div>
       </div>
