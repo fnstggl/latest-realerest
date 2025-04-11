@@ -67,7 +67,7 @@ const Messages: React.FC = () => {
               <div className="divide-y divide-gray-200">
                 {conversations.map((conversation) => {
                   const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
-                  return (
+                  return (a
                     <div 
                       key={conversation.id} 
                       className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''}`}
@@ -75,7 +75,7 @@ const Messages: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <h3 className="font-bold text-lg">{conversation.otherUserName || "Unknown"}</h3>
+                          <h3 className="font-bold text-lg">{conversation.otherUserName}</h3>
                           <p className={`text-sm ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
                             {conversation.latestMessage.senderId === user?.id ? 'You: ' : ''}
                             {truncateMessage(conversation.latestMessage.content)}

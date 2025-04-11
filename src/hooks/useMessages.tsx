@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -75,18 +76,20 @@ export const useMessages = () => {
             .single();
             
           let userName = profileData?.name;
+          let userEmail = profileData?.email;
+            
           if (!userName) {
             const { data: userData } = await supabase.rpc('get_user_email', {
               user_id_param: otherUserId
             });
-            userName = userData || "Unknown";
+            userName = userData || userEmail || "Unknown";
           }
             
           return {
             id: conversation.id,
             otherUserId,
             otherUserName: userName,
-            otherUserEmail: profileData?.email,
+            otherUserEmail: userEmail,
             latestMessage: messageData ? {
               content: messageData.content,
               timestamp: messageData.created_at,
@@ -273,12 +276,14 @@ export const useMessages = () => {
                 .single()
                 .then(({ data }) => {
                   if (data) {
+                    const senderName = data.name || 'Someone';
+                    
                     supabase
                       .from('notifications')
                       .insert({
                         user_id: user.id,
                         title: 'New Message',
-                        message: `${data.name || 'Someone'}: ${message.content}`,
+                        message: `${senderName}: ${message.content}`,
                         type: 'message',
                         properties: {
                           conversationId: message.conversation_id,
@@ -287,7 +292,7 @@ export const useMessages = () => {
                       });
                       
                     toast('New Message', {
-                      description: `${data.name || 'Someone'}: ${message.content}`,
+                      description: `${senderName}: ${message.content}`,
                       action: {
                         label: 'View',
                         onClick: () => window.location.href = `/messages/${message.conversation_id}`

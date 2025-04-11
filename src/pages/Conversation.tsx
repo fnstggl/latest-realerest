@@ -58,7 +58,7 @@ const Conversation: React.FC = () => {
           .single();
           
         if (profile) {
-          setOtherUser({ id: otherUserId, name: profile.name || "Unknown" });
+          setOtherUser({ id: otherUserId, name: profile.name || profile.email || "Unknown" });
         } else {
           // Fallback to fetching from auth.users using the RPC function
           const { data: userData } = await supabase.rpc('get_user_email', {
