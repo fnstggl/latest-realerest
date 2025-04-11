@@ -113,7 +113,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
           bathrooms: "any",
           belowMarket: 0
         });
-      }} variant="link" className="w-full neo-button-primary text-white">Search</Button>
+      }} variant="link" className="w-full neo-button-primary text-white">Reset Filters</Button>
         
         <Button onClick={() => onFilterChange(filters)} className="w-full neo-button-primary text-white">
           Search
