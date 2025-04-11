@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -13,6 +14,8 @@ export interface Conversation {
     isRead: boolean;
     senderId: string;
   };
+  propertyId?: string;
+  propertyTitle?: string;
 }
 
 export interface Message {
@@ -23,6 +26,7 @@ export interface Message {
   timestamp: string;
   isRead: boolean;
   relatedOfferId?: string;
+  propertyId?: string;
 }
 
 export const useMessages = () => {
@@ -33,7 +37,8 @@ export const useMessages = () => {
 
   const getUserDisplayName = useCallback(async (userId: string): Promise<string> => {
     try {
-      const { data: profileData, error: profileError } = await supabase
+      // First try to get the profile name directly
+      const { data: profileData } = await supabase
         .from('profiles')
         .select('name')
         .eq('id', userId)
@@ -43,7 +48,8 @@ export const useMessages = () => {
         return profileData.name;
       }
       
-      console.log(`No profile name found for user ID: ${userId}`);
+      // If no name found, get the email as fallback
+      console.log(`No profile name found for user ID: ${userId}, falling back to email`);
       const { data: userData } = await supabase.rpc('get_user_email', {
         user_id_param: userId
       });
@@ -60,6 +66,7 @@ export const useMessages = () => {
     
     setLoading(true);
     try {
+      // Get all conversations for the current user
       const { data: conversationData, error: conversationError } = await supabase
         .from('conversations')
         .select('id, participant1, participant2, updated_at')
@@ -85,18 +92,48 @@ export const useMessages = () => {
             
           const otherUserName = await getUserDisplayName(otherUserId);
             
+          // Get the latest message and check if it's related to a property
           const { data: messageData } = await supabase
             .from('messages')
-            .select('*')
+            .select('*, property_offers(property_id)')
             .eq('conversation_id', conversation.id)
             .order('created_at', { ascending: false })
             .limit(1)
-            .single();
+            .maybeSingle();
             
+          let propertyId = undefined;
+          let propertyTitle = undefined;
+          
+          // If the message has a related offer, get the property details
+          if (messageData?.related_offer_id) {
+            const { data: offerData } = await supabase
+              .from('property_offers')
+              .select('property_id')
+              .eq('id', messageData.related_offer_id)
+              .maybeSingle();
+              
+            if (offerData?.property_id) {
+              propertyId = offerData.property_id;
+              
+              // Get the property title
+              const { data: propertyData } = await supabase
+                .from('property_listings')
+                .select('title')
+                .eq('id', propertyId)
+                .maybeSingle();
+                
+              if (propertyData?.title) {
+                propertyTitle = propertyData.title;
+              }
+            }
+          }
+          
           return {
             id: conversation.id,
             otherUserId,
             otherUserName,
+            propertyId,
+            propertyTitle,
             latestMessage: messageData ? {
               content: messageData.content,
               timestamp: messageData.created_at,
@@ -135,7 +172,7 @@ export const useMessages = () => {
     try {
       const { data, error } = await supabase
         .from('messages')
-        .select('*')
+        .select('*, property_offers!messages_related_offer_id_fkey(property_id)')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
         
@@ -144,15 +181,35 @@ export const useMessages = () => {
         return [];
       }
       
-      return data.map(message => ({
-        id: message.id,
-        conversationId: message.conversation_id,
-        senderId: message.sender_id,
-        content: message.content,
-        timestamp: message.created_at,
-        isRead: message.is_read,
-        relatedOfferId: message.related_offer_id
+      // Process messages to include property IDs
+      const processedMessages = await Promise.all(data.map(async (message) => {
+        let propertyId = undefined;
+        
+        if (message.related_offer_id) {
+          const { data: offerData } = await supabase
+            .from('property_offers')
+            .select('property_id')
+            .eq('id', message.related_offer_id)
+            .maybeSingle();
+            
+          if (offerData) {
+            propertyId = offerData.property_id;
+          }
+        }
+        
+        return {
+          id: message.id,
+          conversationId: message.conversation_id,
+          senderId: message.sender_id,
+          content: message.content,
+          timestamp: message.created_at,
+          isRead: message.is_read,
+          relatedOfferId: message.related_offer_id,
+          propertyId
+        };
       }));
+      
+      return processedMessages;
     } catch (error) {
       console.error('Error processing messages:', error);
       return [];

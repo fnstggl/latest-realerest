@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Conversation } from '@/hooks/useMessages';
 import { formatDistanceToNow } from 'date-fns';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 
@@ -19,6 +19,13 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
   
   const handleConversationClick = (conversation: Conversation) => {
     navigate(`/messages/${conversation.id}`);
+  };
+  
+  const handlePropertyClick = (e: React.MouseEvent, propertyId?: string) => {
+    if (propertyId) {
+      e.stopPropagation();
+      navigate(`/property/${propertyId}`);
+    }
   };
   
   const truncateMessage = (message: string, maxLength: number = 50) => {
@@ -72,6 +79,17 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h3 className="font-bold text-lg">{conversation.otherUserName}</h3>
+                
+                {conversation.propertyId && conversation.propertyTitle && (
+                  <div 
+                    className="flex items-center text-sm text-blue-600 cursor-pointer hover:underline mb-1"
+                    onClick={(e) => handlePropertyClick(e, conversation.propertyId)}
+                  >
+                    <Home size={14} className="mr-1" />
+                    <span>RE: {conversation.propertyTitle}</span>
+                  </div>
+                )}
+                
                 <p className={`text-sm ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
                   {conversation.latestMessage.senderId === user?.id ? 'You: ' : ''}
                   {truncateMessage(conversation.latestMessage.content)}
