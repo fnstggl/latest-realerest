@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import NotificationCenter from './NotificationCenter';
+import ChatIcon from './ChatIcon';
 import { useNotifications } from '@/context/NotificationContext';
 
 const Navbar: React.FC = () => {
@@ -152,6 +153,7 @@ const Navbar: React.FC = () => {
           {isAuthenticated ? (
             <div className="flex gap-4 items-center">
               <NotificationCenter />
+              <ChatIcon />
               
               <Button 
                 variant="outline" 

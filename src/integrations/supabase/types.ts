@@ -59,6 +59,30 @@ export type Database = {
           },
         ]
       }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          participant1: string
+          participant2: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          participant1: string
+          participant2: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          participant1?: string
+          participant2?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       counter_offers: {
         Row: {
           amount: number
@@ -85,6 +109,51 @@ export type Database = {
           {
             foreignKeyName: "counter_offers_offer_id_fkey"
             columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "property_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          is_read: boolean
+          related_offer_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          related_offer_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          related_offer_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_related_offer_id_fkey"
+            columns: ["related_offer_id"]
             isOneToOne: false
             referencedRelation: "property_offers"
             referencedColumns: ["id"]

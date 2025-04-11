@@ -38,15 +38,10 @@ export const useMessages = () => {
     
     setLoading(true);
     try {
-      // First, get all conversations where the user is a participant
+      // Get all conversations where the user is a participant
       const { data: conversationData, error: conversationError } = await supabase
         .from('conversations')
-        .select(`
-          id,
-          participant1,
-          participant2,
-          updated_at
-        `)
+        .select('id, participant1, participant2, updated_at')
         .or(`participant1.eq.${user.id},participant2.eq.${user.id}`)
         .order('updated_at', { ascending: false });
         
@@ -181,12 +176,6 @@ export const useMessages = () => {
         return null;
       }
       
-      // Update conversation timestamp
-      await supabase
-        .from('conversations')
-        .update({ updated_at: new Date().toISOString() })
-        .eq('id', conversationId);
-        
       return {
         id: data.id,
         conversationId: data.conversation_id,
