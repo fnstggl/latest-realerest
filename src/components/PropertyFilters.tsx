@@ -1,18 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 interface FiltersProps {
   onFilterChange: (filters: FilterState) => void;
 }
-
 interface FilterState {
   propertyType: string;
   priceRange: [number, number];
@@ -20,54 +12,39 @@ interface FilterState {
   bathrooms: string;
   belowMarket: number;
 }
-
-const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
+const PropertyFilters: React.FC<FiltersProps> = ({
+  onFilterChange
+}) => {
   const [filters, setFilters] = useState<FilterState>({
     propertyType: "any",
     priceRange: [100000, 1000000],
     bedrooms: "any",
     bathrooms: "any",
-    belowMarket: 0,
+    belowMarket: 0
   });
-
   const handleFilterChange = (key: keyof FilterState, value: any) => {
-    const newFilters = { ...filters, [key]: value };
+    const newFilters = {
+      ...filters,
+      [key]: value
+    };
     setFilters(newFilters);
     onFilterChange(newFilters);
   };
-
-  return (
-    <div className="bg-white p-6 neo-container">
+  return <div className="bg-white p-6 neo-container">
       <div className="space-y-6">
         <div>
           <h3 className="text-lg font-semibold mb-3">Property Type</h3>
           <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-2">
-            {["Any", "House", "Apartment", "Condo", "Duplex"].map((type) => (
-              <Button
-                key={type}
-                variant={filters.propertyType === type.toLowerCase() ? "default" : "outline"}
-                className={filters.propertyType === type.toLowerCase() 
-                  ? "neo-button-primary" 
-                  : "neo-button"}
-                onClick={() => handleFilterChange("propertyType", type.toLowerCase())}
-              >
+            {["Any", "House", "Apartment", "Condo", "Duplex"].map(type => <Button key={type} variant={filters.propertyType === type.toLowerCase() ? "default" : "outline"} className={filters.propertyType === type.toLowerCase() ? "neo-button-primary" : "neo-button"} onClick={() => handleFilterChange("propertyType", type.toLowerCase())}>
                 {type}
-              </Button>
-            ))}
+              </Button>)}
           </div>
         </div>
 
         <div>
           <h3 className="text-lg font-semibold mb-3">Price Range</h3>
           <div className="mt-2 px-2">
-            <Slider
-              defaultValue={[100000, 1000000]}
-              min={0}
-              max={2000000}
-              step={10000}
-              onValueChange={(value) => handleFilterChange("priceRange", value)}
-              className="my-6"
-            />
+            <Slider defaultValue={[100000, 1000000]} min={0} max={2000000} step={10000} onValueChange={value => handleFilterChange("priceRange", value)} className="my-6" />
             <div className="flex justify-between text-sm text-gray-600">
               <div>${filters.priceRange[0].toLocaleString()}</div>
               <div>${filters.priceRange[1].toLocaleString()}</div>
@@ -78,14 +55,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         <div>
           <h3 className="text-lg font-semibold mb-3">Below Market Value</h3>
           <div className="px-2">
-            <Slider
-              defaultValue={[0]}
-              min={0}
-              max={50}
-              step={5}
-              onValueChange={(value) => handleFilterChange("belowMarket", value[0])}
-              className="my-6"
-            />
+            <Slider defaultValue={[0]} min={0} max={50} step={5} onValueChange={value => handleFilterChange("belowMarket", value[0])} className="my-6" />
             <div className="flex justify-between text-sm text-gray-600">
               <div>0%</div>
               <div>At least {filters.belowMarket}% below</div>
@@ -96,10 +66,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <h3 className="text-md font-semibold mb-2">Bedrooms</h3>
-            <Select
-              value={filters.bedrooms}
-              onValueChange={(value) => handleFilterChange("bedrooms", value)}
-            >
+            <Select value={filters.bedrooms} onValueChange={value => handleFilterChange("bedrooms", value)}>
               <SelectTrigger className="neo-input">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
@@ -116,10 +83,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
 
           <div>
             <h3 className="text-md font-semibold mb-2">Bathrooms</h3>
-            <Select
-              value={filters.bathrooms}
-              onValueChange={(value) => handleFilterChange("bathrooms", value)}
-            >
+            <Select value={filters.bathrooms} onValueChange={value => handleFilterChange("bathrooms", value)}>
               <SelectTrigger className="neo-input">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
@@ -134,38 +98,27 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </div>
         </div>
 
-        <Button
-          onClick={() => {
-            setFilters({
-              propertyType: "any",
-              priceRange: [100000, 1000000],
-              bedrooms: "any",
-              bathrooms: "any",
-              belowMarket: 0,
-            });
-            onFilterChange({
-              propertyType: "any",
-              priceRange: [100000, 1000000],
-              bedrooms: "any",
-              bathrooms: "any",
-              belowMarket: 0,
-            });
-          }}
-          variant="link"
-          className="w-full text-primary neo-button-primary"
-        >
-          Reset Filters
-        </Button>
+        <Button onClick={() => {
+        setFilters({
+          propertyType: "any",
+          priceRange: [100000, 1000000],
+          bedrooms: "any",
+          bathrooms: "any",
+          belowMarket: 0
+        });
+        onFilterChange({
+          propertyType: "any",
+          priceRange: [100000, 1000000],
+          bedrooms: "any",
+          bathrooms: "any",
+          belowMarket: 0
+        });
+      }} variant="link" className="w-full neo-button-primary text-white">Search</Button>
         
-        <Button
-          onClick={() => onFilterChange(filters)}
-          className="w-full neo-button-primary text-white"
-        >
+        <Button onClick={() => onFilterChange(filters)} className="w-full neo-button-primary text-white">
           Search
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PropertyFilters;
