@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useMessages } from "@/hooks/useMessages";
 import { Link } from "react-router-dom";
-
 interface CounterOffer {
   id: string;
   offer_id: string;
@@ -38,7 +37,6 @@ interface Offer {
   createdAt: string;
   counterOffers: CounterOffer[];
 }
-
 const OffersTab: React.FC = () => {
   const {
     user
@@ -53,7 +51,6 @@ const OffersTab: React.FC = () => {
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [counterOfferAmount, setCounterOfferAmount] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
-
   useEffect(() => {
     const fetchOffers = async () => {
       if (!user?.id) return;
@@ -75,39 +72,32 @@ const OffersTab: React.FC = () => {
           `).eq('seller_id', user.id).order('created_at', {
           ascending: false
         });
-
         if (error) {
           console.error("Error fetching offers:", error);
           return;
         }
-
         const offersWithDetails = await Promise.all(propertyOffers.map(async offer => {
           const {
             data: property
           } = await supabase.from('property_listings').select('title, price').eq('id', offer.property_id).single();
-
           const {
             data: buyerProfile,
             error: profileError
           } = await supabase.from('profiles').select('name, email, phone').eq('id', offer.user_id).single();
-
           if (profileError) {
             console.error("Error fetching buyer profile:", profileError, "for user ID:", offer.user_id);
           }
-
           const {
             data: counterOffers
           } = await supabase.from('counter_offers').select('*').eq('offer_id', offer.id).order('created_at', {
             ascending: true
           });
-
           let buyerName = 'Anonymous Buyer';
           if (buyerProfile?.name) {
             buyerName = buyerProfile.name;
           } else if (buyerProfile?.email) {
             buyerName = buyerProfile.email;
           }
-
           return {
             id: offer.id,
             propertyId: offer.property_id,
@@ -127,7 +117,6 @@ const OffersTab: React.FC = () => {
             counterOffers: counterOffers || []
           };
         }));
-
         console.log("Processed offers with buyer names:", offersWithDetails);
         setOffers(offersWithDetails);
       } catch (error) {
@@ -136,9 +125,7 @@ const OffersTab: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchOffers();
-
     const channel = supabase.channel('property_offers_changes').on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -147,7 +134,6 @@ const OffersTab: React.FC = () => {
     }, payload => {
       console.log("New offer received:", payload);
       fetchOffers();
-
       toast.success("New Offer Received", {
         description: "You have received a new offer on one of your properties."
       });
@@ -159,7 +145,6 @@ const OffersTab: React.FC = () => {
     }, () => {
       fetchOffers();
     }).subscribe();
-
     const counterOffersChannel = supabase.channel('counter_offers_changes').on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -172,13 +157,11 @@ const OffersTab: React.FC = () => {
         }
       }
     }).subscribe();
-
     return () => {
       supabase.removeChannel(channel);
       supabase.removeChannel(counterOffersChannel);
     };
   }, [user?.id]);
-
   const handleOfferAction = async (offerId: string, action: "accepted" | "declined" | "countered") => {
     if (!user?.id) return;
     try {
@@ -187,7 +170,6 @@ const OffersTab: React.FC = () => {
         toast.error("Offer not found");
         return;
       }
-
       const {
         error
       } = await supabase.from('property_offers').update({
@@ -198,12 +180,10 @@ const OffersTab: React.FC = () => {
         toast.error("Failed to update offer");
         return;
       }
-
       setOffers(prev => prev.map(offer => offer.id === offerId ? {
         ...offer,
         status: action
       } : offer));
-
       const notificationTitle = action === "accepted" ? "Offer Accepted!" : action === "declined" ? "Offer Declined" : "Counter Offer Received";
       const notificationMessage = action === "accepted" ? `Your offer of $${offerToUpdate.offerAmount.toLocaleString()} for ${offerToUpdate.property.title} has been accepted.` : action === "declined" ? `Your offer of $${offerToUpdate.offerAmount.toLocaleString()} for ${offerToUpdate.property.title} has been declined.` : `The seller has made a counter offer for ${offerToUpdate.property.title}.`;
       await supabase.from('notifications').insert({
@@ -216,7 +196,6 @@ const OffersTab: React.FC = () => {
           offerId: offerId
         }
       });
-
       toast.success(`Offer ${action}`, {
         description: `The offer has been marked as ${action}.`
       });
@@ -225,13 +204,11 @@ const OffersTab: React.FC = () => {
       toast.error("An error occurred while processing the offer");
     }
   };
-
   const handleCounterOffer = (offer: Offer) => {
     setSelectedOffer(offer);
     setCounterOfferAmount(offer.offerAmount);
     setCounterOfferDialogOpen(true);
   };
-
   const submitCounterOffer = async () => {
     if (!selectedOffer || !user?.id) return;
     setSubmitting(true);
@@ -249,7 +226,6 @@ const OffersTab: React.FC = () => {
         toast.error("Failed to create counter offer");
         return;
       }
-
       const {
         error: offerUpdateError
       } = await supabase.from('property_offers').update({
@@ -260,7 +236,6 @@ const OffersTab: React.FC = () => {
         toast.error("Failed to update offer status");
         return;
       }
-
       await supabase.from('notifications').insert({
         user_id: selectedOffer.userId,
         title: "Counter Offer Received",
@@ -273,7 +248,6 @@ const OffersTab: React.FC = () => {
           counterOfferAmount: counterOfferAmount
         }
       });
-
       setOffers(prev => prev.map(offer => offer.id === selectedOffer.id ? {
         ...offer,
         status: 'countered',
@@ -288,16 +262,13 @@ const OffersTab: React.FC = () => {
       setSubmitting(false);
     }
   };
-
   const getLatestOfferAmount = (offer: Offer) => {
     if (offer.counterOffers.length === 0) {
       return offer.offerAmount;
     }
-
     const sortedCounterOffers = [...offer.counterOffers].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     return sortedCounterOffers[0].amount;
   };
-
   const handleMessageBuyer = async (offer: Offer) => {
     if (!user?.id) return;
     try {
@@ -312,7 +283,6 @@ const OffersTab: React.FC = () => {
       toast.error("Failed to create conversation");
     }
   };
-
   if (loading) {
     return <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-8">
         <h2 className="text-xl font-bold mb-6">Loading Offers...</h2>
@@ -325,7 +295,6 @@ const OffersTab: React.FC = () => {
         </div>
       </div>;
   }
-
   return <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
       <div className="border-b-4 border-black p-4 bg-gray-50">
         <h2 className="text-xl font-bold">Property Offers</h2>
@@ -346,9 +315,7 @@ const OffersTab: React.FC = () => {
                     </p>
                   </div>
                   
-                  <Badge className={offer.status === "pending" ? "bg-yellow-100 text-yellow-800 border-2 border-yellow-300 font-bold" : offer.status === "accepted" ? "bg-green-100 text-green-800 border-2 border-green-300 font-bold" : offer.status === "declined" ? "bg-red-100 text-red-800 border-2 border-red-300 font-bold" : "bg-blue-100 text-blue-800 border-2 border-blue-300 font-bold"}>
-                    {offer.status === "pending" ? "Pending" : offer.status === "accepted" ? "Accepted" : offer.status === "declined" ? "Declined" : "Countered"}
-                  </Badge>
+                  
                 </div>
               </CardHeader>
               
@@ -478,5 +445,4 @@ const OffersTab: React.FC = () => {
       </Dialog>
     </div>;
 };
-
 export default OffersTab;
