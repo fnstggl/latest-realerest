@@ -71,24 +71,54 @@ const Conversation: React.FC = () => {
         const messageData = await fetchMessages(id);
         setMessages(messageData);
         
-        // Check if we have property information in any of the messages
+        // Look for property information in messages
+        console.log("Messages data:", messageData);
+        let propertyId = null;
+        let relatedOfferId = null;
+        
+        // Find a message with property information
         for (const message of messageData) {
           if (message.propertyId && message.relatedOfferId) {
-            const { data: propertyData } = await supabase
-              .from('property_listings')
-              .select('title, images')
-              .eq('id', message.propertyId)
-              .maybeSingle();
-              
-            if (propertyData) {
-              setPropertyInfo({
-                id: message.propertyId,
-                title: propertyData.title,
-                image: propertyData.images && propertyData.images.length > 0 ? propertyData.images[0] : undefined
-              });
-              break;
-            }
+            propertyId = message.propertyId;
+            relatedOfferId = message.relatedOfferId;
+            break;
           }
+        }
+        
+        // If found a property ID, fetch its details
+        if (propertyId) {
+          console.log("Found property ID:", propertyId);
+          const { data: propertyData, error } = await supabase
+            .from('property_listings')
+            .select('title, images')
+            .eq('id', propertyId)
+            .maybeSingle();
+            
+          if (error) {
+            console.error("Error fetching property details:", error);
+          }
+          
+          if (propertyData) {
+            console.log("Property data:", propertyData);
+            const imageUrl = propertyData.images && propertyData.images.length > 0 
+              ? propertyData.images[0] 
+              : undefined;
+              
+            setPropertyInfo({
+              id: propertyId,
+              title: propertyData.title,
+              image: imageUrl
+            });
+            console.log("Set property info:", {
+              id: propertyId,
+              title: propertyData.title,
+              image: imageUrl
+            });
+          } else {
+            console.log("No property data found for ID:", propertyId);
+          }
+        } else {
+          console.log("No property ID found in messages");
         }
         
         await markConversationAsRead(id);
@@ -216,15 +246,13 @@ const Conversation: React.FC = () => {
                     <ExternalLink size={14} className="ml-1" />
                   </span>
                 </div>
-                {propertyInfo.image && (
-                  <div className="h-16 w-16 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-                    <img 
-                      src={propertyInfo.image} 
-                      alt={propertyInfo.title} 
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
+                <div className="h-16 w-16 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+                  <img 
+                    src={propertyInfo.image || '/placeholder.svg'} 
+                    alt={propertyInfo.title} 
+                    className="h-full w-full object-cover"
+                  />
+                </div>
               </div>
             )}
           </div>
