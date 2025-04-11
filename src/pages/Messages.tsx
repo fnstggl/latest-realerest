@@ -67,7 +67,7 @@ const Messages: React.FC = () => {
               <div className="divide-y divide-gray-200">
                 {conversations.map((conversation) => {
                   const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
-                  return (a
+                  return (
                     <div 
                       key={conversation.id} 
                       className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''}`}
