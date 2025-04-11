@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Message, useMessages } from '@/hooks/useMessages';
-import { ArrowLeft, Home } from 'lucide-react';
+import { ArrowLeft, Home, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,7 +21,7 @@ const Conversation: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [otherUser, setOtherUser] = useState<{ id: string; name: string; } | null>(null);
-  const [propertyInfo, setPropertyInfo] = useState<{ id: string; title: string; } | null>(null);
+  const [propertyInfo, setPropertyInfo] = useState<{ id: string; title: string; image?: string; } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { fetchMessages, sendMessage, markConversationAsRead } = useMessages();
 
@@ -76,14 +76,15 @@ const Conversation: React.FC = () => {
           if (message.propertyId && message.relatedOfferId) {
             const { data: propertyData } = await supabase
               .from('property_listings')
-              .select('title')
+              .select('title, images')
               .eq('id', message.propertyId)
               .maybeSingle();
               
             if (propertyData) {
               setPropertyInfo({
                 id: message.propertyId,
-                title: propertyData.title
+                title: propertyData.title,
+                image: propertyData.images && propertyData.images.length > 0 ? propertyData.images[0] : undefined
               });
               break;
             }
@@ -188,12 +189,12 @@ const Conversation: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="flex-1 flex flex-col"
         >
-          <div className="flex items-center mb-4">
+          <div className="flex items-center justify-between mb-4">
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => navigate('/messages')}
-              className="mr-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center"
+              className="border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center"
             >
               <ArrowLeft size={16} className="mr-1" />
               Back
@@ -201,17 +202,31 @@ const Conversation: React.FC = () => {
             
             <div className="flex flex-col">
               <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "Unknown User"}</h1>
-              
-              {propertyInfo && (
-                <button 
-                  onClick={handlePropertyClick}
-                  className="flex items-center text-blue-600 text-sm hover:underline mt-1"
-                >
-                  <Home size={14} className="mr-1" />
-                  <span>Regarding: {propertyInfo.title}</span>
-                </button>
-              )}
             </div>
+            
+            {propertyInfo && (
+              <div 
+                onClick={handlePropertyClick}
+                className="flex items-center cursor-pointer hover:opacity-90 transition-opacity"
+              >
+                <div className="flex flex-col items-end mr-3">
+                  <span className="text-sm font-semibold">About Property:</span>
+                  <span className="text-blue-600 flex items-center text-sm hover:underline">
+                    {propertyInfo.title}
+                    <ExternalLink size={14} className="ml-1" />
+                  </span>
+                </div>
+                <div 
+                  className="h-16 w-16 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
+                >
+                  <img 
+                    src={propertyInfo.image || '/placeholder.svg'} 
+                    alt={propertyInfo.title} 
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </div>
           
           <Card className="flex-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">

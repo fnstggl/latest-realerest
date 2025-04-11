@@ -16,6 +16,7 @@ export interface Conversation {
   };
   propertyId?: string;
   propertyTitle?: string;
+  propertyImage?: string;
 }
 
 export interface Message {
@@ -35,6 +36,7 @@ export const useMessages = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const { user } = useAuth();
 
+  // Get user display name with better error handling
   const getUserDisplayName = useCallback(async (userId: string): Promise<string> => {
     try {
       // First try to get the profile name directly
@@ -103,6 +105,7 @@ export const useMessages = () => {
             
           let propertyId = undefined;
           let propertyTitle = undefined;
+          let propertyImage = undefined;
           
           // If the message has a related offer, get the property details
           if (messageData?.related_offer_id) {
@@ -115,15 +118,18 @@ export const useMessages = () => {
             if (offerData?.property_id) {
               propertyId = offerData.property_id;
               
-              // Get the property title
+              // Get the property title and image
               const { data: propertyData } = await supabase
                 .from('property_listings')
-                .select('title')
+                .select('title, images')
                 .eq('id', propertyId)
                 .maybeSingle();
                 
-              if (propertyData?.title) {
+              if (propertyData) {
                 propertyTitle = propertyData.title;
+                if (propertyData.images && propertyData.images.length > 0) {
+                  propertyImage = propertyData.images[0];
+                }
               }
             }
           }
@@ -134,6 +140,7 @@ export const useMessages = () => {
             otherUserName,
             propertyId,
             propertyTitle,
+            propertyImage,
             latestMessage: messageData ? {
               content: messageData.content,
               timestamp: messageData.created_at,

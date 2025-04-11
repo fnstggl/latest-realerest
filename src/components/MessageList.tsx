@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Conversation } from '@/hooks/useMessages';
 import { formatDistanceToNow } from 'date-fns';
-import { MessageSquare, Home } from 'lucide-react';
+import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 
@@ -76,7 +76,7 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
             className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''}`}
             onClick={() => handleConversationClick(conversation)}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center">
               <div className="flex-1">
                 <h3 className="font-bold text-lg">{conversation.otherUserName}</h3>
                 
@@ -86,7 +86,8 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
                     onClick={(e) => handlePropertyClick(e, conversation.propertyId)}
                   >
                     <Home size={14} className="mr-1" />
-                    <span>RE: {conversation.propertyTitle}</span>
+                    <span>Regarding: {conversation.propertyTitle}</span>
+                    <ExternalLink size={12} className="ml-1" />
                   </div>
                 )}
                 
