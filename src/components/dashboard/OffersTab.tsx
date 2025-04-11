@@ -1,15 +1,17 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Clock, ArrowRightLeft } from "lucide-react";
+import { CheckCircle, XCircle, Clock, ArrowRightLeft, MessageSquare } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useNavigate } from "react-router-dom";
+import { useMessages } from "@/hooks/useMessages";
 
 interface CounterOffer {
   id: string;
@@ -40,6 +42,8 @@ interface Offer {
 
 const OffersTab: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { getOrCreateConversation } = useMessages();
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [counterOfferDialogOpen, setCounterOfferDialogOpen] = useState(false);
@@ -351,6 +355,24 @@ const OffersTab: React.FC = () => {
     return sortedCounterOffers[0].amount;
   };
 
+  const handleMessageBuyer = async (offer: Offer) => {
+    if (!user?.id) return;
+    
+    try {
+      // Get or create a conversation with this buyer
+      const conversationId = await getOrCreateConversation(offer.userId);
+      
+      if (conversationId) {
+        navigate(`/messages/${conversationId}`);
+      } else {
+        toast.error("Could not create conversation");
+      }
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+      toast.error("Failed to create conversation");
+    }
+  };
+
   if (loading) {
     return (
       <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-8">
@@ -378,7 +400,7 @@ const OffersTab: React.FC = () => {
         <div className="divide-y-2 divide-gray-200">
           {offers.map((offer) => (
             <Card key={offer.id} className="rounded-none border-0 shadow-none">
-              <CardHeader className="p-4 pb-0">
+              <CardHeader className="p-4 pb-2">
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-lg">{offer.property.title}</CardTitle>
@@ -388,10 +410,10 @@ const OffersTab: React.FC = () => {
                   </div>
                   
                   <Badge className={
-                    offer.status === "pending" ? "bg-yellow-100 text-yellow-800 border border-yellow-300" :
-                    offer.status === "accepted" ? "bg-green-100 text-green-800 border border-green-300" :
-                    offer.status === "declined" ? "bg-red-100 text-red-800 border border-red-300" :
-                    "bg-blue-100 text-blue-800 border border-blue-300"
+                    offer.status === "pending" ? "bg-yellow-100 text-yellow-800 border-2 border-yellow-300 font-bold" :
+                    offer.status === "accepted" ? "bg-green-100 text-green-800 border-2 border-green-300 font-bold" :
+                    offer.status === "declined" ? "bg-red-100 text-red-800 border-2 border-red-300 font-bold" :
+                    "bg-blue-100 text-blue-800 border-2 border-blue-300 font-bold"
                   }>
                     {offer.status === "pending" ? "Pending" :
                      offer.status === "accepted" ? "Accepted" :
@@ -414,26 +436,34 @@ const OffersTab: React.FC = () => {
                   </div>
                   
                   {offer.counterOffers.length > 0 && (
-                    <div className="mt-4 border-2 border-gray-200 p-3 mb-4">
+                    <div className="mt-4 border-2 border-black p-3 mb-4 bg-gray-50">
                       <h3 className="font-bold text-sm mb-2">Negotiation History</h3>
                       <div className="space-y-2 max-h-36 overflow-y-auto">
-                        <div className="flex justify-between items-center p-2 bg-gray-100">
+                        <div className="flex justify-between items-center p-2 bg-gray-100 border border-gray-300">
                           <div>
                             <strong>Initial Offer:</strong> ${offer.offerAmount.toLocaleString()}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs bg-green-100 px-2 py-1 font-bold">
                             Buyer
                           </div>
                         </div>
                         {offer.counterOffers.map((counterOffer) => (
                           <div 
                             key={counterOffer.id} 
-                            className={`flex justify-between items-center p-2 ${counterOffer.from_seller ? 'bg-blue-50' : 'bg-green-50'}`}
+                            className={`flex justify-between items-center p-2 border ${
+                              counterOffer.from_seller 
+                                ? 'bg-blue-50 border-blue-200' 
+                                : 'bg-green-50 border-green-200'
+                            }`}
                           >
                             <div>
                               <strong>${counterOffer.amount.toLocaleString()}</strong>
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className={`text-xs font-bold px-2 py-1 ${
+                              counterOffer.from_seller 
+                                ? 'bg-blue-100' 
+                                : 'bg-green-100'
+                            }`}>
                               {counterOffer.from_seller ? 'You (Seller)' : 'Buyer'}
                             </div>
                           </div>
@@ -442,80 +472,93 @@ const OffersTab: React.FC = () => {
                     </div>
                   )}
                   
-                  {offer.buyerEmail && (
-                    <div className="text-sm mb-1">
-                      <span className="font-semibold">Email:</span> {offer.buyerEmail}
-                    </div>
-                  )}
-                  
-                  {offer.buyerPhone && (
-                    <div className="text-sm">
-                      <span className="font-semibold">Phone:</span> {offer.buyerPhone}
-                    </div>
-                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    {offer.buyerEmail && (
+                      <div className="text-sm border-2 border-black p-2 bg-gray-50">
+                        <span className="font-semibold">Email:</span> {offer.buyerEmail}
+                      </div>
+                    )}
+                    
+                    {offer.buyerPhone && (
+                      <div className="text-sm border-2 border-black p-2 bg-gray-50">
+                        <span className="font-semibold">Phone:</span> {offer.buyerPhone}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
-                {offer.status === "pending" && (
-                  <div className="flex space-x-2 mt-4">
-                    <Button 
-                      onClick={() => handleOfferAction(offer.id, "accepted")}
-                      className="bg-green-600 hover:bg-green-700 flex-1"
-                    >
-                      <CheckCircle size={16} className="mr-2" />
-                      Accept
-                    </Button>
-                    
-                    <Button 
-                      onClick={() => handleCounterOffer(offer)}
-                      className="bg-blue-600 hover:bg-blue-700 flex-1"
-                    >
-                      <ArrowRightLeft size={16} className="mr-2" />
-                      Counter
-                    </Button>
-                    
-                    <Button 
-                      onClick={() => handleOfferAction(offer.id, "declined")}
-                      variant="destructive"
-                      className="flex-1"
-                    >
-                      <XCircle size={16} className="mr-2" />
-                      Decline
-                    </Button>
-                  </div>
-                )}
-                
-                {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && (
-                  <div className="flex space-x-2 mt-4">
-                    <Button 
-                      onClick={() => handleOfferAction(offer.id, "accepted")}
-                      className="bg-green-600 hover:bg-green-700 flex-1"
-                    >
-                      <CheckCircle size={16} className="mr-2" />
-                      Accept Counter Offer
-                    </Button>
-                    
-                    <Button 
-                      onClick={() => handleCounterOffer(offer)}
-                      className="bg-blue-600 hover:bg-blue-700 flex-1"
-                    >
-                      <ArrowRightLeft size={16} className="mr-2" />
-                      Counter Again
-                    </Button>
-                    
-                    <Button 
-                      onClick={() => handleOfferAction(offer.id, "declined")}
-                      variant="destructive"
-                      className="flex-1"
-                    >
-                      <XCircle size={16} className="mr-2" />
-                      Decline
-                    </Button>
-                  </div>
-                )}
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {offer.status === "pending" && (
+                    <>
+                      <Button 
+                        onClick={() => handleOfferAction(offer.id, "accepted")}
+                        className="bg-green-600 hover:bg-green-700 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                      >
+                        <CheckCircle size={16} className="mr-2" />
+                        Accept
+                      </Button>
+                      
+                      <Button 
+                        onClick={() => handleCounterOffer(offer)}
+                        className="bg-blue-600 hover:bg-blue-700 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all text-white"
+                      >
+                        <ArrowRightLeft size={16} className="mr-2" />
+                        Counter
+                      </Button>
+                      
+                      <Button 
+                        onClick={() => handleOfferAction(offer.id, "declined")}
+                        variant="destructive"
+                        className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                      >
+                        <XCircle size={16} className="mr-2" />
+                        Decline
+                      </Button>
+                    </>
+                  )}
+                  
+                  {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && (
+                    <>
+                      <Button 
+                        onClick={() => handleOfferAction(offer.id, "accepted")}
+                        className="bg-green-600 hover:bg-green-700 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                      >
+                        <CheckCircle size={16} className="mr-2" />
+                        Accept Counter Offer
+                      </Button>
+                      
+                      <Button 
+                        onClick={() => handleCounterOffer(offer)}
+                        className="bg-blue-600 hover:bg-blue-700 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all text-white"
+                      >
+                        <ArrowRightLeft size={16} className="mr-2" />
+                        Counter Again
+                      </Button>
+                      
+                      <Button 
+                        onClick={() => handleOfferAction(offer.id, "declined")}
+                        variant="destructive"
+                        className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                      >
+                        <XCircle size={16} className="mr-2" />
+                        Decline
+                      </Button>
+                    </>
+                  )}
+                  
+                  <Button 
+                    onClick={() => handleMessageBuyer(offer)}
+                    variant="outline"
+                    className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                  >
+                    <MessageSquare size={16} className="mr-2" />
+                    Message Buyer
+                  </Button>
+                </div>
                 
                 {offer.status === "accepted" && (
-                  <div className="bg-green-100 border border-green-300 p-3 rounded">
-                    <p className="text-green-800">
+                  <div className="bg-green-100 border-2 border-green-300 p-3 rounded mt-4">
+                    <p className="text-green-800 font-bold">
                       <CheckCircle size={16} className="inline mr-2" />
                       You've accepted this offer. Contact the buyer to proceed with the sale.
                     </p>
@@ -523,8 +566,8 @@ const OffersTab: React.FC = () => {
                 )}
                 
                 {offer.status === "declined" && (
-                  <div className="bg-red-100 border border-red-300 p-3 rounded">
-                    <p className="text-red-800">
+                  <div className="bg-red-100 border-2 border-red-300 p-3 rounded mt-4">
+                    <p className="text-red-800 font-bold">
                       <XCircle size={16} className="inline mr-2" />
                       You've declined this offer.
                     </p>
@@ -579,8 +622,7 @@ const OffersTab: React.FC = () => {
             </Button>
             <Button 
               type="button" 
-              variant="navy"
-              className="text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              className="bg-[#0d2f72] text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
               onClick={submitCounterOffer}
               disabled={submitting}
             >

@@ -39,6 +39,8 @@ const Cookies = lazy(() => import("./pages/Cookies"));
 const Careers = lazy(() => import("./pages/Careers"));
 const PropertyDetail = lazy(() => import("./pages/PropertyDetail"));
 const PropertyEdit = lazy(() => import("./pages/PropertyEdit"));
+const Messages = lazy(() => import("./pages/Messages"));
+const Conversation = lazy(() => import("./pages/Conversation"));
 
 // Loading fallback for lazy loaded components
 const LoadingFallback = () => (
@@ -83,6 +85,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <CreateBlog />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/messages" 
+              element={
+                <ProtectedRoute>
+                  <Messages />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/messages/:id" 
+              element={
+                <ProtectedRoute>
+                  <Conversation />
                 </ProtectedRoute>
               } 
             />

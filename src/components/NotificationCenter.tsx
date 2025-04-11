@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   Popover,
@@ -86,7 +86,10 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
     if (!notification.properties) return;
     
     // Navigate based on notification type
-    if (notification.type === 'new_listing' && notification.properties.propertyId) {
+    if (notification.type === 'message' && notification.properties.conversationId) {
+      // For messages - go to the specific conversation
+      navigate(`/messages/${notification.properties.conversationId}`);
+    } else if (notification.type === 'new_listing' && notification.properties.propertyId) {
       // For property owners - go to the waitlist tab to review requests
       navigate('/dashboard', { state: { activeTab: 'waitlist' } });
     } else if (notification.properties.propertyId) {
@@ -111,15 +114,15 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="border-b border-gray-200 p-4 bg-gray-50">
+      <PopoverContent className="w-80 p-0 neo-border neo-shadow-sm" align="end">
+        <div className="border-b-4 border-black p-4 bg-gray-50">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-bold">Notifications</h3>
             <Button 
               variant="ghost" 
               size="sm"
               onClick={handleMarkAllAsRead}
-              className="text-xs"
+              className="text-xs font-bold"
             >
               Mark all as read
             </Button>
