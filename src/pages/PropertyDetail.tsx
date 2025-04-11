@@ -13,19 +13,25 @@ import PropertyDetails from '@/components/property-detail/PropertyDetails';
 import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
 import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
 import SiteFooter from '@/components/sections/SiteFooter';
-
 const PropertyDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const {
+    id
+  } = useParams<{
+    id: string;
+  }>();
   const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
-  const { property, loading, isOwner, isApproved, shouldShowSellerInfo } = usePropertyDetail(id);
-
+  const {
+    property,
+    loading,
+    isOwner,
+    isApproved,
+    shouldShowSellerInfo
+  } = usePropertyDetail(id);
   const handleAddressClick = () => {
     setShowWaitlistDialog(true);
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white">
+    return <div className="min-h-screen bg-white">
         <Navbar />
         <div className="container mx-auto px-4 py-12">
           <div className="animate-pulse">
@@ -40,13 +46,10 @@ const PropertyDetail: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!property) {
-    return (
-      <div className="min-h-screen bg-white">
+    return <div className="min-h-screen bg-white">
         <Navbar />
         <div className="container mx-auto px-4 py-12 text-center">
           <h1 className="text-3xl font-bold mb-4">Property Not Found</h1>
@@ -55,12 +58,9 @@ const PropertyDetail: React.FC = () => {
             <Link to="/search">Browse Other Properties</Link>
           </Button>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
@@ -71,135 +71,73 @@ const PropertyDetail: React.FC = () => {
           </Link>
         </div>
         
-        {!isOwner && isApproved && (
-          <OfferStatusBanner 
-            propertyId={property.id} 
-            sellerName={property.sellerName || 'Property Owner'} 
-            sellerEmail={property.sellerEmail} 
-            sellerPhone={property.sellerPhone} 
-          />
-        )}
+        {!isOwner && isApproved && <OfferStatusBanner propertyId={property.id} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail} sellerPhone={property.sellerPhone} />}
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <PropertyImages 
-            mainImage={property?.image} 
-            images={property?.images} 
-          />
+          <PropertyImages mainImage={property?.image} images={property?.images} />
           
           <div className="flex flex-col justify-between">
             <div>
-              <PropertyHeader 
-                title={property?.title}
-                belowMarket={property?.belowMarket}
-                price={property?.price}
-                marketPrice={property?.marketPrice}
-                beds={property?.beds}
-                baths={property?.baths}
-                sqft={property?.sqft}
-                location={property?.location}
-                fullAddress={property?.full_address}
-                showFullAddress={isOwner || isApproved}
-                onShowAddressClick={handleAddressClick}
-              />
+              <PropertyHeader title={property?.title} belowMarket={property?.belowMarket} price={property?.price} marketPrice={property?.marketPrice} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} location={property?.location} fullAddress={property?.full_address} showFullAddress={isOwner || isApproved} onShowAddressClick={handleAddressClick} />
               
-              {isOwner ? (
-                <Link to={`/property/${property?.id}/edit`}>
+              {isOwner ? <Link to={`/property/${property?.id}/edit`}>
                   <Button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 neo-shadow-sm transition-colors">
                     <Cog size={18} className="mr-2" />
                     Edit Listing
                   </Button>
-                </Link>
-              ) : (
-                isApproved ? (
-                  <div className="space-y-4">
+                </Link> : isApproved ? <div className="space-y-4">
                     <div className="border-2 border-[#0d2f72] p-4 mb-2">
-                      <div className="font-bold text-[#0d2f72] mb-2">Your waitlist request has been approved!</div>
+                      <div className="font-bold text-[#C42924 mb-2">Your waitlist request has been approved!</div>
                       <p>You now have access to view the full property details and contact the seller directly.</p>
                     </div>
                     
-                    {property && (
-                      <MakeOfferButton 
-                        propertyId={property.id}
-                        propertyTitle={property.title}
-                        sellerName={property.sellerName || 'Property Owner'}
-                        sellerEmail={property.sellerEmail || ''}
-                        sellerPhone={property.sellerPhone || ''}
-                        sellerId={property.sellerId || ''}
-                        currentPrice={property.price}
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <WaitlistButton 
-                    propertyId={property?.id || ''}
-                    propertyTitle={property?.title || ''}
-                    open={showWaitlistDialog}
-                    onOpenChange={setShowWaitlistDialog}
-                  />
-                )
-              )}
+                    {property && <MakeOfferButton propertyId={property.id} propertyTitle={property.title} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail || ''} sellerPhone={property.sellerPhone || ''} sellerId={property.sellerId || ''} currentPrice={property.price} />}
+                  </div> : <WaitlistButton propertyId={property?.id || ''} propertyTitle={property?.title || ''} open={showWaitlistDialog} onOpenChange={setShowWaitlistDialog} />}
               
-              {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && (
-                <div className="grid grid-cols-2 gap-4 mt-4">
+              {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="border-2 border-black p-3">
-                    <div className="text-lg font-bold text-black">{property?.afterRepairValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
+                    <div className="text-lg font-bold text-black">{property?.afterRepairValue.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                  })}</div>
                     <div className="text-xs">After Repair Value</div>
                   </div>
                   <div className="border-2 border-black p-3">
-                    <div className="text-lg font-bold text-black">{property?.estimatedRehab.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
+                    <div className="text-lg font-bold text-black">{property?.estimatedRehab.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                  })}</div>
                     <div className="text-xs">Est. Rehab Cost</div>
                   </div>
-                </div>
-              )}
+                </div>}
             </div>
             
-            <SellerContactInfo 
-              name={property?.sellerName}
-              phone={property?.sellerPhone}
-              email={property?.sellerEmail}
-              showContact={shouldShowSellerInfo}
-              sellerId={property?.sellerId}
-            />
+            <SellerContactInfo name={property?.sellerName} phone={property?.sellerPhone} email={property?.sellerEmail} showContact={shouldShowSellerInfo} sellerId={property?.sellerId} />
           </div>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="md:col-span-2">
-            <PropertyDescription 
-              description={property?.description}
-              beds={property?.beds}
-              baths={property?.baths}
-              sqft={property?.sqft}
-              belowMarket={property?.belowMarket}
-            />
+            <PropertyDescription description={property?.description} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} belowMarket={property?.belowMarket} />
           </div>
           
           <div>
-            <PropertyDetails 
-              afterRepairValue={property?.afterRepairValue}
-              estimatedRehab={property?.estimatedRehab}
-            />
+            <PropertyDetails afterRepairValue={property?.afterRepairValue} estimatedRehab={property?.estimatedRehab} />
           </div>
         </div>
         
-        {property?.comparables && property?.comparables.length > 0 && shouldShowSellerInfo && (
-          <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 mb-12">
+        {property?.comparables && property?.comparables.length > 0 && shouldShowSellerInfo && <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 mb-12">
             <h2 className="text-2xl font-bold mb-4">Comparable Properties</h2>
             <ul className="space-y-2">
-              {property?.comparables.map((address, index) => (
-                <li key={index} className="flex items-start">
+              {property?.comparables.map((address, index) => <li key={index} className="flex items-start">
                   <Home size={18} className="mr-2 mt-1 text-[#d0161a]" />
                   <span>{address}</span>
-                </li>
-              ))}
+                </li>)}
             </ul>
-          </div>
-        )}
+          </div>}
       </div>
       
       <SiteFooter />
-    </div>
-  );
+    </div>;
 };
-
 export default PropertyDetail;
