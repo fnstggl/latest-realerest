@@ -392,7 +392,7 @@ const OffersTab: React.FC = () => {
                         Accept
                       </Button>
                       
-                      <Button onClick={() => handleCounterOffer(offer)} className="bg-blue-600 hover:bg-blue-700 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all text-white">
+                      <Button onClick={() => handleCounterOffer(offer)} className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all text-white bg-donedeal-navy">
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
                       </Button>
