@@ -159,7 +159,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         
         <Button
           onClick={() => onFilterChange(filters)}
-          className="w-full neo-button-primary"
+          className="w-full neo-button-primary text-white"
         >
           Search
         </Button>
