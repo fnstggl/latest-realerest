@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -33,13 +32,11 @@ export const useMessages = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const { user } = useAuth();
 
-  // Fetch all conversations for the current user
   const fetchConversations = useCallback(async () => {
     if (!user?.id) return;
     
     setLoading(true);
     try {
-      // Get all conversations where the user is a participant
       const { data: conversationData, error: conversationError } = await supabase
         .from('conversations')
         .select('id, participant1, participant2, updated_at')
@@ -57,22 +54,18 @@ export const useMessages = () => {
         return;
       }
       
-      // For each conversation, get the latest message and the other user's details
       const conversationsWithDetails = await Promise.all(
         conversationData.map(async (conversation) => {
-          // Get the other user's ID
           const otherUserId = conversation.participant1 === user.id 
             ? conversation.participant2 
             : conversation.participant1;
             
-          // Get the other user's profile
           const { data: profileData } = await supabase
             .from('profiles')
             .select('name, email')
             .eq('id', otherUserId)
             .single();
             
-          // Get the latest message
           const { data: messageData } = await supabase
             .from('messages')
             .select('*')
@@ -81,13 +74,12 @@ export const useMessages = () => {
             .limit(1)
             .single();
             
-          // If we don't have a name, fetch it from auth.users
           let userName = profileData?.name;
           if (!userName) {
             const { data: userData } = await supabase.rpc('get_user_email', {
               user_id_param: otherUserId
             });
-            userName = userData || "User";
+            userName = userData || "Unknown";
           }
             
           return {
@@ -112,7 +104,6 @@ export const useMessages = () => {
       
       setConversations(conversationsWithDetails);
       
-      // Calculate unread count
       const unread = conversationsWithDetails.reduce((count, conversation) => {
         if (!conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user.id) {
           return count + 1;
@@ -128,7 +119,6 @@ export const useMessages = () => {
     }
   }, [user?.id]);
 
-  // Fetch messages for a specific conversation
   const fetchMessages = useCallback(async (conversationId: string) => {
     if (!user?.id) return [];
     
@@ -159,7 +149,6 @@ export const useMessages = () => {
     }
   }, [user?.id]);
 
-  // Send a message
   const sendMessage = useCallback(async (
     conversationId: string, 
     content: string, 
@@ -168,7 +157,6 @@ export const useMessages = () => {
     if (!user?.id) return null;
     
     try {
-      // Insert the message
       const { data, error } = await supabase
         .from('messages')
         .insert({
@@ -202,12 +190,10 @@ export const useMessages = () => {
     }
   }, [user?.id]);
 
-  // Get or create a conversation between two users
   const getOrCreateConversation = useCallback(async (otherUserId: string) => {
     if (!user?.id || !otherUserId) return null;
     
     try {
-      // Check if conversation already exists
       const { data: existingConversation, error: existingError } = await supabase
         .from('conversations')
         .select('id')
@@ -220,12 +206,10 @@ export const useMessages = () => {
         return null;
       }
       
-      // If conversation exists, return it
       if (existingConversation) {
         return existingConversation.id;
       }
       
-      // Otherwise, create a new conversation
       const { data: newConversation, error: newError } = await supabase
         .from('conversations')
         .insert({
@@ -248,7 +232,6 @@ export const useMessages = () => {
     }
   }, [user?.id]);
 
-  // Mark all messages in a conversation as read
   const markConversationAsRead = useCallback(async (conversationId: string) => {
     if (!user?.id) return;
     
@@ -260,18 +243,15 @@ export const useMessages = () => {
         .neq('sender_id', user.id)
         .eq('is_read', false);
         
-      // Refresh conversations to update unread count
       fetchConversations();
     } catch (error) {
       console.error('Error marking conversation as read:', error);
     }
   }, [user?.id, fetchConversations]);
 
-  // Set up real-time listeners
   useEffect(() => {
     if (!user?.id) return;
     
-    // Subscribe to new messages
     const messageSubscription = supabase
       .channel('messages_changes')
       .on('postgres_changes', 
@@ -281,15 +261,11 @@ export const useMessages = () => {
           table: 'messages'
         },
         (payload) => {
-          // Only update if the message is for the current user
           const message = payload.new as any;
           if (message) {
-            // Refresh conversations
             fetchConversations();
             
-            // Show notification if message is not from current user
             if (message.sender_id !== user.id) {
-              // Get sender name
               supabase
                 .from('profiles')
                 .select('name')
@@ -297,7 +273,6 @@ export const useMessages = () => {
                 .single()
                 .then(({ data }) => {
                   if (data) {
-                    // Add notification
                     supabase
                       .from('notifications')
                       .insert({
@@ -311,7 +286,6 @@ export const useMessages = () => {
                         }
                       });
                       
-                    // Show toast notification
                     toast('New Message', {
                       description: `${data.name || 'Someone'}: ${message.content}`,
                       action: {
@@ -327,7 +301,6 @@ export const useMessages = () => {
       )
       .subscribe();
       
-    // Subscribe to conversation updates
     const conversationSubscription = supabase
       .channel('conversations_changes')
       .on('postgres_changes', 
@@ -337,13 +310,11 @@ export const useMessages = () => {
           table: 'conversations'
         },
         () => {
-          // Refresh conversations when any change occurs
           fetchConversations();
         }
       )
       .subscribe();
     
-    // Initial fetch
     fetchConversations();
     
     return () => {

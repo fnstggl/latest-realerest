@@ -8,11 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Message, useMessages } from '@/hooks/useMessages';
 import { formatDistanceToNow } from 'date-fns';
-import { ArrowLeft, Send, DollarSign } from 'lucide-react';
+import { ArrowLeft, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { usePropertyDetail } from '@/hooks/usePropertyDetail';
 import { toast } from 'sonner';
 
 const Conversation: React.FC = () => {
@@ -24,8 +23,6 @@ const Conversation: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [otherUser, setOtherUser] = useState<{ id: string; name: string; } | null>(null);
-  const [propertyId, setPropertyId] = useState<string | null>(null);
-  const { property } = usePropertyDetail(propertyId || '');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { fetchMessages, sendMessage, markConversationAsRead } = useMessages();
 
@@ -61,19 +58,14 @@ const Conversation: React.FC = () => {
           .single();
           
         if (profile) {
-          setOtherUser({ id: otherUserId, name: profile.name || "User" });
-        }
-        
-        // Fetch property ID (if related to a property)
-        const { data: propertyData } = await supabase
-          .from('property_listings')
-          .select('id')
-          .eq('user_id', otherUserId)
-          .limit(1)
-          .maybeSingle();
+          setOtherUser({ id: otherUserId, name: profile.name || "Unknown" });
+        } else {
+          // Fallback to fetching from auth.users using the RPC function
+          const { data: userData } = await supabase.rpc('get_user_email', {
+            user_id_param: otherUserId
+          });
           
-        if (propertyData) {
-          setPropertyId(propertyData.id);
+          setOtherUser({ id: otherUserId, name: userData || "Unknown" });
         }
         
         // Fetch messages
@@ -160,15 +152,6 @@ const Conversation: React.FC = () => {
     }
   };
 
-  const handleSendOffer = async () => {
-    if (!id || !user?.id || !otherUser || !propertyId) {
-      toast.error("Cannot send offer - missing property information");
-      return;
-    }
-    
-    navigate(`/property/${propertyId}?showOfferModal=true`);
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -202,13 +185,13 @@ const Conversation: React.FC = () => {
               variant="outline" 
               size="sm"
               onClick={() => navigate('/messages')}
-              className="mr-4 neo-button-secondary flex items-center"
+              className="mr-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center"
             >
               <ArrowLeft size={16} className="mr-1" />
               Back
             </Button>
             
-            <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "User"}</h1>
+            <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "Unknown"}</h1>
           </div>
           
           <Card className="flex-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
@@ -244,12 +227,6 @@ const Conversation: React.FC = () => {
                                 ? 'bg-[#0d2f72] text-white neo-shadow-sm' 
                                 : 'border-4 border-black bg-white neo-shadow-sm'
                             } rounded-none p-3`}>
-                              {message.relatedOfferId && (
-                                <div className={`mb-2 p-2 ${isCurrentUser ? 'bg-blue-700' : 'bg-gray-100'} rounded flex items-center`}>
-                                  <DollarSign size={16} className="mr-1" />
-                                  <span className="text-sm font-medium">Offer/Counter Offer</span>
-                                </div>
-                              )}
                               <p className="whitespace-pre-wrap">{message.content}</p>
                               <p className={`text-xs mt-1 ${isCurrentUser ? 'text-blue-200' : 'text-gray-500'}`}>
                                 {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
@@ -281,24 +258,13 @@ const Conversation: React.FC = () => {
                   className="resize-none border-2 border-black focus:ring-0"
                   rows={2}
                 />
-                <div className="flex space-x-2">
-                  {propertyId && (
-                    <Button 
-                      onClick={handleSendOffer}
-                      className="h-20 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-[#d0161a] text-white hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
-                    >
-                      <DollarSign size={16} className="mr-1" />
-                      Offer
-                    </Button>
-                  )}
-                  <Button 
-                    onClick={handleSendMessage}
-                    disabled={!newMessage.trim() || sending}
-                    className="h-20 w-20 neo-button-primary flex items-center justify-center"
-                  >
-                    <Send size={20} />
-                  </Button>
-                </div>
+                <Button 
+                  onClick={handleSendMessage}
+                  disabled={!newMessage.trim() || sending}
+                  className="h-20 w-20 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#0d2f72] text-white flex items-center justify-center"
+                >
+                  <Send size={20} />
+                </Button>
               </div>
             </div>
           </Card>

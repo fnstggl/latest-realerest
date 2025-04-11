@@ -75,7 +75,7 @@ const Messages: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <h3 className="font-bold text-lg">{conversation.otherUserName || "Loading..."}</h3>
+                          <h3 className="font-bold text-lg">{conversation.otherUserName || "Unknown"}</h3>
                           <p className={`text-sm ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
                             {conversation.latestMessage.senderId === user?.id ? 'You: ' : ''}
                             {truncateMessage(conversation.latestMessage.content)}
