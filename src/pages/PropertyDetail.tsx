@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -159,6 +158,7 @@ const PropertyDetail: React.FC = () => {
               phone={property?.sellerPhone}
               email={property?.sellerEmail}
               showContact={shouldShowSellerInfo}
+              sellerId={property?.sellerId}
             />
           </div>
         </div>

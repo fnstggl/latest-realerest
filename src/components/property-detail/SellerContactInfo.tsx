@@ -1,11 +1,17 @@
 
 import React from 'react';
-import { Phone, Mail } from 'lucide-react';
+import { Phone, Mail, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { useAuth } from '@/context/AuthContext';
+import { useMessages } from '@/hooks/useMessages';
+
 interface SellerContactInfoProps {
   name?: string;
   phone?: string | null;
   email?: string | null;
   showContact: boolean;
+  sellerId?: string;
 }
 
 // Format phone number in a consistent way
@@ -21,40 +27,74 @@ const formatPhoneNumber = (phoneNumber: string | null | undefined): string | nul
   }
   return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
 };
+
 const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   name = 'Property Owner',
   phone,
   email,
-  showContact
+  showContact,
+  sellerId
 }) => {
-  console.log("SellerContactInfo rendering with:", {
-    name,
-    phone,
-    email,
-    showContact
-  });
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { getOrCreateConversation } = useMessages();
+
   if (!showContact) {
     return null;
   }
-  return <div className="border-2 border-black p-4 mt-6">
+
+  const handleMessageSeller = async () => {
+    if (!sellerId || !user) return;
+    
+    try {
+      const conversationId = await getOrCreateConversation(sellerId);
+      if (conversationId) {
+        navigate(`/messages/${conversationId}`);
+      }
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+    }
+  };
+
+  return (
+    <div className="border-2 border-black p-4 mt-6">
       <h3 className="font-bold mb-2">Contact Seller</h3>
       <p className="mb-1">{name}</p>
       
-      {phone && <div className="flex items-center">
+      {phone && (
+        <div className="flex items-center">
           <Phone size={16} className="mr-2 text-[#0d2f72]" />
           <a href={`tel:${phone}`} className="text-[#0d2f72] hover:underline">
             {formatPhoneNumber(phone)}
           </a>
-        </div>}
+        </div>
+      )}
       
-      {email && <div className="flex items-center mt-1">
+      {email && (
+        <div className="flex items-center mt-1">
           <Mail size={16} className="mr-2 text-[#0d2f72]" />
           <a href={`mailto:${email}`} className="text-[#0d2f72] hover:underline">
             {email}
           </a>
-        </div>}
+        </div>
+      )}
       
-      {!phone && !email && <p className="text-gray-500 italic">No contact information available</p>}
-    </div>;
+      {!phone && !email && (
+        <p className="text-gray-500 italic">No contact information available</p>
+      )}
+      
+      {sellerId && user && sellerId !== user.id && (
+        <Button 
+          variant="navy"
+          className="w-full mt-3 text-white font-bold py-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+          onClick={handleMessageSeller}
+        >
+          <MessageSquare size={18} className="mr-2" />
+          Message Seller
+        </Button>
+      )}
+    </div>
+  );
 };
+
 export default SellerContactInfo;
