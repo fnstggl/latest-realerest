@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from './AuthContext';
@@ -120,8 +121,13 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   useEffect(() => {
     if (!user) return;
     
+    console.log('Setting up notification subscription for user:', user.id);
+    
+    // Remove any existing subscriptions to avoid duplicates
+    supabase.removeAllChannels();
+    
     const channel = supabase
-      .channel('public:notifications')
+      .channel(`public:notifications:user_id=eq.${user.id}`)
       .on('postgres_changes', 
         { 
           event: '*', 
@@ -184,13 +190,16 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Notification subscription status:', status);
+      });
       
     // Cleanup subscription on unmount
     return () => {
+      console.log('Cleaning up notification subscription');
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user?.id]);
   
   // Debounced save to localStorage with error handling
   useEffect(() => {

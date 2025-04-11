@@ -22,7 +22,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Show a toast for new notifications
+  // Show a toast for new notifications (but not when popover is open)
   useEffect(() => {
     // Show toast for the most recent unread notification when it appears
     const getLatestUnread = () => {
