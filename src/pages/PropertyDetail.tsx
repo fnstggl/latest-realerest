@@ -13,6 +13,7 @@ import PropertyDetails from '@/components/property-detail/PropertyDetails';
 import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
 import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
 import SiteFooter from '@/components/sections/SiteFooter';
+
 const PropertyDetail: React.FC = () => {
   const {
     id
@@ -27,9 +28,11 @@ const PropertyDetail: React.FC = () => {
     isApproved,
     shouldShowSellerInfo
   } = usePropertyDetail(id);
+
   const handleAddressClick = () => {
     setShowWaitlistDialog(true);
   };
+
   if (loading) {
     return <div className="min-h-screen bg-white">
         <Navbar />
@@ -48,6 +51,7 @@ const PropertyDetail: React.FC = () => {
         </div>
       </div>;
   }
+
   if (!property) {
     return <div className="min-h-screen bg-white">
         <Navbar />
@@ -60,6 +64,7 @@ const PropertyDetail: React.FC = () => {
         </div>
       </div>;
   }
+
   return <div className="min-h-screen bg-white">
       <Navbar />
       
@@ -87,11 +92,9 @@ const PropertyDetail: React.FC = () => {
                   </Button>
                 </Link> : isApproved ? <div className="space-y-4">
                     <div className="border-2 border-[#0d2f72] p-4 mb-2">
-                      <div className="font-bold text-[#C42924 mb-2">Your waitlist request has been approved!</div>
+                      <div className="font-bold text-[#C42924] mb-2">Your waitlist request has been approved!</div>
                       <p>You now have access to view the full property details and contact the seller directly.</p>
                     </div>
-                    
-                    {property && <MakeOfferButton propertyId={property.id} propertyTitle={property.title} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail || ''} sellerPhone={property.sellerPhone || ''} sellerId={property.sellerId || ''} currentPrice={property.price} />}
                   </div> : <WaitlistButton propertyId={property?.id || ''} propertyTitle={property?.title || ''} open={showWaitlistDialog} onOpenChange={setShowWaitlistDialog} />}
               
               {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && <div className="grid grid-cols-2 gap-4 mt-4">
@@ -113,6 +116,20 @@ const PropertyDetail: React.FC = () => {
             </div>
             
             <SellerContactInfo name={property?.sellerName} phone={property?.sellerPhone} email={property?.sellerEmail} showContact={shouldShowSellerInfo} sellerId={property?.sellerId} />
+            
+            {isApproved && property && (
+              <div className="mt-3">
+                <MakeOfferButton 
+                  propertyId={property.id} 
+                  propertyTitle={property.title} 
+                  sellerName={property.sellerName || 'Property Owner'} 
+                  sellerEmail={property.sellerEmail || ''} 
+                  sellerPhone={property.sellerPhone || ''} 
+                  sellerId={property.sellerId || ''} 
+                  currentPrice={property.price} 
+                />
+              </div>
+            )}
           </div>
         </div>
         
@@ -140,4 +157,5 @@ const PropertyDetail: React.FC = () => {
       <SiteFooter />
     </div>;
 };
+
 export default PropertyDetail;
