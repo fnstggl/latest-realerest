@@ -306,7 +306,7 @@ const OffersTab: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-lg">
-                      <Link to={`/property/${offer.propertyId}`} className="text-blue-600 hover:underline">
+                      <Link to={`/property/${offer.propertyId}`} className="text-blue-900 hover:underline">
                         {offer.property.title}
                       </Link>
                     </CardTitle>
