@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -45,26 +44,26 @@ const Conversation: React.FC = () => {
           ? conversation.participant2 
           : conversation.participant1;
           
-        const { data: profile, error: profileError } = await supabase
+        const { data: profileData } = await supabase
           .from('profiles')
           .select('name')
           .eq('id', otherUserId)
-          .single();
+          .maybeSingle();
           
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-        }
+        let userName = "Unknown User";
         
-        if (profile && profile.name) {
-          setOtherUser({ id: otherUserId, name: profile.name });
+        if (profileData && profileData.name) {
+          userName = profileData.name;
         } else {
           console.log("No profile name found, falling back to email for user ID:", otherUserId);
           const { data: userData } = await supabase.rpc('get_user_email', {
             user_id_param: otherUserId
           });
           
-          setOtherUser({ id: otherUserId, name: userData || "Unknown" });
+          userName = userData || "Unknown User";
         }
+        
+        setOtherUser({ id: otherUserId, name: userName });
         
         const messageData = await fetchMessages(id);
         setMessages(messageData);
@@ -172,7 +171,7 @@ const Conversation: React.FC = () => {
               Back
             </Button>
             
-            <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "Unknown"}</h1>
+            <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "Unknown User"}</h1>
           </div>
           
           <Card className="flex-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">

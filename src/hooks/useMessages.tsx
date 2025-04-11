@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -32,6 +31,30 @@ export const useMessages = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const { user } = useAuth();
 
+  const getUserDisplayName = useCallback(async (userId: string): Promise<string> => {
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', userId)
+        .maybeSingle();
+      
+      if (profileData?.name) {
+        return profileData.name;
+      }
+      
+      console.log(`No profile name found for user ID: ${userId}`);
+      const { data: userData } = await supabase.rpc('get_user_email', {
+        user_id_param: userId
+      });
+      
+      return userData || "Unknown User";
+    } catch (error) {
+      console.error(`Error getting user display name for ${userId}:`, error);
+      return "Unknown User";
+    }
+  }, []);
+
   const fetchConversations = useCallback(async () => {
     if (!user?.id) return;
     
@@ -60,17 +83,8 @@ export const useMessages = () => {
             ? conversation.participant2 
             : conversation.participant1;
             
-          // Always get profile data for the other user
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('name')
-            .eq('id', otherUserId)
-            .single();
+          const otherUserName = await getUserDisplayName(otherUserId);
             
-          if (profileError) {
-            console.error('Error fetching profile:', profileError);
-          }
-          
           const { data: messageData } = await supabase
             .from('messages')
             .select('*')
@@ -79,26 +93,10 @@ export const useMessages = () => {
             .limit(1)
             .single();
             
-          // Prioritize using the name from profile table
-          let userName = "Unknown";
-          
-          if (profileData && profileData.name) {
-            userName = profileData.name;
-          } else {
-            console.log("No profile name found for user ID:", otherUserId);
-            // We should not have to fall back to email, but just in case
-            const { data: userData } = await supabase.rpc('get_user_email', {
-              user_id_param: otherUserId
-            });
-            if (userData) {
-              userName = userData;
-            }
-          }
-            
           return {
             id: conversation.id,
             otherUserId,
-            otherUserName: userName,
+            otherUserName,
             latestMessage: messageData ? {
               content: messageData.content,
               timestamp: messageData.created_at,
@@ -129,7 +127,7 @@ export const useMessages = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, getUserDisplayName]);
 
   const fetchMessages = useCallback(async (conversationId: string) => {
     if (!user?.id) return [];
@@ -278,36 +276,28 @@ export const useMessages = () => {
             fetchConversations();
             
             if (message.sender_id !== user.id) {
-              supabase
-                .from('profiles')
-                .select('name')
-                .eq('id', message.sender_id)
-                .single()
-                .then(({ data }) => {
-                  if (data) {
-                    const senderName = data.name || 'Someone';
-                    
-                    supabase
-                      .from('notifications')
-                      .insert({
-                        user_id: user.id,
-                        title: 'New Message',
-                        message: `${senderName}: ${message.content}`,
-                        type: 'message',
-                        properties: {
-                          conversationId: message.conversation_id,
-                          senderId: message.sender_id
-                        }
-                      });
-                      
-                    toast('New Message', {
-                      description: `${senderName}: ${message.content}`,
-                      action: {
-                        label: 'View',
-                        onClick: () => window.location.href = `/messages/${message.conversation_id}`
+              getUserDisplayName(message.sender_id)
+                .then(senderName => {
+                  supabase
+                    .from('notifications')
+                    .insert({
+                      user_id: user.id,
+                      title: 'New Message',
+                      message: `${senderName}: ${message.content}`,
+                      type: 'message',
+                      properties: {
+                        conversationId: message.conversation_id,
+                        senderId: message.sender_id
                       }
                     });
-                  }
+                    
+                  toast('New Message', {
+                    description: `${senderName}: ${message.content}`,
+                    action: {
+                      label: 'View',
+                      onClick: () => window.location.href = `/messages/${message.conversation_id}`
+                    }
+                  });
                 });
             }
           }
@@ -335,7 +325,7 @@ export const useMessages = () => {
       supabase.removeChannel(messageSubscription);
       supabase.removeChannel(conversationSubscription);
     };
-  }, [user?.id, fetchConversations]);
+  }, [user?.id, fetchConversations, getUserDisplayName]);
 
   return {
     conversations,
