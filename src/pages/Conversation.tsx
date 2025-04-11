@@ -200,7 +200,7 @@ const Conversation: React.FC = () => {
               Back
             </Button>
             
-            <div className="flex flex-col">
+            <div>
               <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "Unknown User"}</h1>
             </div>
             
@@ -216,15 +216,15 @@ const Conversation: React.FC = () => {
                     <ExternalLink size={14} className="ml-1" />
                   </span>
                 </div>
-                <div 
-                  className="h-16 w-16 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
-                >
-                  <img 
-                    src={propertyInfo.image || '/placeholder.svg'} 
-                    alt={propertyInfo.title} 
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+                {propertyInfo.image && (
+                  <div className="h-16 w-16 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+                    <img 
+                      src={propertyInfo.image} 
+                      alt={propertyInfo.title} 
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -83,7 +83,7 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
                   onClick={(e) => handlePropertyClick(e, conversation.propertyId)}
                 >
                   <img 
-                    src={conversation.propertyImage || '/placeholder.svg'} 
+                    src={conversation.propertyImage} 
                     alt={conversation.propertyTitle || 'Property'} 
                     className="h-full w-full object-cover"
                   />
