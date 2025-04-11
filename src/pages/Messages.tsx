@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Conversation, useMessages } from '@/hooks/useMessages';
 import { formatDistanceToNow } from 'date-fns';
-import { MessageSquare, Clock } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 

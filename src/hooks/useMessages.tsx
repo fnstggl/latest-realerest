@@ -8,7 +8,6 @@ export interface Conversation {
   id: string;
   otherUserId: string;
   otherUserName: string;
-  otherUserEmail?: string;
   latestMessage: {
     content: string;
     timestamp: string;
@@ -61,9 +60,10 @@ export const useMessages = () => {
             ? conversation.participant2 
             : conversation.participant1;
             
+          // First try to get the user's name from the profiles table
           const { data: profileData } = await supabase
             .from('profiles')
-            .select('name, email')
+            .select('name')
             .eq('id', otherUserId)
             .single();
             
@@ -75,21 +75,21 @@ export const useMessages = () => {
             .limit(1)
             .single();
             
+          // Use the name from profile if available
           let userName = profileData?.name;
-          let userEmail = profileData?.email;
             
           if (!userName) {
+            // Fallback to email if name is not available
             const { data: userData } = await supabase.rpc('get_user_email', {
               user_id_param: otherUserId
             });
-            userName = userData || userEmail || "Unknown";
+            userName = userData || "Unknown";
           }
             
           return {
             id: conversation.id,
             otherUserId,
             otherUserName: userName,
-            otherUserEmail: userEmail,
             latestMessage: messageData ? {
               content: messageData.content,
               timestamp: messageData.created_at,
