@@ -76,7 +76,20 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
             className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''}`}
             onClick={() => handleConversationClick(conversation)}
           >
-            <div className="flex items-center">
+            <div className="flex items-start">
+              {conversation.propertyImage && (
+                <div 
+                  className="h-16 w-16 rounded-md border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] overflow-hidden mr-3 flex-shrink-0 cursor-pointer"
+                  onClick={(e) => handlePropertyClick(e, conversation.propertyId)}
+                >
+                  <img 
+                    src={conversation.propertyImage || '/placeholder.svg'} 
+                    alt={conversation.propertyTitle || 'Property'} 
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+              
               <div className="flex-1">
                 <h3 className="font-bold text-lg">{conversation.otherUserName}</h3>
                 
