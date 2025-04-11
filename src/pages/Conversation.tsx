@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -26,14 +25,12 @@ const Conversation: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { fetchMessages, sendMessage, markConversationAsRead } = useMessages();
 
-  // Fetch conversation details and messages
   useEffect(() => {
     const loadConversation = async () => {
       if (!id || !user?.id) return;
       
       setLoading(true);
       try {
-        // Fetch conversation details
         const { data: conversation } = await supabase
           .from('conversations')
           .select('participant1, participant2')
@@ -45,22 +42,24 @@ const Conversation: React.FC = () => {
           return;
         }
         
-        // Determine the other user
         const otherUserId = conversation.participant1 === user.id 
           ? conversation.participant2 
           : conversation.participant1;
           
-        // Fetch other user's profile
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('name')
           .eq('id', otherUserId)
           .single();
           
-        if (profile) {
-          setOtherUser({ id: otherUserId, name: profile.name || "Unknown" });
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+        }
+        
+        if (profile && profile.name) {
+          setOtherUser({ id: otherUserId, name: profile.name });
         } else {
-          // Fallback to fetching from auth.users using the RPC function
+          console.log("No profile name found, falling back to email for user ID:", otherUserId);
           const { data: userData } = await supabase.rpc('get_user_email', {
             user_id_param: otherUserId
           });
@@ -68,11 +67,9 @@ const Conversation: React.FC = () => {
           setOtherUser({ id: otherUserId, name: userData || "Unknown" });
         }
         
-        // Fetch messages
         const messageData = await fetchMessages(id);
         setMessages(messageData);
         
-        // Mark conversation as read
         await markConversationAsRead(id);
       } catch (error) {
         console.error('Error loading conversation:', error);
@@ -83,7 +80,6 @@ const Conversation: React.FC = () => {
     
     loadConversation();
     
-    // Set up real-time subscription for new messages
     const subscription = supabase
       .channel(`messages:${id}`)
       .on('postgres_changes', 
@@ -94,7 +90,6 @@ const Conversation: React.FC = () => {
           filter: `conversation_id=eq.${id}`
         },
         async (payload) => {
-          // Fetch the fresh message to ensure we have all fields
           const { data } = await supabase
             .from('messages')
             .select('*')
@@ -114,7 +109,6 @@ const Conversation: React.FC = () => {
             
             setMessages(prev => [...prev, newMsg]);
             
-            // Mark message as read if it's not from the current user
             if (data.sender_id !== user.id) {
               await supabase
                 .from('messages')
@@ -131,7 +125,6 @@ const Conversation: React.FC = () => {
     };
   }, [id, user?.id, fetchMessages, navigate, markConversationAsRead]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -159,7 +152,6 @@ const Conversation: React.FC = () => {
     }
   };
 
-  // Group messages by date
   const groupedMessages = messages.reduce<{ [date: string]: Message[] }>((groups, message) => {
     const date = new Date(message.timestamp).toDateString();
     if (!groups[date]) {

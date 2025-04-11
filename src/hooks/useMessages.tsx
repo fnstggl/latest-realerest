@@ -60,13 +60,17 @@ export const useMessages = () => {
             ? conversation.participant2 
             : conversation.participant1;
             
-          // First try to get the user's name from the profiles table
-          const { data: profileData } = await supabase
+          // Always get profile data for the other user
+          const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('name')
             .eq('id', otherUserId)
             .single();
             
+          if (profileError) {
+            console.error('Error fetching profile:', profileError);
+          }
+          
           const { data: messageData } = await supabase
             .from('messages')
             .select('*')
@@ -75,15 +79,20 @@ export const useMessages = () => {
             .limit(1)
             .single();
             
-          // Use the name from profile if available
-          let userName = profileData?.name;
-            
-          if (!userName) {
-            // Fallback to email if name is not available
+          // Prioritize using the name from profile table
+          let userName = "Unknown";
+          
+          if (profileData && profileData.name) {
+            userName = profileData.name;
+          } else {
+            console.log("No profile name found for user ID:", otherUserId);
+            // We should not have to fall back to email, but just in case
             const { data: userData } = await supabase.rpc('get_user_email', {
               user_id_param: otherUserId
             });
-            userName = userData || "Unknown";
+            if (userData) {
+              userName = userData;
+            }
           }
             
           return {
