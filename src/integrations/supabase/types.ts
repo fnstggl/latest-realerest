@@ -219,6 +219,7 @@ export type Database = {
           after_repair_value: number | null
           baths: number | null
           beds: number | null
+          comparable_addresses: string[] | null
           created_at: string
           description: string | null
           estimated_rehab: number | null
@@ -237,6 +238,7 @@ export type Database = {
           after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
+          comparable_addresses?: string[] | null
           created_at?: string
           description?: string | null
           estimated_rehab?: number | null
@@ -255,6 +257,7 @@ export type Database = {
           after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
+          comparable_addresses?: string[] | null
           created_at?: string
           description?: string | null
           estimated_rehab?: number | null

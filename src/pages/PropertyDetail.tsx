@@ -13,6 +13,7 @@ import PropertyDetails from '@/components/property-detail/PropertyDetails';
 import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
 import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
 import SiteFooter from '@/components/sections/SiteFooter';
+
 const PropertyDetail: React.FC = () => {
   const {
     id
@@ -27,9 +28,11 @@ const PropertyDetail: React.FC = () => {
     isApproved,
     shouldShowSellerInfo
   } = usePropertyDetail(id);
+
   const handleAddressClick = () => {
     setShowWaitlistDialog(true);
   };
+
   if (loading) {
     return <div className="min-h-screen bg-white">
         <Navbar />
@@ -48,6 +51,7 @@ const PropertyDetail: React.FC = () => {
         </div>
       </div>;
   }
+
   if (!property) {
     return <div className="min-h-screen bg-white">
         <Navbar />
@@ -60,6 +64,7 @@ const PropertyDetail: React.FC = () => {
         </div>
       </div>;
   }
+
   return <div className="min-h-screen bg-white">
       <Navbar />
       
@@ -120,26 +125,27 @@ const PropertyDetail: React.FC = () => {
         
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="md:col-span-2">
-            <PropertyDescription description={property?.description} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} belowMarket={property?.belowMarket} />
+            <PropertyDescription 
+              description={property?.description} 
+              beds={property?.beds} 
+              baths={property?.baths} 
+              sqft={property?.sqft} 
+              belowMarket={property?.belowMarket}
+              comparables={shouldShowSellerInfo ? property?.comparables : undefined}
+            />
           </div>
           
           <div>
-            <PropertyDetails afterRepairValue={property?.afterRepairValue} estimatedRehab={property?.estimatedRehab} />
+            <PropertyDetails 
+              afterRepairValue={property?.afterRepairValue} 
+              estimatedRehab={property?.estimatedRehab} 
+            />
           </div>
         </div>
-        
-        {property?.comparables && property?.comparables.length > 0 && shouldShowSellerInfo && <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 mb-12">
-            <h2 className="text-2xl font-bold mb-4">Comparable Properties</h2>
-            <ul className="space-y-2">
-              {property?.comparables.map((address, index) => <li key={index} className="flex items-start">
-                  <Home size={18} className="mr-2 mt-1 text-[#d0161a]" />
-                  <span>{address}</span>
-                </li>)}
-            </ul>
-          </div>}
       </div>
       
       <SiteFooter />
     </div>;
 };
+
 export default PropertyDetail;

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,7 +34,6 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
   const [isApproved, setIsApproved] = useState(false);
   const { user } = useAuth();
 
-  // Check if user is on the waitlist and approved
   useEffect(() => {
     if (!user?.id || !propertyId) return;
     
@@ -66,14 +64,12 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     checkWaitlistStatus();
   }, [user?.id, propertyId]);
 
-  // Fetch property details
   useEffect(() => {
     const fetchProperty = async () => {
       if (!propertyId) return;
       
       setLoading(true);
       try {
-        // Fetch property data
         const { data: propertyData, error: propertyError } = await supabase
           .from('property_listings')
           .select('*')
@@ -92,14 +88,12 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           toast.error("Seller information not available for this listing");
         }
         
-        // Seller information with fallback strategy
         let sellerName = 'Property Owner';
         let sellerPhone = null;
         let sellerEmail = null;
         
         if (propertyData.user_id) {
           try {
-            // First try to get seller info from profiles table
             const { data: profileData, error: profileError } = await supabase
               .from('profiles')
               .select('name, email, phone')
@@ -118,8 +112,6 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
             } else {
               console.warn("No profile found in profiles table, trying to fetch from auth.users");
               
-              // If no profile found, try to directly fetch auth user's email using a custom query
-              // This is the key addition to fix the issue
               const { data: userData, error: userError } = await supabase
                 .rpc('get_user_email', { user_id_param: propertyData.user_id }) as { data: string | null, error: any };
                 
@@ -130,7 +122,6 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
                 sellerEmail = userData;
               }
               
-              // If the property owner is the current user, use their info
               if (user && user.id === propertyData.user_id) {
                 console.log("Property owner is the current user, using their info");
                 sellerName = user.name || 'Property Owner';
@@ -142,7 +133,8 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           }
         }
         
-        // Transform property data
+        const comparables = propertyData.comparable_addresses || [];
+        
         if (propertyData) {
           const transformedProperty: PropertyDetail = {
             id: propertyData.id,
@@ -169,7 +161,8 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
               : undefined,
             estimatedRehab: propertyData.estimated_rehab !== null 
               ? Number(propertyData.estimated_rehab) 
-              : undefined
+              : undefined,
+            comparables: comparables.length > 0 ? comparables : undefined
           };
           
           setProperty(transformedProperty);
@@ -221,7 +214,6 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     fetchProperty();
   }, [propertyId, user]);
 
-  // Determine if the seller contact info should be shown
   const shouldShowSellerInfo = isOwner || isApproved;
   console.log("Debug - isOwner:", isOwner, "isApproved:", isApproved, "shouldShowSellerInfo:", shouldShowSellerInfo);
   if (property) {

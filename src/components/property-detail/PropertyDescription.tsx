@@ -7,6 +7,7 @@ interface PropertyDescriptionProps {
   baths: number;
   sqft: number;
   belowMarket: number;
+  comparables?: string[];
 }
 
 const PropertyDescription: React.FC<PropertyDescriptionProps> = ({ 
@@ -14,7 +15,8 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
   beds, 
   baths, 
   sqft, 
-  belowMarket 
+  belowMarket,
+  comparables
 }) => {
   const defaultDescription = `This beautiful property offers great value at ${belowMarket}% below market price. 
   With ${beds} bedrooms and ${baths} bathrooms across ${sqft.toLocaleString()} square feet, 
@@ -28,6 +30,17 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
       <p className="whitespace-pre-line">
         {description || defaultDescription}
       </p>
+      
+      {comparables && comparables.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-xl font-bold mb-2">Comparable Properties</h3>
+          <ul className="list-disc pl-5">
+            {comparables.map((address, index) => (
+              <li key={index} className="mb-1">{address}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
