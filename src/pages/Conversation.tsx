@@ -12,6 +12,8 @@ import { ArrowLeft, Send, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { usePropertyDetail } from '@/hooks/usePropertyDetail';
+import { toast } from 'sonner';
 
 const Conversation: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +24,8 @@ const Conversation: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [otherUser, setOtherUser] = useState<{ id: string; name: string; } | null>(null);
+  const [propertyId, setPropertyId] = useState<string | null>(null);
+  const { property } = usePropertyDetail(propertyId || '');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { fetchMessages, sendMessage, markConversationAsRead } = useMessages();
 
@@ -57,7 +61,19 @@ const Conversation: React.FC = () => {
           .single();
           
         if (profile) {
-          setOtherUser({ id: otherUserId, name: profile.name });
+          setOtherUser({ id: otherUserId, name: profile.name || "User" });
+        }
+        
+        // Fetch property ID (if related to a property)
+        const { data: propertyData } = await supabase
+          .from('property_listings')
+          .select('id')
+          .eq('user_id', otherUserId)
+          .limit(1)
+          .maybeSingle();
+          
+        if (propertyData) {
+          setPropertyId(propertyData.id);
         }
         
         // Fetch messages
@@ -144,6 +160,15 @@ const Conversation: React.FC = () => {
     }
   };
 
+  const handleSendOffer = async () => {
+    if (!id || !user?.id || !otherUser || !propertyId) {
+      toast.error("Cannot send offer - missing property information");
+      return;
+    }
+    
+    navigate(`/property/${propertyId}?showOfferModal=true`);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -174,16 +199,16 @@ const Conversation: React.FC = () => {
         >
           <div className="flex items-center mb-4">
             <Button 
-              variant="ghost" 
+              variant="outline" 
               size="sm"
               onClick={() => navigate('/messages')}
-              className="mr-2"
+              className="mr-4 neo-button-secondary flex items-center"
             >
               <ArrowLeft size={16} className="mr-1" />
               Back
             </Button>
             
-            <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || 'Conversation'}</h1>
+            <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "User"}</h1>
           </div>
           
           <Card className="flex-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
@@ -216,7 +241,7 @@ const Conversation: React.FC = () => {
                           <div key={message.id} className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-[70%] ${
                               isCurrentUser 
-                                ? 'bg-blue-600 text-white neo-shadow-sm' 
+                                ? 'bg-[#0d2f72] text-white neo-shadow-sm' 
                                 : 'border-4 border-black bg-white neo-shadow-sm'
                             } rounded-none p-3`}>
                               {message.relatedOfferId && (
@@ -256,13 +281,24 @@ const Conversation: React.FC = () => {
                   className="resize-none border-2 border-black focus:ring-0"
                   rows={2}
                 />
-                <Button 
-                  onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || sending}
-                  className="h-10 neo-button-primary"
-                >
-                  <Send size={16} />
-                </Button>
+                <div className="flex space-x-2">
+                  {propertyId && (
+                    <Button 
+                      onClick={handleSendOffer}
+                      className="h-20 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-[#d0161a] text-white hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+                    >
+                      <DollarSign size={16} className="mr-1" />
+                      Offer
+                    </Button>
+                  )}
+                  <Button 
+                    onClick={handleSendMessage}
+                    disabled={!newMessage.trim() || sending}
+                    className="h-20 w-20 neo-button-primary flex items-center justify-center"
+                  >
+                    <Send size={20} />
+                  </Button>
+                </div>
               </div>
             </div>
           </Card>

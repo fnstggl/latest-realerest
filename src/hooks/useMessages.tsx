@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -80,10 +81,19 @@ export const useMessages = () => {
             .limit(1)
             .single();
             
+          // If we don't have a name, fetch it from auth.users
+          let userName = profileData?.name;
+          if (!userName) {
+            const { data: userData } = await supabase.rpc('get_user_email', {
+              user_id_param: otherUserId
+            });
+            userName = userData || "User";
+          }
+            
           return {
             id: conversation.id,
             otherUserId,
-            otherUserName: profileData?.name || 'Unknown User',
+            otherUserName: userName,
             otherUserEmail: profileData?.email,
             latestMessage: messageData ? {
               content: messageData.content,
@@ -293,7 +303,7 @@ export const useMessages = () => {
                       .insert({
                         user_id: user.id,
                         title: 'New Message',
-                        message: `${data.name}: ${message.content}`,
+                        message: `${data.name || 'Someone'}: ${message.content}`,
                         type: 'message',
                         properties: {
                           conversationId: message.conversation_id,
@@ -303,7 +313,7 @@ export const useMessages = () => {
                       
                     // Show toast notification
                     toast('New Message', {
-                      description: `${data.name}: ${message.content}`,
+                      description: `${data.name || 'Someone'}: ${message.content}`,
                       action: {
                         label: 'View',
                         onClick: () => window.location.href = `/messages/${message.conversation_id}`
