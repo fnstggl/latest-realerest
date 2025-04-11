@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Check, CreditCard, Upload, AlertCircle } from 'lucide-react';
+import { CreditCard, Upload, SquareCheck } from 'lucide-react';
 import { Label } from "@/components/ui/label";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -38,8 +38,6 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   const [offerSubmitted, setOfferSubmitted] = useState(false);
   const [offerError, setOfferError] = useState<string | null>(null);
 
-  const minimumOfferAmount = Math.max(currentPrice - 5000, 0);
-
   const handleMakeOffer = () => {
     setDialogOpen(true);
   };
@@ -62,9 +60,9 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
     const value = Number(e.target.value);
     setOfferAmount(value);
     
-    // Validate the offer amount
-    if (value < minimumOfferAmount) {
-      setOfferError(`Offer cannot be less than $${minimumOfferAmount.toLocaleString()} (listing price minus $5,000)`);
+    // Only validate that the offer amount is positive
+    if (value <= 0) {
+      setOfferError("Offer amount must be greater than 0");
     } else {
       setOfferError(null);
     }
@@ -84,13 +82,6 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
     
     if (offerAmount <= 0) {
       toast.error("Please enter a valid offer amount");
-      return;
-    }
-    
-    // Validate offer amount isn't less than $5,000 below listing price
-    if (offerAmount < minimumOfferAmount) {
-      setOfferError(`Offer cannot be less than $${minimumOfferAmount.toLocaleString()} (listing price minus $5,000)`);
-      toast.error(`Offer must be at least $${minimumOfferAmount.toLocaleString()}`);
       return;
     }
     
@@ -188,14 +179,10 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
             className={`mt-2 border-2 ${offerError ? 'border-red-500' : 'border-black'} focus:ring-0`}
           />
           {offerError && (
-            <div className="flex items-center gap-1 text-[#d0161a] text-sm mt-1">
-              <AlertCircle size={14} />
-              <span>{offerError}</span>
+            <div className="text-[#d0161a] text-sm mt-1">
+              {offerError}
             </div>
           )}
-          <div className="text-xs text-gray-500 mt-1">
-            Minimum offer: ${minimumOfferAmount.toLocaleString()} (listing price minus $5,000)
-          </div>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -269,7 +256,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       
       <div className="py-8 text-center">
         <div className="mx-auto w-12 h-12 bg-[#0d2f72] rounded-none flex items-center justify-center mb-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <Check size={24} className="text-white" />
+          <SquareCheck size={24} className="text-white" />
         </div>
         
         <p className="mb-6">
