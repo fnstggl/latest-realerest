@@ -39,24 +39,46 @@ export const useMessages = () => {
   // Get user display name with better error handling
   const getUserDisplayName = useCallback(async (userId: string): Promise<string> => {
     try {
+      console.log(`Attempting to get display name for user ID: ${userId}`);
+      
       // First try to get the profile name directly
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('name')
+        .select('name, email')
         .eq('id', userId)
         .maybeSingle();
       
+      if (profileError) {
+        console.error(`Error fetching profile for ${userId}:`, profileError);
+      }
+      
       if (profileData?.name) {
+        console.log(`Found profile name for ${userId}:`, profileData.name);
         return profileData.name;
       }
       
-      // If no name found, get the email as fallback
-      console.log(`No profile name found for user ID: ${userId}, falling back to email`);
-      const { data: userData } = await supabase.rpc('get_user_email', {
+      if (profileData?.email) {
+        console.log(`No profile name found for ${userId}, using email:`, profileData.email);
+        return profileData.email;
+      }
+      
+      // If no profile found or no name, get the email as fallback
+      console.log(`No profile found for user ID: ${userId}, falling back to email via RPC`);
+      const { data: userData, error: userError } = await supabase.rpc('get_user_email', {
         user_id_param: userId
       });
       
-      return userData || "Unknown User";
+      if (userError) {
+        console.error(`Error getting email for ${userId}:`, userError);
+      }
+      
+      if (userData) {
+        console.log(`Retrieved email for ${userId}:`, userData);
+        return userData;
+      }
+      
+      console.warn(`Could not find any identifying information for user ${userId}`);
+      return "Unknown User";
     } catch (error) {
       console.error(`Error getting user display name for ${userId}:`, error);
       return "Unknown User";
@@ -399,6 +421,7 @@ export const useMessages = () => {
     sendMessage,
     getOrCreateConversation,
     markConversationAsRead,
-    refreshConversations: fetchConversations
+    refreshConversations: fetchConversations,
+    getUserDisplayName // Export this function so other components can use it
   };
 };

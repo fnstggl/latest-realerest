@@ -9,8 +9,14 @@ const Messages: React.FC = () => {
   const { conversations, loading, refreshConversations } = useMessages();
 
   useEffect(() => {
+    console.log("Messages page - refreshing conversations");
     refreshConversations();
   }, [refreshConversations]);
+
+  // Log conversations for debugging
+  useEffect(() => {
+    console.log("Current conversations:", conversations);
+  }, [conversations]);
 
   return (
     <div className="min-h-screen bg-white">

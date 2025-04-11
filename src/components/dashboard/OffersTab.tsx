@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useMessages } from "@/hooks/useMessages";
 import { Link } from "react-router-dom";
+
 interface CounterOffer {
   id: string;
   offer_id: string;
@@ -19,6 +20,7 @@ interface CounterOffer {
   from_seller: boolean;
   created_at: string;
 }
+
 interface Offer {
   id: string;
   propertyId: string;
@@ -37,29 +39,29 @@ interface Offer {
   createdAt: string;
   counterOffers: CounterOffer[];
 }
+
 const OffersTab: React.FC = () => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const {
-    getOrCreateConversation
-  } = useMessages();
+  const { getOrCreateConversation, getUserDisplayName } = useMessages();
+  
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [counterOfferDialogOpen, setCounterOfferDialogOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [counterOfferAmount, setCounterOfferAmount] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     const fetchOffers = async () => {
       if (!user?.id) return;
+      
       try {
         setLoading(true);
-        const {
-          data: propertyOffers,
-          error
-        } = await supabase.from('property_offers').select(`
+        
+        const { data: propertyOffers, error } = await supabase
+          .from('property_offers')
+          .select(`
             id,
             property_id,
             user_id,
@@ -69,35 +71,75 @@ const OffersTab: React.FC = () => {
             status,
             created_at,
             seller_id
-          `).eq('seller_id', user.id).order('created_at', {
-          ascending: false
-        });
+          `)
+          .eq('seller_id', user.id)
+          .order('created_at', { ascending: false });
+          
         if (error) {
           console.error("Error fetching offers:", error);
           return;
         }
+        
+        console.log("Raw property offers data:", propertyOffers);
+        
         const offersWithDetails = await Promise.all(propertyOffers.map(async offer => {
-          const {
-            data: property
-          } = await supabase.from('property_listings').select('title, price').eq('id', offer.property_id).single();
-          const {
-            data: buyerProfile,
-            error: profileError
-          } = await supabase.from('profiles').select('name, email, phone').eq('id', offer.user_id).single();
-          if (profileError) {
-            console.error("Error fetching buyer profile:", profileError, "for user ID:", offer.user_id);
+          // Get property details
+          const { data: property } = await supabase
+            .from('property_listings')
+            .select('title, price')
+            .eq('id', offer.property_id)
+            .single();
+            
+          console.log(`Property for offer ${offer.id}:`, property);
+          
+          // Get buyer profile details using both direct profile query and auth.users as backup
+          let buyerName = 'Unknown User';
+          let buyerEmail = null;
+          let buyerPhone = null;
+          
+          try {
+            // First try to get profile name directly
+            const { data: buyerProfile, error: profileError } = await supabase
+              .from('profiles')
+              .select('name, email, phone')
+              .eq('id', offer.user_id)
+              .maybeSingle();
+            
+            if (profileError) {
+              console.error(`Error fetching buyer profile for user ${offer.user_id}:`, profileError);
+            }
+            
+            if (buyerProfile) {
+              console.log(`Buyer profile for ${offer.user_id}:`, buyerProfile);
+              buyerEmail = buyerProfile.email;
+              buyerPhone = buyerProfile.phone;
+              
+              if (buyerProfile.name) {
+                buyerName = buyerProfile.name;
+              }
+            }
+            
+            // If no name found, try to get email from the getUserDisplayName utility
+            if (buyerName === 'Unknown User') {
+              const displayName = await getUserDisplayName(offer.user_id);
+              if (displayName && displayName !== 'Unknown User') {
+                buyerName = displayName;
+                if (!buyerEmail && displayName.includes('@')) {
+                  buyerEmail = displayName;
+                }
+              }
+            }
+          } catch (error) {
+            console.error(`Error processing buyer details for ${offer.user_id}:`, error);
           }
-          const {
-            data: counterOffers
-          } = await supabase.from('counter_offers').select('*').eq('offer_id', offer.id).order('created_at', {
-            ascending: true
-          });
-          let buyerName = 'Anonymous Buyer';
-          if (buyerProfile?.name) {
-            buyerName = buyerProfile.name;
-          } else if (buyerProfile?.email) {
-            buyerName = buyerProfile.email;
-          }
+          
+          // Get counter offers
+          const { data: counterOffers } = await supabase
+            .from('counter_offers')
+            .select('*')
+            .eq('offer_id', offer.id)
+            .order('created_at', { ascending: true });
+            
           return {
             id: offer.id,
             propertyId: offer.property_id,
@@ -107,8 +149,8 @@ const OffersTab: React.FC = () => {
             },
             userId: offer.user_id,
             buyerName: buyerName,
-            buyerEmail: buyerProfile?.email,
-            buyerPhone: buyerProfile?.phone,
+            buyerEmail: buyerEmail,
+            buyerPhone: buyerPhone,
             offerAmount: offer.offer_amount,
             isInterested: offer.is_interested,
             proofOfFundsUrl: offer.proof_of_funds_url || '',
@@ -117,6 +159,7 @@ const OffersTab: React.FC = () => {
             counterOffers: counterOffers || []
           };
         }));
+        
         console.log("Processed offers with buyer names:", offersWithDetails);
         setOffers(offersWithDetails);
       } catch (error) {
@@ -125,7 +168,9 @@ const OffersTab: React.FC = () => {
         setLoading(false);
       }
     };
+    
     fetchOffers();
+    
     const channel = supabase.channel('property_offers_changes').on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -145,6 +190,7 @@ const OffersTab: React.FC = () => {
     }, () => {
       fetchOffers();
     }).subscribe();
+    
     const counterOffersChannel = supabase.channel('counter_offers_changes').on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -157,11 +203,13 @@ const OffersTab: React.FC = () => {
         }
       }
     }).subscribe();
+    
     return () => {
       supabase.removeChannel(channel);
       supabase.removeChannel(counterOffersChannel);
     };
-  }, [user?.id]);
+  }, [user?.id, getUserDisplayName]);
+
   const handleOfferAction = async (offerId: string, action: "accepted" | "declined" | "countered") => {
     if (!user?.id) return;
     try {
@@ -204,11 +252,13 @@ const OffersTab: React.FC = () => {
       toast.error("An error occurred while processing the offer");
     }
   };
+
   const handleCounterOffer = (offer: Offer) => {
     setSelectedOffer(offer);
     setCounterOfferAmount(offer.offerAmount);
     setCounterOfferDialogOpen(true);
   };
+
   const submitCounterOffer = async () => {
     if (!selectedOffer || !user?.id) return;
     setSubmitting(true);
@@ -262,6 +312,7 @@ const OffersTab: React.FC = () => {
       setSubmitting(false);
     }
   };
+
   const getLatestOfferAmount = (offer: Offer) => {
     if (offer.counterOffers.length === 0) {
       return offer.offerAmount;
@@ -269,6 +320,7 @@ const OffersTab: React.FC = () => {
     const sortedCounterOffers = [...offer.counterOffers].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     return sortedCounterOffers[0].amount;
   };
+
   const handleMessageBuyer = async (offer: Offer) => {
     if (!user?.id) return;
     try {
@@ -283,6 +335,7 @@ const OffersTab: React.FC = () => {
       toast.error("Failed to create conversation");
     }
   };
+
   if (loading) {
     return <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-8">
         <h2 className="text-xl font-bold mb-6">Loading Offers...</h2>
@@ -295,13 +348,16 @@ const OffersTab: React.FC = () => {
         </div>
       </div>;
   }
+
   return <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
       <div className="border-b-4 border-black p-4 bg-gray-50">
         <h2 className="text-xl font-bold">Property Offers</h2>
       </div>
       
-      {offers.length > 0 ? <div className="divide-y-2 divide-gray-200">
-          {offers.map(offer => <Card key={offer.id} className="rounded-none border-0 shadow-none">
+      {offers.length > 0 ? (
+        <div className="divide-y-2 divide-gray-200">
+          {offers.map(offer => (
+            <Card key={offer.id} className="rounded-none border-0 shadow-none">
               <CardHeader className="p-4 pb-2">
                 <div className="flex justify-between items-start">
                   <div>
@@ -314,8 +370,6 @@ const OffersTab: React.FC = () => {
                       From: {offer.buyerName} • {new Date(offer.createdAt).toLocaleString()}
                     </p>
                   </div>
-                  
-                  
                 </div>
               </CardHeader>
               
@@ -365,7 +419,8 @@ const OffersTab: React.FC = () => {
                 </div>
                 
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {offer.status === "pending" && <>
+                  {offer.status === "pending" && (
+                    <>
                       <Button onClick={() => handleOfferAction(offer.id, "accepted")} className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-donedeal-red">
                         <CheckCircle size={16} className="mr-2" />
                         Accept
@@ -375,9 +430,11 @@ const OffersTab: React.FC = () => {
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
                       </Button>
-                    </>}
+                    </>
+                  )}
                   
-                  {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && <>
+                  {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && (
+                    <>
                       <Button onClick={() => handleOfferAction(offer.id, "accepted")} className="bg-green-600 hover:bg-green-700 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
@@ -387,7 +444,8 @@ const OffersTab: React.FC = () => {
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter Again
                       </Button>
-                    </>}
+                    </>
+                  )}
                   
                   <Button onClick={() => handleMessageBuyer(offer)} variant="outline" className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
                     <MessageSquare size={16} className="mr-2" />
@@ -409,12 +467,16 @@ const OffersTab: React.FC = () => {
                     </p>
                   </div>}
               </CardContent>
-            </Card>)}
-        </div> : <div className="p-12 text-center">
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="p-12 text-center">
           <Clock size={48} className="mx-auto mb-4 text-gray-400" />
           <h3 className="text-xl font-bold mb-2">No Offers Yet</h3>
           <p className="text-gray-500">You haven't received any offers on your properties yet.</p>
-        </div>}
+        </div>
+      )}
       
       <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
         <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
@@ -445,4 +507,5 @@ const OffersTab: React.FC = () => {
       </Dialog>
     </div>;
 };
+
 export default OffersTab;

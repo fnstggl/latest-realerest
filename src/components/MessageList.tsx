@@ -91,7 +91,9 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
               )}
               
               <div className="flex-1">
-                <h3 className="font-bold text-lg">{conversation.otherUserName}</h3>
+                <h3 className="font-bold text-lg">
+                  {conversation.otherUserName || 'Unknown User'}
+                </h3>
                 
                 {conversation.propertyId && conversation.propertyTitle && (
                   <div 
