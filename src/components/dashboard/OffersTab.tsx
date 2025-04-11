@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Eye, FileText, Check, X, CreditCard } from "lucide-react";
+import { Eye, FileText, Check, X, CreditCard, ArrowRightLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface Offer {
   id: string;
@@ -22,8 +24,17 @@ interface Offer {
   offerAmount: number;
   isInterested: boolean;
   proofOfFundsUrl: string | null;
-  status: "pending" | "accepted" | "declined";
+  status: "pending" | "accepted" | "declined" | "countered";
   createdAt: string;
+  counterOffers?: CounterOffer[];
+}
+
+interface CounterOffer {
+  id: string;
+  offerId: string;
+  amount: number;
+  fromSeller: boolean;
+  created_at: string;
 }
 
 const OffersTab: React.FC = () => {
@@ -33,6 +44,9 @@ const OffersTab: React.FC = () => {
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [offerDialogOpen, setOfferDialogOpen] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [counterOfferDialogOpen, setCounterOfferDialogOpen] = useState(false);
+  const [counterOfferAmount, setCounterOfferAmount] = useState<number>(0);
+  const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -94,6 +108,13 @@ const OffersTab: React.FC = () => {
             console.error("Error fetching buyer information:", error);
           }
           
+          // Fetch counter offers for this offer
+          const { data: counterOffers } = await supabase
+            .from('counter_offers')
+            .select('*')
+            .eq('offer_id', offer.id)
+            .order('created_at', { ascending: true });
+          
           return {
             id: offer.id,
             propertyId: offer.property_id,
@@ -108,8 +129,9 @@ const OffersTab: React.FC = () => {
             offerAmount: Number(offer.offer_amount),
             isInterested: offer.is_interested,
             proofOfFundsUrl: offer.proof_of_funds_url,
-            status: offer.status as "pending" | "accepted" | "declined",
-            createdAt: offer.created_at
+            status: offer.status as "pending" | "accepted" | "declined" | "countered",
+            createdAt: offer.created_at,
+            counterOffers: counterOffers || []
           };
         }));
         
@@ -140,8 +162,24 @@ const OffersTab: React.FC = () => {
       )
       .subscribe();
       
+    // Set up a subscription for counter offers
+    const counterOffersChannel = supabase
+      .channel('public:counter_offers')
+      .on('postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'counter_offers'
+        },
+        () => {
+          fetchOffers();
+        }
+      )
+      .subscribe();
+      
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(counterOffersChannel);
     };
   }, [user?.id]);
 
@@ -205,12 +243,126 @@ const OffersTab: React.FC = () => {
     }
   };
 
+  const handleCounterOffer = (offer: Offer) => {
+    setActiveOfferId(offer.id);
+    setCounterOfferAmount(offer.offerAmount); // Start with the current offer amount
+    setCounterOfferDialogOpen(true);
+  };
+
+  const submitCounterOffer = async () => {
+    if (!activeOfferId) return;
+    
+    setUpdatingStatus(true);
+    try {
+      // Get the offer we're countering
+      const offer = offers.find(o => o.id === activeOfferId);
+      if (!offer) {
+        toast.error("Offer not found");
+        return;
+      }
+
+      // 1. Insert the counter offer record
+      const { data: counterOffer, error: counterOfferError } = await supabase
+        .from('counter_offers')
+        .insert({
+          offer_id: activeOfferId,
+          amount: counterOfferAmount,
+          from_seller: true, // this is from seller since we're in the seller dashboard
+        })
+        .select('*')
+        .single();
+        
+      if (counterOfferError) {
+        console.error("Error creating counter offer:", counterOfferError);
+        toast.error("Failed to create counter offer");
+        return;
+      }
+      
+      // 2. Update the offer status to countered
+      const { error: updateError } = await supabase
+        .from('property_offers')
+        .update({ status: 'countered' })
+        .eq('id', activeOfferId);
+        
+      if (updateError) {
+        console.error("Error updating offer status:", updateError);
+        toast.error("Failed to update offer status");
+        return;
+      }
+      
+      // 3. Send notification to the buyer
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: offer.userId,
+          title: "Counter Offer Received",
+          message: `The seller has countered your offer for ${offer.property?.title} with $${counterOfferAmount.toLocaleString()}.`,
+          type: "info",
+          properties: {
+            propertyId: offer.propertyId,
+            propertyTitle: offer.property?.title,
+            offerId: offer.id,
+            counterOfferId: counterOffer.id,
+            counterOfferAmount: counterOfferAmount
+          },
+          read: false
+        });
+      
+      // Update the local state
+      setOffers(offers.map(o => {
+        if (o.id === activeOfferId) {
+          const newCounterOffers = [...(o.counterOffers || []), {
+            id: counterOffer.id,
+            offerId: activeOfferId,
+            amount: counterOfferAmount,
+            fromSeller: true,
+            created_at: new Date().toISOString()
+          }];
+          
+          return { 
+            ...o, 
+            status: 'countered',
+            counterOffers: newCounterOffers
+          };
+        }
+        return o;
+      }));
+      
+      // Update selected offer if it's open
+      if (selectedOffer && selectedOffer.id === activeOfferId) {
+        const newCounterOffers = [...(selectedOffer.counterOffers || []), {
+          id: counterOffer.id,
+          offerId: activeOfferId,
+          amount: counterOfferAmount,
+          fromSeller: true,
+          created_at: new Date().toISOString()
+        }];
+        
+        setSelectedOffer({
+          ...selectedOffer,
+          status: 'countered',
+          counterOffers: newCounterOffers
+        });
+      }
+      
+      toast.success("Counter offer sent successfully");
+      setCounterOfferDialogOpen(false);
+    } catch (error) {
+      console.error("Error submitting counter offer:", error);
+      toast.error("Failed to submit counter offer");
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'accepted':
         return <span className="px-2 py-1 bg-green-100 text-green-800 font-bold">ACCEPTED</span>;
       case 'declined':
         return <span className="px-2 py-1 bg-red-100 text-red-800 font-bold">DECLINED</span>;
+      case 'countered':
+        return <span className="px-2 py-1 bg-blue-100 text-blue-800 font-bold">COUNTERED</span>;
       default:
         return <span className="px-2 py-1 bg-yellow-100 text-yellow-800 font-bold">PENDING</span>;
     }
@@ -220,6 +372,19 @@ const OffersTab: React.FC = () => {
     if (!listingPrice) return 0;
     const percentage = ((offerAmount - listingPrice) / listingPrice) * 100;
     return Math.round(percentage);
+  };
+
+  const getLatestOfferAmount = (offer: Offer) => {
+    if (!offer.counterOffers || offer.counterOffers.length === 0) {
+      return offer.offerAmount;
+    }
+    
+    // Sort counter offers by date and get the latest
+    const sortedCounterOffers = [...offer.counterOffers].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    
+    return sortedCounterOffers[0].amount;
   };
 
   return (
@@ -255,11 +420,16 @@ const OffersTab: React.FC = () => {
                     <div className="text-sm text-gray-500">{new Date(offer.createdAt).toLocaleDateString()}</div>
                   </td>
                   <td className="p-4">
-                    <div className="font-bold">${offer.offerAmount.toLocaleString()}</div>
+                    <div className="font-bold">${getLatestOfferAmount(offer).toLocaleString()}</div>
                     {offer.property?.price && (
-                      <div className={`text-sm ${getOfferPercentage(offer.offerAmount, offer.property.price) >= 0 ? 'text-[#d60013]' : 'text-[#0d2f72]'}`}>
-                        {getOfferPercentage(offer.offerAmount, offer.property.price) >= 0 ? '+' : ''}
-                        {getOfferPercentage(offer.offerAmount, offer.property.price)}% from listing
+                      <div className={`text-sm ${getOfferPercentage(getLatestOfferAmount(offer), offer.property.price) >= 0 ? 'text-[#d0161a]' : 'text-[#0d2f72]'}`}>
+                        {getOfferPercentage(getLatestOfferAmount(offer), offer.property.price) >= 0 ? '+' : ''}
+                        {getOfferPercentage(getLatestOfferAmount(offer), offer.property.price)}% from listing
+                      </div>
+                    )}
+                    {offer.counterOffers && offer.counterOffers.length > 0 && (
+                      <div className="text-xs text-gray-500 mt-1">
+                        {offer.counterOffers.length} counter offer(s)
                       </div>
                     )}
                   </td>
@@ -278,7 +448,7 @@ const OffersTab: React.FC = () => {
                         View
                       </Button>
                       
-                      {offer.status === 'pending' && (
+                      {(offer.status === 'pending' || offer.status === 'countered') && (
                         <>
                           <Button 
                             size="sm" 
@@ -291,7 +461,16 @@ const OffersTab: React.FC = () => {
                           </Button>
                           <Button 
                             size="sm" 
-                            className="bg-[#d60013] hover:bg-[#d60013]/90 text-white border-2 border-black"
+                            className="bg-blue-500 hover:bg-blue-600 text-white border-2 border-black"
+                            onClick={() => handleCounterOffer(offer)}
+                            disabled={updatingStatus}
+                          >
+                            <ArrowRightLeft size={16} className="mr-1" />
+                            Counter
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            className="bg-[#d0161a] hover:bg-[#d0161a]/90 text-white border-2 border-black"
                             onClick={() => handleUpdateOfferStatus(offer.id, 'declined')}
                             disabled={updatingStatus}
                           >
@@ -360,16 +539,47 @@ const OffersTab: React.FC = () => {
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <div className="border-2 border-black p-4 mb-4">
-                      <p className="text-xl font-bold">${selectedOffer.offerAmount.toLocaleString()}</p>
-                      <p className="text-sm">Offer Amount</p>
+                      <p className="text-xl font-bold">${getLatestOfferAmount(selectedOffer).toLocaleString()}</p>
+                      <p className="text-sm">Latest Offer Amount</p>
                       
                       {selectedOffer.property?.price && (
-                        <p className={`mt-2 ${getOfferPercentage(selectedOffer.offerAmount, selectedOffer.property.price) >= 0 ? 'text-[#d60013]' : 'text-[#0d2f72]'} font-bold`}>
-                          {getOfferPercentage(selectedOffer.offerAmount, selectedOffer.property.price) >= 0 ? '+' : ''}
-                          {getOfferPercentage(selectedOffer.offerAmount, selectedOffer.property.price)}% from listing price
+                        <p className={`mt-2 ${getOfferPercentage(getLatestOfferAmount(selectedOffer), selectedOffer.property.price) >= 0 ? 'text-[#d0161a]' : 'text-[#0d2f72]'} font-bold`}>
+                          {getOfferPercentage(getLatestOfferAmount(selectedOffer), selectedOffer.property.price) >= 0 ? '+' : ''}
+                          {getOfferPercentage(getLatestOfferAmount(selectedOffer), selectedOffer.property.price)}% from listing price
                         </p>
                       )}
                     </div>
+                    
+                    {selectedOffer.counterOffers && selectedOffer.counterOffers.length > 0 && (
+                      <div className="border-2 border-black p-4 mb-4">
+                        <h4 className="font-bold mb-2">Negotiation History</h4>
+                        <div className="space-y-3 max-h-40 overflow-y-auto">
+                          <div className="flex justify-between items-center p-2 bg-gray-100">
+                            <div>
+                              <strong>Initial Offer:</strong> ${selectedOffer.offerAmount.toLocaleString()}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {new Date(selectedOffer.createdAt).toLocaleString()}
+                            </div>
+                          </div>
+                          {[...selectedOffer.counterOffers]
+                            .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+                            .map((counterOffer, index) => (
+                              <div 
+                                key={counterOffer.id} 
+                                className={`flex justify-between items-center p-2 ${counterOffer.fromSeller ? 'bg-blue-50' : 'bg-green-50'}`}
+                              >
+                                <div>
+                                  <strong>{counterOffer.fromSeller ? 'You' : 'Buyer'}:</strong> ${counterOffer.amount.toLocaleString()}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {new Date(counterOffer.created_at).toLocaleString()}
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
                     
                     <div>
                       <p className="font-bold mb-2">Buyer's Interest:</p>
@@ -404,7 +614,7 @@ const OffersTab: React.FC = () => {
                       <p className="font-bold mb-2">Current Status:</p>
                       <div className="mb-4">{getStatusBadge(selectedOffer.status)}</div>
                       
-                      {selectedOffer.status === 'pending' && (
+                      {(selectedOffer.status === 'pending' || selectedOffer.status === 'countered') && (
                         <div className="flex gap-2">
                           <Button 
                             variant="navy"
@@ -416,7 +626,15 @@ const OffersTab: React.FC = () => {
                             Accept Offer
                           </Button>
                           <Button 
-                            className="bg-[#d60013] hover:bg-[#d60013]/90 text-white border-2 border-black"
+                            className="bg-blue-500 hover:bg-blue-600 text-white border-2 border-black"
+                            onClick={() => handleCounterOffer(selectedOffer)}
+                            disabled={updatingStatus}
+                          >
+                            <ArrowRightLeft size={16} className="mr-1" />
+                            Counter Offer
+                          </Button>
+                          <Button 
+                            className="bg-[#d0161a] hover:bg-[#d0161a]/90 text-white border-2 border-black"
                             onClick={() => handleUpdateOfferStatus(selectedOffer.id, 'declined')}
                             disabled={updatingStatus}
                           >
@@ -450,6 +668,53 @@ const OffersTab: React.FC = () => {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Counter Offer Dialog */}
+      <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
+        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Make Counter Offer</DialogTitle>
+            <DialogDescription>
+              Enter the amount you'd like to counter with. The buyer will be notified.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="counterOfferAmount" className="text-black font-bold">Counter Offer Amount ($)</Label>
+              <Input 
+                id="counterOfferAmount" 
+                type="number" 
+                value={counterOfferAmount} 
+                onChange={(e) => setCounterOfferAmount(Number(e.target.value))}
+                className="mt-2 border-2 border-black focus:ring-0"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="flex gap-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setCounterOfferDialogOpen(false)}
+              className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              disabled={updatingStatus}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="button" 
+              variant="navy"
+              className="text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              onClick={submitCounterOffer}
+              disabled={updatingStatus}
+            >
+              <ArrowRightLeft size={18} className="mr-2" />
+              {updatingStatus ? "Sending..." : "Send Counter Offer"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
