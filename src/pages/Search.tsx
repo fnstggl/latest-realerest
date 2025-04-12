@@ -8,44 +8,34 @@ import { Button } from "@/components/ui/button";
 import { Sliders, Grid, List, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { useListings, Listing } from '@/hooks/useListings';
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
-  
   const [isGridView, setIsGridView] = useState(true);
   const [filteredProperties, setFilteredProperties] = useState<Listing[]>([]);
   const [sortOption, setSortOption] = useState("recommended");
-  
-  const { listings: properties, loading, error } = useListings();
-  
+  const {
+    listings: properties,
+    loading,
+    error
+  } = useListings();
   useEffect(() => {
     if (searchQuery && properties.length > 0) {
-      const results = properties.filter(property => 
-        property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
+      const results = properties.filter(property => property.location.toLowerCase().includes(searchQuery.toLowerCase()) || property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()));
       setFilteredProperties(results);
     } else {
       setFilteredProperties(properties);
     }
   }, [properties, searchQuery]);
-  
   const handleFilterChange = (filters: any) => {
     const filtered = properties.filter(property => {
       if (property.price < filters.priceRange[0] || property.price > filters.priceRange[1]) {
         return false;
       }
-      
       if (property.belowMarket < filters.belowMarket) {
         return false;
       }
-      
       if (filters.propertyType !== "any") {
         if (filters.propertyType === "house" && !property.title?.toLowerCase().includes("home")) {
           return false;
@@ -57,29 +47,23 @@ const Search: React.FC = () => {
           return false;
         }
       }
-      
       if (filters.bedrooms !== "any") {
         if (property.beds < parseInt(filters.bedrooms)) {
           return false;
         }
       }
-      
       if (filters.bathrooms !== "any") {
         if (property.baths < parseInt(filters.bathrooms)) {
           return false;
         }
       }
-      
       return true;
     });
-    
     setFilteredProperties(filtered);
   };
-  
   const handleSortChange = (option: string) => {
     setSortOption(option);
     let sorted = [...filteredProperties];
-    
     switch (option) {
       case "price-low":
         sorted.sort((a, b) => a.price - b.price);
@@ -95,18 +79,14 @@ const Search: React.FC = () => {
       default:
         break;
     }
-    
     setFilteredProperties(sorted);
   };
-  
   useEffect(() => {
     if (error) {
       toast.error(error);
     }
   }, [error]);
-  
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <Navbar />
       
       <section className="py-8 bg-white border-b">
@@ -146,23 +126,17 @@ const Search: React.FC = () => {
             <div className="bg-white rounded-xl p-4 mb-6 neo-container">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-xl font-semibold">
+                  <h1 className="font-semibold text-base">
                     {filteredProperties.length} properties
                     {searchQuery ? ` for "${searchQuery}"` : ''}
                   </h1>
-                  {filteredProperties.length !== properties.length && (
-                    <p className="text-sm text-gray-500">
+                  {filteredProperties.length !== properties.length && <p className="text-sm text-gray-500">
                       Filtered from {properties.length} total properties
-                    </p>
-                  )}
+                    </p>}
                 </div>
                 
                 <div className="flex items-center gap-4 w-full sm:w-auto">
-                  <select
-                    className="flex-1 sm:flex-none border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary neo-input"
-                    value={sortOption}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                  >
+                  <select className="flex-1 sm:flex-none border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary neo-input" value={sortOption} onChange={e => handleSortChange(e.target.value)}>
                     <option value="recommended">Recommended</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
@@ -171,20 +145,10 @@ const Search: React.FC = () => {
                   </select>
                   
                   <div className="hidden sm:flex border rounded-md neo-border">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={`rounded-r-none ${isGridView ? 'bg-gray-100' : ''}`}
-                      onClick={() => setIsGridView(true)}
-                    >
+                    <Button variant="ghost" size="icon" className={`rounded-r-none ${isGridView ? 'bg-gray-100' : ''}`} onClick={() => setIsGridView(true)}>
                       <Grid size={18} />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={`rounded-l-none ${!isGridView ? 'bg-gray-100' : ''}`}
-                      onClick={() => setIsGridView(false)}
-                    >
+                    <Button variant="ghost" size="icon" className={`rounded-l-none ${!isGridView ? 'bg-gray-100' : ''}`} onClick={() => setIsGridView(false)}>
                       <List size={18} />
                     </Button>
                   </div>
@@ -192,37 +156,26 @@ const Search: React.FC = () => {
               </div>
             </div>
             
-            {loading ? (
-              <div className="flex justify-center items-center py-16">
+            {loading ? <div className="flex justify-center items-center py-16">
                 <div className="text-center">
                   <div className="w-12 h-12 border-4 border-t-[#d60013] border-r-[#d60013] border-b-transparent border-l-transparent rounded-full animate-spin mb-4 mx-auto"></div>
                   <p className="text-lg font-medium text-gray-700">Loading properties...</p>
                 </div>
-              </div>
-            ) : filteredProperties.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-xl neo-container">
+              </div> : filteredProperties.length === 0 ? <div className="text-center py-16 bg-white rounded-xl neo-container">
                 <h2 className="text-xl font-semibold mb-2">No properties found</h2>
                 <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
                 <Button onClick={() => handleFilterChange({
-                  propertyType: "any",
-                  priceRange: [0, 2000000],
-                  bedrooms: "any",
-                  bathrooms: "any",
-                  belowMarket: 0,
-                })} className="neo-button-primary">
+              propertyType: "any",
+              priceRange: [0, 2000000],
+              bedrooms: "any",
+              bathrooms: "any",
+              belowMarket: 0
+            })} className="neo-button-primary">
                   Reset Filters
                 </Button>
-              </div>
-            ) : (
-              <div className={isGridView 
-                ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" 
-                : "space-y-6"
-              }>
-                {filteredProperties.map((property) => (
-                  <PropertyCard key={property.id} {...property} />
-                ))}
-              </div>
-            )}
+              </div> : <div className={isGridView ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-6"}>
+                {filteredProperties.map(property => <PropertyCard key={property.id} {...property} />)}
+              </div>}
           </div>
         </div>
       </div>
@@ -232,8 +185,6 @@ const Search: React.FC = () => {
           © {new Date().getFullYear()} DoneDeal. All rights reserved.
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Search;
