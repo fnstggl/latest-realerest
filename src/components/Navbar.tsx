@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -9,23 +10,23 @@ import { useAuth } from '@/context/AuthContext';
 import NotificationCenter from './NotificationCenter';
 import ChatIcon from './ChatIcon';
 import { useNotifications } from '@/context/NotificationContext';
+
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const {
-    isAuthenticated,
-    user
-  } = useAuth();
-  const {
-    unreadCount
-  } = useNotifications();
+  const { isAuthenticated, user } = useAuth();
+  const { unreadCount } = useNotifications();
+
   const handleSignIn = () => {
     navigate('/signin');
   };
+
   const handleSignUp = () => {
     navigate('/signup');
   };
-  const MobileNavigation = () => <Sheet>
+
+  const MobileNavigation = () => (
+    <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none">
           <Menu size={24} />
@@ -57,30 +58,45 @@ const Navbar: React.FC = () => {
           </nav>
           
           <div className="flex flex-col gap-3 mt-4">
-            {isAuthenticated ? <Button className="w-full justify-center font-bold bg-black text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(196,41,36,1)]" onClick={() => navigate('/dashboard')}>
+            {isAuthenticated ? (
+              <Button 
+                className="w-full justify-center font-bold bg-black text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(196,41,36,1)]" 
+                onClick={() => navigate('/dashboard')}
+              >
                 Dashboard
-              </Button> : <>
-                <Button variant="outline" className="w-full justify-center neo-button font-bold" onClick={handleSignIn}>
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-center neo-button font-bold" 
+                  onClick={handleSignIn}
+                >
                   Log In
                 </Button>
                 
-                <Button variant="red" className="w-full justify-center neo-button-primary font-bold" onClick={handleSignUp}>
+                <Button 
+                  variant="red" 
+                  className="w-full justify-center neo-button-primary font-bold" 
+                  onClick={handleSignUp}
+                >
                   Sign up
                 </Button>
-              </>}
+              </>
+            )}
           </div>
         </div>
       </SheetContent>
-    </Sheet>;
-  return <motion.nav className="bg-white border-b-4 border-black py-4 px-6 w-full" initial={{
-    y: -100
-  }} animate={{
-    y: 0
-  }} transition={{
-    duration: 0.5,
-    type: "spring",
-    stiffness: 100
-  }}>
+    </Sheet>
+  );
+
+  return (
+    <motion.nav 
+      className="bg-white border-b-4 border-black py-4 px-4 sm:px-6 w-full" 
+      initial={{ y: -100 }} 
+      animate={{ y: 0 }} 
+      transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+    >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
           {isMobile && <MobileNavigation />}
@@ -114,35 +130,53 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
         
-        <div className="flex items-center gap-4">
-          {isAuthenticated ? <div className="flex gap-4 items-center">
+        <div className="flex items-center gap-2 sm:gap-4">
+          {isAuthenticated ? (
+            <div className="flex gap-2 sm:gap-4 items-center">
               <NotificationCenter />
               <ChatIcon />
               
-              <Button variant="outline" className="p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none relative" onClick={() => navigate('/dashboard')}>
-                <User size={20} className="mr-2" />
-                <span className="font-bold">{user?.name || 'Account'}</span>
+              <Button 
+                variant="outline" 
+                className="p-1 sm:p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none relative text-xs sm:text-base" 
+                onClick={() => navigate('/dashboard')}
+              >
+                <User size={isMobile ? 16 : 20} className="mr-1 sm:mr-2" />
+                <span className="font-bold hidden xs:inline-block">{user?.name || 'Account'}</span>
                 
-                {unreadCount > 0 && <span className="absolute -top-1 -right-1 bg-[#C42924] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#C42924] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {unreadCount}
-                  </span>}
+                  </span>
+                )}
               </Button>
-            </div> : <>
-              <Link to="/search">
-                
-              </Link>
+            </div>
+          ) : (
+            <>
+              <Link to="/search"></Link>
               
-              <Button variant="navy" className="hidden md:flex neo-button-secondary font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" onClick={handleSignIn}>
+              <Button 
+                variant="navy" 
+                className="hidden md:flex neo-button-secondary font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" 
+                onClick={handleSignIn}
+              >
                 <LogIn size={18} className="mr-2" />
                 Log In
               </Button>
               
-              <Button variant="red" className="neo-button-primary font-bold" onClick={handleSignUp}>
+              <Button 
+                variant="red" 
+                className="neo-button-primary font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
+                onClick={handleSignUp}
+              >
                 Sign up
               </Button>
-            </>}
+            </>
+          )}
         </div>
       </div>
-    </motion.nav>;
+    </motion.nav>
+  );
 };
+
 export default Navbar;

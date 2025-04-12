@@ -75,6 +75,12 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Add viewport meta tag for mobile responsiveness */
+  html {
+    @apply overflow-x-hidden;
   }
 
   @font-face {
@@ -105,7 +111,7 @@
 
   /* Neobrutalist custom styles */
   .neo-shadow {
-    @apply shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
+    @apply shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
   }
 
   .neo-shadow-sm {
@@ -113,43 +119,60 @@
   }
 
   .neo-shadow-white {
-    @apply shadow-[8px_8px_0px_0px_rgba(255,255,255,0.5)];
+    @apply shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] sm:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.5)];
   }
 
   .neo-shadow-red {
-    @apply shadow-[8px_8px_0px_0px_rgba(208,22,26,1)];
+    @apply shadow-[4px_4px_0px_0px_rgba(208,22,26,1)] sm:shadow-[8px_8px_0px_0px_rgba(208,22,26,1)];
   }
 
   .neo-shadow-navy {
-    @apply shadow-[8px_8px_0px_0px_rgba(13,47,114,1)];
+    @apply shadow-[4px_4px_0px_0px_rgba(13,47,114,1)] sm:shadow-[8px_8px_0px_0px_rgba(13,47,114,1)];
   }
 
   .neo-border {
-    @apply border-4 border-black;
+    @apply border-2 sm:border-4 border-black;
   }
 
   .neo-button {
-    @apply font-bold bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
+    @apply font-bold bg-white border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
   }
 
   .neo-button-primary {
-    @apply font-bold bg-[#d0161a] text-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
+    @apply font-bold bg-[#d0161a] text-white border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
   }
 
   .neo-button-secondary {
-    @apply font-bold bg-[#0d2f72] text-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
+    @apply font-bold bg-[#0d2f72] text-white border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
   }
 
   .neo-input {
-    @apply border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-0;
+    @apply border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-0;
   }
 
   .neo-container {
-    @apply border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8;
+    @apply border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-8;
   }
 
   .neo-highlight {
-    @apply bg-[#d0161a] text-white px-2 py-1 -rotate-1 border-2 border-black;
+    @apply bg-[#d0161a] text-white px-1 sm:px-2 py-1 -rotate-1 border-2 border-black;
+  }
+
+  /* Mobile responsiveness utilities */
+  .mobile-container {
+    @apply px-4 sm:px-6 md:px-8;
+  }
+
+  .mobile-text {
+    @apply text-sm sm:text-base;
+  }
+
+  .mobile-heading {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  .mobile-shadow {
+    @apply shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
   }
 }
 
@@ -167,4 +190,37 @@
 
 .morph-animation {
   animation: morphing 5s infinite;
+}
+
+/* Add responsive breakpoints */
+@layer utilities {
+  /* Extra small devices */
+  .xs\:inline-block {
+    @media (min-width: 480px) {
+      display: inline-block;
+    }
+  }
+
+  .xs\:hidden {
+    @media (min-width: 480px) {
+      display: none;
+    }
+  }
+}
+
+/* Responsive fixes for property cards and other components */
+.responsive-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+}
+
+.responsive-card {
+  @apply p-3 sm:p-4 md:p-6;
+}
+
+.responsive-padding {
+  @apply p-2 sm:p-4 md:p-6;
+}
+
+.responsive-margin {
+  @apply m-2 sm:m-4 md:m-6;
 }

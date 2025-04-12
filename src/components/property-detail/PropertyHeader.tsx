@@ -33,14 +33,14 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
       return (
-        <span className="font-medium">
+        <span className="font-medium text-sm sm:text-base break-words">
           {fullAddress}{location ? `, ${location}` : ''}
         </span>
       );
     }
     
     return (
-      <span className="font-medium">
+      <span className="font-medium text-sm sm:text-base">
         <span 
           className="cursor-pointer text-black font-bold hover:underline"
           onClick={onShowAddressClick}
@@ -55,30 +55,30 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
-        <div className="bg-[#d0161a] text-white px-3 py-1 border-2 border-black font-bold inline-flex items-center">
+        <div className="bg-[#d0161a] text-white px-2 sm:px-3 py-1 border-2 border-black font-bold inline-flex items-center text-xs sm:text-sm">
           {belowMarket}% BELOW MARKET
         </div>
       </div>
       
-      <h1 className="text-3xl font-bold mb-2">{title}</h1>
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 break-words">{title}</h1>
       
-      <div className="flex items-center mb-4">
-        <MapPin size={18} className="mr-2 text-[#d0161a]" />
+      <div className="flex items-start sm:items-center mb-4 flex-wrap">
+        <MapPin size={16} className="mr-1 sm:mr-2 text-[#d0161a] mt-1 sm:mt-0" />
         {renderLocation()}
       </div>
       
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="border-2 border-black p-4">
-          <div className="text-2xl font-bold text-[#d0161a]">{formatCurrency(price)}</div>
-          <div className="text-sm">Listing Price</div>
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <div className="border-2 border-black p-2 sm:p-4">
+          <div className="text-lg sm:text-2xl font-bold text-[#d0161a]">{formatCurrency(price)}</div>
+          <div className="text-xs sm:text-sm">Listing Price</div>
         </div>
-        <div className="border-2 border-black p-4">
-          <div className="text-xl font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
-          <div className="text-sm">Market Value</div>
+        <div className="border-2 border-black p-2 sm:p-4">
+          <div className="text-base sm:text-xl font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
+          <div className="text-xs sm:text-sm">Market Value</div>
         </div>
       </div>
       
-      <div className="flex justify-between pt-3 border-t-2 border-black mb-6">
+      <div className="flex justify-between pt-2 sm:pt-3 border-t-2 border-black mb-4 sm:mb-6 text-sm sm:text-base">
         <div className="flex items-center">
           <span className="font-bold">{beds}</span>
           <span className="ml-1">Beds</span>

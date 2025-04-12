@@ -19,6 +19,7 @@ const fadeInUp = {
     }
   }
 };
+
 const stagger = {
   hidden: {
     opacity: 0
@@ -30,27 +31,35 @@ const stagger = {
     }
   }
 };
+
 const HeroSection: React.FC = () => {
-  return <section className="py-16 bg-white">
+  return (
+    <section className="py-12 sm:py-16 bg-white">
       <div className="container px-4 lg:px-8 mx-auto">
-        <motion.div className="grid md:grid-cols-2 gap-12 items-center" initial="hidden" animate="visible" variants={stagger}>
+        <motion.div 
+          className="grid md:grid-cols-2 gap-8 md:gap-12 items-center" 
+          initial="hidden" 
+          animate="visible" 
+          variants={stagger}
+        >
           <motion.div className="order-2 md:order-1" variants={fadeInUp}>
-            {/* Single-line header text layout */}
-            <h1 className="text-5xl lg:text-7xl font-bold text-black mb-4 whitespace-nowrap md:text-5xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-black mb-3 md:mb-4 break-words sm:whitespace-nowrap">
               Find your dream home...
             </h1>
-            <div className="bg-[#d0161a] block mb-6 px-3 py-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-auto inline-block">
-              <h1 className="text-5xl lg:text-7xl font-bold text-white whitespace-nowrap md:text-5xl">
+            <div className="bg-[#d0161a] block mb-4 md:mb-6 px-2 sm:px-3 py-1 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-auto inline-block">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white break-words sm:whitespace-nowrap">
                 we'll find your dream price
               </h1>
             </div>
-            <p className="text-black mb-8 text-lg">Connecting families with affordable housing—fast. Discover below-market homes without compromising on size, location or safety.</p>
-            <SearchBar className="mb-8" />
+            <p className="text-black mb-6 md:mb-8 text-base md:text-lg">
+              Connecting families with affordable housing—fast. Discover below-market homes without compromising on size, location or safety.
+            </p>
+            <SearchBar className="mb-6 md:mb-8" />
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="red" className="neo-button-primary font-bold">
+              <Button asChild variant="red" className="neo-button-primary font-bold text-base">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="navy" className="neo-button-secondary font-bold">
+              <Button asChild variant="navy" className="neo-button-secondary font-bold text-base">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
@@ -60,6 +69,8 @@ const HeroSection: React.FC = () => {
           </motion.div>
         </motion.div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default HeroSection;

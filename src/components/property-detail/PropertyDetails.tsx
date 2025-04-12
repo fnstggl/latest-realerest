@@ -20,10 +20,10 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   parking = "2-Car Garage"
 }) => {
   return (
-    <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
-      <h2 className="text-2xl font-bold mb-4">Property Details</h2>
+    <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Property Details</h2>
       
-      <div className="space-y-4">
+      <div className="space-y-4 text-sm sm:text-base">
         <div className="flex justify-between">
           <span className="font-bold">Property Type:</span>
           <span>{propertyType}</span>

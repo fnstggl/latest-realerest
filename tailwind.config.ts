@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			screens: {
+				'xs': '480px',
+			},
 			fontFamily: {
 				sans: ['Helvetica', 'Arial', 'sans-serif'],
 				futura: ['Futura', 'Helvetica', 'Arial', 'sans-serif'],
