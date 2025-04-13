@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
+
 const About: React.FC = () => {
   return <div className="min-h-screen bg-white">
       <Navbar />
@@ -57,23 +58,23 @@ const About: React.FC = () => {
               </ul>
             </div>
             
-            <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
+            <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 bg-[#0d2f72] text-white">
               <h2 className="text-2xl font-bold mb-4">For Sellers</h2>
               <ul className="space-y-3">
                 <li className="flex items-start">
-                  <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#d60013]" />
+                  <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
                   <span>Reach motivated buyers quickly</span>
                 </li>
                 <li className="flex items-start">
-                  <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#d60013]" />
+                  <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
                   <span>Sell without high agent commissions</span>
                 </li>
                 <li className="flex items-start">
-                  <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#d60013]" />
+                  <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
                   <span>Control who views your property</span>
                 </li>
                 <li className="flex items-start">
-                  <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#d60013]" />
+                  <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
                   <span>Simple listing creation and management</span>
                 </li>
               </ul>
