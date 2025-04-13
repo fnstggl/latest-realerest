@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { formatCurrency } from '@/lib/utils';
 interface Offer {
@@ -27,8 +28,8 @@ const PropertyOffers: React.FC<PropertyOffersProps> = ({
       const numOffers = Math.floor(Math.random() * 4); // 0-3 offers
       const mockOffers: Offer[] = [];
       for (let i = 0; i < numOffers; i++) {
-        // Create random discount between 3k-10k below listing price
-        const discount = Math.floor(Math.random() * 7000) + 3000;
+        // Create random discount between 0-8k below listing price, rounded to nearest hundred
+        const discount = Math.round(Math.floor(Math.random() * 8001) / 100) * 100;
         const offerAmount = propertyPrice - discount;
         mockOffers.push({
           id: `mock-${i}-${propertyId}`,
