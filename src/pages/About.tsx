@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -6,19 +5,20 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
-
 const About: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-4xl mx-auto"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.5
+      }} className="max-w-4xl mx-auto">
           <div className="mb-12">
             <h1 className="text-5xl font-bold mb-4">About DoneDeal</h1>
             <div className="h-2 w-32 bg-[#d60013]"></div>
@@ -89,9 +89,7 @@ const About: React.FC = () => {
             <p className="text-lg mb-4">
               DoneDeal was founded by two students looking to make buying a home actually affordable for everyday Americans.
             </p>
-            <p className="text-lg mb-4">
-              After witnessing countless buyers priced out of the market and sellers losing thousands to commissions and fees, we knew there had to be a better way. We created DoneDeal to directly connect motivated sellers with qualified buyers, benefiting both sides of the transaction.
-            </p>
+            <p className="text-lg mb-4">After looking to find affordable homes in NYC and learning firsthand both how hopeless and competitive the search for an affordable home felt, we knew there had to be a better way. We created DoneDeal to directly connect motivated sellers with qualified buyers, benefiting both sides of the transaction.</p>
             <p className="text-lg">
               Today, we're proud to be revolutionizing the real estate market with our transparent, user-friendly platform that puts power back in the hands of buyers and sellers.
             </p>
@@ -125,8 +123,6 @@ const About: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>
-  );
+    </div>;
 };
-
 export default About;
