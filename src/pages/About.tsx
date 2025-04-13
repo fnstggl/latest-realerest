@@ -25,13 +25,9 @@ const About: React.FC = () => {
           </div>
           
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
-            <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
-            <p className="text-lg mb-6">
-              At DoneDeal, we believe everyone deserves access to affordable housing. Our mission is to connect buyers directly with motivated sellers offering properties below market value, creating a win-win situation for both parties.
-            </p>
-            <p className="text-lg">
-              We're eliminating unnecessary middlemen and breaking down the barriers that make homeownership seem out of reach for many Americans. By providing a direct, transparent platform, we're revolutionizing the way people buy and sell homes.
-            </p>
+            <h2 className="text-2xl font-bold mb-4">Our Story</h2>
+            <p className="text-lg mb-6">We were two students in NYC trying to figure out how anyone was supposed to buy a home. Everywhere we looked, it felt impossible. Prices were too high, listings were outdated or gone, and everything moved fast — unless you had cash, connections, or perfect timing, you were out of luck. We couldn’t understand why something as basic as finding an affordable home felt this broken.</p>
+            <p className="text-lg">It felt hopeless. But instead of giving up, we started building. We knew there had to be a better way — something faster, simpler, and actually made for people like us. So we created DoneDeal to connect real buyers with real homes, without all the games. No middlemen. No hidden fees. No jumping through hoops. Just a clear path toward ownership for people who’ve been told they don’t belong in the market.</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 mb-12">
