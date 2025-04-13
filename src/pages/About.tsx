@@ -36,23 +36,23 @@ const About: React.FC = () => {
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
-                  <span className="text-base">Find your dream home, we'll find your dream price</span>
+                  <span className="text-base">Affordable homes, all in one place.</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
-                  <span>Connect directly with motivated sellers</span>
+                  <span className="text-base">Save your cash for the home, not the agent.</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
-                  <span>Save thousands on your dream home</span>
+                  <span>Buy a home faster than you can say &quot;sold&quot;</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
-                  <span>Simple and streamlined buying process</span>
+                  <span>No fees. No middlemen. Just the keys.</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
-                  <span>Act quickly on time-sensitive deals</span>
+                  <span>The market wasn’t made for you. So we made a new one.</span>
                 </li>
               </ul>
             </div>
@@ -62,7 +62,7 @@ const About: React.FC = () => {
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
-                  <span>Sell with confidence, without a middleman.</span>
+                  <span>List your home in 1 minute, sell it in 2.</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
@@ -70,11 +70,11 @@ const About: React.FC = () => {
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
-                  <span>List your home in 1 minute.</span>
+                  <span>Sell your home, skip the headache.</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
-                  <span>Sit back and relax while we bring the buyers to you.</span>
+                  <span>Get a great offer on your home... today.</span>
                 </li>
               </ul>
             </div>
