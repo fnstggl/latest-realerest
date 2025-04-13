@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -19,7 +18,6 @@ const fadeInUp = {
     }
   }
 };
-
 const stagger = {
   hidden: {
     opacity: 0
@@ -31,17 +29,10 @@ const stagger = {
     }
   }
 };
-
 const HeroSection: React.FC = () => {
-  return (
-    <section className="py-12 sm:py-16 bg-white">
+  return <section className="py-12 sm:py-16 bg-white">
       <div className="container px-4 lg:px-8 mx-auto">
-        <motion.div 
-          className="grid md:grid-cols-2 gap-8 md:gap-12 items-center" 
-          initial="hidden" 
-          animate="visible" 
-          variants={stagger}
-        >
+        <motion.div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center" initial="hidden" animate="visible" variants={stagger}>
           <motion.div className="order-2 md:order-1" variants={fadeInUp}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-black mb-3 md:mb-4 break-words sm:whitespace-nowrap">
               Find your dream home...
@@ -51,9 +42,7 @@ const HeroSection: React.FC = () => {
                 we'll find your dream price
               </h1>
             </div>
-            <p className="text-black mb-6 md:mb-8 text-base md:text-lg">
-              Connecting families with affordable housing—fast. Discover below-market homes without compromising on size, location or safety.
-            </p>
+            <p className="text-black mb-6 md:mb-8 text-base md:text-lg">Buy an affordable home without compromising on size, location or safety.</p>
             <SearchBar className="mb-6 md:mb-8" />
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild variant="red" className="neo-button-primary font-bold text-base">
@@ -69,8 +58,6 @@ const HeroSection: React.FC = () => {
           </motion.div>
         </motion.div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
