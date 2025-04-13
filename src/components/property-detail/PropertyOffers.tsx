@@ -1,14 +1,11 @@
-
 import React from 'react';
 import { formatCurrency } from '@/lib/utils';
-
 interface Offer {
   id: string;
   amount: number;
   buyerName: string;
   isReal?: boolean;
 }
-
 interface PropertyOffersProps {
   propertyId: string;
   propertyPrice: number;
@@ -18,14 +15,12 @@ interface PropertyOffersProps {
     buyerName: string;
   }>;
 }
-
 const PropertyOffers: React.FC<PropertyOffersProps> = ({
   propertyId,
   propertyPrice,
   realOffers = []
 }) => {
   const [offers, setOffers] = React.useState<Offer[]>([]);
-
   React.useEffect(() => {
     // Generate between 0-3 mock offers
     const generateMockOffers = () => {
@@ -57,32 +52,20 @@ const PropertyOffers: React.FC<PropertyOffersProps> = ({
     };
     generateMockOffers();
   }, [propertyId, propertyPrice, realOffers]);
-  
   if (offers.length === 0) return null;
-  return (
-    <div className="border-2 border-black p-4 mt-4 neo-shadow">
+  return <div className="border-2 border-black p-4 mt-4 neo-shadow">
       <h3 className="font-bold text-lg mb-3">Top Bids</h3>
       <div className="space-y-2">
-        {offers.map(offer => (
-          <div 
-            key={offer.id} 
-            className="flex justify-between items-center border-b border-gray-200 pb-2"
-          >
+        {offers.map(offer => <div key={offer.id} className="flex justify-between items-center border-b border-gray-200 pb-2">
             <div className="flex items-center">
-              <span className="font-medium">{offer.buyerName}</span>
-              {offer.isReal && (
-                <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+              <span className="text-base font-semibold">{offer.buyerName}</span>
+              {offer.isReal && <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                   Verified Offer
-                </span>
-              )}
+                </span>}
             </div>
             <span className="font-bold">{formatCurrency(offer.amount)}</span>
-          </div>
-        ))}
+          </div>)}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PropertyOffers;
-
