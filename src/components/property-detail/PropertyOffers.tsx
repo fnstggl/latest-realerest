@@ -28,8 +28,8 @@ const PropertyOffers: React.FC<PropertyOffersProps> = ({
       const numOffers = Math.floor(Math.random() * 4); // 0-3 offers
       const mockOffers: Offer[] = [];
       for (let i = 0; i < numOffers; i++) {
-        // Create random discount between 0-8k below listing price, rounded to nearest hundred
-        const discount = Math.round(Math.floor(Math.random() * 8001) / 100) * 100;
+        // Create random discount between 0-8k below listing price, rounded to nearest thousand
+        const discount = Math.round(Math.floor(Math.random() * 8001) / 1000) * 1000;
         const offerAmount = propertyPrice - discount;
         mockOffers.push({
           id: `mock-${i}-${propertyId}`,
@@ -53,6 +53,7 @@ const PropertyOffers: React.FC<PropertyOffersProps> = ({
     };
     generateMockOffers();
   }, [propertyId, propertyPrice, realOffers]);
+  
   if (offers.length === 0) return null;
   return <div className="border-2 border-black p-4 mt-4">
       <h3 className="font-bold text-lg mb-3">Top Bids</h3>
