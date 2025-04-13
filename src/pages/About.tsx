@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
-
 const About: React.FC = () => {
   return <div className="min-h-screen bg-white">
       <Navbar />
@@ -37,7 +36,7 @@ const About: React.FC = () => {
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
-                  <span>Access properties at below market prices</span>
+                  <span className="text-base">Find your dream home, we'll find your dream price</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
@@ -49,7 +48,7 @@ const About: React.FC = () => {
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
-                  <span>Simple, transparent process</span>
+                  <span>Simple and streamlined buying process</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0" />
@@ -63,19 +62,19 @@ const About: React.FC = () => {
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
-                  <span>Reach motivated buyers quickly</span>
+                  <span>Sell with confidence, without a middleman.</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
-                  <span>Sell without high agent commissions</span>
+                  <span>Zero fees, zero commissions, forever.</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
-                  <span>Control who views your property</span>
+                  <span>List your home in 1 minute.</span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-white" />
-                  <span>Simple listing creation and management</span>
+                  <span>Sit back and relax while we bring the buyers to you.</span>
                 </li>
               </ul>
             </div>
