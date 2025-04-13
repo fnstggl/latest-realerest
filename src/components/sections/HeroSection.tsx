@@ -42,7 +42,7 @@ const HeroSection: React.FC = () => {
                 we'll find your dream price
               </h1>
             </div>
-            <p className="text-black mb-6 md:mb-8 text-base md:text-lg">Buy an affordable home without compromising on size, location or safety.</p>
+            <p className="text-black mb-6 md:mb-8 text-base md:text-lg">Helping families buy homes they were told they couldn't afford.</p>
             <SearchBar className="mb-6 md:mb-8" />
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild variant="red" className="neo-button-primary font-bold text-base">
