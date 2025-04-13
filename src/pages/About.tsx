@@ -81,12 +81,10 @@ const About: React.FC = () => {
           </div>
           
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
-            <h2 className="text-2xl font-bold mb-4">Our Story</h2>
-            <p className="text-lg mb-4">DoneDeal was founded by two students in NYC looking to make buying a home actually affordable for everyday Americans.</p>
-            <p className="text-lg mb-4">After looking for affordable homes all over New York and learning firsthand both how hopeless and competitive the search for an affordable home felt, we knew there had to be a better way. We created DoneDeal to directly connect motivated sellers with qualified buyers, benefiting both sides of the transaction.</p>
-            <p className="text-lg">
-              Today, we're proud to be revolutionizing the real estate market with our transparent, user-friendly platform that puts power back in the hands of buyers and sellers.
-            </p>
+            <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
+            <p className="text-lg mb-4">We built DoneDeal to make housing feel possible again. Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking. </p>
+            <p className="text-lg mb-4">We’re here for the buyers who’ve been priced out, the ones who refresh Zillow every night hoping something new pops up. We’re here for the people trying to get their families into something stable, something real. And we’re here for sellers too — the ones ready to move on, without the wait.</p>
+            <p className="text-lg">DoneDeal is about making the market work for people again. You shouldn’t have to fight this hard for something so basic.</p>
           </div>
           
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
