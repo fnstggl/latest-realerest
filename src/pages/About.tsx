@@ -85,7 +85,7 @@ const About: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
             <p className="text-lg mb-4">We built DoneDeal to make housing feel possible again. Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking. </p>
             <p className="text-lg mb-4">We’re here for the buyers who’ve been priced out, the ones who refresh Zillow every night hoping something new pops up. We’re here for the people trying to get their families into something stable, something real. And we’re here for sellers too — the ones ready to move on, without the wait.</p>
-            <p className="text-lg">DoneDeal is about making the market work for people again. You shouldn’t have to fight this hard for something so basic.</p>
+            <p className="text-lg">DoneDeal is about revolutionizing the real estate market to make it work for people again. You shouldn’t have to fight this hard for something so basic.</p>
           </div>
           
           <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
