@@ -21,7 +21,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
 }) => {
   return (
     <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4">Property Details</h2>
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">The Numbers</h2>
       
       <div className="space-y-4 text-sm sm:text-base">
         <div className="flex justify-between">

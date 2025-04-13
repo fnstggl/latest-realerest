@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
@@ -33,16 +32,19 @@ const PropertyDetail: React.FC = () => {
     shouldShowSellerInfo
   } = usePropertyDetail(id);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   const handleAddressClick = () => {
     setShowWaitlistDialog(true);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!id) return;
 
     const fetchRealOffers = async () => {
       try {
-        // Fetch actual offers from the database for this property
         const { data, error } = await supabase
           .from('property_offers')
           .select('id, offer_amount, user_id')
@@ -57,11 +59,10 @@ const PropertyDetail: React.FC = () => {
         }
 
         if (data && data.length > 0) {
-          // Transform the data to match our component's needs
           const formattedOffers = data.map(offer => ({
             id: offer.id,
             amount: Number(offer.offer_amount),
-            buyerName: "Real Buyer" // Could fetch actual names if desired
+            buyerName: "Real Buyer"
           }));
           
           setRealOffers(formattedOffers);
@@ -105,6 +106,9 @@ const PropertyDetail: React.FC = () => {
         </div>
       </div>;
   }
+
+  const showPropertyDetails = property?.afterRepairValue !== undefined || 
+                             property?.estimatedRehab !== undefined;
 
   return <div className="min-h-screen bg-white">
       <Navbar />
@@ -182,12 +186,14 @@ const PropertyDetail: React.FC = () => {
             />
           </div>
           
-          <div>
-            <PropertyDetails 
-              afterRepairValue={property?.afterRepairValue} 
-              estimatedRehab={property?.estimatedRehab} 
-            />
-          </div>
+          {showPropertyDetails && (
+            <div>
+              <PropertyDetails 
+                afterRepairValue={property?.afterRepairValue} 
+                estimatedRehab={property?.estimatedRehab} 
+              />
+            </div>
+          )}
         </div>
       </div>
       
