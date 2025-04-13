@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -10,9 +11,11 @@ import PropertyHeader from '@/components/property-detail/PropertyHeader';
 import SellerContactInfo from '@/components/property-detail/SellerContactInfo';
 import PropertyDescription from '@/components/property-detail/PropertyDescription';
 import PropertyDetails from '@/components/property-detail/PropertyDetails';
+import PropertyOffers from '@/components/property-detail/PropertyOffers';
 import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
 import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
 import SiteFooter from '@/components/sections/SiteFooter';
+import { supabase } from '@/integrations/supabase/client';
 
 const PropertyDetail: React.FC = () => {
   const {
@@ -21,6 +24,7 @@ const PropertyDetail: React.FC = () => {
     id: string;
   }>();
   const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
+  const [realOffers, setRealOffers] = useState<Array<{ id: string; amount: number; buyerName: string }>>([]);
   const {
     property,
     loading,
@@ -32,6 +36,43 @@ const PropertyDetail: React.FC = () => {
   const handleAddressClick = () => {
     setShowWaitlistDialog(true);
   };
+
+  React.useEffect(() => {
+    if (!id) return;
+
+    const fetchRealOffers = async () => {
+      try {
+        // Fetch actual offers from the database for this property
+        const { data, error } = await supabase
+          .from('property_offers')
+          .select('id, offer_amount, user_id')
+          .eq('property_id', id)
+          .eq('is_interested', true)
+          .order('offer_amount', { ascending: false })
+          .limit(3);
+
+        if (error) {
+          console.error("Error fetching real offers:", error);
+          return;
+        }
+
+        if (data && data.length > 0) {
+          // Transform the data to match our component's needs
+          const formattedOffers = data.map(offer => ({
+            id: offer.id,
+            amount: Number(offer.offer_amount),
+            buyerName: "Real Buyer" // Could fetch actual names if desired
+          }));
+          
+          setRealOffers(formattedOffers);
+        }
+      } catch (error) {
+        console.error("Error in fetchRealOffers:", error);
+      }
+    };
+
+    fetchRealOffers();
+  }, [id]);
 
   if (loading) {
     return <div className="min-h-screen bg-white">
@@ -96,6 +137,12 @@ const PropertyDetail: React.FC = () => {
                       <p>You now have access to view the full property details and contact the seller directly.</p>
                     </div>
                   </div> : <WaitlistButton propertyId={property?.id || ''} propertyTitle={property?.title || ''} open={showWaitlistDialog} onOpenChange={setShowWaitlistDialog} />}
+              
+              {property && <PropertyOffers 
+                propertyId={property.id} 
+                propertyPrice={property.price} 
+                realOffers={realOffers} 
+              />}
               
               {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="border-2 border-black p-3">
