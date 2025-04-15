@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -100,7 +101,7 @@ const PropertyDetail: React.FC = () => {
         <div className="container mx-auto px-4 py-12 text-center">
           <h1 className="text-3xl font-bold mb-4">Property Not Found</h1>
           <p className="mb-8">The property you're looking for doesn't exist or has been removed.</p>
-          <Button asChild className="neo-button">
+          <Button asChild className="glass-button">
             <Link to="/search">Browse Other Properties</Link>
           </Button>
         </div>
@@ -110,12 +111,16 @@ const PropertyDetail: React.FC = () => {
   const showPropertyDetails = property?.afterRepairValue !== undefined || 
                              property?.estimatedRehab !== undefined;
 
-  return <div className="min-h-screen bg-white">
+  return <div className="min-h-screen relative white-bg-with-splashes">
+      {/* Add gradient blobs in the background */}
+      <div className="gradient-blob gradient-blob-1"></div>
+      <div className="gradient-blob gradient-blob-2"></div>
+      <div className="gradient-blob gradient-blob-3"></div>
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8">
-          <Link to="/search" className="flex items-center text-black hover:text-[#d0161a] font-bold transition-colors">
+          <Link to="/search" className="glass-button px-4 py-2 flex items-center text-black hover:text-[#d0161a] font-bold transition-colors inline-flex">
             <ArrowLeft size={18} className="mr-2" />
             Back to Search
           </Link>
@@ -124,20 +129,22 @@ const PropertyDetail: React.FC = () => {
         {!isOwner && isApproved && <OfferStatusBanner propertyId={property.id} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail} sellerPhone={property.sellerPhone} />}
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <PropertyImages mainImage={property?.image} images={property?.images} />
+          <div className="glass-card">
+            <PropertyImages mainImage={property?.image} images={property?.images} />
+          </div>
           
-          <div className="flex flex-col justify-between">
+          <div className="property-detail-card p-6 flex flex-col justify-between">
             <div>
               <PropertyHeader title={property?.title} belowMarket={property?.belowMarket} price={property?.price} marketPrice={property?.marketPrice} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} location={property?.location} fullAddress={property?.full_address} showFullAddress={isOwner || isApproved} onShowAddressClick={handleAddressClick} />
               
               {isOwner ? <Link to={`/property/${property?.id}/edit`}>
-                  <Button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 neo-shadow-sm transition-colors">
+                  <Button className="w-full glass-button font-bold py-2">
                     <Cog size={18} className="mr-2" />
                     Edit Listing
                   </Button>
                 </Link> : isApproved ? <div className="space-y-4">
-                    <div className="border-2 border-[#0d2f72] p-4 mb-2">
-                      <div className="font-bold text-[#d0161a] mb-2 bg-transparent">Your waitlist request has been approved!</div>
+                    <div className="glass-card p-4 mb-2 bg-white/40">
+                      <div className="font-bold text-[#d0161a] mb-2">Your waitlist request has been approved!</div>
                       <p>You now have access to view the full property details and contact the seller directly.</p>
                     </div>
                   </div> : <WaitlistButton propertyId={property?.id || ''} propertyTitle={property?.title || ''} open={showWaitlistDialog} onOpenChange={setShowWaitlistDialog} />}
@@ -149,14 +156,14 @@ const PropertyDetail: React.FC = () => {
               />}
               
               {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && <div className="grid grid-cols-2 gap-4 mt-4">
-                  <div className="border-2 border-black p-3">
+                  <div className="glass-card p-3">
                     <div className="text-lg font-bold text-black">{property?.afterRepairValue.toLocaleString('en-US', {
                     style: 'currency',
                     currency: 'USD'
                   })}</div>
                     <div className="text-xs">After Repair Value</div>
                   </div>
-                  <div className="border-2 border-black p-3">
+                  <div className="glass-card p-3">
                     <div className="text-lg font-bold text-black">{property?.estimatedRehab.toLocaleString('en-US', {
                     style: 'currency',
                     currency: 'USD'
