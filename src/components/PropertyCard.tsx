@@ -42,7 +42,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       to={`/property/${id}`} 
       className="block perspective-container"
     >
-      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden card-hover-glow transform translate-z-5">
+      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden search-glow transform translate-z-5">
         <div className="relative layer-1">
           <img 
             src={validImage} 
@@ -63,7 +63,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-bold text-xl text-foreground layer-1">{address || location.split(',')[0]}</h3>
             <div className="text-right">
-              <div className="text-2xl font-bold text-black layer-2">{formatCurrency(price)}</div>
+              <div className="text-2xl font-bold rainbow-text layer-2">{formatCurrency(price)}</div>
               <div className="text-muted-foreground line-through layer-1">{formatCurrency(marketPrice)}</div>
             </div>
           </div>
@@ -90,8 +90,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="glass-button-rainbow w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10 card-hover-glow">
-                <ArrowRight size={20} className="text-black" />
+              <div className="glass-button-rainbow w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10">
+                <ArrowRight size={20} className="rainbow-text" />
               </div>
             </div>
           </div>

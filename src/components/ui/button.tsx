@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white/30 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 card-hover-glow",
-        destructive: "bg-white/30 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 card-hover-glow",
-        outline: "border border-white/30 bg-white/20 hover:bg-white/20 backdrop-blur-md rounded-xl text-foreground shadow-lg card-hover-glow",
-        secondary: "bg-white/30 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 card-hover-glow",
-        ghost: "hover:bg-accent hover:text-accent-foreground card-hover-glow",
-        link: "underline-offset-4 hover:underline",
-        warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 card-hover-glow",
-        glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-lg card-hover-glow",
-        navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 card-hover-glow",
-        red: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 card-hover-glow",
+        default: "bg-white/30 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",
+        destructive: "bg-white/30 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",
+        outline: "border border-white/30 bg-white/20 hover:bg-white/20 backdrop-blur-md rounded-xl text-foreground shadow-lg search-glow",
+        secondary: "bg-white/30 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",
+        ghost: "hover:bg-accent hover:text-accent-foreground search-glow",
+        link: "rainbow-text underline-offset-4 hover:underline",
+        warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",
+        glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-lg search-glow",
+        navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",
+        red: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",
       },
       size: {
         default: "h-10 px-4 py-2",

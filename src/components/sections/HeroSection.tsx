@@ -30,33 +30,33 @@ const HeroSection: React.FC = () => {
           animate="visible" 
           variants={stagger}
         >
-          <motion.div variants={fadeInUp} className="layer-1 flex flex-col items-center">
+          <motion.div variants={fadeInUp} className="layer-1">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-3 md:mb-4 break-words sm:whitespace-nowrap text-shadow mx-auto">
               Find a home you love...
             </h1>
-            <div className="apple-glow-text mb-4 md:mb-6 shadow-2xl layer-2 text-center">
+            <div className="apple-glow-text mb-4 md:mb-6 shadow-2xl layer-2 mx-auto">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold break-words sm:whitespace-nowrap text-shadow">
                 at a price you'll love more
               </h1>
             </div>
-            <p className="text-foreground mb-6 md:mb-8 text-base md:text-lg text-center">
+            <p className="text-foreground mb-6 md:mb-8 text-base md:text-lg mx-auto">
               Helping families buy homes they were told they couldn't afford.
             </p>
-            <div className="glass-card p-1 mb-6 md:mb-8 shadow-xl layer-2 card-hover-glow rounded-xl mx-auto w-full max-w-3xl">
+            <div className="glass-card p-1 mb-6 md:mb-8 shadow-xl layer-2 search-glow rounded-xl mx-auto">
               <SearchBar className="" />
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mx-auto">
               <Button 
                 asChild 
                 variant="glass" 
-                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 card-hover-glow"
+                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 search-glow"
               >
                 <Link to="/search">Find Homes</Link>
               </Button>
               <Button 
                 asChild 
                 variant="glass" 
-                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 card-hover-glow"
+                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 search-glow"
               >
                 <Link to="/about">Learn More</Link>
               </Button>
