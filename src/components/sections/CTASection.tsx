@@ -20,27 +20,27 @@ const CTASection: React.FC = () => {
       variants={fadeInUp}
     >
       <div className="container px-4 lg:px-8 mx-auto flex justify-center">
-        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl property-card-glow max-w-5xl w-full">
+        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl property-card-glow max-w-5xl w-full perspective-container">
           <div className="layer-1">
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
-              <span className="purple-text px-3 mx-2 py-1 font-bold rounded-lg inline-block layer-2 shadow-lg">
+              <span className="purple-text px-3 mx-2 py-1 font-bold rounded-lg inline-block layer-2 shadow-lg glass backdrop-blur-md border border-white/20">
                 dream home?
               </span>
             </h2>
-            <p className="text-xl mb-8 text-foreground/80">
+            <p className="text-xl mb-8 text-foreground/80 glass p-3 rounded-lg backdrop-blur-sm shadow-sm border border-white/20 layer-2">
               Get started today and discover properties below market value in your desired location.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl search-glow">
+            <div className="flex flex-col sm:flex-row gap-4 layer-3">
+              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl search-glow border border-white/30">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl search-glow">
+              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl search-glow border border-white/30">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
           </div>
-          <div className="glass overflow-hidden rounded-xl shadow-2xl perspective-container layer-2 property-card-glow">
+          <div className="glass overflow-hidden rounded-xl shadow-2xl perspective-container layer-2 property-card-glow border border-white/30 backdrop-blur-md">
             <AspectRatio ratio={16/9} className="w-full">
               <img 
                 src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
