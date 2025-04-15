@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -194,6 +195,7 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     transform-style: preserve-3d;
     transform: translateY(0) translateZ(0);
+    background-color: rgba(255, 255, 255, 0.85);
   }
   
   .outline-glow-card:hover {
