@@ -40,9 +40,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block perspective-container"
+      className="block perspective-container rainbow-glow-card"
     >
-      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden transform translate-z-5">
+      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10">
         <div className="relative layer-1">
           <img 
             src={validImage} 
@@ -53,7 +53,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-4 glass-discount-badge-purple py-1 px-3 font-bold text-white shadow-lg rounded-md transform translate-z-10 layer-3 backdrop-blur-md border border-white/30">
+            <div className="absolute top-4 left-4 rainbow-badge py-1 px-3 font-bold text-foreground shadow-lg rounded-md transform translate-z-10 layer-3 backdrop-blur-md border border-white/30">
               {roundedBelowMarket}% OFF
             </div>
           )}
@@ -63,7 +63,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-bold text-xl text-foreground layer-1">{address || location.split(',')[0]}</h3>
             <div className="text-right">
-              <div className="text-2xl font-bold text-foreground layer-3 bg-white/10 px-3 py-1 rounded-lg shadow-md backdrop-blur-sm border border-white/20">{formatCurrency(price)}</div>
+              <div className="text-2xl font-bold rainbow-price layer-3 px-3 py-1 rounded-lg">
+                {formatCurrency(price)}
+              </div>
               <div className="text-muted-foreground line-through layer-1 mt-1">{formatCurrency(marketPrice)}</div>
             </div>
           </div>
@@ -90,8 +92,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="glass-button-purple w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10 backdrop-blur-md border border-white/30">
-                <ArrowRight size={20} className="text-white" />
+              <div className="rainbow-btn-circle w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10 backdrop-blur-md">
+                <ArrowRight size={20} className="text-foreground" />
               </div>
             </div>
           </div>

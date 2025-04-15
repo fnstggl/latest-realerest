@@ -157,6 +157,120 @@
     font-weight: bold;
   }
   
+  /* Rainbow glow card - matches reference image */
+  .rainbow-glow-card {
+    position: relative;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .rainbow-glow-card:hover::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    padding: 3px;
+    background: linear-gradient(90deg, #FF5C00, #D946EF, #3C79F5, #00C9FF, #ff3CAC);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 1;
+    filter: blur(3px);
+    z-index: 0;
+    animation: animateGlow 3s linear infinite;
+    background-size: 400% 100%;
+  }
+  
+  /* Rainbow price */
+  .rainbow-price {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    position: relative;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover .rainbow-price::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(90deg, #FF5C00, #D946EF, #3C79F5, #00C9FF, #ff3CAC);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    filter: blur(2px);
+    animation: animateGlow 3s linear infinite;
+    background-size: 400% 100%;
+  }
+  
+  /* Rainbow badge for discount */
+  .rainbow-badge {
+    background: rgba(255, 255, 255, 0.85);
+    position: relative;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover .rainbow-badge::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(90deg, #FF5C00, #D946EF, #3C79F5, #00C9FF, #ff3CAC);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    filter: blur(2px);
+    animation: animateGlow 3s linear infinite;
+    background-size: 400% 100%;
+  }
+  
+  /* Rainbow button circle */
+  .rainbow-btn-circle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover .rainbow-btn-circle::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(90deg, #FF5C00, #D946EF, #3C79F5, #00C9FF, #ff3CAC);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    filter: blur(2px);
+    animation: animateGlow 3s linear infinite;
+    background-size: 400% 100%;
+  }
+
   /* Purple text */
   .purple-text {
     color: var(--purple-primary);
@@ -411,6 +525,15 @@
   }
   100% {
     transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes animateGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 400% 50%;
   }
 }
 
