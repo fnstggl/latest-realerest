@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import NotificationCenter from './NotificationCenter';
 import ChatIcon from './ChatIcon';
 import { useNotifications } from '@/context/NotificationContext';
+
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -19,128 +21,164 @@ const Navbar: React.FC = () => {
   const {
     unreadCount
   } = useNotifications();
+  
   const handleSignIn = () => {
     navigate('/signin');
   };
+  
   const handleSignUp = () => {
     navigate('/signup');
   };
-  const MobileNavigation = () => <Sheet>
+
+  const MobileNavigation = () => (
+    <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none">
+        <Button variant="glass" size="icon" className="md:hidden">
           <Menu size={24} />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] border-r-4 border-black p-0">
+      <SheetContent side="left" className="w-[300px] glass-dark border-r p-0">
         <div className="flex flex-col gap-6 p-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-[#0d2f72] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black">DD</div>
-            <span className="font-bold text-black text-2xl">DoneDeal</span>
+            <div className="w-12 h-12 bg-gradient-purple rounded-full text-white flex items-center justify-center font-bold text-lg">RE</div>
+            <span className="font-bold text-white text-2xl">RealerEstate</span>
           </Link>
           
           <nav className="flex flex-col space-y-2">
-            <Link to="/" className="text-[#0d2f72] hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black">
+            <Link to="/" className="text-primary hover:text-white transition-colors font-bold text-xl py-3 border-b border-white/10">
               Home
             </Link>
-            <Link to="/search" className="text-black hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black">
+            <Link to="/search" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10">
               Browse
             </Link>
-            <Link to="/sell/create" className="text-black hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black">
+            <Link to="/sell/create" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10">
               Sell
             </Link>
-            <Link to="/about" className="text-black hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black">
+            <Link to="/about" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10">
               About
             </Link>
-            <Link to="/contact" className="text-black hover:text-[#C42924] transition-colors font-bold text-xl py-3 border-b-2 border-black">
+            <Link to="/contact" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10">
               Contact
             </Link>
           </nav>
           
           <div className="flex flex-col gap-3 mt-4">
-            {isAuthenticated ? <Button className="w-full justify-center font-bold bg-black text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(196,41,36,1)]" onClick={() => navigate('/dashboard')}>
+            {isAuthenticated ? (
+              <Button className="w-full justify-center font-bold glass-button-primary" onClick={() => navigate('/dashboard')}>
                 Dashboard
-              </Button> : <>
-                <Button variant="outline" className="w-full justify-center neo-button font-bold" onClick={handleSignIn}>
+              </Button>
+            ) : (
+              <>
+                <Button variant="outline" className="w-full justify-center glass-button font-bold text-white" onClick={handleSignIn}>
                   Log In
                 </Button>
                 
-                <Button variant="red" className="w-full justify-center neo-button-primary font-bold" onClick={handleSignUp}>
+                <Button variant="red" className="w-full justify-center glass-button-primary font-bold" onClick={handleSignUp}>
                   Sign up
                 </Button>
-              </>}
+              </>
+            )}
           </div>
         </div>
       </SheetContent>
-    </Sheet>;
-  return <motion.nav className="bg-white border-b-4 border-black py-4 px-4 sm:px-6 w-full" initial={{
-    y: -100
-  }} animate={{
-    y: 0
-  }} transition={{
-    duration: 0.5,
-    type: "spring",
-    stiffness: 100
-  }}>
+    </Sheet>
+  );
+
+  return (
+    <motion.nav 
+      className="glass fixed top-4 left-1/2 -translate-x-1/2 py-2 px-4 sm:px-6 w-[95%] max-w-7xl z-50 shadow-lg"
+      initial={{
+        y: -100
+      }}
+      animate={{
+        y: 0
+      }}
+      transition={{
+        duration: 0.5,
+        type: "spring",
+        stiffness: 100
+      }}
+    >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
           {isMobile && <MobileNavigation />}
           
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-[#0d2f72] rounded-full text-white flex items-center justify-center font-bold text-xl border-2 border-black">DD</div>
-            <span className="font-bold text-black text-2xl hidden md:block">Realer Estate</span>
+            <div className="w-12 h-12 bg-gradient-purple rounded-full text-white flex items-center justify-center font-bold text-xl shadow-md">RE</div>
+            <span className="font-bold text-foreground text-2xl hidden md:block">RealerEstate</span>
           </Link>
         </div>
         
         <div className="hidden md:flex space-x-6 text-lg">
-          <Link to="/" className="text-[#0d2f72] hover:text-[#C42924] transition-colors font-bold relative group">
+          <Link to="/" className="text-primary hover:text-primary/80 transition-colors font-bold relative group">
             <span>Home</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/search" className="text-black hover:text-[#C42924] transition-colors font-bold relative group">
+          <Link to="/search" className="text-foreground hover:text-primary transition-colors font-bold relative group">
             <span>Browse</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/sell/create" className="text-black hover:text-[#C42924] transition-colors font-bold relative group">
+          <Link to="/sell/create" className="text-foreground hover:text-primary transition-colors font-bold relative group">
             <span>Sell</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/about" className="text-black hover:text-[#C42924] transition-colors font-bold relative group">
+          <Link to="/about" className="text-foreground hover:text-primary transition-colors font-bold relative group">
             <span>About</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <Link to="/contact" className="text-black hover:text-[#C42924] transition-colors font-bold relative group">
+          <Link to="/contact" className="text-foreground hover:text-primary transition-colors font-bold relative group">
             <span>Contact</span>
-            <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#C42924] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </Link>
         </div>
         
         <div className="flex items-center gap-2 sm:gap-4">
-          {isAuthenticated ? <div className="flex gap-2 sm:gap-4 items-center">
+          {isAuthenticated ? (
+            <div className="flex gap-2 sm:gap-4 items-center">
               <NotificationCenter />
               <ChatIcon />
               
-              <Button variant="outline" className="p-1 sm:p-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none relative text-xs sm:text-base" onClick={() => navigate('/dashboard')}>
+              <Button 
+                variant="outline" 
+                className="p-1 sm:p-2 glass text-xs sm:text-base relative"
+                onClick={() => navigate('/dashboard')}
+              >
                 <User size={isMobile ? 16 : 20} className="mr-1 sm:mr-2" />
                 <span className="font-bold hidden xs:inline-block">{user?.name || 'Account'}</span>
                 
-                {unreadCount > 0 && <span className="absolute -top-1 -right-1 bg-[#C42924] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {unreadCount}
-                  </span>}
+                  </span>
+                )}
               </Button>
-            </div> : <>
+            </div>
+          ) : (
+            <>
               <Link to="/search"></Link>
               
-              <Button variant="navy" className="hidden md:flex neo-button-secondary font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" onClick={handleSignIn}>
+              <Button 
+                variant="glass" 
+                className="hidden md:flex font-bold text-foreground" 
+                onClick={handleSignIn}
+              >
                 <LogIn size={18} className="mr-2" />
                 Log In
               </Button>
               
-              <Button variant="red" className="neo-button-primary font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" onClick={handleSignUp}>
+              <Button 
+                variant="black" 
+                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
+                onClick={handleSignUp}
+              >
                 Sign up
               </Button>
-            </>}
+            </>
+          )}
         </div>
       </div>
-    </motion.nav>;
+    </motion.nav>
+  );
 };
+
 export default Navbar;

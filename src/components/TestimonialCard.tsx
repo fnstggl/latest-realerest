@@ -19,13 +19,13 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
   image,
 }) => {
   return (
-    <Card className="border-none shadow-md rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="glass-card overflow-hidden transition-shadow hover:shadow-lg">
       <CardContent className="p-6">
         <div className="flex gap-4 items-start">
           <img
             src={image}
             alt={name}
-            className="w-14 h-14 rounded-full object-cover"
+            className="w-14 h-14 rounded-full object-cover border-2 border-white/30"
           />
           <div className="flex-1">
             <div className="flex items-center gap-2">
@@ -33,14 +33,14 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
                 <Star
                   key={i}
                   size={16}
-                  className={i < rating ? "fill-donedeal-orange text-donedeal-orange" : "text-gray-300"}
+                  className={i < rating ? "fill-primary text-primary" : "text-gray-300"}
                 />
               ))}
             </div>
-            <p className="mt-3 text-gray-700">{content}</p>
+            <p className="mt-3 text-foreground/80">{content}</p>
             <div className="mt-4">
-              <p className="font-semibold text-donedeal-navy">{name}</p>
-              <p className="text-sm text-gray-500">{role}</p>
+              <p className="font-semibold text-foreground">{name}</p>
+              <p className="text-sm text-foreground/60">{role}</p>
             </div>
           </div>
         </div>

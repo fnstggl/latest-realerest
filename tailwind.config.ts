@@ -77,7 +77,15 @@ export default {
 					'blue': '#F8F9FA',
 					'light-gray': '#F8F9FA',
 					'dark-gray': '#343A40'
-				}
+				},
+				glass: {
+					purple: '#9b87f5',
+					blue: '#0EA5E9',
+					pink: '#ea384c',
+					background: 'rgba(255, 255, 255, 0.05)',
+					border: 'rgba(255, 255, 255, 0.1)',
+					overlay: 'rgba(0, 0, 0, 0.2)',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -128,6 +136,12 @@ export default {
 				'fade-in': 'fade-in 0.5s ease-out',
 				'scale-in': 'scale-in 0.3s ease-out',
 				'enter': 'fade-in 0.5s ease-out, scale-in 0.3s ease-out'
+			},
+			backgroundImage: {
+				'gradient-purple': 'linear-gradient(135deg, #9b87f5 0%, #7E69AB 100%)',
+				'gradient-blue': 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
 			}
 		}
 	},

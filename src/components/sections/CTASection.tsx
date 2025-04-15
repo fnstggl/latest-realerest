@@ -14,39 +14,43 @@ const fadeInUp = {
 const CTASection: React.FC = () => {
   return (
     <motion.section 
-      className="py-16 bg-white text-black border-t-4 border-b-4 border-black"
+      className="py-16 relative overflow-hidden"
       initial="visible"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeInUp}
     >
+      {/* Gradient background shapes */}
+      <div className="absolute top-0 -right-20 w-72 h-72 rounded-full bg-purple-300/20 blur-3xl"></div>
+      <div className="absolute bottom-0 -left-10 w-60 h-60 rounded-full bg-blue-300/20 blur-3xl"></div>
+      
       <div className="container px-4 lg:px-8 mx-auto">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12">
           <div>
-            <h2 className="text-4xl font-bold mb-4">
+            <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
-              <span className="bg-black text-white px-2 mx-2 font-bold border-2 border-black">
+              <span className="glass-gradient-purple px-2 mx-2 font-bold rounded-lg text-white inline-block">
                 dream home?
               </span>
             </h2>
-            <p className="text-xl mb-8">
+            <p className="text-xl mb-8 text-foreground/80">
               Get started today and discover properties below market value in your desired location.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="black" className="neo-button-primary font-bold">
+              <Button asChild variant="black" className="font-bold">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="black" className="neo-button-secondary font-bold">
+              <Button asChild variant="glass" className="font-bold">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
           </div>
-          <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden bg-white">
+          <div className="glass overflow-hidden rounded-xl">
             <AspectRatio ratio={16/9} className="w-full">
               <img 
                 src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
                 alt="Modern home exterior at sunset with warm lighting" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-lg"
               />
             </AspectRatio>
           </div>

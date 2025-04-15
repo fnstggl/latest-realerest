@@ -1,78 +1,44 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --background: 260 60% 98%;
+    --foreground: 260 10% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 260 10% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 260 10% 10%;
 
-    --primary: 0 0% 0%;  /* Changed to black */
-    --primary-foreground: 0 0% 100%;
+    --primary: 260 60% 55%;
+    --primary-foreground: 260 0% 100%;
 
-    --secondary: 0 0% 0%;  /* Changed to black */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 260 30% 96%;
+    --secondary-foreground: 260 10% 10%;
 
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted: 260 30% 96%;
+    --muted-foreground: 260 5% 45%;
 
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 260 30% 96%;
+    --accent-foreground: 260 10% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 0%;
-    --input: 0 0% 0%;
-    --ring: 0 0% 0%;
+    --border: 260 30% 92%;
+    --input: 260 30% 92%;
+    --ring: 260 60% 55%;
 
-    --radius: 0rem;  /* No rounded corners for neobrutalism */
-  }
-
-  .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 0%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-
-    --secondary: 220 78% 25%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 60%;
-
-    --accent: 0 0% 20%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 100%;
-    --input: 0 0% 100%;
-    --ring: 0 85% 57%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
+    --radius: 1rem;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-to-br from-purple-50 to-blue-50 text-foreground antialiased;
+    background-attachment: fixed;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-text-size-adjust: 100%;
   }
@@ -107,85 +73,52 @@
     @apply transition-transform duration-200 hover:scale-105;
   }
 
-  .neo-shadow {
-    @apply shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
+  /* Glassmorphism utilities */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl;
   }
-
-  .neo-shadow-sm {
-    @apply shadow-[4px_4px_0px_0px_rgba(0,0,0,1)];
+  
+  .glass-card {
+    @apply bg-white/20 backdrop-blur-lg border border-white/30 rounded-xl shadow-lg;
   }
-
-  .neo-shadow-white {
-    @apply shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)] sm:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.5)];
+  
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-md border border-white/10 rounded-xl text-white;
   }
-
-  .neo-shadow-red {
-    @apply shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
+  
+  .glass-input {
+    @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent;
   }
-
-  .neo-shadow-navy {
-    @apply shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
+  
+  .glass-button {
+    @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 transition-all shadow-sm;
   }
-
-  .neo-border {
-    @apply border-2 sm:border-4 border-black;
+  
+  .glass-button-primary {
+    @apply bg-glass-purple/90 backdrop-blur-md border border-white/30 rounded-xl hover:bg-glass-purple/80 transition-all text-white shadow-sm;
   }
-
-  .neo-button {
-    @apply font-bold bg-white border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
+  
+  .text-shadow {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
-
-  .neo-button-primary {
-    @apply font-bold bg-black text-white border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
-  }
-
-  .neo-button-secondary {
-    @apply font-bold bg-black text-white border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
-  }
-
-  .neo-input {
-    @apply border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-0;
-  }
-
-  .neo-container {
-    @apply border-2 sm:border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-8;
-  }
-
-  .neo-highlight {
-    @apply bg-black text-white px-1 sm:px-2 py-1 -rotate-1 border-2 border-black;
-  }
-
-  .mobile-container {
-    @apply px-4 sm:px-6 md:px-8;
-  }
-
-  .mobile-text {
-    @apply text-sm sm:text-base;
-  }
-
-  .mobile-heading {
-    @apply text-xl sm:text-2xl md:text-3xl;
-  }
-
-  .mobile-shadow {
-    @apply shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
+  
+  .glass-gradient-purple {
+    @apply bg-gradient-purple;
+    background-size: 200% 200%;
+    animation: gradientShift 5s ease infinite;
   }
 }
 
-@keyframes morphing {
+@keyframes gradientShift {
   0% {
-    transform: rotate(-2deg) scale(1);
+    background-position: 0% 50%;
   }
   50% {
-    transform: rotate(1deg) scale(1.05);
+    background-position: 100% 50%;
   }
   100% {
-    transform: rotate(-2deg) scale(1);
+    background-position: 0% 50%;
   }
-}
-
-.morph-animation {
-  animation: morphing 5s infinite;
 }
 
 @layer utilities {

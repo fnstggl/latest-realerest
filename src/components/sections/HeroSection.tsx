@@ -32,30 +32,78 @@ const stagger = {
 };
 
 const HeroSection: React.FC = () => {
-  return <section className="py-12 sm:py-16 bg-white">
-      <div className="container px-4 lg:px-8 mx-auto">
-        <motion.div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center" initial="visible" animate="visible" variants={stagger}>
+  return (
+    <section className="pt-32 pb-16 relative overflow-hidden">
+      {/* Gradient background shapes */}
+      <div className="absolute -top-10 -right-10 w-60 h-60 rounded-full bg-purple-300/20 blur-3xl"></div>
+      <div className="absolute top-40 -left-20 w-80 h-80 rounded-full bg-blue-300/20 blur-3xl"></div>
+      
+      <div className="container px-4 lg:px-8 mx-auto relative">
+        <motion.div 
+          className="grid md:grid-cols-2 gap-8 md:gap-12 items-center" 
+          initial="visible" 
+          animate="visible" 
+          variants={stagger}
+        >
           <motion.div className="order-2 md:order-1" variants={fadeInUp}>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-black mb-3 md:mb-4 break-words sm:whitespace-nowrap">Find a home you love...</h1>
-            <div className="bg-black block mb-4 md:mb-6 px-2 sm:px-3 py-1 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-auto inline-block">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white break-words sm:whitespace-nowrap">at a price you'll love more</h1>
+            <div className="mb-2">
+              <span className="px-4 py-1 text-sm bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-primary font-medium inline-block mb-4">
+                Real Estate Reimagined
+              </span>
             </div>
-            <p className="text-black mb-6 md:mb-8 text-base md:text-lg">Helping families buy homes they were told they couldn't afford.</p>
-            <SearchBar className="mb-6 md:mb-8" />
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-3 md:mb-4 break-words sm:whitespace-nowrap text-shadow">
+              Find a home you love...
+            </h1>
+            <div className="glass-gradient-purple px-2 sm:px-3 py-1 rounded-xl w-auto inline-block mb-4 md:mb-6 shadow-lg">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white break-words sm:whitespace-nowrap text-shadow">
+                at a price you'll love more
+              </h1>
+            </div>
+            <p className="text-foreground mb-6 md:mb-8 text-base md:text-lg">
+              Helping families buy homes they were told they couldn't afford.
+            </p>
+            <div className="glass-card p-1 mb-6 md:mb-8 shadow-lg">
+              <SearchBar className="" />
+            </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="black" className="neo-button-primary font-bold text-base">
+              <Button 
+                asChild 
+                variant="black" 
+                className="font-bold text-base shadow-lg"
+              >
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="black" className="neo-button-secondary font-bold text-base">
+              <Button 
+                asChild 
+                variant="glass" 
+                className="font-bold text-base"
+              >
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
           </motion.div>
-          <motion.div className="order-1 md:order-2" variants={fadeInUp}>
-            {/* Intentionally left empty per user request */}
+          
+          <motion.div className="order-1 md:order-2 relative" variants={fadeInUp}>
+            <div className="glass-card p-6 rounded-xl relative shadow-xl">
+              <img 
+                src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
+                alt="Modern house with a luxurious pool" 
+                className="w-full h-auto rounded-lg object-cover shadow-lg"
+              />
+              
+              <div className="absolute -bottom-5 -right-5 glass-dark p-4 rounded-lg shadow-lg max-w-[200px]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                  <span className="text-sm font-medium">Trending Now</span>
+                </div>
+                <p className="text-xs opacity-80">Exclusive properties below market value in your area</p>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default HeroSection;

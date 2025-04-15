@@ -6,23 +6,21 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        default: "bg-primary/90 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-primary/80 shadow-sm",
+        destructive: "bg-destructive/90 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-destructive/80 shadow-sm",
+        outline: "border border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-foreground shadow-sm",
+        secondary: "bg-secondary/90 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-secondary/80 shadow-sm",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        warning: "bg-amber-500 text-white hover:bg-amber-600",
-        navy: "bg-black text-white hover:bg-black/90",
-        red: "bg-black text-white hover:bg-black/90", 
-        black: "bg-black text-white hover:bg-black/90",
+        warning: "bg-amber-500/90 text-white backdrop-blur-md rounded-xl hover:bg-amber-500/80 shadow-sm",
+        navy: "bg-gradient-purple text-white backdrop-blur-md rounded-xl hover:opacity-90 shadow-sm", 
+        red: "bg-gradient-blue text-white backdrop-blur-md rounded-xl hover:opacity-90 shadow-sm", 
+        black: "bg-gradient-to-r from-primary/90 to-glass-blue/90 text-white backdrop-blur-md rounded-xl hover:opacity-90 shadow-sm",
+        glass: "bg-white/20 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",

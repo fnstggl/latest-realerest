@@ -28,11 +28,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
           placeholder="Search by city, address, or zip code..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-6 py-4 text-lg border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-0"
+          className="w-full px-6 py-4 text-lg glass-input text-foreground focus:outline-none"
         />
         <Button 
           type="submit" 
-          className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#d0161a] hover:bg-[#d0161a]/90 text-white font-bold h-10 w-10 border-2 border-black flex items-center justify-center"
+          className="absolute right-3 top-1/2 -translate-y-1/2 glass-gradient-purple text-white font-bold h-10 w-10 flex items-center justify-center rounded-full"
         >
           <Search className="h-5 w-5" />
         </Button>
