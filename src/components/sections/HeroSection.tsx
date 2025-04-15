@@ -25,17 +25,17 @@ const HeroSection: React.FC = () => {
     <section className="pt-32 md:pt-36 pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
       <div className="container px-4 lg:px-8 mx-auto relative flex justify-center">
         <motion.div 
-          className="w-full max-w-3xl text-center mx-auto" 
+          className="w-full max-w-5xl text-center mx-auto" 
           initial="hidden" 
           animate="visible" 
           variants={stagger}
         >
           <motion.div variants={fadeInUp} className="layer-1 flex flex-col items-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-3 md:mb-4 mx-auto text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-4 mx-auto text-center leading-tight">
               Find a home you love...
             </h1>
             <div className="apple-glow-text mb-4 md:mb-6 shadow-2xl layer-2 mx-auto text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-center">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center leading-tight">
                 at a price you'll love more
               </h1>
             </div>
