@@ -40,10 +40,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block hover:scale-[1.01] transition-transform duration-300 ease-in-out perspective-container"
+      className="block perspective-container"
     >
-      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden">
-        <div className="relative">
+      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden rainbow-glow-card transform translate-z-5">
+        <div className="relative layer-1">
           <img 
             src={validImage} 
             alt={location} 
@@ -53,13 +53,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-4 glass-discount-badge py-1 px-3 font-bold text-white shadow-lg rounded-lg transform translate-z-10 layer-3">
+            <div className="absolute top-4 left-4 glass-discount-badge py-1 px-3 font-bold text-white shadow-lg rounded-md transform translate-z-10 layer-3">
               {roundedBelowMarket}% OFF
             </div>
           )}
         </div>
         
-        <div className="p-6">
+        <div className="p-6 layer-2">
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-bold text-xl text-foreground layer-1">{address || location.split(',')[0]}</h3>
             <div className="text-right">
@@ -90,7 +90,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="glass-button w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 hover:opacity-90 layer-3 transform translate-z-10">
+              <div className="glass-button w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10">
                 <ArrowRight size={20} className="text-[#FF5C00]" />
               </div>
             </div>

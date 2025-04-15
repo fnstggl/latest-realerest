@@ -25,7 +25,7 @@ const HeroSection: React.FC = () => {
     <section className="pt-32 md:pt-36 pb-16 relative overflow-hidden perspective-container">
       <div className="container px-4 lg:px-8 mx-auto relative">
         <motion.div 
-          className="grid md:grid-cols-2 gap-8 md:gap-12 items-center" 
+          className="mx-auto max-w-3xl text-center" 
           initial="hidden" 
           animate="visible" 
           variants={stagger}
@@ -45,7 +45,7 @@ const HeroSection: React.FC = () => {
             <div className="glass-card p-1 mb-6 md:mb-8 shadow-xl layer-2">
               <SearchBar className="" />
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
                 asChild 
                 variant="glass" 
@@ -60,24 +60,6 @@ const HeroSection: React.FC = () => {
               >
                 <Link to="/about">Learn More</Link>
               </Button>
-            </div>
-          </motion.div>
-          
-          <motion.div className="relative perspective-container" variants={fadeInUp}>
-            <div className="glass-card p-6 rounded-xl relative shadow-2xl card-3d">
-              <img 
-                src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
-                alt="Modern house with a luxurious pool" 
-                className="w-full h-auto rounded-lg object-cover shadow-lg"
-              />
-              
-              <div className="absolute -bottom-5 -right-5 glass-dark p-4 rounded-lg shadow-xl max-w-[200px] layer-2">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                  <span className="text-sm font-medium">Trending Now</span>
-                </div>
-                <p className="text-xs opacity-80">Exclusive properties below market value in your area</p>
-              </div>
             </div>
           </motion.div>
         </motion.div>

@@ -40,7 +40,7 @@ const CTASection: React.FC = () => {
               </Button>
             </div>
           </div>
-          <div className="glass overflow-hidden rounded-xl shadow-2xl perspective-container">
+          <div className="glass overflow-hidden rounded-xl shadow-2xl perspective-container layer-2">
             <AspectRatio ratio={16/9} className="w-full">
               <img 
                 src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
@@ -48,13 +48,6 @@ const CTASection: React.FC = () => {
                 className="w-full h-full object-cover rounded-lg"
               />
             </AspectRatio>
-            <div className="absolute -bottom-5 -right-5 glass-dark p-4 rounded-lg shadow-xl max-w-[200px] layer-2">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span className="text-sm font-medium">Exclusive Deal</span>
-              </div>
-              <p className="text-xs opacity-80">Limited time offer on premium properties</p>
-            </div>
           </div>
         </div>
       </div>

@@ -130,18 +130,32 @@
     filter: brightness(1.05);
   }
   
-  /* Glass button with Apple-style glow */
-  .apple-glow-button {
+  /* Gradient hover text effect for links */
+  .gradient-hover-text {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .gradient-hover-text:hover {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 15px rgba(108, 66, 245, 0.4), 0 0 30px rgba(217, 70, 239, 0.2);
+  }
+  
+  /* Glass button with outline glow */
+  .glow-button-outline {
     position: relative;
     transition: all 0.3s ease;
     transform-style: preserve-3d;
   }
   
-  .apple-glow-button:hover {
-    box-shadow: 0 10px 25px rgba(255, 92, 0, 0.2);
+  .glow-button-outline:hover {
+    box-shadow: 0 5px 15px rgba(255, 92, 0, 0.1);
   }
   
-  .apple-glow-button:hover::before {
+  .glow-button-outline:hover::before {
     content: "";
     position: absolute;
     inset: -2px;
@@ -164,6 +178,36 @@
   /* Glass button icon */
   .glass-button-icon {
     transform: translateZ(15px);
+  }
+
+  /* Rainbow glow card animation */
+  .rainbow-glow-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    transform-style: preserve-3d;
+    transform: translateY(0) translateZ(0);
+  }
+  
+  .rainbow-glow-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    border-radius: inherit;
+    opacity: 0;
+    filter: blur(8px);
+    transition: opacity 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover {
+    transform: translateY(-5px) translateZ(0);
+  }
+  
+  .rainbow-glow-card:hover::before {
+    opacity: 0.6;
+    animation: gradientShift 3s linear infinite;
   }
 
   .white-bg-with-splashes {
@@ -304,7 +348,7 @@
 }
 
 .card-3d:hover {
-  transform: perspective(1000px) rotateX(-2deg) translateZ(5px);
+  transform: translateZ(5px);
 }
 
 .glass-banner {

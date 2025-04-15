@@ -108,7 +108,7 @@ const FeaturedProperties: React.FC = () => {
                 onClick={() => navigate('/search')} 
                 className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 flex items-center gap-2"
               >
-                View All Properties
+                <span className="apple-glow-text-small">View All Properties</span>
                 <div className="glass-button-icon w-8 h-8 rounded-full flex items-center justify-center shadow-lg bg-white/20 backdrop-blur-md border border-white/30 layer-3">
                   <ArrowRight size={18} className="text-[#FF5C00]" />
                 </div>

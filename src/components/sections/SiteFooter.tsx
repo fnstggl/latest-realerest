@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const SiteFooter: React.FC = () => {
   return (
     <footer className="pt-10 pb-4 relative overflow-hidden">
-      <div className="container px-4 lg:px-8 mx-auto md:ml-64">
+      <div className="container px-4 lg:px-8 mx-auto">
         <div className="glass-card p-8 rounded-xl mb-6">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
@@ -21,28 +21,28 @@ const SiteFooter: React.FC = () => {
             <div>
               <h3 className="font-bold text-foreground mb-4 text-xl">Platform</h3>
               <ul className="space-y-2">
-                <li><Link to="/search" className="text-foreground/80 hover:text-primary font-medium">Search Homes</Link></li>
-                <li><Link to="/sell/create" className="text-foreground/80 hover:text-primary font-medium">List Property</Link></li>
-                <li><Link to="/faq" className="text-foreground/80 hover:text-primary font-medium">FAQ</Link></li>
+                <li><Link to="/search" className="text-foreground/80 gradient-hover-text font-medium">Search Homes</Link></li>
+                <li><Link to="/sell/create" className="text-foreground/80 gradient-hover-text font-medium">List Property</Link></li>
+                <li><Link to="/faq" className="text-foreground/80 gradient-hover-text font-medium">FAQ</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-bold text-foreground mb-4 text-xl">Company</h3>
               <ul className="space-y-2">
-                <li><Link to="/about" className="text-foreground/80 hover:text-primary font-medium">About Us</Link></li>
-                <li><Link to="/blog" className="text-foreground/80 hover:text-primary font-medium">Blog</Link></li>
-                <li><Link to="/careers" className="text-foreground/80 hover:text-primary font-medium">Careers</Link></li>
-                <li><Link to="/contact" className="text-foreground/80 hover:text-primary font-medium">Contact</Link></li>
+                <li><Link to="/about" className="text-foreground/80 gradient-hover-text font-medium">About Us</Link></li>
+                <li><Link to="/blog" className="text-foreground/80 gradient-hover-text font-medium">Blog</Link></li>
+                <li><Link to="/careers" className="text-foreground/80 gradient-hover-text font-medium">Careers</Link></li>
+                <li><Link to="/contact" className="text-foreground/80 gradient-hover-text font-medium">Contact</Link></li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-bold text-foreground mb-4 text-xl">Legal</h3>
               <ul className="space-y-2">
-                <li><Link to="/terms" className="text-foreground/80 hover:text-primary font-medium">Terms of Service</Link></li>
-                <li><Link to="/privacy" className="text-foreground/80 hover:text-primary font-medium">Privacy Policy</Link></li>
-                <li><Link to="/cookies" className="text-foreground/80 hover:text-primary font-medium">Cookie Policy</Link></li>
+                <li><Link to="/terms" className="text-foreground/80 gradient-hover-text font-medium">Terms of Service</Link></li>
+                <li><Link to="/privacy" className="text-foreground/80 gradient-hover-text font-medium">Privacy Policy</Link></li>
+                <li><Link to="/cookies" className="text-foreground/80 gradient-hover-text font-medium">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
