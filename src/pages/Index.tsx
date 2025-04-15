@@ -15,12 +15,14 @@ const Index: React.FC = () => {
       <div className="gradient-blob gradient-blob-3"></div>
       <div className="gradient-blob gradient-blob-4"></div>
       
-      <Navbar />
-      <div className="w-full max-w-full overflow-hidden">
-        <HeroSection />
-        <FeaturedProperties />
-        <CTASection />
-        <SiteFooter />
+      <div className="flex flex-col md:flex-row">
+        <Navbar />
+        <div className="w-full max-w-full overflow-hidden">
+          <HeroSection />
+          <FeaturedProperties />
+          <CTASection />
+          <SiteFooter />
+        </div>
       </div>
     </div>
   );

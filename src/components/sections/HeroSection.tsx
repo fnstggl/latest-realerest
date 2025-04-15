@@ -33,10 +33,8 @@ const stagger = {
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="pt-32 pb-16 relative overflow-hidden">
-      {/* No need to add gradient background shapes as they're now in the Index component */}
-      
-      <div className="container px-4 lg:px-8 mx-auto relative">
+    <section className="pt-32 md:pt-20 pb-16 relative overflow-hidden">
+      <div className="container px-4 lg:px-8 mx-auto relative md:ml-64">
         <motion.div 
           className="grid md:grid-cols-2 gap-8 md:gap-12 items-center" 
           initial="visible" 
@@ -66,7 +64,7 @@ const HeroSection: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 asChild 
-                variant="black" 
+                variant="glass" 
                 className="font-bold text-base shadow-lg"
               >
                 <Link to="/search">Find Homes</Link>

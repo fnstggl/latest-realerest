@@ -42,9 +42,7 @@ const FeaturedProperties: React.FC = () => {
       }} 
       variants={fadeInUp}
     >
-      {/* No need for gradient background shapes as they're in the Index component */}
-      
-      <div className="container px-4 lg:px-8 mx-auto">
+      <div className="container px-4 lg:px-8 mx-auto md:ml-64">
         <div className="flex items-center mb-8">
           <div className="glass-gradient-pink inline-block px-3 py-1 rounded-xl shadow-md">
             <h2 className="text-3xl font-bold text-white">Featured</h2>
@@ -120,7 +118,7 @@ const FeaturedProperties: React.FC = () => {
             ) : (
               <div className="glass-card p-12 text-center">
                 <h3 className="text-2xl font-bold text-foreground mb-6">No properties have been listed yet.</h3>
-                <Button className="glass-gradient-orange font-bold text-white" onClick={() => navigate('/sell/create')}>
+                <Button className="glass" onClick={() => navigate('/sell/create')}>
                   List Your Property
                 </Button>
               </div>

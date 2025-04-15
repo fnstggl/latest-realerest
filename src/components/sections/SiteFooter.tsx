@@ -5,10 +5,7 @@ import { Link } from 'react-router-dom';
 const SiteFooter: React.FC = () => {
   return (
     <footer className="pt-10 pb-4 relative overflow-hidden">
-      {/* Gradient background shapes */}
-      <div className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full bg-purple-300/20 blur-3xl"></div>
-      
-      <div className="container px-4 lg:px-8 mx-auto">
+      <div className="container px-4 lg:px-8 mx-auto md:ml-64">
         <div className="glass-card p-8 rounded-xl mb-6">
           <div className="grid md:grid-cols-4 gap-8">
             <div>

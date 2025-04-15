@@ -20,9 +20,7 @@ const CTASection: React.FC = () => {
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeInUp}
     >
-      {/* No need for gradient background shapes as they're in the Index component */}
-      
-      <div className="container px-4 lg:px-8 mx-auto">
+      <div className="container px-4 lg:px-8 mx-auto md:ml-64">
         <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12">
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">
@@ -35,7 +33,7 @@ const CTASection: React.FC = () => {
               Get started today and discover properties below market value in your desired location.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="black" className="font-bold">
+              <Button asChild variant="glass" className="font-bold">
                 <Link to="/search">Find Homes</Link>
               </Button>
               <Button asChild variant="glass" className="font-bold">
