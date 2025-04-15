@@ -20,7 +20,7 @@ const CTASection: React.FC = () => {
       variants={fadeInUp}
     >
       <div className="container px-4 lg:px-8 mx-auto flex justify-center">
-        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl perspective-container search-glow max-w-5xl w-full">
+        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl perspective-container card-hover-glow max-w-5xl w-full">
           <div className="layer-1">
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
@@ -32,15 +32,15 @@ const CTASection: React.FC = () => {
               Get started today and discover properties below market value in your desired location.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl search-glow">
+              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl card-hover-glow">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl search-glow">
+              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl card-hover-glow">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
           </div>
-          <div className="glass overflow-hidden rounded-xl shadow-2xl perspective-container layer-2 search-glow">
+          <div className="glass overflow-hidden rounded-xl shadow-2xl perspective-container layer-2 card-hover-glow">
             <AspectRatio ratio={16/9} className="w-full">
               <img 
                 src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
