@@ -25,7 +25,7 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
   Located in a desirable neighborhood, this property won't last long at this price!`;
 
   return (
-    <div className="glass-card shadow-lg p-4 sm:p-6 transform transition-all duration-300 perspective-container">
+    <div className="glass-card shadow-lg p-4 sm:p-6 transform transition-all duration-300 perspective-container outline-glow-card">
       <h2 className="text-xl sm:text-2xl font-bold mb-4 text-foreground layer-1">Property Description</h2>
       <p className="whitespace-pre-line text-sm sm:text-base layer-2">
         {description || defaultDescription}

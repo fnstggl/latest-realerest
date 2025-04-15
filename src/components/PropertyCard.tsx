@@ -42,7 +42,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       to={`/property/${id}`} 
       className="block perspective-container"
     >
-      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden rainbow-glow-card transform translate-z-5">
+      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden outline-glow-card transform translate-z-5">
         <div className="relative layer-1">
           <img 
             src={validImage} 

@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -155,6 +154,14 @@
     box-shadow: 0 5px 15px rgba(255, 92, 0, 0.1);
   }
   
+  .glow-button-outline:hover span {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 15px rgba(108, 66, 245, 0.4), 0 0 30px rgba(217, 70, 239, 0.2);
+  }
+  
   .glow-button-outline:hover::before {
     content: "";
     position: absolute;
@@ -180,33 +187,28 @@
     transform: translateZ(15px);
   }
 
-  /* Rainbow glow card animation */
-  .rainbow-glow-card {
+  /* Property card with outline glow animation */
+  .outline-glow-card {
     position: relative;
     overflow: hidden;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     transform-style: preserve-3d;
     transform: translateY(0) translateZ(0);
   }
   
-  .rainbow-glow-card::before {
+  .outline-glow-card:hover {
+    transform: translateY(-5px) translateZ(0);
+  }
+  
+  .outline-glow-card:hover::before {
     content: "";
     position: absolute;
     inset: -1px;
     z-index: -1;
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     border-radius: inherit;
-    opacity: 0;
-    filter: blur(8px);
-    transition: opacity 0.3s ease;
-  }
-  
-  .rainbow-glow-card:hover {
-    transform: translateY(-5px) translateZ(0);
-  }
-  
-  .rainbow-glow-card:hover::before {
     opacity: 0.6;
+    filter: blur(8px);
     animation: gradientShift 3s linear infinite;
   }
 
