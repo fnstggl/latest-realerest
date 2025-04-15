@@ -31,11 +31,6 @@ const HeroSection: React.FC = () => {
           variants={stagger}
         >
           <motion.div variants={fadeInUp} className="layer-1">
-            <div className="mb-2">
-              <span className="px-4 py-1 text-sm glass-banner backdrop-blur-lg rounded-full border border-white/40 text-primary font-medium inline-block mb-4 shadow-lg">
-                Real Estate Reimagined
-              </span>
-            </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-3 md:mb-4 break-words sm:whitespace-nowrap text-shadow">
               Find a home you love...
             </h1>
@@ -54,14 +49,14 @@ const HeroSection: React.FC = () => {
               <Button 
                 asChild 
                 variant="glass" 
-                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 rainbow-glow-hover"
               >
                 <Link to="/search">Find Homes</Link>
               </Button>
               <Button 
                 asChild 
                 variant="glass" 
-                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 rainbow-glow-hover"
               >
                 <Link to="/about">Learn More</Link>
               </Button>

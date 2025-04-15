@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BadgePercent, Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
+import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
 interface PropertyCardProps {
@@ -40,7 +40,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block hover:scale-[1.01] transition-transform duration-300 ease-in-out perspective-container"
+      className="block hover:scale-[1.01] transition-transform duration-300 ease-in-out perspective-container rainbow-glow-card"
     >
       <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden">
         <div className="relative">
@@ -53,7 +53,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-0 glass-gradient-orange py-1 px-3 font-bold text-white shadow-lg rounded-r-lg layer-2">
+            <div className="absolute top-4 left-0 glass-discount-badge py-1 px-3 font-bold text-white shadow-lg rounded-lg layer-2">
               {roundedBelowMarket}% OFF
             </div>
           )}

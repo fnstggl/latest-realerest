@@ -25,15 +25,15 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
   Located in a desirable neighborhood, this property won't last long at this price!`;
 
   return (
-    <div className="glass-card shadow-lg p-4 sm:p-6 transform hover:scale-[1.01] transition-all duration-300 perspective-container">
+    <div className="glass-card shadow-lg p-4 sm:p-6 transform hover:scale-[1.01] transition-all duration-300 perspective-container rainbow-glow-card">
       <h2 className="text-xl sm:text-2xl font-bold mb-4 text-foreground layer-1">Property Description</h2>
-      <p className="whitespace-pre-line text-sm sm:text-base">
+      <p className="whitespace-pre-line text-sm sm:text-base layer-2">
         {description || defaultDescription}
       </p>
       
       {comparables && comparables.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-lg sm:text-xl font-bold mb-2 bg-[#FF5C00] inline-block px-3 py-1 rounded-lg text-white shadow-lg">Comparable Properties</h3>
+        <div className="mt-6 layer-2">
+          <h3 className="text-lg sm:text-xl font-bold mb-2 glass-gradient-orange inline-block px-3 py-1 rounded-lg text-white shadow-lg">Comparable Properties</h3>
           <ul className="list-disc pl-5 text-sm sm:text-base mt-4">
             {comparables.map((address, index) => (
               <li key={index} className="mb-1 break-words">{address}</li>

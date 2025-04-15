@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white/30 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
-        destructive: "bg-white/30 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
-        outline: "border border-white/30 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-foreground shadow-lg",
-        secondary: "bg-white/30 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        default: "bg-white/30 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 rainbow-glow-hover",
+        destructive: "bg-white/30 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 rainbow-glow-hover",
+        outline: "border border-white/30 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-foreground shadow-lg rainbow-glow-hover",
+        secondary: "bg-white/30 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 rainbow-glow-hover",
+        ghost: "hover:bg-accent hover:text-accent-foreground rainbow-glow-hover",
         link: "text-[#FF5C00] underline-offset-4 hover:underline",
-        warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
-        glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 text-foreground shadow-lg",
-        navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
-        red: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
+        warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 rainbow-glow-hover",
+        glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 text-foreground shadow-lg rainbow-glow-hover",
+        navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 rainbow-glow-hover",
+        red: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 rainbow-glow-hover",
       },
       size: {
         default: "h-10 px-4 py-2",

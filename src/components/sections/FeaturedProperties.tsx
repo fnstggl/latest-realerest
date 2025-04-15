@@ -47,7 +47,7 @@ const FeaturedProperties: React.FC = () => {
         {error ? (
           <div className="glass-card p-12 text-center shadow-xl">
             <h3 className="text-xl font-bold text-red-600 mb-4">{error}</h3>
-            <Button className="glass-button shadow-lg" onClick={() => window.location.reload()}>
+            <Button className="glass-button shadow-lg rainbow-glow-hover" onClick={() => window.location.reload()}>
               Try Again
             </Button>
           </div>
@@ -95,9 +95,9 @@ const FeaturedProperties: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="glass-card p-12 text-center shadow-xl">
+              <div className="glass-card p-12 text-center shadow-xl rainbow-glow-card">
                 <h3 className="text-2xl font-bold text-foreground mb-6">No properties have been listed yet.</h3>
-                <Button className="glass shadow-lg" onClick={() => navigate('/sell/create')}>
+                <Button className="glass shadow-lg rainbow-glow-hover" onClick={() => navigate('/sell/create')}>
                   List Your Property
                 </Button>
               </div>
@@ -106,7 +106,7 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 rainbow-glow-hover"
               >
                 View All Properties
                 <ArrowRight size={18} />

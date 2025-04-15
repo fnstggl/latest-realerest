@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -143,6 +144,58 @@
     transform: perspective(1000px) translateZ(10px);
   }
 
+  /* Glass discount badge */
+  .glass-discount-badge {
+    background: linear-gradient(135deg, #FF5C00 0%, #FF8A3D 100%);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transform: translateZ(15px);
+  }
+
+  /* Rainbow glow effects */
+  .rainbow-glow-hover {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-glow-hover:hover {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  }
+  
+  .rainbow-glow-hover:hover::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    background: linear-gradient(90deg, #FF5C00, #FF3CAC, #8B5CF6, #0EA5E9, #10B981);
+    border-radius: inherit;
+    z-index: -1;
+    animation: animateGlow 2s linear infinite;
+    opacity: 0.7;
+    filter: blur(8px);
+  }
+  
+  .rainbow-glow-card {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover {
+    z-index: 1;
+  }
+  
+  .rainbow-glow-card:hover::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, #FF5C00, #FF3CAC, #8B5CF6, #0EA5E9, #10B981);
+    border-radius: inherit;
+    z-index: -1;
+    animation: animateGlow 3s linear infinite;
+    opacity: 0.5;
+    filter: blur(6px);
+  }
+
   .white-bg-with-splashes {
     background: white;
     position: relative;
@@ -238,6 +291,43 @@
     left: 10%;
     animation-delay: -16s;
   }
+
+  /* Rainbow blobs */
+  .rainbow-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.08;
+    z-index: -1;
+    animation: float 20s ease-in-out infinite;
+    background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+    background-size: 1800% 1800%;
+    animation: float 15s ease-in-out infinite, animateGlow 10s linear infinite;
+  }
+  
+  .rainbow-blob-1 {
+    width: 40vw;
+    height: 40vw;
+    top: 5%;
+    left: 60%;
+    animation-delay: -3s;
+  }
+  
+  .rainbow-blob-2 {
+    width: 30vw;
+    height: 30vw;
+    bottom: 10%;
+    left: 5%;
+    animation-delay: -7s;
+  }
+  
+  .rainbow-blob-3 {
+    width: 25vw;
+    height: 25vw;
+    top: 60%;
+    right: 10%;
+    animation-delay: -12s;
+  }
 }
 
 @keyframes gradientShift {
@@ -261,6 +351,18 @@
   }
   100% {
     transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes animateGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 

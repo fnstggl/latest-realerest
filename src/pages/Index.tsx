@@ -9,7 +9,7 @@ import SiteFooter from '@/components/sections/SiteFooter';
 const Index: React.FC = () => {
   return (
     <div className="min-h-screen white-bg-with-splashes overflow-hidden relative perspective-container">
-      {/* Subtle gradient blobs for background */}
+      {/* Rainbow gradient blobs for background */}
       <div className="gradient-blob gradient-blob-1"></div>
       <div className="gradient-blob gradient-blob-2"></div>
       <div className="gradient-blob gradient-blob-3"></div>
@@ -19,6 +19,9 @@ const Index: React.FC = () => {
       <div className="gradient-blob gradient-blob-7"></div>
       <div className="gradient-blob gradient-blob-8"></div>
       <div className="gradient-blob gradient-blob-9"></div>
+      <div className="rainbow-blob rainbow-blob-1"></div>
+      <div className="rainbow-blob rainbow-blob-2"></div>
+      <div className="rainbow-blob rainbow-blob-3"></div>
       
       {/* Content layers */}
       <div className="relative z-10">

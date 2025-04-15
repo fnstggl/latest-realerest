@@ -20,7 +20,7 @@ const CTASection: React.FC = () => {
       variants={fadeInUp}
     >
       <div className="container px-4 lg:px-8 mx-auto">
-        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl perspective-container">
+        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl perspective-container rainbow-glow-card">
           <div className="layer-1">
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
@@ -32,10 +32,10 @@ const CTASection: React.FC = () => {
               Get started today and discover properties below market value in your desired location.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl">
+              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl rainbow-glow-hover">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl">
+              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl rainbow-glow-hover">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>

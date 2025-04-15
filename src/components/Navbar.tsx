@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
   const MobileNavigation = () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="glass" size="icon" className="md:hidden">
+        <Button variant="glass" size="icon" className="md:hidden rainbow-glow-hover">
           <Menu size={24} />
         </Button>
       </SheetTrigger>
@@ -46,35 +46,35 @@ const Navbar: React.FC = () => {
           </Link>
           
           <nav className="flex flex-col space-y-2">
-            <Link to="/" className="text-primary hover:text-white transition-colors font-bold text-xl py-3 border-b border-white/10">
+            <Link to="/" className="text-primary hover:text-white transition-colors font-bold text-xl py-3 border-b border-white/10 rainbow-glow-hover">
               Home
             </Link>
-            <Link to="/search" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10">
+            <Link to="/search" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10 rainbow-glow-hover">
               Browse
             </Link>
-            <Link to="/sell/create" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10">
+            <Link to="/sell/create" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10 rainbow-glow-hover">
               Sell
             </Link>
-            <Link to="/about" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10">
+            <Link to="/about" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10 rainbow-glow-hover">
               About
             </Link>
-            <Link to="/contact" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10">
+            <Link to="/contact" className="text-white hover:text-primary transition-colors font-bold text-xl py-3 border-b border-white/10 rainbow-glow-hover">
               Contact
             </Link>
           </nav>
           
           <div className="flex flex-col gap-3 mt-4">
             {isAuthenticated ? (
-              <Button className="w-full justify-center font-bold" variant="glass" onClick={() => navigate('/dashboard')}>
+              <Button className="w-full justify-center font-bold rainbow-glow-hover" variant="glass" onClick={() => navigate('/dashboard')}>
                 Dashboard
               </Button>
             ) : (
               <>
-                <Button variant="glass" className="w-full justify-center font-bold text-foreground" onClick={handleSignIn}>
+                <Button variant="glass" className="w-full justify-center font-bold text-foreground rainbow-glow-hover" onClick={handleSignIn}>
                   Log In
                 </Button>
                 
-                <Button variant="glass" className="w-full justify-center font-bold" onClick={handleSignUp}>
+                <Button variant="glass" className="w-full justify-center font-bold rainbow-glow-hover" onClick={handleSignUp}>
                   Sign up
                 </Button>
               </>
@@ -103,11 +103,11 @@ const Navbar: React.FC = () => {
         </div>
         
         <div className="hidden md:flex space-x-8 mx-auto">
-          <Link to="/" className="text-foreground font-semibold hover:text-primary transition-colors">Home</Link>
-          <Link to="/search" className="text-foreground font-semibold hover:text-primary transition-colors">Browse</Link>
-          <Link to="/sell/create" className="text-foreground font-semibold hover:text-primary transition-colors">Sell</Link>
-          <Link to="/about" className="text-foreground font-semibold hover:text-primary transition-colors">About</Link>
-          <Link to="/contact" className="text-foreground font-semibold hover:text-primary transition-colors">Contact</Link>
+          <Link to="/" className="text-foreground font-semibold hover:text-primary transition-colors rainbow-glow-hover">Home</Link>
+          <Link to="/search" className="text-foreground font-semibold hover:text-primary transition-colors rainbow-glow-hover">Browse</Link>
+          <Link to="/sell/create" className="text-foreground font-semibold hover:text-primary transition-colors rainbow-glow-hover">Sell</Link>
+          <Link to="/about" className="text-foreground font-semibold hover:text-primary transition-colors rainbow-glow-hover">About</Link>
+          <Link to="/contact" className="text-foreground font-semibold hover:text-primary transition-colors rainbow-glow-hover">Contact</Link>
         </div>
         
         <div className="flex items-center gap-2 sm:gap-4">
@@ -118,7 +118,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="glass" 
-                className="p-1 sm:p-2 glass text-xs sm:text-base relative"
+                className="p-1 sm:p-2 glass text-xs sm:text-base relative rainbow-glow-hover"
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={isMobile ? 16 : 20} className="mr-1 sm:mr-2" />
@@ -135,7 +135,7 @@ const Navbar: React.FC = () => {
             <>
               <Button 
                 variant="glass" 
-                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
+                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4 rainbow-glow-hover" 
                 onClick={handleSignIn}
               >
                 <LogIn size={18} className="mr-2" />
@@ -144,7 +144,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="glass" 
-                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
+                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4 rainbow-glow-hover" 
                 onClick={handleSignUp}
               >
                 Sign up
