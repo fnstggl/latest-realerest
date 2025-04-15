@@ -5,17 +5,17 @@ import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
-// Animation variants
+// Remove animations
 const fadeInUp = {
-  hidden: { opacity: 0, y: 60 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  hidden: { opacity: 1, y: 0 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0 } }
 };
 
 const CTASection: React.FC = () => {
   return (
     <motion.section 
       className="py-16 bg-white text-black border-t-4 border-b-4 border-black"
-      initial="hidden"
+      initial="visible"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeInUp}
@@ -25,7 +25,7 @@ const CTASection: React.FC = () => {
           <div>
             <h2 className="text-4xl font-bold mb-4">
               Ready to find your 
-              <span className="bg-[#d0161a] text-white px-2 mx-2 font-bold border-2 border-black">
+              <span className="bg-black text-white px-2 mx-2 font-bold border-2 border-black">
                 dream home?
               </span>
             </h2>
@@ -33,10 +33,10 @@ const CTASection: React.FC = () => {
               Get started today and discover properties below market value in your desired location.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="red" className="neo-button-primary font-bold">
+              <Button asChild variant="black" className="neo-button-primary font-bold">
                 <Link to="/search">Find Homes</Link>
               </Button>
-              <Button asChild variant="navy" className="neo-button-secondary font-bold">
+              <Button asChild variant="black" className="neo-button-secondary font-bold">
                 <Link to="/about">Learn More</Link>
               </Button>
             </div>
