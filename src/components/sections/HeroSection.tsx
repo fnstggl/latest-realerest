@@ -34,8 +34,8 @@ const HeroSection: React.FC = () => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-3 md:mb-4 break-words sm:whitespace-nowrap text-shadow">
               Find a home you love...
             </h1>
-            <div className="glass-gradient-orange-pink px-2 sm:px-3 py-1 rounded-xl w-auto inline-block mb-4 md:mb-6 shadow-2xl layer-2">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white break-words sm:whitespace-nowrap text-shadow">
+            <div className="apple-glow-text mb-4 md:mb-6 shadow-2xl layer-2">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold break-words sm:whitespace-nowrap text-shadow">
                 at a price you'll love more
               </h1>
             </div>
@@ -49,14 +49,14 @@ const HeroSection: React.FC = () => {
               <Button 
                 asChild 
                 variant="glass" 
-                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 rainbow-glow-hover"
+                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
               >
                 <Link to="/search">Find Homes</Link>
               </Button>
               <Button 
                 asChild 
                 variant="glass" 
-                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 rainbow-glow-hover"
+                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
               >
                 <Link to="/about">Learn More</Link>
               </Button>

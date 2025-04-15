@@ -40,7 +40,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block hover:scale-[1.01] transition-transform duration-300 ease-in-out perspective-container rainbow-glow-card"
+      className="block hover:scale-[1.01] transition-transform duration-300 ease-in-out perspective-container"
     >
       <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden">
         <div className="relative">
@@ -53,7 +53,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-0 glass-discount-badge py-1 px-3 font-bold text-white shadow-lg rounded-lg layer-2">
+            <div className="absolute top-4 left-4 glass-discount-badge py-1 px-3 font-bold text-white shadow-lg rounded-lg transform translate-z-10 layer-3">
               {roundedBelowMarket}% OFF
             </div>
           )}
@@ -61,21 +61,21 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         
         <div className="p-6">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-xl text-foreground">{address || location.split(',')[0]}</h3>
+            <h3 className="font-bold text-xl text-foreground layer-1">{address || location.split(',')[0]}</h3>
             <div className="text-right">
-              <div className="text-2xl font-bold text-[#FF5C00]">{formatCurrency(price)}</div>
-              <div className="text-muted-foreground line-through">{formatCurrency(marketPrice)}</div>
+              <div className="text-2xl font-bold text-[#FF5C00] layer-2">{formatCurrency(price)}</div>
+              <div className="text-muted-foreground line-through layer-1">{formatCurrency(marketPrice)}</div>
             </div>
           </div>
           
-          <div className="flex items-center text-foreground/70 mb-4">
+          <div className="flex items-center text-foreground/70 mb-4 layer-1">
             <MapPin size={18} className="mr-1" />
             <span>{location}</span>
           </div>
           
           <div className="border-t border-white/20 pt-4 mt-2">
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4 text-foreground/80">
+              <div className="flex items-center gap-4 text-foreground/80 layer-1">
                 <div className="flex items-center">
                   <Bed size={18} className="mr-1" />
                   <span className="font-bold">{beds}</span>
@@ -90,8 +90,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="text-white w-10 h-10 flex items-center justify-center bg-[#FF5C00] rounded-full shadow-lg transition-all duration-300 hover:opacity-90 layer-2">
-                <ArrowRight size={20} />
+              <div className="glass-button w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 hover:opacity-90 layer-3 transform translate-z-10">
+                <ArrowRight size={20} className="text-[#FF5C00]" />
               </div>
             </div>
           </div>

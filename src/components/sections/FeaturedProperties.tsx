@@ -34,8 +34,8 @@ const FeaturedProperties: React.FC = () => {
     >
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <div className="glass-gradient-pink inline-block px-4 py-2 rounded-xl shadow-xl layer-2">
-            <h2 className="text-3xl font-bold text-white">Featured</h2>
+          <div className="apple-glow-text-small inline-block px-4 py-2 rounded-xl shadow-xl layer-2">
+            <h2 className="text-3xl font-bold">Featured</h2>
           </div>
           <h2 className="text-3xl font-bold text-foreground ml-4 layer-1">Properties</h2>
         </div>
@@ -47,7 +47,7 @@ const FeaturedProperties: React.FC = () => {
         {error ? (
           <div className="glass-card p-12 text-center shadow-xl">
             <h3 className="text-xl font-bold text-red-600 mb-4">{error}</h3>
-            <Button className="glass-button shadow-lg rainbow-glow-hover" onClick={() => window.location.reload()}>
+            <Button className="glass-button shadow-lg" onClick={() => window.location.reload()}>
               Try Again
             </Button>
           </div>
@@ -95,9 +95,9 @@ const FeaturedProperties: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="glass-card p-12 text-center shadow-xl rainbow-glow-card">
+              <div className="glass-card p-12 text-center shadow-xl">
                 <h3 className="text-2xl font-bold text-foreground mb-6">No properties have been listed yet.</h3>
-                <Button className="glass shadow-lg rainbow-glow-hover" onClick={() => navigate('/sell/create')}>
+                <Button className="glass shadow-lg" onClick={() => navigate('/sell/create')}>
                   List Your Property
                 </Button>
               </div>
@@ -106,10 +106,12 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 rainbow-glow-hover"
+                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 flex items-center gap-2"
               >
                 View All Properties
-                <ArrowRight size={18} />
+                <div className="glass-button-icon w-8 h-8 rounded-full flex items-center justify-center shadow-lg bg-white/20 backdrop-blur-md border border-white/30 layer-3">
+                  <ArrowRight size={18} className="text-[#FF5C00]" />
+                </div>
               </Button>
             </div>
           </>
