@@ -61,7 +61,7 @@ const SignUp: React.FC = () => {
       <div className="w-full p-8 flex flex-col">
         <Button 
           variant="ghost" 
-          className="w-fit mb-8 font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+          className="w-fit mb-8 font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all search-glow"
           onClick={() => navigate('/')}
         >
           <ArrowLeft className="mr-2" size={18} />
@@ -82,12 +82,12 @@ const SignUp: React.FC = () => {
           )}
           
           {signupSuccess ? (
-            <div className="text-center p-6 border-4 border-green-500 rounded-md bg-green-50 mb-6">
+            <div className="text-center p-6 border-4 border-green-500 rounded-md bg-green-50 mb-6 search-glow">
               <h3 className="text-xl font-bold text-green-700 mb-2">Account Created Successfully!</h3>
               <p className="mb-4">We've sent a confirmation email to your inbox. Please verify your email to complete the signup process.</p>
               <Button
                 onClick={() => navigate('/signin')} 
-                className="bg-green-600 hover:bg-green-700 text-white font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                className="bg-green-600 hover:bg-green-700 text-white font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all search-glow"
               >
                 Go to Login
               </Button>
@@ -133,7 +133,7 @@ const SignUp: React.FC = () => {
               </div>
               <Button 
                 type="submit"
-                className="w-full bg-[#d60013] hover:bg-[#d60013]/90 text-white font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                className="w-full bg-[#d60013] hover:bg-[#d60013]/90 text-white font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all search-glow"
                 disabled={isLoading}
               >
                 {isLoading ? "Creating Account..." : "Sign Up"}

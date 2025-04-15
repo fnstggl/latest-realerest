@@ -49,14 +49,14 @@ const HeroSection: React.FC = () => {
               <Button 
                 asChild 
                 variant="glass" 
-                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 search-glow"
               >
                 <Link to="/search">Find Homes</Link>
               </Button>
               <Button 
                 asChild 
                 variant="glass" 
-                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+                className="font-bold text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 search-glow"
               >
                 <Link to="/about">Learn More</Link>
               </Button>

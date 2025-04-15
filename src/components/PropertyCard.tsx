@@ -42,7 +42,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       to={`/property/${id}`} 
       className="block perspective-container"
     >
-      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden outline-glow-card transform translate-z-5">
+      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden search-glow transform translate-z-5">
         <div className="relative layer-1">
           <img 
             src={validImage} 
@@ -90,7 +90,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="glass-button w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10">
+              <div className="glass-button w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10 search-glow">
                 <ArrowRight size={20} className="text-[#FF5C00]" />
               </div>
             </div>
