@@ -40,9 +40,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block hover:scale-[1.02] transition-transform duration-300 ease-in-out hover:shadow-2xl"
+      className="block hover:scale-[1.02] transition-transform duration-300 ease-in-out perspective-container"
     >
-      <div className="glass-card overflow-hidden h-full backdrop-blur-lg border border-white/30 shadow-lg">
+      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-2xl overflow-hidden">
         <div className="relative">
           <img 
             src={validImage} 
@@ -53,7 +53,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-0 glass-gradient-orange py-1 px-3 font-bold text-white shadow-md rounded-r-lg">
+            <div className="absolute top-4 left-0 glass-gradient-orange py-1 px-3 font-bold text-white shadow-xl rounded-r-lg layer-2">
               {roundedBelowMarket}% OFF
             </div>
           )}
@@ -73,7 +73,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             <span>{location}</span>
           </div>
           
-          <div className="border-t border-white/10 pt-4 mt-2">
+          <div className="border-t border-white/20 pt-4 mt-2">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4 text-foreground/80">
                 <div className="flex items-center">
@@ -90,7 +90,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="text-white w-10 h-10 flex items-center justify-center glass-gradient-pink rounded-full shadow-md transition-all duration-300 hover:opacity-90 hover:translate-x-1">
+              <div className="text-white w-10 h-10 flex items-center justify-center glass-gradient-pink rounded-full shadow-xl transition-all duration-300 hover:opacity-90 hover:translate-x-1 layer-2">
                 <ArrowRight size={20} />
               </div>
             </div>

@@ -6,20 +6,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary/90 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-primary/80 shadow-sm",
-        destructive: "bg-destructive/90 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-destructive/80 shadow-sm",
-        outline: "border border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-foreground shadow-sm",
-        secondary: "bg-secondary/90 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-secondary/80 shadow-sm",
+        default: "bg-white/20 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
+        destructive: "bg-white/20 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
+        outline: "border border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-foreground shadow-lg",
+        secondary: "bg-white/20 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        warning: "bg-amber-500/90 text-white backdrop-blur-md rounded-xl hover:bg-amber-500/80 shadow-sm",
-        glass: "bg-white/20 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-sm",
-        navy: "bg-primary/90 text-white backdrop-blur-md rounded-xl hover:bg-primary/80 shadow-lg",
-        red: "bg-destructive/90 text-white backdrop-blur-md rounded-xl hover:bg-destructive/80 shadow-lg",
+        warning: "bg-white/20 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
+        glass: "bg-white/20 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-lg",
+        navy: "bg-white/20 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
+        red: "bg-white/20 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
       },
       size: {
         default: "h-10 px-4 py-2",

@@ -23,7 +23,7 @@ const FeaturedProperties: React.FC = () => {
 
   return (
     <motion.section 
-      className="py-16 relative overflow-hidden"
+      className="py-16 relative overflow-hidden perspective-container"
       initial="hidden" 
       whileInView="visible" 
       viewport={{
@@ -32,29 +32,29 @@ const FeaturedProperties: React.FC = () => {
       }} 
       variants={fadeInUp}
     >
-      <div className="container px-4 lg:px-8 mx-auto">
+      <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <div className="glass-gradient-pink inline-block px-3 py-1 rounded-xl shadow-md">
+          <div className="glass-gradient-pink inline-block px-4 py-2 rounded-xl shadow-xl layer-2">
             <h2 className="text-3xl font-bold text-white">Featured</h2>
           </div>
-          <h2 className="text-3xl font-bold text-foreground ml-4">Properties</h2>
+          <h2 className="text-3xl font-bold text-foreground ml-4 layer-1">Properties</h2>
         </div>
         
-        <p className="text-xl text-foreground mb-8">
+        <p className="text-xl text-foreground mb-8 max-w-3xl">
           Discover properties below market value, exclusively available through RealerEstate.
         </p>
         
         {error ? (
-          <div className="glass-card p-12 text-center">
+          <div className="glass-card p-12 text-center shadow-xl">
             <h3 className="text-xl font-bold text-red-600 mb-4">{error}</h3>
-            <Button className="glass-button" onClick={() => window.location.reload()}>
+            <Button className="glass-button shadow-lg" onClick={() => window.location.reload()}>
               Try Again
             </Button>
           </div>
         ) : loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((_, index) => (
-              <div key={index} className="glass-card p-4 h-[400px]">
+              <div key={index} className="glass-card p-4 h-[400px] shadow-xl">
                 <Skeleton className="h-[240px] w-full mb-4 bg-white/10" />
                 <Skeleton className="h-6 w-3/4 mb-2 bg-white/10" />
                 <Skeleton className="h-4 w-1/2 mb-4 bg-white/10" />
@@ -95,16 +95,19 @@ const FeaturedProperties: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="glass-card p-12 text-center">
+              <div className="glass-card p-12 text-center shadow-xl">
                 <h3 className="text-2xl font-bold text-foreground mb-6">No properties have been listed yet.</h3>
-                <Button className="glass" onClick={() => navigate('/sell/create')}>
+                <Button className="glass shadow-lg" onClick={() => navigate('/sell/create')}>
                   List Your Property
                 </Button>
               </div>
             )}
             
             <div className="mt-12 text-center">
-              <Button onClick={() => navigate('/search')} className="glass-button font-bold">
+              <Button 
+                onClick={() => navigate('/search')} 
+                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+              >
                 View All Properties
                 <ArrowRight size={18} />
               </Button>
