@@ -15,7 +15,7 @@ const buttonVariants = cva(
         outline: "border border-white/30 bg-white/20 hover:bg-white/20 backdrop-blur-md rounded-xl text-foreground shadow-lg search-glow",
         secondary: "bg-white/30 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",
         ghost: "hover:bg-accent hover:text-accent-foreground search-glow",
-        link: "text-[#FF5C00] underline-offset-4 hover:underline",
+        link: "rainbow-text underline-offset-4 hover:underline",
         warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",
         glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-lg search-glow",
         navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow",

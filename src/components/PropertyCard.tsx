@@ -53,7 +53,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-4 glass-discount-badge py-1 px-3 font-bold text-white shadow-lg rounded-md transform translate-z-10 layer-3">
+            <div className="absolute top-4 left-4 glass-discount-badge-gradient py-1 px-3 font-bold text-white shadow-lg rounded-md transform translate-z-10 layer-3">
               {roundedBelowMarket}% OFF
             </div>
           )}
@@ -63,7 +63,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-bold text-xl text-foreground layer-1">{address || location.split(',')[0]}</h3>
             <div className="text-right">
-              <div className="text-2xl font-bold text-[#FF5C00] layer-2">{formatCurrency(price)}</div>
+              <div className="text-2xl font-bold rainbow-text layer-2">{formatCurrency(price)}</div>
               <div className="text-muted-foreground line-through layer-1">{formatCurrency(marketPrice)}</div>
             </div>
           </div>
@@ -90,8 +90,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="glass-button w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10 search-glow">
-                <ArrowRight size={20} className="text-[#FF5C00]" />
+              <div className="glass-button-rainbow w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10">
+                <ArrowRight size={20} className="rainbow-text" />
               </div>
             </div>
           </div>

@@ -19,8 +19,8 @@ const CTASection: React.FC = () => {
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeInUp}
     >
-      <div className="container px-4 lg:px-8 mx-auto">
-        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl perspective-container search-glow">
+      <div className="container px-4 lg:px-8 mx-auto flex justify-center">
+        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl perspective-container search-glow max-w-5xl w-full">
           <div className="layer-1">
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 

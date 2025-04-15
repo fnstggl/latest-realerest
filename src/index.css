@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -94,7 +95,12 @@
   }
   
   .glass-button-primary {
-    @apply bg-[#FF5C00]/90 backdrop-blur-md border border-white/30 rounded-xl hover:bg-[#FF5C00]/80 transition-all text-white shadow-sm;
+    @apply backdrop-blur-md border border-white/30 rounded-xl transition-all text-white shadow-sm;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+  }
+  
+  .glass-button-rainbow {
+    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-full hover:bg-white/40 transition-all shadow-sm search-glow;
   }
   
   .text-shadow {
@@ -127,6 +133,17 @@
     font-weight: bold;
     transform: translateZ(10px);
     filter: brightness(1.05);
+  }
+  
+  /* Rainbow gradient text for pricing and other highlights */
+  .rainbow-text {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+    font-weight: bold;
   }
   
   /* Gradient hover text effect for links */
@@ -188,6 +205,14 @@
   
   .glass-discount-badge {
     background: linear-gradient(135deg, #FF5C00 0%, #FF8A3D 100%);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Rainbow gradient badge for discounts */
+  .glass-discount-badge-gradient {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     backdrop-filter: blur(4px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
