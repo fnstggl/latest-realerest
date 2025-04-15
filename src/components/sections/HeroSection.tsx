@@ -5,43 +5,32 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import SearchBar from '@/components/SearchBar';
 
-// Animation variants - modified to remove scroll animations
+// Animation variants
 const fadeInUp = {
-  hidden: {
-    opacity: 1,
-    y: 0
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0
-    }
-  }
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
 const stagger = {
-  hidden: {
-    opacity: 1
-  },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0
+      staggerChildren: 0.1
     }
   }
 };
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="pt-32 md:pt-20 pb-16 relative overflow-hidden">
-      <div className="container px-4 lg:px-8 mx-auto relative md:ml-64">
+    <section className="pt-32 md:pt-36 pb-16 relative overflow-hidden">
+      <div className="container px-4 lg:px-8 mx-auto relative">
         <motion.div 
           className="grid md:grid-cols-2 gap-8 md:gap-12 items-center" 
-          initial="visible" 
+          initial="hidden" 
           animate="visible" 
           variants={stagger}
         >
-          <motion.div className="order-2 md:order-1" variants={fadeInUp}>
+          <motion.div variants={fadeInUp}>
             <div className="mb-2">
               <span className="px-4 py-1 text-sm bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-primary font-medium inline-block mb-4">
                 Real Estate Reimagined
@@ -79,7 +68,7 @@ const HeroSection: React.FC = () => {
             </div>
           </motion.div>
           
-          <motion.div className="order-1 md:order-2 relative" variants={fadeInUp}>
+          <motion.div className="relative" variants={fadeInUp}>
             <div className="glass-card p-6 rounded-xl relative shadow-xl">
               <img 
                 src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 

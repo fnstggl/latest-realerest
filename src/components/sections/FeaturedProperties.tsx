@@ -8,19 +8,9 @@ import { ArrowRight } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useListings } from '@/hooks/useListings';
 
-// Remove scroll animations
 const fadeInUp = {
-  hidden: {
-    opacity: 1,
-    y: 0
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0
-    }
-  }
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
 
 const FeaturedProperties: React.FC = () => {
@@ -34,7 +24,7 @@ const FeaturedProperties: React.FC = () => {
   return (
     <motion.section 
       className="py-16 relative overflow-hidden"
-      initial="visible" 
+      initial="hidden" 
       whileInView="visible" 
       viewport={{
         once: true,
@@ -42,7 +32,7 @@ const FeaturedProperties: React.FC = () => {
       }} 
       variants={fadeInUp}
     >
-      <div className="container px-4 lg:px-8 mx-auto md:ml-64">
+      <div className="container px-4 lg:px-8 mx-auto">
         <div className="flex items-center mb-8">
           <div className="glass-gradient-pink inline-block px-3 py-1 rounded-xl shadow-md">
             <h2 className="text-3xl font-bold text-white">Featured</h2>
@@ -84,21 +74,10 @@ const FeaturedProperties: React.FC = () => {
                 {listings.map((property, index) => (
                   <motion.div 
                     key={property.id} 
-                    initial={{
-                      opacity: 1,
-                      y: 0
-                    }} 
-                    whileInView={{
-                      opacity: 1,
-                      y: 0
-                    }} 
-                    viewport={{
-                      once: true
-                    }} 
-                    transition={{
-                      duration: 0,
-                      delay: 0
-                    }}
+                    initial={{ opacity: 0, y: 20 }} 
+                    whileInView={{ opacity: 1, y: 0 }} 
+                    viewport={{ once: true }} 
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <PropertyCard 
                       id={property.id} 

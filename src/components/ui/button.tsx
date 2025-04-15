@@ -18,6 +18,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         warning: "bg-amber-500/90 text-white backdrop-blur-md rounded-xl hover:bg-amber-500/80 shadow-sm",
         glass: "bg-white/20 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-sm",
+        navy: "bg-primary/90 text-white backdrop-blur-md rounded-xl hover:bg-primary/80 shadow-lg",
+        red: "bg-destructive/90 text-white backdrop-blur-md rounded-xl hover:bg-destructive/80 shadow-lg",
       },
       size: {
         default: "h-10 px-4 py-2",

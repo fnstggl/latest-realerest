@@ -105,34 +105,35 @@
   .glass-gradient-purple {
     @apply bg-gradient-purple;
     background-size: 200% 200%;
-    animation: gradientShift 5s ease infinite;
+    animation: gradientShift 8s ease infinite;
   }
 
   .glass-gradient-orange {
     @apply bg-gradient-orange;
     background-size: 200% 200%;
-    animation: gradientShift 5s ease infinite;
+    animation: gradientShift 8s ease infinite;
   }
 
   .glass-gradient-pink {
     @apply bg-gradient-pink;
     background-size: 200% 200%;
-    animation: gradientShift 5s ease infinite;
+    animation: gradientShift 8s ease infinite;
   }
 
   .glass-gradient-orange-pink {
     @apply bg-gradient-orange-pink;
     background-size: 200% 200%;
-    animation: gradientShift 5s ease infinite;
+    animation: gradientShift 8s ease infinite;
   }
 
   /* Background gradient blobs */
   .gradient-blob {
     position: absolute;
     border-radius: 50%;
-    filter: blur(60px);
+    filter: blur(80px);
     opacity: 0.4;
     z-index: -1;
+    animation: float 15s ease-in-out infinite;
   }
   
   .gradient-blob-1 {
@@ -141,6 +142,7 @@
     height: 30vw;
     top: 10%;
     left: -10%;
+    animation-delay: 0s;
   }
   
   .gradient-blob-2 {
@@ -149,6 +151,7 @@
     height: 25vw;
     top: 20%;
     right: -5%;
+    animation-delay: -2s;
   }
   
   .gradient-blob-3 {
@@ -157,6 +160,7 @@
     height: 35vw;
     bottom: 5%;
     left: 20%;
+    animation-delay: -4s;
   }
   
   .gradient-blob-4 {
@@ -165,6 +169,25 @@
     height: 20vw;
     bottom: 10%;
     right: 5%;
+    animation-delay: -6s;
+  }
+  
+  .gradient-blob-5 {
+    background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
+    width: 15vw;
+    height: 15vw;
+    top: 40%;
+    left: 30%;
+    animation-delay: -8s;
+  }
+  
+  .gradient-blob-6 {
+    background: linear-gradient(135deg, #CE9FFC 0%, #7367F0 100%);
+    width: 18vw;
+    height: 18vw;
+    top: 60%;
+    right: 25%;
+    animation-delay: -10s;
   }
 }
 
@@ -177,6 +200,18 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+  100% {
+    transform: translateY(0) scale(1);
   }
 }
 

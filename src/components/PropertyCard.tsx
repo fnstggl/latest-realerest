@@ -40,9 +40,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block hover:scale-[1.02] transition-transform duration-300 ease-in-out hover:shadow-xl"
+      className="block hover:scale-[1.02] transition-transform duration-300 ease-in-out hover:shadow-2xl"
     >
-      <div className="glass-card overflow-hidden h-full">
+      <div className="glass-card overflow-hidden h-full backdrop-blur-lg border border-white/30 shadow-lg">
         <div className="relative">
           <img 
             src={validImage} 
