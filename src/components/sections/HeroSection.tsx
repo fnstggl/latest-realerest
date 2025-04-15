@@ -34,9 +34,7 @@ const stagger = {
 const HeroSection: React.FC = () => {
   return (
     <section className="pt-32 pb-16 relative overflow-hidden">
-      {/* Gradient background shapes */}
-      <div className="absolute -top-10 -right-10 w-60 h-60 rounded-full bg-purple-300/20 blur-3xl"></div>
-      <div className="absolute top-40 -left-20 w-80 h-80 rounded-full bg-blue-300/20 blur-3xl"></div>
+      {/* No need to add gradient background shapes as they're now in the Index component */}
       
       <div className="container px-4 lg:px-8 mx-auto relative">
         <motion.div 
@@ -54,7 +52,7 @@ const HeroSection: React.FC = () => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-3 md:mb-4 break-words sm:whitespace-nowrap text-shadow">
               Find a home you love...
             </h1>
-            <div className="glass-gradient-purple px-2 sm:px-3 py-1 rounded-xl w-auto inline-block mb-4 md:mb-6 shadow-lg">
+            <div className="glass-gradient-orange-pink px-2 sm:px-3 py-1 rounded-xl w-auto inline-block mb-4 md:mb-6 shadow-lg">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white break-words sm:whitespace-nowrap text-shadow">
                 at a price you'll love more
               </h1>

@@ -8,7 +8,13 @@ import SiteFooter from '@/components/sections/SiteFooter';
 
 const Index: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-hidden relative">
+      {/* Gradient blobs */}
+      <div className="gradient-blob gradient-blob-1"></div>
+      <div className="gradient-blob gradient-blob-2"></div>
+      <div className="gradient-blob gradient-blob-3"></div>
+      <div className="gradient-blob gradient-blob-4"></div>
+      
       <Navbar />
       <div className="w-full max-w-full overflow-hidden">
         <HeroSection />

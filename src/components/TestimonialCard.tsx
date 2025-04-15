@@ -33,7 +33,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
                 <Star
                   key={i}
                   size={16}
-                  className={i < rating ? "fill-primary text-primary" : "text-gray-300"}
+                  className={i < rating ? "fill-accent text-accent" : "text-gray-300"}
                 />
               ))}
             </div>

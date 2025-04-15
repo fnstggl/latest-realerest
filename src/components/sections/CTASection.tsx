@@ -20,16 +20,14 @@ const CTASection: React.FC = () => {
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeInUp}
     >
-      {/* Gradient background shapes */}
-      <div className="absolute top-0 -right-20 w-72 h-72 rounded-full bg-purple-300/20 blur-3xl"></div>
-      <div className="absolute bottom-0 -left-10 w-60 h-60 rounded-full bg-blue-300/20 blur-3xl"></div>
+      {/* No need for gradient background shapes as they're in the Index component */}
       
       <div className="container px-4 lg:px-8 mx-auto">
         <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12">
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
-              <span className="glass-gradient-purple px-2 mx-2 font-bold rounded-lg text-white inline-block">
+              <span className="glass-gradient-orange px-2 mx-2 font-bold rounded-lg text-white inline-block">
                 dream home?
               </span>
             </h2>

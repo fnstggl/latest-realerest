@@ -32,7 +32,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
         />
         <Button 
           type="submit" 
-          className="absolute right-3 top-1/2 -translate-y-1/2 glass-gradient-purple text-white font-bold h-10 w-10 flex items-center justify-center rounded-full"
+          className="absolute right-3 top-1/2 -translate-y-1/2 glass-gradient-pink text-white font-bold h-10 w-10 flex items-center justify-center rounded-full"
         >
           <Search className="h-5 w-5" />
         </Button>

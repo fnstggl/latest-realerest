@@ -53,7 +53,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-0 glass-gradient-purple py-1 px-3 font-bold text-white shadow-md rounded-r-lg">
+            <div className="absolute top-4 left-0 glass-gradient-orange py-1 px-3 font-bold text-white shadow-md rounded-r-lg">
               {roundedBelowMarket}% OFF
             </div>
           )}
@@ -90,7 +90,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="text-white w-10 h-10 flex items-center justify-center glass-gradient-purple rounded-full shadow-md transition-all duration-300 hover:opacity-90 hover:translate-x-1">
+              <div className="text-white w-10 h-10 flex items-center justify-center glass-gradient-pink rounded-full shadow-md transition-all duration-300 hover:opacity-90 hover:translate-x-1">
                 <ArrowRight size={20} />
               </div>
             </div>

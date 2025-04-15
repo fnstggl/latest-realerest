@@ -5,39 +5,39 @@
 
 @layer base {
   :root {
-    --background: 260 60% 98%;
-    --foreground: 260 10% 10%;
+    --background: 280 60% 98%;
+    --foreground: 280 10% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 260 10% 10%;
+    --card-foreground: 280 10% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 260 10% 10%;
+    --popover-foreground: 280 10% 10%;
 
-    --primary: 260 60% 55%;
-    --primary-foreground: 260 0% 100%;
+    --primary: 320 60% 55%;
+    --primary-foreground: 320 0% 100%;
 
-    --secondary: 260 30% 96%;
-    --secondary-foreground: 260 10% 10%;
+    --secondary: 280 30% 96%;
+    --secondary-foreground: 280 10% 10%;
 
-    --muted: 260 30% 96%;
-    --muted-foreground: 260 5% 45%;
+    --muted: 280 30% 96%;
+    --muted-foreground: 280 5% 45%;
 
-    --accent: 260 30% 96%;
-    --accent-foreground: 260 10% 10%;
+    --accent: 30 95% 55%;
+    --accent-foreground: 30 10% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 260 30% 92%;
-    --input: 260 30% 92%;
-    --ring: 260 60% 55%;
+    --border: 280 30% 92%;
+    --input: 280 30% 92%;
+    --ring: 320 60% 55%;
 
     --radius: 1rem;
   }
 
   body {
-    @apply bg-gradient-to-br from-purple-50 to-blue-50 text-foreground antialiased;
+    @apply bg-gradient-to-br from-pink-50 to-purple-50 text-foreground antialiased;
     background-attachment: fixed;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-text-size-adjust: 100%;
@@ -87,7 +87,7 @@
   }
   
   .glass-input {
-    @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent;
+    @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent;
   }
   
   .glass-button {
@@ -95,7 +95,7 @@
   }
   
   .glass-button-primary {
-    @apply bg-glass-purple/90 backdrop-blur-md border border-white/30 rounded-xl hover:bg-glass-purple/80 transition-all text-white shadow-sm;
+    @apply bg-glass-pink/90 backdrop-blur-md border border-white/30 rounded-xl hover:bg-glass-pink/80 transition-all text-white shadow-sm;
   }
   
   .text-shadow {
@@ -106,6 +106,65 @@
     @apply bg-gradient-purple;
     background-size: 200% 200%;
     animation: gradientShift 5s ease infinite;
+  }
+
+  .glass-gradient-orange {
+    @apply bg-gradient-orange;
+    background-size: 200% 200%;
+    animation: gradientShift 5s ease infinite;
+  }
+
+  .glass-gradient-pink {
+    @apply bg-gradient-pink;
+    background-size: 200% 200%;
+    animation: gradientShift 5s ease infinite;
+  }
+
+  .glass-gradient-orange-pink {
+    @apply bg-gradient-orange-pink;
+    background-size: 200% 200%;
+    animation: gradientShift 5s ease infinite;
+  }
+
+  /* Background gradient blobs */
+  .gradient-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.4;
+    z-index: -1;
+  }
+  
+  .gradient-blob-1 {
+    background: linear-gradient(135deg, #D946EF 0%, #9b87f5 100%);
+    width: 30vw;
+    height: 30vw;
+    top: 10%;
+    left: -10%;
+  }
+  
+  .gradient-blob-2 {
+    background: linear-gradient(135deg, #F97316 0%, #FDBA74 100%);
+    width: 25vw;
+    height: 25vw;
+    top: 20%;
+    right: -5%;
+  }
+  
+  .gradient-blob-3 {
+    background: linear-gradient(135deg, #9b87f5 0%, #7E69AB 100%);
+    width: 35vw;
+    height: 35vw;
+    bottom: 5%;
+    left: 20%;
+  }
+  
+  .gradient-blob-4 {
+    background: linear-gradient(135deg, #F8A4D8 0%, #FECACA 100%);
+    width: 20vw;
+    height: 20vw;
+    bottom: 10%;
+    right: 5%;
   }
 }
 

@@ -80,8 +80,9 @@ export default {
 				},
 				glass: {
 					purple: '#9b87f5',
-					blue: '#0EA5E9',
-					pink: '#ea384c',
+					orange: '#F97316',
+					pink: '#D946EF',
+					peach: '#FDE1D3',
 					background: 'rgba(255, 255, 255, 0.05)',
 					border: 'rgba(255, 255, 255, 0.1)',
 					overlay: 'rgba(0, 0, 0, 0.2)',
@@ -139,7 +140,10 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-purple': 'linear-gradient(135deg, #9b87f5 0%, #7E69AB 100%)',
-				'gradient-blue': 'linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)',
+				'gradient-orange': 'linear-gradient(135deg, #F97316 0%, #FDBA74 100%)',
+				'gradient-pink': 'linear-gradient(135deg, #D946EF 0%, #F8A4D8 100%)',
+				'gradient-peach': 'linear-gradient(135deg, #FDE1D3 0%, #FECACA 100%)',
+				'gradient-orange-pink': 'linear-gradient(135deg, #F97316 0%, #D946EF 100%)',
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
 			}
