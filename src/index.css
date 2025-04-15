@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -149,6 +148,8 @@
     position: relative;
     transition: all 0.3s ease;
     transform-style: preserve-3d;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 1;
   }
   
   .glow-button-outline:hover {
@@ -170,12 +171,21 @@
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     border-radius: inherit;
     z-index: -1;
-    opacity: 0.5;
-    filter: blur(8px);
+    opacity: 0.7;
+    filter: blur(3px);
     transform: translateZ(-5px);
+    animation: gradientShift 3s linear infinite;
   }
   
-  /* Glass discount badge */
+  .glow-button-outline:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: inherit;
+    z-index: -1;
+  }
+  
   .glass-discount-badge {
     background: linear-gradient(135deg, #FF5C00 0%, #FF8A3D 100%);
     backdrop-filter: blur(4px);
@@ -183,12 +193,10 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 
-  /* Glass button icon */
   .glass-button-icon {
     transform: translateZ(15px);
   }
 
-  /* Property card with outline glow animation */
   .outline-glow-card {
     position: relative;
     overflow: hidden;
@@ -196,6 +204,7 @@
     transform-style: preserve-3d;
     transform: translateY(0) translateZ(0);
     background-color: rgba(255, 255, 255, 0.85);
+    z-index: 1;
   }
   
   .outline-glow-card:hover {
@@ -205,13 +214,48 @@
   .outline-glow-card:hover::before {
     content: "";
     position: absolute;
-    inset: -1px;
+    inset: -2px;
     z-index: -1;
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     border-radius: inherit;
-    opacity: 0.6;
-    filter: blur(8px);
+    opacity: 0.8;
+    filter: blur(3px);
     animation: gradientShift 3s linear infinite;
+  }
+  
+  .outline-glow-card:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  .search-glow {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .search-glow:hover::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.6;
+    filter: blur(3px);
+    animation: gradientShift 3s linear infinite;
+  }
+  
+  .search-glow:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: inherit;
+    z-index: -1;
   }
 
   .white-bg-with-splashes {

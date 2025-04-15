@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white/30 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 glow-button-outline",
-        destructive: "bg-white/30 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 glow-button-outline",
-        outline: "border border-white/30 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-foreground shadow-lg glow-button-outline",
-        secondary: "bg-white/30 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 glow-button-outline",
+        default: "bg-white/30 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 glow-button-outline",
+        destructive: "bg-white/30 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 glow-button-outline",
+        outline: "border border-white/30 bg-white/20 hover:bg-white/20 backdrop-blur-md rounded-xl text-foreground shadow-lg glow-button-outline",
+        secondary: "bg-white/30 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 glow-button-outline",
         ghost: "hover:bg-accent hover:text-accent-foreground glow-button-outline",
         link: "text-[#FF5C00] underline-offset-4 hover:underline",
-        warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 glow-button-outline",
-        glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 text-foreground shadow-lg glow-button-outline",
-        navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 glow-button-outline",
-        red: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 glow-button-outline",
+        warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 glow-button-outline",
+        glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-lg glow-button-outline",
+        navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 glow-button-outline",
+        red: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 glow-button-outline",
       },
       size: {
         default: "h-10 px-4 py-2",

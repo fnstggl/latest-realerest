@@ -20,7 +20,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   parking = "2-Car Garage"
 }) => {
   return (
-    <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6">
+    <div className="glass-card outline-glow-card h-full backdrop-blur-lg border border-white/30 shadow-lg p-4 sm:p-6 rounded-xl">
       <h2 className="text-xl sm:text-2xl font-bold mb-4">The Numbers</h2>
       
       <div className="space-y-4 text-sm sm:text-base">
