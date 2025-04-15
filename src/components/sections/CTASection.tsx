@@ -20,11 +20,11 @@ const CTASection: React.FC = () => {
       variants={fadeInUp}
     >
       <div className="container px-4 lg:px-8 mx-auto flex justify-center">
-        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl perspective-container search-glow max-w-5xl w-full">
+        <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl property-card-glow max-w-5xl w-full">
           <div className="layer-1">
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
-              <span className="apple-glow-text-small px-3 mx-2 py-1 font-bold rounded-lg inline-block layer-2 shadow-lg">
+              <span className="purple-text px-3 mx-2 py-1 font-bold rounded-lg inline-block layer-2 shadow-lg">
                 dream home?
               </span>
             </h2>
@@ -40,7 +40,7 @@ const CTASection: React.FC = () => {
               </Button>
             </div>
           </div>
-          <div className="glass overflow-hidden rounded-xl shadow-2xl perspective-container layer-2 search-glow">
+          <div className="glass overflow-hidden rounded-xl shadow-2xl perspective-container layer-2 property-card-glow">
             <AspectRatio ratio={16/9} className="w-full">
               <img 
                 src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
