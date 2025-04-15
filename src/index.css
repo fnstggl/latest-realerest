@@ -192,42 +192,17 @@
   .outline-glow-card {
     position: relative;
     overflow: hidden;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     transform-style: preserve-3d;
     transform: translateY(0) translateZ(0);
     background-color: rgba(255, 255, 255, 0.85);
   }
   
   .outline-glow-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px) translateZ(0);
   }
   
-  /* FIXED: Ensure the outline glow is added to the card only on hover */
-  .outline-glow-card::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    z-index: -1;
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
-    border-radius: inherit;
-    opacity: 0;
-    filter: blur(8px);
-    transition: opacity 0.3s ease;
-    animation: gradientShift 3s linear infinite;
-    pointer-events: none;
-  }
-
   .outline-glow-card:hover::before {
-    opacity: 0.6;
-  }
-
-  /* Edge glow effect for search bar */
-  .edge-glow-input {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .edge-glow-input::before {
     content: "";
     position: absolute;
     inset: -1px;
@@ -237,7 +212,6 @@
     opacity: 0.6;
     filter: blur(8px);
     animation: gradientShift 3s linear infinite;
-    pointer-events: none;
   }
 
   .white-bg-with-splashes {
@@ -298,33 +272,6 @@
     top: 40%;
     left: 30%;
     animation-delay: -8s;
-  }
-
-  /* Glass Card Effects for Property Detail */
-  .property-detail-card {
-    @apply bg-white/75 backdrop-blur-lg border border-white/30 rounded-xl shadow-xl;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .property-detail-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
-  }
-
-  .property-detail-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
   }
 }
 
@@ -433,4 +380,3 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
 }
-

@@ -22,10 +22,10 @@ const stagger = {
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="pt-32 md:pt-36 pb-16 relative overflow-hidden perspective-container flex justify-center items-center w-full">
-      <div className="container mx-auto px-4 lg:px-8 flex justify-center items-center">
+    <section className="pt-32 md:pt-36 pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
+      <div className="container px-4 lg:px-8 mx-auto relative">
         <motion.div 
-          className="w-full max-w-3xl text-center" 
+          className="mx-auto max-w-3xl text-center" 
           initial="hidden" 
           animate="visible" 
           variants={stagger}
@@ -42,7 +42,7 @@ const HeroSection: React.FC = () => {
             <p className="text-foreground mb-6 md:mb-8 text-base md:text-lg">
               Helping families buy homes they were told they couldn't afford.
             </p>
-            <div className="glass-card edge-glow-input p-1 mb-6 md:mb-8 shadow-xl layer-2">
+            <div className="glass-card p-1 mb-6 md:mb-8 shadow-xl layer-2">
               <SearchBar className="" />
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

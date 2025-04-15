@@ -20,10 +20,10 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   parking = "2-Car Garage"
 }) => {
   return (
-    <div className="glass-card shadow-lg p-4 sm:p-6 transform transition-all duration-300 perspective-container">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 apple-glow-text-small inline-block px-3 py-1 rounded-lg">The Numbers</h2>
+    <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 sm:p-6">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">The Numbers</h2>
       
-      <div className="space-y-4 text-sm sm:text-base mt-4">
+      <div className="space-y-4 text-sm sm:text-base">
         <div className="flex justify-between">
           <span className="font-bold">Property Type:</span>
           <span>{propertyType}</span>
@@ -42,14 +42,14 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
         </div>
         
         {afterRepairValue !== undefined && (
-          <div className="flex justify-between p-2 glass-card mt-2 layer-1">
+          <div className="flex justify-between">
             <span className="font-bold">ARV:</span>
             <span>{formatCurrency(afterRepairValue)}</span>
           </div>
         )}
         
         {estimatedRehab !== undefined && (
-          <div className="flex justify-between p-2 glass-card mt-2 layer-1">
+          <div className="flex justify-between">
             <span className="font-bold">Est. Rehab Cost:</span>
             <span>{formatCurrency(estimatedRehab)}</span>
           </div>
