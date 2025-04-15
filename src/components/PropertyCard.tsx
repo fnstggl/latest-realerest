@@ -40,9 +40,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block hover:scale-[1.02] transition-transform duration-300 ease-in-out perspective-container"
+      className="block hover:scale-[1.01] transition-transform duration-300 ease-in-out perspective-container"
     >
-      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-2xl overflow-hidden">
+      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden">
         <div className="relative">
           <img 
             src={validImage} 
@@ -53,7 +53,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-0 glass-gradient-orange py-1 px-3 font-bold text-white shadow-xl rounded-r-lg layer-2">
+            <div className="absolute top-4 left-0 glass-gradient-orange py-1 px-3 font-bold text-white shadow-lg rounded-r-lg layer-2">
               {roundedBelowMarket}% OFF
             </div>
           )}
@@ -63,7 +63,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-bold text-xl text-foreground">{address || location.split(',')[0]}</h3>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary">{formatCurrency(price)}</div>
+              <div className="text-2xl font-bold text-[#FF5C00]">{formatCurrency(price)}</div>
               <div className="text-muted-foreground line-through">{formatCurrency(marketPrice)}</div>
             </div>
           </div>
@@ -90,7 +90,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="text-white w-10 h-10 flex items-center justify-center glass-gradient-pink rounded-full shadow-xl transition-all duration-300 hover:opacity-90 hover:translate-x-1 layer-2">
+              <div className="text-white w-10 h-10 flex items-center justify-center bg-[#FF5C00] rounded-full shadow-lg transition-all duration-300 hover:opacity-90 layer-2">
                 <ArrowRight size={20} />
               </div>
             </div>

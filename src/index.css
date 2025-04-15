@@ -1,11 +1,10 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 280 60% 98%;
+    --background: 0 0% 100%;
     --foreground: 280 10% 10%;
 
     --card: 0 0% 100%;
@@ -14,8 +13,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 280 10% 10%;
 
-    --primary: 320 90% 55%;
-    --primary-foreground: 320 0% 100%;
+    --primary: 24 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 280 30% 96%;
     --secondary-foreground: 280 10% 10%;
@@ -23,21 +22,21 @@
     --muted: 280 30% 96%;
     --muted-foreground: 280 5% 45%;
 
-    --accent: 30 95% 60%;
-    --accent-foreground: 30 10% 10%;
+    --accent: 24 100% 50%;
+    --accent-foreground: 24 10% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 280 30% 92%;
     --input: 280 30% 92%;
-    --ring: 320 90% 55%;
+    --ring: 24 100% 50%;
 
     --radius: 1.25rem;
   }
 
   body {
-    @apply bg-gradient-to-br from-purple-50 to-pink-50 text-foreground antialiased;
+    @apply bg-white text-foreground antialiased;
     background-attachment: fixed;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-text-size-adjust: 100%;
@@ -75,34 +74,34 @@
 
   /* Enhanced Glassmorphism utilities */
   .glass {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-lg;
+    @apply bg-white/20 backdrop-blur-md border border-white/20 rounded-xl shadow-lg;
   }
   
   .glass-card {
-    @apply bg-white/15 backdrop-blur-lg border border-white/30 rounded-xl shadow-xl;
+    @apply bg-white/25 backdrop-blur-lg border border-white/30 rounded-xl shadow-xl;
   }
   
   .glass-dark {
-    @apply bg-black/40 backdrop-blur-md border border-white/10 rounded-xl text-white shadow-lg;
+    @apply bg-black/30 backdrop-blur-md border border-white/10 rounded-xl text-white shadow-lg;
   }
   
   .glass-input {
-    @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent;
+    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl focus:ring-2 focus:ring-[#FF5C00] focus:border-transparent;
   }
   
   .glass-button {
-    @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 transition-all shadow-sm;
+    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 transition-all shadow-sm;
   }
   
   .glass-button-primary {
-    @apply bg-glass-pink/90 backdrop-blur-md border border-white/30 rounded-xl hover:bg-glass-pink/80 transition-all text-white shadow-sm;
+    @apply bg-[#FF5C00]/90 backdrop-blur-md border border-white/30 rounded-xl hover:bg-[#FF5C00]/80 transition-all text-white shadow-sm;
   }
   
   .text-shadow {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
   
-  /* Enhanced gradient utilities with 3D effect */
+  /* Gradient highlights with vibrant orange */
   .glass-gradient-purple {
     @apply bg-gradient-purple relative;
     background-size: 200% 200%;
@@ -115,7 +114,8 @@
     @apply bg-gradient-orange relative;
     background-size: 200% 200%;
     animation: gradientShift 8s ease infinite;
-    box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4), 0 8px 10px -8px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #FF5C00 0%, #FF8A3D 100%);
+    box-shadow: 0 10px 25px -5px rgba(255, 92, 0, 0.4), 0 8px 10px -8px rgba(0, 0, 0, 0.2);
     transform: perspective(1000px) translateZ(10px);
   }
 
@@ -128,52 +128,58 @@
   }
 
   .glass-gradient-orange-pink {
-    @apply bg-gradient-orange-pink relative;
+    background: linear-gradient(135deg, #FF5C00 0%, #FF8A3D 50%, #FF719A 100%);
     background-size: 200% 200%;
     animation: gradientShift 8s ease infinite;
-    box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.3), 0 8px 10px -8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px -5px rgba(255, 92, 0, 0.3), 0 8px 10px -8px rgba(0, 0, 0, 0.2);
     transform: perspective(1000px) translateZ(10px);
   }
 
-  /* Rainbow gradient background */
-  .rainbow-bg {
-    background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
-    background-size: 1800% 1800%;
-    animation: rainbow 18s ease infinite;
+  .glass-gradient-blue-purple {
+    background: linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+    box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.3), 0 8px 10px -8px rgba(0, 0, 0, 0.2);
+    transform: perspective(1000px) translateZ(10px);
   }
 
-  /* Enhanced background gradient blobs */
+  .white-bg-with-splashes {
+    background: white;
+    position: relative;
+    overflow: hidden;
+  }
+
   .gradient-blob {
     position: absolute;
     border-radius: 50%;
     filter: blur(80px);
-    opacity: 0.5;
+    opacity: 0.15;
     z-index: -1;
     animation: float 15s ease-in-out infinite;
   }
   
   .gradient-blob-1 {
     background: linear-gradient(135deg, #D946EF 0%, #9b87f5 100%);
-    width: 35vw;
-    height: 35vw;
+    width: 25vw;
+    height: 25vw;
     top: 10%;
-    left: -15%;
+    left: -5%;
     animation-delay: 0s;
   }
   
   .gradient-blob-2 {
-    background: linear-gradient(135deg, #F97316 0%, #FDBA74 100%);
-    width: 30vw;
-    height: 30vw;
+    background: linear-gradient(135deg, #FF5C00 0%, #FDBA74 100%);
+    width: 20vw;
+    height: 20vw;
     top: 20%;
-    right: -10%;
+    right: -5%;
     animation-delay: -2s;
   }
   
   .gradient-blob-3 {
     background: linear-gradient(135deg, #8B5CF6 0%, #7E69AB 100%);
-    width: 40vw;
-    height: 40vw;
+    width: 30vw;
+    height: 30vw;
     bottom: 5%;
     left: 20%;
     animation-delay: -4s;
@@ -181,8 +187,8 @@
   
   .gradient-blob-4 {
     background: linear-gradient(135deg, #F8A4D8 0%, #FECACA 100%);
-    width: 25vw;
-    height: 25vw;
+    width: 15vw;
+    height: 15vw;
     bottom: 15%;
     right: 5%;
     animation-delay: -6s;
@@ -190,27 +196,26 @@
   
   .gradient-blob-5 {
     background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%);
-    width: 20vw;
-    height: 20vw;
+    width: 10vw;
+    height: 10vw;
     top: 40%;
     left: 30%;
     animation-delay: -8s;
   }
   
   .gradient-blob-6 {
-    background: linear-gradient(135deg, #FC466B 0%, #3F5EFB 100%);
-    width: 22vw;
-    height: 22vw;
+    background: linear-gradient(135deg, #FF5C00 0%, #3F5EFB 100%);
+    width: 12vw;
+    height: 12vw;
     top: 60%;
     right: 25%;
     animation-delay: -10s;
   }
 
-  /* New gradient blobs for more vibrancy */
   .gradient-blob-7 {
-    background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
-    width: 18vw;
-    height: 18vw;
+    background: linear-gradient(135deg, #FFD700 0%, #FF5C00 100%);
+    width: 8vw;
+    height: 8vw;
     top: 25%;
     left: 20%;
     animation-delay: -12s;
@@ -218,8 +223,8 @@
 
   .gradient-blob-8 {
     background: linear-gradient(135deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);
-    width: 24vw;
-    height: 24vw;
+    width: 14vw;
+    height: 14vw;
     bottom: 30%;
     right: 15%;
     animation-delay: -14s;
@@ -227,8 +232,8 @@
 
   .gradient-blob-9 {
     background: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
-    width: 15vw;
-    height: 15vw;
+    width: 5vw;
+    height: 5vw;
     top: 70%;
     left: 10%;
     animation-delay: -16s;
@@ -252,17 +257,11 @@
     transform: translateY(0) scale(1) rotate(0deg);
   }
   50% {
-    transform: translateY(-20px) scale(1.05) rotate(5deg);
+    transform: translateY(-10px) scale(1.03) rotate(3deg);
   }
   100% {
     transform: translateY(0) scale(1) rotate(0deg);
   }
-}
-
-@keyframes rainbow {
-  0% { background-position: 0% 82% }
-  50% { background-position: 100% 19% }
-  100% { background-position: 0% 82% }
 }
 
 @layer utilities {
@@ -278,7 +277,6 @@
     }
   }
 
-  /* 3D effect utilities */
   .layer-1 {
     transform: translateZ(10px);
   }
@@ -313,19 +311,17 @@
   @apply m-2 sm:m-4 md:m-6;
 }
 
-/* 3D Card effect */
 .card-3d {
   transform-style: preserve-3d;
   transition: transform 0.5s ease;
 }
 
 .card-3d:hover {
-  transform: perspective(1000px) rotateY(5deg) rotateX(5deg) translateZ(10px);
+  transform: perspective(1000px) rotateX(-2deg) translateZ(5px);
 }
 
-/* Glass banner effect */
 .glass-banner {
-  @apply bg-white/20 backdrop-blur-lg border border-white/30 rounded-xl shadow-lg;
+  @apply bg-white/30 backdrop-blur-lg border border-white/40 rounded-xl shadow-lg;
   position: relative;
   overflow: hidden;
 }

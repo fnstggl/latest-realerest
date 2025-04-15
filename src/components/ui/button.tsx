@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white/20 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
-        destructive: "bg-white/20 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
-        outline: "border border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-foreground shadow-lg",
-        secondary: "bg-white/20 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
+        default: "bg-white/30 text-primary-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
+        destructive: "bg-white/30 text-destructive-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
+        outline: "border border-white/30 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-foreground shadow-lg",
+        secondary: "bg-white/30 text-secondary-foreground backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        warning: "bg-white/20 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
-        glass: "bg-white/20 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-lg",
-        navy: "bg-white/20 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
-        red: "bg-white/20 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30",
+        link: "text-[#FF5C00] underline-offset-4 hover:underline",
+        warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
+        glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 text-foreground shadow-lg",
+        navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
+        red: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30",
       },
       size: {
         default: "h-10 px-4 py-2",
