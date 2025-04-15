@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -79,13 +80,20 @@
     @apply transition-transform duration-200 hover:scale-105;
   }
 
-  /* Enhanced Glassmorphism utilities */
+  /* Enhanced Glassmorphism utilities with more transparency and 3D effects */
   .glass {
     @apply bg-white/20 backdrop-blur-md border border-white/20 rounded-xl shadow-lg;
   }
   
   .glass-card {
-    @apply bg-white/25 backdrop-blur-lg border border-white/30 rounded-xl shadow-xl;
+    @apply bg-white/20 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl;
+  }
+
+  /* New 3D glass card with enhanced depth */
+  .glass-card-3d {
+    @apply bg-white/20 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl transition-all duration-300;
+    transform-style: preserve-3d;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
   }
   
   .glass-dark {
@@ -93,11 +101,24 @@
   }
   
   .glass-input {
-    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl focus:ring-2 focus:ring-[#FF5C00] focus:border-transparent;
+    @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-xl focus:ring-2 focus:ring-[#FF5C00] focus:border-transparent;
   }
   
   .glass-button {
     @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 transition-all shadow-sm;
+  }
+
+  /* New 3D glass button with enhanced depth */
+  .glass-button-3d {
+    @apply bg-white/20 backdrop-blur-md border border-white/20 rounded-xl transition-all shadow-md hover:shadow-lg;
+    transform-style: preserve-3d;
+    transform: translateZ(5px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .glass-button-3d:hover {
+    transform: translateZ(5px) translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   }
   
   .glass-button-primary {
@@ -219,6 +240,64 @@
     border-radius: inherit;
     z-index: -1;
   }
+
+  /* Price outline glow for property prices */
+  .price-outline-glow {
+    position: relative;
+    z-index: 1;
+    transform: translateZ(10px);
+  }
+  
+  .price-outline-glow::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.6;
+    filter: blur(3px);
+    transform: translateZ(-5px);
+    animation: gradientShift 3s linear infinite;
+  }
+  
+  .price-outline-glow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  /* Discount badge glow */
+  .discount-badge-glow {
+    position: relative;
+    z-index: 1;
+    transform: translateZ(10px);
+  }
+  
+  .discount-badge-glow::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.7;
+    filter: blur(3px);
+    transform: translateZ(-5px);
+    animation: gradientShift 3s linear infinite;
+  }
+  
+  .discount-badge-glow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: inherit;
+    z-index: -1;
+  }
   
   /* Purple discount badge */
   .glass-discount-badge-purple {
@@ -275,30 +354,35 @@
     z-index: -1;
   }
 
-  /* Property card glow effect - outline only on hover */
-  .property-card-glow {
-    position: relative;
-    z-index: 1;
-    transition: transform 0.3s ease;
+  /* Property card hover with outline glow */
+  .hover-property-card:hover .glass-card-3d {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
   }
   
-  .property-card-glow:hover::before {
+  .hover-property-card .glass-card-3d::before {
     content: "";
     position: absolute;
     inset: -2px;
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     border-radius: inherit;
     z-index: -1;
-    opacity: 0.8;
+    opacity: 0;
     filter: blur(3px);
+    transform: translateZ(-5px);
+    transition: opacity 0.3s ease;
+  }
+  
+  .hover-property-card:hover .glass-card-3d::before {
+    opacity: 0.8;
     animation: gradientShift 3s linear infinite;
   }
   
-  .property-card-glow:hover::after {
+  .hover-property-card .glass-card-3d::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: inherit;
     z-index: -1;
   }
@@ -324,7 +408,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: inherit;
     z-index: -1;
   }
