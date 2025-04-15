@@ -36,7 +36,7 @@ const HeroSection: React.FC = () => {
           <motion.div className="order-2 md:order-1" variants={fadeInUp}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-black mb-3 md:mb-4 break-words sm:whitespace-nowrap">Find a home you love...</h1>
             <div className="bg-[#d0161a] block mb-4 md:mb-6 px-2 sm:px-3 py-1 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-auto inline-block">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white break-words sm:whitespace-nowrap">at a price you'll love more</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white break-words sm:whitespace-nowrap">at a price you'll love more</h1>
             </div>
             <p className="text-black mb-6 md:mb-8 text-base md:text-lg">Helping families buy homes they were told they couldn't afford.</p>
             <SearchBar className="mb-6 md:mb-8" />
