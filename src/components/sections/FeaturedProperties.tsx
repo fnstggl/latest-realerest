@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -37,7 +36,7 @@ const FeaturedProperties: React.FC = () => {
         </div>
         
         <p className="text-xl text-foreground mb-8 max-w-3xl">
-          Realer Estate does real estate better. We exclusively offer below-market priced homes, and the best part is — they're available to everyone
+          Realer Estate does real estate better. We exclusively offer below-market priced homes, and the best part is... they're available for everyone
         </p>
         
         {error ? (
