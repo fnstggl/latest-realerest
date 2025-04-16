@@ -10,6 +10,7 @@
     position: relative;
     transform-style: preserve-3d;
     transition: transform 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.85); /* Ensuring the background stays white */
   }
   
   .glass-dark {
@@ -21,7 +22,7 @@
   }
   
   .glass-button {
-    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 transition-all shadow-sm;
+    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 transition-all shadow-sm text-black;
   }
   
   /* Super translucent glass style for auth buttons with improved visibility */
@@ -133,6 +134,15 @@
     filter: blur(4px);
   }
   
+  .property-card-glow:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85); /* Ensuring the background stays white */
+    border-radius: inherit;
+    z-index: -1;
+  }
+  
   /* Rainbow text for headings and emphasis - changed to static gradient */
   .rainbow-text {
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
@@ -166,5 +176,16 @@
   
   .perspective-container:hover {
     transform: translateY(-5px);
+  }
+  
+  /* Loading animation */
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
   }
 }

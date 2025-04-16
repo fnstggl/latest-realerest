@@ -57,37 +57,37 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <div className="w-full p-8 flex flex-col">
         <Button 
-          variant="ghost" 
-          className="w-fit mb-8 font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all search-glow"
+          variant="glass" 
+          className="w-fit mb-8 property-card-glow"
           onClick={() => navigate('/')}
         >
           <ArrowLeft className="mr-2" size={18} />
           Back
         </Button>
         
-        <div className="mx-auto w-full max-w-md">
+        <div className="mx-auto w-full max-w-md glass-card backdrop-blur-lg border border-white/30 p-8 rounded-xl shadow-lg property-card-glow">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Create Account</h1>
+            <h1 className="text-4xl font-bold mb-2 text-black">Create Account</h1>
             <p className="text-gray-600">Join DoneDeal to start finding your dream home.</p>
           </div>
         
           {signupError && (
-            <Alert variant="destructive" className="mb-6">
+            <Alert variant="destructive" className="mb-6 glass backdrop-blur-md">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{signupError}</AlertDescription>
             </Alert>
           )}
           
           {signupSuccess ? (
-            <div className="text-center p-6 border-4 border-green-500 rounded-md bg-green-50 mb-6 search-glow">
+            <div className="text-center p-6 glass backdrop-blur-lg border border-green-300 rounded-md mb-6 property-card-glow">
               <h3 className="text-xl font-bold text-green-700 mb-2">Account Created Successfully!</h3>
-              <p className="mb-4">We've sent a confirmation email to your inbox. Please verify your email to complete the signup process.</p>
+              <p className="mb-4 text-black">We've sent a confirmation email to your inbox. Please verify your email to complete the signup process.</p>
               <Button
                 onClick={() => navigate('/signin')} 
-                className="bg-green-600 hover:bg-green-700 text-white font-bold border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all search-glow"
+                className="property-card-glow glass-button-primary text-white font-bold"
               >
                 Go to Login
               </Button>
@@ -95,7 +95,7 @@ const SignUp: React.FC = () => {
           ) : (
             <form onSubmit={handleSignup} className="space-y-6">
               <div>
-                <Label htmlFor="name" className="font-bold">Name</Label>
+                <Label htmlFor="name" className="font-bold text-black">Name</Label>
                 <Input 
                   type="text" 
                   id="name" 
@@ -103,11 +103,11 @@ const SignUp: React.FC = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="mt-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:border-black focus:ring-0"
+                  className="mt-2 glass-input"
                 />
               </div>
               <div>
-                <Label htmlFor="email" className="font-bold">Email</Label>
+                <Label htmlFor="email" className="font-bold text-black">Email</Label>
                 <Input 
                   type="email" 
                   id="email" 
@@ -115,11 +115,11 @@ const SignUp: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="mt-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:border-black focus:ring-0"
+                  className="mt-2 glass-input"
                 />
               </div>
               <div>
-                <Label htmlFor="password" className="font-bold">Password</Label>
+                <Label htmlFor="password" className="font-bold text-black">Password</Label>
                 <Input 
                   type="password" 
                   id="password" 
@@ -127,19 +127,19 @@ const SignUp: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="mt-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:border-black focus:ring-0"
+                  className="mt-2 glass-input"
                 />
                 <p className="text-xs text-gray-500 mt-1">Password must be at least 6 characters long</p>
               </div>
               <Button 
                 type="submit"
-                className="w-full bg-[#d60013] hover:bg-[#d60013]/90 text-white font-bold border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all search-glow"
+                className="w-full property-card-glow glass-button-primary text-white font-bold"
                 disabled={isLoading}
               >
                 {isLoading ? "Creating Account..." : "Sign Up"}
               </Button>
               <p className="text-sm text-gray-600 text-center">
-                Already have an account? <Link to="/signin" className="text-[#d60013] font-bold hover:underline">Log In</Link>
+                Already have an account? <Link to="/signin" className="text-black font-bold hover:underline rainbow-text">Log In</Link>
               </p>
             </form>
           )}

@@ -71,7 +71,7 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <Button 
-                  className="w-full justify-center font-bold" 
+                  className="w-full justify-center font-bold property-card-glow text-black" 
                   variant="translucent"
                   onClick={handleSignIn}
                 >
@@ -79,7 +79,7 @@ const Navbar: React.FC = () => {
                 </Button>
                 
                 <Button 
-                  className="w-full justify-center font-bold" 
+                  className="w-full justify-center font-bold property-card-glow text-black" 
                   variant="translucent"
                   onClick={handleSignUp}
                 >
@@ -126,7 +126,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="glass" 
-                className="p-1 sm:p-2 glass text-xs sm:text-base relative text-foreground"
+                className="p-1 sm:p-2 glass text-xs sm:text-base relative text-foreground property-card-glow"
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={isMobile ? 16 : 20} className="mr-1 sm:mr-2" />
@@ -143,7 +143,7 @@ const Navbar: React.FC = () => {
             <>
               <Button 
                 variant="translucent"
-                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4 hover:bg-white/40 z-10" 
+                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4 hover:bg-white/40 z-10 property-card-glow text-black" 
                 onClick={handleSignIn}
               >
                 <LogIn size={18} className="mr-1 sm:mr-2" />
@@ -152,7 +152,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="translucent"
-                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4 hover:bg-white/40 z-10" 
+                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4 hover:bg-white/40 z-10 property-card-glow text-black" 
                 onClick={handleSignUp}
               >
                 Sign up
