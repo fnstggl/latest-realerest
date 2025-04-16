@@ -1,4 +1,3 @@
-
 @layer components {
   .story-link {
     @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-[#0892D0] after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
@@ -67,5 +66,14 @@
   .gradient-hover-text:hover {
     color: #0892D0;
     text-shadow: 0 0 10px rgba(8, 146, 208, 0.5), 0 0 20px rgba(8, 146, 208, 0.3);
+  }
+
+  /* Static gradient text for marketing highlights */
+  .text-gradient-marketing {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
   }
 }

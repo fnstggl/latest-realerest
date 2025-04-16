@@ -238,7 +238,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         return (
           <Button 
             variant="glass"
-            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg border-gradient-br-pink-purple-gold rainbow-glow-card"
+            className="w-full text-gradient-marketing font-bold py-2 rounded-xl backdrop-blur-lg border-gradient-br-pink-purple-gold rainbow-glow-card"
             onClick={handleJoinWaitlist}
           >
             <ClipboardList size={18} className="mr-2" />
