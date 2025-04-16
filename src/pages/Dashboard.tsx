@@ -91,7 +91,7 @@ const Dashboard: React.FC = () => {
             </TabsList>
             
             {/* Properties Tab */}
-            <TabsContent value="properties" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
+            <TabsContent value="properties" className="space-y-6">
               <PropertiesTab 
                 myProperties={myProperties}
                 setMyProperties={setMyProperties}
@@ -105,7 +105,7 @@ const Dashboard: React.FC = () => {
             </TabsContent>
             
             {/* Waitlist Tab */}
-            <TabsContent value="waitlist" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
+            <TabsContent value="waitlist" className="space-y-6">
               <WaitlistTab 
                 waitlistUsers={waitlistUsers}
                 setWaitlistUsers={setWaitlistUsers}
@@ -113,7 +113,7 @@ const Dashboard: React.FC = () => {
             </TabsContent>
             
             {/* Offers Tab */}
-            <TabsContent value="offers" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
+            <TabsContent value="offers" className="space-y-6">
               <OffersTab />
             </TabsContent>
             

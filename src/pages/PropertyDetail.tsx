@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -153,7 +154,7 @@ const PropertyDetail: React.FC = () => {
             
             {isOwner ? (
               <Link to={`/property/${property?.id}/edit`}>
-                <Button className="w-full glass backdrop-blur-lg border border-white/40 text-pink-600 font-bold py-2 hover:bg-white/50 transition-colors layer-2">
+                <Button className="w-full glass backdrop-blur-lg border border-white/40 text-[#0892D0] font-bold py-2 hover:bg-white/50 transition-colors shadow-[0_0_10px_rgba(8,146,208,0.5)] hover:shadow-[0_0_15px_rgba(8,146,208,0.7)]">
                   <Cog size={18} className="mr-2" />
                   Edit Listing
                 </Button>

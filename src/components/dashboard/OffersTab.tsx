@@ -355,7 +355,7 @@ const OffersTab: React.FC = () => {
   }
 
   return (
-    <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg overflow-hidden">
+    <div className="rounded-xl shadow-lg overflow-hidden">
       <div className="border-b border-white/20 p-4 bg-white/30">
         <h2 className="text-xl font-bold">Property Offers</h2>
       </div>
@@ -446,7 +446,7 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="font-bold border border-white/40 bg-white hover:bg-green-50 text-green-600 hover:border-green-500 hover:shadow-[0_0_10px_rgba(22,163,74,0.5)] transition-all"
+                        className="font-bold border border-white/40 hover:translate-y-[-5px] transition-all text-gradient-static"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept
@@ -466,7 +466,7 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="font-bold border border-white/40 bg-white hover:bg-green-50 text-green-600 hover:border-green-500 hover:shadow-[0_0_10px_rgba(22,163,74,0.5)] transition-all"
+                        className="font-bold border border-white/40 hover:translate-y-[-5px] transition-all text-gradient-static"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
@@ -493,8 +493,8 @@ const OffersTab: React.FC = () => {
                 </div>
                 
                 {offer.status === "accepted" && (
-                  <div className="bg-green-100 border border-green-300 p-3 rounded-lg mt-4">
-                    <p className="text-green-800 font-bold">
+                  <div className="bg-gradient-blue-purple text-white border border-white/30 p-3 rounded-lg mt-4">
+                    <p className="font-bold">
                       <CheckCircle size={16} className="inline mr-2" />
                       You've accepted this offer. Contact the buyer to proceed with the sale.
                     </p>
