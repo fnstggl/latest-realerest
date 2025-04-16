@@ -1,7 +1,7 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Clock, ArrowRightLeft, MessageSquare } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useMessages } from "@/hooks/useMessages";
 import { Link } from "react-router-dom";
-
 interface CounterOffer {
   id: string;
   offer_id: string;
@@ -20,7 +19,6 @@ interface CounterOffer {
   from_seller: boolean;
   created_at: string;
 }
-
 interface Offer {
   id: string;
   propertyId: string;
@@ -39,29 +37,30 @@ interface Offer {
   createdAt: string;
   counterOffers: CounterOffer[];
 }
-
 const OffersTab: React.FC = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  const { getOrCreateConversation, getUserDisplayName } = useMessages();
-  
+  const {
+    getOrCreateConversation,
+    getUserDisplayName
+  } = useMessages();
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [counterOfferDialogOpen, setCounterOfferDialogOpen] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [counterOfferAmount, setCounterOfferAmount] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
-
   useEffect(() => {
     const fetchOffers = async () => {
       if (!user?.id) return;
-      
       try {
         setLoading(true);
-        
-        const { data: propertyOffers, error } = await supabase
-          .from('property_offers')
-          .select(`
+        const {
+          data: propertyOffers,
+          error
+        } = await supabase.from('property_offers').select(`
             id,
             property_id,
             user_id,
@@ -71,51 +70,44 @@ const OffersTab: React.FC = () => {
             status,
             created_at,
             seller_id
-          `)
-          .eq('seller_id', user.id)
-          .order('created_at', { ascending: false });
-          
+          `).eq('seller_id', user.id).order('created_at', {
+          ascending: false
+        });
         if (error) {
           console.error("Error fetching offers:", error);
           return;
         }
-        
         console.log("Raw property offers data:", propertyOffers);
-        
         const offersWithDetails = await Promise.all(propertyOffers.map(async offer => {
-          const { data: property } = await supabase
-            .from('property_listings')
-            .select('title, price')
-            .eq('id', offer.property_id)
-            .single();
-            
+          // Get property details
+          const {
+            data: property
+          } = await supabase.from('property_listings').select('title, price').eq('id', offer.property_id).single();
           console.log(`Property for offer ${offer.id}:`, property);
-          
+
+          // Get buyer profile details using both direct profile query and auth.users as backup
           let buyerName = 'Unknown User';
           let buyerEmail = null;
           let buyerPhone = null;
-          
           try {
-            const { data: buyerProfile, error: profileError } = await supabase
-              .from('profiles')
-              .select('name, email, phone')
-              .eq('id', offer.user_id)
-              .maybeSingle();
-            
+            // First try to get profile name directly
+            const {
+              data: buyerProfile,
+              error: profileError
+            } = await supabase.from('profiles').select('name, email, phone').eq('id', offer.user_id).maybeSingle();
             if (profileError) {
               console.error(`Error fetching buyer profile for user ${offer.user_id}:`, profileError);
             }
-            
             if (buyerProfile) {
               console.log(`Buyer profile for ${offer.user_id}:`, buyerProfile);
               buyerEmail = buyerProfile.email;
               buyerPhone = buyerProfile.phone;
-              
               if (buyerProfile.name) {
                 buyerName = buyerProfile.name;
               }
             }
-            
+
+            // If no name found, try to get email from the getUserDisplayName utility
             if (buyerName === 'Unknown User') {
               const displayName = await getUserDisplayName(offer.user_id);
               if (displayName && displayName !== 'Unknown User') {
@@ -128,13 +120,13 @@ const OffersTab: React.FC = () => {
           } catch (error) {
             console.error(`Error processing buyer details for ${offer.user_id}:`, error);
           }
-          
-          const { data: counterOffers } = await supabase
-            .from('counter_offers')
-            .select('*')
-            .eq('offer_id', offer.id)
-            .order('created_at', { ascending: true });
-            
+
+          // Get counter offers
+          const {
+            data: counterOffers
+          } = await supabase.from('counter_offers').select('*').eq('offer_id', offer.id).order('created_at', {
+            ascending: true
+          });
           return {
             id: offer.id,
             propertyId: offer.property_id,
@@ -154,7 +146,6 @@ const OffersTab: React.FC = () => {
             counterOffers: counterOffers || []
           };
         }));
-        
         console.log("Processed offers with buyer names:", offersWithDetails);
         setOffers(offersWithDetails);
       } catch (error) {
@@ -163,9 +154,7 @@ const OffersTab: React.FC = () => {
         setLoading(false);
       }
     };
-    
     fetchOffers();
-    
     const channel = supabase.channel('property_offers_changes').on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -185,7 +174,6 @@ const OffersTab: React.FC = () => {
     }, () => {
       fetchOffers();
     }).subscribe();
-    
     const counterOffersChannel = supabase.channel('counter_offers_changes').on('postgres_changes', {
       event: 'INSERT',
       schema: 'public',
@@ -198,13 +186,11 @@ const OffersTab: React.FC = () => {
         }
       }
     }).subscribe();
-    
     return () => {
       supabase.removeChannel(channel);
       supabase.removeChannel(counterOffersChannel);
     };
   }, [user?.id, getUserDisplayName]);
-
   const handleOfferAction = async (offerId: string, action: "accepted" | "declined" | "countered") => {
     if (!user?.id) return;
     try {
@@ -247,13 +233,11 @@ const OffersTab: React.FC = () => {
       toast.error("An error occurred while processing the offer");
     }
   };
-
   const handleCounterOffer = (offer: Offer) => {
     setSelectedOffer(offer);
     setCounterOfferAmount(offer.offerAmount);
     setCounterOfferDialogOpen(true);
   };
-
   const submitCounterOffer = async () => {
     if (!selectedOffer || !user?.id) return;
     setSubmitting(true);
@@ -307,7 +291,6 @@ const OffersTab: React.FC = () => {
       setSubmitting(false);
     }
   };
-
   const getLatestOfferAmount = (offer: Offer) => {
     if (offer.counterOffers.length === 0) {
       return offer.offerAmount;
@@ -315,7 +298,6 @@ const OffersTab: React.FC = () => {
     const sortedCounterOffers = [...offer.counterOffers].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     return sortedCounterOffers[0].amount;
   };
-
   const handleMessageBuyer = async (offer: Offer) => {
     if (!user?.id) return;
     try {
@@ -330,34 +312,25 @@ const OffersTab: React.FC = () => {
       toast.error("Failed to create conversation");
     }
   };
-
   if (loading) {
-    return (
-      <div className="bg-white rounded-xl p-8 border border-gray-200">
+    return <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-8 shadow-lg">
         <h2 className="text-xl font-bold mb-6">Loading Offers...</h2>
         <div className="space-y-4">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="border p-4 animate-pulse rounded-lg">
+          {[1, 2, 3].map(i => <div key={i} className="border border-white/20 p-4 animate-pulse rounded-lg">
               <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
               <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
               <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-            </div>
-          ))}
+            </div>)}
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-200">
-      <div className="border-b p-4 bg-gray-50">
+  return <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg overflow-hidden">
+      <div className="border-b border-white/20 p-4 bg-white/30">
         <h2 className="text-xl font-bold">Property Offers</h2>
       </div>
       
-      {offers.length > 0 ? (
-        <div className="divide-y">
-          {offers.map(offer => (
-            <Card key={offer.id} className="rounded-none border-0 shadow-none hover:bg-gray-50 transition-all">
+      {offers.length > 0 ? <div className="">
+          {offers.map(offer => <Card key={offer.id} className="rounded-none border-0 shadow-none hover:bg-white/30 transition-all">
               <CardHeader className="p-4 pb-2">
                 <div className="flex justify-between items-start">
                   <div>
@@ -385,11 +358,10 @@ const OffersTab: React.FC = () => {
                     <span className="font-bold">${getLatestOfferAmount(offer).toLocaleString()}</span>
                   </div>
                   
-                  {offer.counterOffers.length > 0 && (
-                    <div className="mt-4 border rounded-lg p-3 mb-4 bg-gray-50">
+                  {offer.counterOffers.length > 0 && <div className="mt-4 border border-white/40 rounded-lg p-3 mb-4 bg-white/20">
                       <h3 className="font-bold text-sm mb-2">Negotiation History</h3>
                       <div className="space-y-2 max-h-36 overflow-y-auto">
-                        <div className="flex justify-between items-center p-2 bg-white border rounded-md">
+                        <div className="flex justify-between items-center p-2 bg-white/30 border border-white/30 rounded-md">
                           <div>
                             <strong>Initial Offer:</strong> ${offer.offerAmount.toLocaleString()}
                           </div>
@@ -397,128 +369,82 @@ const OffersTab: React.FC = () => {
                             Buyer
                           </div>
                         </div>
-                        {offer.counterOffers.map(counterOffer => (
-                          <div 
-                            key={counterOffer.id} 
-                            className={`flex justify-between items-center p-2 border rounded-md ${
-                              counterOffer.from_seller 
-                                ? 'bg-blue-50 border-blue-200' 
-                                : 'bg-green-50 border-green-200'
-                            }`}
-                          >
+                        {offer.counterOffers.map(counterOffer => <div key={counterOffer.id} className={`flex justify-between items-center p-2 border rounded-md ${counterOffer.from_seller ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'}`}>
                             <div>
                               <strong>${counterOffer.amount.toLocaleString()}</strong>
                             </div>
-                            <div className={`text-xs font-bold px-2 py-1 rounded-md ${
-                              counterOffer.from_seller ? 'bg-blue-100' : 'bg-green-100'
-                            }`}>
+                            <div className={`text-xs font-bold px-2 py-1 rounded-md ${counterOffer.from_seller ? 'bg-blue-100' : 'bg-green-100'}`}>
                               {counterOffer.from_seller ? 'You (Seller)' : 'Buyer'}
                             </div>
-                          </div>
-                        ))}
+                          </div>)}
                       </div>
-                    </div>
-                  )}
+                    </div>}
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    {offer.buyerEmail && (
-                      <div className="text-sm border rounded-lg p-2 bg-gray-50">
+                    {offer.buyerEmail && <div className="text-sm border border-white/40 rounded-lg p-2 bg-white/20">
                         <span className="font-semibold">Email:</span> {offer.buyerEmail}
-                      </div>
-                    )}
+                      </div>}
                     
-                    {offer.buyerPhone && (
-                      <div className="text-sm border rounded-lg p-2 bg-gray-50">
+                    {offer.buyerPhone && <div className="text-sm border border-white/40 rounded-lg p-2 bg-white/20">
                         <span className="font-semibold">Phone:</span> {offer.buyerPhone}
-                      </div>
-                    )}
+                      </div>}
                   </div>
                 </div>
                 
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {offer.status === "pending" && (
-                    <>
-                      <Button 
-                        onClick={() => handleOfferAction(offer.id, "accepted")}
-                        className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
-                      >
+                  {offer.status === "pending" && <>
+                      <Button onClick={() => handleOfferAction(offer.id, "accepted")} className="font-bold border border-white/40 bg-white hover:bg-green-50 text-green-600 hover:border-green-500 hover:shadow-[0_0_10px_rgba(22,163,74,0.5)] transition-all">
                         <CheckCircle size={16} className="mr-2" />
                         Accept
                       </Button>
                       
-                      <Button 
-                        onClick={() => handleCounterOffer(offer)}
-                        variant="outline"
-                        className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
-                      >
+                      <Button onClick={() => handleCounterOffer(offer)} className="font-bold border border-white/40 bg-white hover:bg-[#0892D0]/10 text-[#0892D0] hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all">
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
                       </Button>
-                    </>
-                  )}
+                    </>}
                   
-                  {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && (
-                    <>
-                      <Button 
-                        onClick={() => handleOfferAction(offer.id, "accepted")}
-                        className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
-                      >
+                  {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && <>
+                      <Button onClick={() => handleOfferAction(offer.id, "accepted")} className="font-bold border border-white/40 bg-white hover:bg-green-50 text-green-600 hover:border-green-500 hover:shadow-[0_0_10px_rgba(22,163,74,0.5)] transition-all">
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
                       </Button>
                       
-                      <Button 
-                        onClick={() => handleCounterOffer(offer)}
-                        variant="outline"
-                        className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
-                      >
+                      <Button onClick={() => handleCounterOffer(offer)} className="font-bold border border-white/40 bg-white hover:bg-[#0892D0]/10 text-[#0892D0] hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all">
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter Again
                       </Button>
-                    </>
-                  )}
+                    </>}
                   
-                  <Button 
-                    onClick={() => handleMessageBuyer(offer)}
-                    variant="outline"
-                    className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
-                  >
+                  <Button onClick={() => handleMessageBuyer(offer)} variant="outline" className="font-bold border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all">
                     <MessageSquare size={16} className="mr-2" />
                     Message Buyer
                   </Button>
                 </div>
                 
-                {offer.status === "accepted" && (
-                  <div className="bg-green-50 text-green-800 border border-green-200 p-3 rounded-lg mt-4">
-                    <p className="font-bold">
+                {offer.status === "accepted" && <div className="bg-green-100 border border-green-300 p-3 rounded-lg mt-4">
+                    <p className="text-green-800 font-bold">
                       <CheckCircle size={16} className="inline mr-2" />
                       You've accepted this offer. Contact the buyer to proceed with the sale.
                     </p>
-                  </div>
-                )}
+                  </div>}
                 
-                {offer.status === "declined" && (
-                  <div className="bg-red-100 border border-red-300 p-3 rounded-lg mt-4">
+                {offer.status === "declined" && <div className="bg-red-100 border border-red-300 p-3 rounded-lg mt-4">
                     <p className="text-red-800 font-bold">
                       <XCircle size={16} className="inline mr-2" />
                       You've declined this offer.
                     </p>
-                  </div>
-                )}
+                  </div>}
               </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="p-12 text-center">
+            </Card>)}
+        </div> : <div className="p-12 text-center">
           <Clock size={48} className="mx-auto mb-4 text-gray-400" />
           <h3 className="text-xl font-bold mb-2">No Offers Yet</h3>
           <p className="text-gray-500">You haven't received any offers on your properties yet.</p>
-        </div>
-      )}
+        </div>}
       
       <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
-        <DialogContent className="bg-white border border-gray-200 shadow-sm rounded-xl">
+        <DialogContent className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Make Counter Offer</DialogTitle>
             <DialogDescription>
@@ -529,40 +455,21 @@ const OffersTab: React.FC = () => {
           <div className="space-y-4 py-4">
             <div>
               <Label htmlFor="counterOfferAmount" className="text-black font-bold">Counter Offer Amount ($)</Label>
-              <Input 
-                id="counterOfferAmount" 
-                type="number" 
-                value={counterOfferAmount} 
-                onChange={e => setCounterOfferAmount(Number(e.target.value))} 
-                className="mt-2 border border-gray-200" 
-              />
+              <Input id="counterOfferAmount" type="number" value={counterOfferAmount} onChange={e => setCounterOfferAmount(Number(e.target.value))} className="mt-2 border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" />
             </div>
           </div>
           
           <DialogFooter className="flex gap-2">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => setCounterOfferDialogOpen(false)} 
-              className="font-bold border border-gray-200"
-              disabled={submitting}
-            >
+            <Button type="button" variant="outline" onClick={() => setCounterOfferDialogOpen(false)} className="font-bold border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all" disabled={submitting}>
               Cancel
             </Button>
-            <Button 
-              type="button" 
-              onClick={submitCounterOffer} 
-              disabled={submitting}
-              className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
-            >
+            <Button type="button" className="bg-[#0892D0] text-white font-bold border border-white/40 hover:bg-[#0892D0]/90 hover:shadow-[0_0_15px_rgba(8,146,208,0.7)] transition-all" onClick={submitCounterOffer} disabled={submitting}>
               <ArrowRightLeft size={18} className="mr-2" />
               {submitting ? "Sending..." : "Send Counter Offer"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default OffersTab;
