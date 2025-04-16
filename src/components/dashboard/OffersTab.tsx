@@ -433,7 +433,7 @@ const OffersTab: React.FC = () => {
                     )}
                     
                     {offer.buyerPhone && (
-                      className="text-sm border rounded-lg p-2 bg-gray-50">
+                      <div className="text-sm border rounded-lg p-2 bg-gray-50">
                         <span className="font-semibold">Phone:</span> {offer.buyerPhone}
                       </div>
                     )}
@@ -570,4 +570,3 @@ const OffersTab: React.FC = () => {
 };
 
 export default OffersTab;
-
