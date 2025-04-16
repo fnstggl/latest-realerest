@@ -55,9 +55,11 @@
   @keyframes layerHover {
     from {
       transform: translateY(0) translateZ(0);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
     to {
       transform: translateY(-5px) translateZ(5px);
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.12);
     }
   }
 
@@ -71,6 +73,7 @@
   
   .layer-hover {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
   }
   
   .layer-hover:hover {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -90,9 +89,9 @@ const PropertyDetail: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
         <Navbar />
         <div className="container mx-auto px-4 py-12 text-center">
-          <h1 className="text-3xl font-bold mb-4 rainbow-text">Property Not Found</h1>
+          <h1 className="text-3xl font-bold mb-4 text-black">Property Not Found</h1>
           <p className="mb-8 glass p-4 rounded-lg backdrop-blur-md inline-block">The property you're looking for doesn't exist or has been removed.</p>
-          <Button asChild variant="translucent" className="property-card-glow">
+          <Button asChild variant="translucent" className="layer-hover layer-2">
             <Link to="/search">Browse Other Properties</Link>
           </Button>
         </div>
@@ -105,7 +104,6 @@ const PropertyDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 relative overflow-hidden">
-      {/* Background blobs */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100/40 rounded-full filter blur-3xl"></div>
       <div className="absolute top-60 -right-20 w-80 h-80 bg-purple-100/40 rounded-full filter blur-3xl"></div>
       <div className="absolute bottom-20 left-60 w-72 h-72 bg-pink-100/30 rounded-full filter blur-3xl"></div>
@@ -117,7 +115,7 @@ const PropertyDetail: React.FC = () => {
           <Button 
             asChild
             variant="glass" 
-            className="flex items-center rainbow-text hover:bg-white/40 font-bold transition-colors property-card-glow"
+            className="flex items-center text-black hover:bg-white/40 font-bold transition-colors layer-hover layer-2"
           >
             <Link to="/search">
               <ArrowLeft size={18} className="mr-2" />
@@ -155,14 +153,14 @@ const PropertyDetail: React.FC = () => {
             
             {isOwner ? (
               <Link to={`/property/${property?.id}/edit`}>
-                <Button className="w-full glass backdrop-blur-lg border border-white/30 text-pink-600 font-bold py-2 hover:bg-white/40 property-card-glow transition-colors">
+                <Button className="w-full glass backdrop-blur-lg border border-white/40 text-pink-600 font-bold py-2 hover:bg-white/50 transition-colors layer-2">
                   <Cog size={18} className="mr-2" />
                   Edit Listing
                 </Button>
               </Link> 
             ) : isApproved ? (
-              <div className="glass-card backdrop-blur-lg border border-white/30 shadow-lg p-4 rounded-xl property-card-glow">
-                <div className="font-bold rainbow-text mb-2">Your waitlist request has been approved!</div>
+              <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
+                <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
                 <p>You now have access to view the full property details and contact the seller directly.</p>
               </div>
             ) : (
@@ -184,8 +182,8 @@ const PropertyDetail: React.FC = () => {
             
             {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && (
               <div className="grid grid-cols-2 gap-4">
-                <div className="glass backdrop-blur-lg border border-white/30 p-3 rounded-lg property-card-glow">
-                  <div className="text-lg font-bold rainbow-text">
+                <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
+                  <div className="text-lg font-bold text-black">
                     {property?.afterRepairValue.toLocaleString('en-US', {
                       style: 'currency',
                       currency: 'USD'
@@ -193,8 +191,8 @@ const PropertyDetail: React.FC = () => {
                   </div>
                   <div className="text-xs">After Repair Value</div>
                 </div>
-                <div className="glass backdrop-blur-lg border border-white/30 p-3 rounded-lg property-card-glow">
-                  <div className="text-lg font-bold rainbow-text">
+                <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
+                  <div className="text-lg font-bold text-black">
                     {property?.estimatedRehab.toLocaleString('en-US', {
                       style: 'currency',
                       currency: 'USD'

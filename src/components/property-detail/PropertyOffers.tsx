@@ -64,13 +64,13 @@ const PropertyOffers: React.FC<PropertyOffersProps> = ({ propertyId, propertyPri
 
   return (
     <div className="glass-card backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl property-card-glow mt-6">
-      <h3 className="text-lg font-bold mb-3 rainbow-text">Top Bids</h3>
+      <h3 className="text-lg font-bold mb-3 text-black">Top Bids</h3>
       
       <div className="space-y-2">
         {offers.map((offer) => (
-          <div key={offer.id} className="flex justify-between items-center glass p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
+          <div key={offer.id} className="flex justify-between items-center glass p-2 rounded-lg backdrop-blur-sm border border-white/30 shadow-sm">
             <div className="text-black">{offer.buyerName}</div>
-            <div className="font-bold rainbow-text">{formatCurrency(offer.amount)}</div>
+            <div className="font-bold text-black">{formatCurrency(offer.amount)}</div>
           </div>
         ))}
       </div>
