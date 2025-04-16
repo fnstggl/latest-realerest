@@ -24,7 +24,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({ mainImage, images = [] 
           {images.map((img, index) => (
             <div 
               key={index} 
-              className={`glass-card backdrop-blur-sm cursor-pointer property-card-glow ${activeImage === img ? 'border-2 border-white/40' : 'border border-white/20'}`}
+              className={`glass-content backdrop-blur-sm cursor-pointer property-card-glow ${activeImage === img ? 'border-2 border-white/40' : 'border border-white/20'}`}
               onClick={() => setActiveImage(img)}
             >
               <img 

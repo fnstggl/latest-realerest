@@ -52,20 +52,10 @@ const FeaturedProperties: React.FC = () => {
             </Button>
           </div>
         ) : loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((_, index) => (
-              <div key={index} className="glass-card p-4 h-[400px] shadow-xl">
-                <Skeleton className="h-[240px] w-full mb-4 bg-white/10" />
-                <Skeleton className="h-6 w-3/4 mb-2 bg-white/10" />
-                <Skeleton className="h-4 w-1/2 mb-4 bg-white/10" />
-                <div className="flex gap-4 mb-4">
-                  <Skeleton className="h-4 w-16 bg-white/10" />
-                  <Skeleton className="h-4 w-16 bg-white/10" />
-                  <Skeleton className="h-4 w-16 bg-white/10" />
-                </div>
-                <Skeleton className="h-10 w-full bg-white/10" />
-              </div>
-            ))}
+          <div className="min-h-[300px] flex justify-center items-center">
+            <div className="loading-container">
+              <div className="gradient-blob"></div>
+            </div>
           </div>
         ) : (
           <>

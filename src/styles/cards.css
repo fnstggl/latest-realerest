@@ -154,7 +154,7 @@
     position: relative;
     z-index: 1;
     transition: transform 0.3s ease;
-    background-color: rgba(255, 255, 255, 0.75); /* More translucent white background */
+    background-color: rgba(255, 255, 255, 0.75);
   }
   
   .property-card-glow:hover {
@@ -176,7 +176,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.75); /* Keeping the inside exactly the same white but more translucent */
+    background: rgba(255, 255, 255, 0.75);
     border-radius: inherit;
     z-index: -1;
   }

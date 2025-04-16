@@ -9,6 +9,7 @@ import { Sliders, Grid, List, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { useListings, Listing } from '@/hooks/useListings';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
@@ -20,6 +21,7 @@ const Search: React.FC = () => {
     loading,
     error
   } = useListings();
+
   useEffect(() => {
     if (searchQuery && properties.length > 0) {
       const results = properties.filter(property => property.location.toLowerCase().includes(searchQuery.toLowerCase()) || property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -28,6 +30,7 @@ const Search: React.FC = () => {
       setFilteredProperties(properties);
     }
   }, [properties, searchQuery]);
+
   const handleFilterChange = (filters: any) => {
     const filtered = properties.filter(property => {
       if (property.price < filters.priceRange[0] || property.price > filters.priceRange[1]) {
@@ -61,6 +64,7 @@ const Search: React.FC = () => {
     });
     setFilteredProperties(filtered);
   };
+
   const handleSortChange = (option: string) => {
     setSortOption(option);
     let sorted = [...filteredProperties];
@@ -81,11 +85,13 @@ const Search: React.FC = () => {
     }
     setFilteredProperties(sorted);
   };
+
   useEffect(() => {
     if (error) {
       toast.error(error);
     }
   }, [error]);
+
   return <div className="min-h-screen bg-gray-50">
       <Navbar />
       
@@ -157,9 +163,8 @@ const Search: React.FC = () => {
             </div>
             
             {loading ? <div className="flex justify-center items-center py-16">
-                <div className="text-center">
-                  <div className="w-12 h-12 border-4 border-t-[#d60013] border-r-[#d60013] border-b-transparent border-l-transparent rounded-full animate-spin mb-4 mx-auto"></div>
-                  <p className="text-lg font-medium text-gray-700">Loading properties...</p>
+                <div className="loading-container">
+                  <div className="gradient-blob"></div>
                 </div>
               </div> : filteredProperties.length === 0 ? <div className="text-center py-16 bg-white rounded-xl neo-container">
                 <h2 className="text-xl font-semibold mb-2">No properties found</h2>
@@ -187,4 +192,5 @@ const Search: React.FC = () => {
       </footer>
     </div>;
 };
+
 export default Search;
