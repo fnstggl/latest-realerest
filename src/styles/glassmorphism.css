@@ -21,9 +21,9 @@
     @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 transition-all shadow-sm;
   }
   
-  /* New super translucent glass style for auth buttons */
+  /* Super translucent glass style for auth buttons with improved visibility */
   .glass-translucent {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl transition-all shadow-md;
+    @apply bg-white/20 backdrop-blur-lg border border-white/20 rounded-xl transition-all shadow-md;
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -33,15 +33,17 @@
   .auth-button {
     position: relative;
     z-index: 1;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
     transform: translateY(0);
+    color: white;
   }
   
   .auth-button:hover {
     transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.25);
   }
   
   .auth-button:hover::before {
@@ -60,7 +62,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: inherit;
     backdrop-filter: blur(12px);
     z-index: -1;

@@ -71,14 +71,16 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <Button 
-                  className="w-full justify-center font-bold text-foreground auth-button" 
+                  className="w-full justify-center font-bold text-white" 
+                  variant="translucent"
                   onClick={handleSignIn}
                 >
                   Log In
                 </Button>
                 
                 <Button 
-                  className="w-full justify-center font-bold auth-button" 
+                  className="w-full justify-center font-bold text-white" 
+                  variant="translucent"
                   onClick={handleSignUp}
                 >
                   Sign up
@@ -124,7 +126,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="glass" 
-                className="p-1 sm:p-2 glass text-xs sm:text-base relative"
+                className="p-1 sm:p-2 glass text-xs sm:text-base relative text-foreground"
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={isMobile ? 16 : 20} className="mr-1 sm:mr-2" />
@@ -140,15 +142,17 @@ const Navbar: React.FC = () => {
           ) : (
             <>
               <Button 
-                className="auth-button glass-translucent font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
+                variant="translucent"
+                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4 text-white hover:bg-white/30" 
                 onClick={handleSignIn}
               >
-                <LogIn size={18} className="mr-2" />
+                <LogIn size={18} className="mr-1 sm:mr-2" />
                 Log In
               </Button>
               
               <Button 
-                className="auth-button glass-translucent font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
+                variant="translucent"
+                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4 text-white hover:bg-white/30" 
                 onClick={handleSignUp}
               >
                 Sign up
