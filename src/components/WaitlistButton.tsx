@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { ClipboardList, X, Check } from 'lucide-react';
@@ -30,14 +29,12 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [waitlistStatus, setWaitlistStatus] = useState<'pending' | 'accepted' | 'declined' | null>(null);
 
-  // Sync external and internal dialog state
   useEffect(() => {
     if (externalOpen !== undefined) {
       setDialogOpen(externalOpen);
     }
   }, [externalOpen]);
 
-  // Check if user is already in waitlist for this property from database
   const checkWaitlistStatus = useCallback(async () => {
     if (!user?.id) return null;
     
@@ -49,7 +46,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         .eq('user_id', user.id)
         .single();
         
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
+      if (error && error.code !== 'PGRST116') {
         console.error("Error checking waitlist status:", error);
         return null;
       }
@@ -85,10 +82,8 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     }
   };
 
-  // Create notifications for both the property owner and the user joining the waitlist
   const createNotifications = async (propertyOwnerId: string, propertyTitle: string) => {
     try {
-      // Notification for property owner
       await supabase
         .from('notifications')
         .insert({
@@ -105,7 +100,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           read: false
         });
       
-      // Notification for the user joining the waitlist
       await supabase
         .from('notifications')
         .insert({
@@ -120,7 +114,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           read: false
         });
       
-      // Add local notification for immediate feedback
       addNotification(
         'Waitlist Request Submitted',
         `You've successfully joined the waitlist for: ${propertyTitle}`,
@@ -147,7 +140,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     setSubmitting(true);
     
     try {
-      // First, get the property owner's user_id
       const { data: propertyData, error: propertyError } = await supabase
         .from('property_listings')
         .select('user_id')
@@ -161,7 +153,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       
       const propertyOwnerId = propertyData.user_id;
       
-      // Add request to waitlist_requests table
       const { error: insertError } = await supabase
         .from('waitlist_requests')
         .insert({
@@ -174,7 +165,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         });
       
       if (insertError) {
-        // Check if it's a unique constraint violation (user already in waitlist)
         if (insertError.code === '23505') {
           toast.error("You're already on the waitlist for this property");
         } else {
@@ -182,7 +172,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           throw new Error("Failed to join waitlist");
         }
       } else {
-        // Create notifications for property owner and user
         await createNotifications(propertyOwnerId, propertyTitle);
         
         setWaitlistStatus('pending');
@@ -242,7 +231,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
             onClick={handleJoinWaitlist}
           >
             <ClipboardList size={18} className="mr-2" />
-            Join Waitlist
+            <span className="text-gradient-static">Join Waitlist</span>
           </Button>
         );
     }
