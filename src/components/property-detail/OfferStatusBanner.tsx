@@ -305,7 +305,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         <div className="flex gap-2 mt-4">
           <Button 
             variant="outline"
-            className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
+            className="bg-white text-black border border-gray-200 hover:border-[#0892D0] rounded-lg"
             onClick={() => handleCounterOffer()}
           >
             <ArrowRightLeft size={16} className="mr-2" />
@@ -348,7 +348,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
               <Button 
                 type="button" 
                 variant="outline"
-                className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
+                className="bg-white text-black border border-gray-200 hover:border-[#0892D0] rounded-lg"
                 onClick={submitCounterOffer}
                 disabled={submitting}
               >
@@ -377,7 +377,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
           <Button 
             variant="outline" 
             onClick={() => setShowSuccessDetails(true)}
-            className="mt-2 w-full bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
+            className="mt-2 w-full bg-white text-black border border-gray-200 hover:border-[#0892D0] rounded-lg"
           >
             Next Steps <ArrowRight size={16} className="ml-1" />
           </Button>

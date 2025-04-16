@@ -63,12 +63,12 @@ const PropertyOffers: React.FC<PropertyOffersProps> = ({ propertyId, propertyPri
   if (!offers || offers.length === 0) return null;
 
   return (
-    <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mt-6">
+    <div className="border border-gray-200 bg-white p-4 rounded-lg mt-6">
       <h3 className="text-lg font-bold mb-3 text-black">Top Bids</h3>
       
       <div className="space-y-2">
         {offers.map((offer) => (
-          <div key={offer.id} className="flex justify-between items-center p-2 rounded-lg backdrop-blur-sm border border-white/30 shadow-sm">
+          <div key={offer.id} className="flex justify-between items-center p-2 rounded-lg bg-gray-50 border border-gray-200">
             <div className="text-black">{offer.buyerName}</div>
             <div className="font-bold text-black">{formatCurrency(offer.amount)}</div>
           </div>

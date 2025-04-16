@@ -10,17 +10,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white/80 text-black rounded-xl hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] shadow-sm border border-white/40 transition-all",
-        destructive: "bg-white/80 text-red-500 rounded-xl hover:bg-white/90 hover:border-red-500 hover:shadow-[0_0_10px_rgba(239,68,68,0.5)] shadow-sm border border-white/40 transition-all",
-        outline: "border border-white/40 bg-white/80 hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] rounded-xl text-black shadow-sm transition-all",
-        secondary: "bg-white/80 text-black rounded-xl hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] shadow-sm border border-white/40 transition-all",
+        default: "bg-white text-black rounded-lg hover:bg-gray-50 shadow-sm border border-gray-200 transition-all",
+        destructive: "bg-white text-red-500 rounded-lg hover:bg-red-50 shadow-sm border border-red-200 transition-all",
+        outline: "border border-gray-200 bg-white hover:bg-gray-50 rounded-lg text-black shadow-sm transition-all",
+        secondary: "bg-white text-black rounded-lg hover:bg-gray-50 shadow-sm border border-gray-200 transition-all",
         ghost: "hover:text-[#0892D0] transition-colors",
         link: "text-black underline-offset-4 hover:underline hover:text-[#0892D0] transition-colors",
-        warning: "bg-white/80 text-[#0892D0] rounded-xl hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] shadow-sm border border-white/40 transition-all",
-        glass: "bg-white/80 border border-white/40 rounded-xl hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] text-black shadow-sm transition-all",
-        navy: "bg-white/80 text-black rounded-xl hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] shadow-sm border border-white/40 transition-all",
-        red: "bg-white/80 text-black rounded-xl hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] shadow-sm border border-white/40 transition-all",
-        translucent: "bg-white/80 border border-white/40 rounded-xl text-black hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm",
+        warning: "bg-white text-[#0892D0] rounded-lg hover:bg-blue-50 shadow-sm border border-[#0892D0] transition-all",
+        glass: "bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-black shadow-sm transition-all",
+        navy: "bg-white text-black rounded-lg hover:bg-gray-50 shadow-sm border border-gray-200 transition-all",
+        red: "bg-white text-black rounded-lg hover:bg-gray-50 shadow-sm border border-gray-200 transition-all",
+        translucent: "bg-white border border-gray-200 rounded-lg text-black hover:bg-gray-50 transition-all shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",
