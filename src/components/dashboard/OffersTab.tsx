@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Clock, ArrowRightLeft, MessageSquare } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -339,11 +338,11 @@ const OffersTab: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-8 shadow-lg">
+      <div className="bg-white rounded-xl p-8 shadow-lg">
         <h2 className="text-xl font-bold mb-6">Loading Offers...</h2>
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="border border-white/20 p-4 animate-pulse rounded-lg">
+            <div key={i} className="border p-4 animate-pulse rounded-lg">
               <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
               <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
               <div className="h-4 bg-gray-200 rounded w-1/4"></div>
@@ -355,15 +354,15 @@ const OffersTab: React.FC = () => {
   }
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden">
-      <div className="border-b border-white/20 p-4 bg-white/30">
+    <div className="rounded-xl shadow-lg overflow-hidden bg-white">
+      <div className="border-b p-4 bg-gray-50">
         <h2 className="text-xl font-bold">Property Offers</h2>
       </div>
       
       {offers.length > 0 ? (
-        <div className="divide-y divide-white/10">
+        <div className="divide-y">
           {offers.map(offer => (
-            <Card key={offer.id} className="rounded-none border-0 shadow-none hover:bg-white/30 transition-all">
+            <Card key={offer.id} className="rounded-none border-0 shadow-none hover:bg-gray-50 transition-all">
               <CardHeader className="p-4 pb-2">
                 <div className="flex justify-between items-start">
                   <div>
@@ -392,10 +391,10 @@ const OffersTab: React.FC = () => {
                   </div>
                   
                   {offer.counterOffers.length > 0 && (
-                    <div className="mt-4 border border-white/40 rounded-lg p-3 mb-4 bg-white/20">
+                    <div className="mt-4 border rounded-lg p-3 mb-4 bg-gray-50">
                       <h3 className="font-bold text-sm mb-2">Negotiation History</h3>
                       <div className="space-y-2 max-h-36 overflow-y-auto">
-                        <div className="flex justify-between items-center p-2 bg-white/30 border border-white/30 rounded-md">
+                        <div className="flex justify-between items-center p-2 bg-white border rounded-md">
                           <div>
                             <strong>Initial Offer:</strong> ${offer.offerAmount.toLocaleString()}
                           </div>
@@ -428,13 +427,13 @@ const OffersTab: React.FC = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     {offer.buyerEmail && (
-                      <div className="text-sm border border-white/40 rounded-lg p-2 bg-white/20">
+                      <div className="text-sm border rounded-lg p-2 bg-gray-50">
                         <span className="font-semibold">Email:</span> {offer.buyerEmail}
                       </div>
                     )}
                     
                     {offer.buyerPhone && (
-                      <div className="text-sm border border-white/40 rounded-lg p-2 bg-white/20">
+                      className="text-sm border rounded-lg p-2 bg-gray-50">
                         <span className="font-semibold">Phone:</span> {offer.buyerPhone}
                       </div>
                     )}
@@ -446,7 +445,7 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="font-bold border border-white/40 hover:translate-y-[-5px] transition-all text-gradient-static"
+                        className="font-bold border"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept
@@ -454,7 +453,8 @@ const OffersTab: React.FC = () => {
                       
                       <Button 
                         onClick={() => handleCounterOffer(offer)} 
-                        className="font-bold border border-white/40 bg-white hover:bg-[#0892D0]/10 text-[#0892D0] hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all"
+                        variant="outline"
+                        className="font-bold"
                       >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
@@ -466,7 +466,7 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="font-bold border border-white/40 hover:translate-y-[-5px] transition-all text-gradient-static"
+                        className="font-bold border"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
@@ -474,7 +474,8 @@ const OffersTab: React.FC = () => {
                       
                       <Button 
                         onClick={() => handleCounterOffer(offer)} 
-                        className="font-bold border border-white/40 bg-white hover:bg-[#0892D0]/10 text-[#0892D0] hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all"
+                        variant="outline"
+                        className="font-bold"
                       >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter Again
@@ -485,7 +486,7 @@ const OffersTab: React.FC = () => {
                   <Button 
                     onClick={() => handleMessageBuyer(offer)} 
                     variant="outline" 
-                    className="font-bold border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all"
+                    className="font-bold"
                   >
                     <MessageSquare size={16} className="mr-2" />
                     Message Buyer
@@ -493,7 +494,7 @@ const OffersTab: React.FC = () => {
                 </div>
                 
                 {offer.status === "accepted" && (
-                  <div className="bg-gradient-blue-purple text-white border border-white/30 p-3 rounded-lg mt-4">
+                  <div className="bg-green-50 text-green-800 border border-green-200 p-3 rounded-lg mt-4">
                     <p className="font-bold">
                       <CheckCircle size={16} className="inline mr-2" />
                       You've accepted this offer. Contact the buyer to proceed with the sale.
@@ -522,7 +523,7 @@ const OffersTab: React.FC = () => {
       )}
       
       <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
-        <DialogContent className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg">
+        <DialogContent className="rounded-xl shadow-lg">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Make Counter Offer</DialogTitle>
             <DialogDescription>
@@ -538,7 +539,7 @@ const OffersTab: React.FC = () => {
                 type="number" 
                 value={counterOfferAmount} 
                 onChange={e => setCounterOfferAmount(Number(e.target.value))} 
-                className="mt-2 border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
+                className="mt-2" 
               />
             </div>
           </div>
@@ -548,14 +549,13 @@ const OffersTab: React.FC = () => {
               type="button" 
               variant="outline" 
               onClick={() => setCounterOfferDialogOpen(false)} 
-              className="font-bold border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all" 
+              className="font-bold" 
               disabled={submitting}
             >
               Cancel
             </Button>
             <Button 
               type="button" 
-              className="bg-[#0892D0] text-white font-bold border border-white/40 hover:bg-[#0892D0]/90 hover:shadow-[0_0_15px_rgba(8,146,208,0.7)] transition-all" 
               onClick={submitCounterOffer} 
               disabled={submitting}
             >
@@ -570,3 +570,4 @@ const OffersTab: React.FC = () => {
 };
 
 export default OffersTab;
+
