@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
+
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle, Clock, ArrowRightLeft, MessageSquare } from "lucide-react";
@@ -332,7 +333,7 @@ const OffersTab: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl p-8 shadow-lg">
+      <div className="bg-white rounded-xl p-8 border border-gray-200">
         <h2 className="text-xl font-bold mb-6">Loading Offers...</h2>
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
@@ -348,7 +349,7 @@ const OffersTab: React.FC = () => {
   }
 
   return (
-    <div className="rounded-xl shadow-lg overflow-hidden bg-white">
+    <div className="bg-white rounded-xl border border-gray-200">
       <div className="border-b p-4 bg-gray-50">
         <h2 className="text-xl font-bold">Property Offers</h2>
       </div>
@@ -439,7 +440,7 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")}
-                        className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
+                        className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept
@@ -448,7 +449,7 @@ const OffersTab: React.FC = () => {
                       <Button 
                         onClick={() => handleCounterOffer(offer)}
                         variant="outline"
-                        className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
+                        className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
                       >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
@@ -460,7 +461,7 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")}
-                        className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
+                        className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
@@ -469,7 +470,7 @@ const OffersTab: React.FC = () => {
                       <Button 
                         onClick={() => handleCounterOffer(offer)}
                         variant="outline"
-                        className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
+                        className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
                       >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter Again
@@ -480,7 +481,7 @@ const OffersTab: React.FC = () => {
                   <Button 
                     onClick={() => handleMessageBuyer(offer)}
                     variant="outline"
-                    className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
+                    className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
                   >
                     <MessageSquare size={16} className="mr-2" />
                     Message Buyer
@@ -517,7 +518,7 @@ const OffersTab: React.FC = () => {
       )}
       
       <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
-        <DialogContent className="rounded-xl shadow-lg">
+        <DialogContent className="bg-white border border-gray-200 shadow-sm rounded-xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Make Counter Offer</DialogTitle>
             <DialogDescription>
@@ -533,7 +534,7 @@ const OffersTab: React.FC = () => {
                 type="number" 
                 value={counterOfferAmount} 
                 onChange={e => setCounterOfferAmount(Number(e.target.value))} 
-                className="mt-2" 
+                className="mt-2 border border-gray-200" 
               />
             </div>
           </div>
@@ -543,7 +544,7 @@ const OffersTab: React.FC = () => {
               type="button" 
               variant="outline" 
               onClick={() => setCounterOfferDialogOpen(false)} 
-              className="font-bold" 
+              className="font-bold border border-gray-200"
               disabled={submitting}
             >
               Cancel
@@ -552,7 +553,7 @@ const OffersTab: React.FC = () => {
               type="button" 
               onClick={submitCounterOffer} 
               disabled={submitting}
-              className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
+              className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
             >
               <ArrowRightLeft size={18} className="mr-2" />
               {submitting ? "Sending..." : "Send Counter Offer"}

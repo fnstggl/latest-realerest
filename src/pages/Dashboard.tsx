@@ -42,10 +42,10 @@ const Dashboard: React.FC = () => {
   }, [location.state]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
+    <div className="min-h-screen bg-white">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-6 py-12 max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -58,16 +58,16 @@ const Dashboard: React.FC = () => {
             </div>
             
             <Button 
-              className="layer-2 glass-card backdrop-blur-lg border border-white/40 hover:translate-y-[-5px] transition-all bg-white hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
+              className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
               onClick={() => navigate('/sell/create')}
             >
               <Plus size={18} className="mr-2" />
-              <span className="electric-blue-glow">Add Property</span>
+              <span>Add Property</span>
             </Button>
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="layer-2 backdrop-blur-md border border-white/30 bg-white/70 shadow-lg">
+            <TabsList className="bg-white border border-gray-200 shadow-sm">
               <TabsTrigger value="properties" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
                 <Home size={18} className="mr-2" />
                 Properties
@@ -118,12 +118,12 @@ const Dashboard: React.FC = () => {
             </TabsContent>
             
             {/* Account Tab */}
-            <TabsContent value="account" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
+            <TabsContent value="account" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
               <AccountTab user={user} logout={logout} />
             </TabsContent>
             
             {/* Notifications Tab */}
-            <TabsContent value="notifications" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
+            <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
               <NotificationsTab 
                 notifications={notifications}
                 markAsRead={markAsRead}

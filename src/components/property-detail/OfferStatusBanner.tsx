@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -235,7 +236,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
 
   if (offerStatus === 'pending') {
     return (
-      <div className="bg-gray-100 border-2 border-black p-4 mb-4">
+      <div className="bg-gray-100 border border-gray-200 p-4 mb-4 rounded-lg">
         <div className="flex items-center">
           <Clock size={20} className="text-gray-700 mr-2" />
           <div className="font-bold">Offer Sent to Seller</div>
@@ -249,9 +250,9 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
 
   if (offerStatus === 'declined') {
     return (
-      <div className="bg-[#FFE8E8] border-2 border-black p-4 mb-4">
+      <div className="bg-red-50 border border-red-200 p-4 mb-4 rounded-lg">
         <div className="flex items-center">
-          <XCircle size={20} className="text-[#d0161a] mr-2" />
+          <XCircle size={20} className="text-red-500 mr-2" />
           <div className="font-bold">Offer Declined</div>
         </div>
         <p className="mt-2">
@@ -263,9 +264,9 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
 
   if (offerStatus === 'countered') {
     return (
-      <div className="bg-[#E8F4FF] border-2 border-black p-4 mb-4">
+      <div className="bg-blue-50 border border-blue-200 p-4 mb-4 rounded-lg">
         <div className="flex items-center">
-          <ArrowRightLeft size={20} className="text-[#0d2f72] mr-2" />
+          <ArrowRightLeft size={20} className="text-blue-600 mr-2" />
           <div className="font-bold">Counter Offer Received</div>
         </div>
         <p className="mt-2">
@@ -273,10 +274,10 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         </p>
         
         {counterOffers.length > 0 && (
-          <div className="mt-4 border-2 border-[#0d2f72] bg-white p-3 mb-4">
+          <div className="mt-4 border border-blue-200 bg-white p-3 mb-4 rounded-lg">
             <h3 className="font-bold text-lg mb-2">Negotiation History</h3>
             <div className="space-y-2 max-h-36 overflow-y-auto">
-              <div className="flex justify-between items-center p-2 bg-gray-100">
+              <div className="flex justify-between items-center p-2 bg-gray-100 rounded-md">
                 <div>
                   <strong>Initial Offer:</strong> ${offerAmount?.toLocaleString()}
                 </div>
@@ -284,10 +285,10 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
                   You
                 </div>
               </div>
-              {counterOffers.map((counterOffer, index) => (
+              {counterOffers.map((counterOffer) => (
                 <div 
                   key={counterOffer.id} 
-                  className={`flex justify-between items-center p-2 ${counterOffer.from_seller ? 'bg-blue-50' : 'bg-green-50'}`}
+                  className={`flex justify-between items-center p-2 rounded-md ${counterOffer.from_seller ? 'bg-blue-50' : 'bg-green-50'}`}
                 >
                   <div>
                     <strong>${counterOffer.amount.toLocaleString()}</strong>
@@ -303,8 +304,8 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         
         <div className="flex gap-2 mt-4">
           <Button 
-            variant="navy" 
-            className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
+            variant="outline"
+            className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
             onClick={() => handleCounterOffer()}
           >
             <ArrowRightLeft size={16} className="mr-2" />
@@ -313,7 +314,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         </div>
         
         <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
-          <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+          <DialogContent className="bg-white border border-gray-200 shadow-sm rounded-lg">
             <DialogHeader>
               <DialogTitle className="text-xl font-bold">Make Counter Offer</DialogTitle>
               <DialogDescription>
@@ -329,7 +330,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
                   type="number" 
                   value={counterOfferAmount} 
                   onChange={(e) => setCounterOfferAmount(Number(e.target.value))}
-                  className="mt-2 border-2 border-black focus:ring-0"
+                  className="mt-2 border border-gray-200"
                 />
               </div>
             </div>
@@ -339,15 +340,15 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
                 type="button" 
                 variant="outline" 
                 onClick={() => setCounterOfferDialogOpen(false)}
-                className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                className="font-bold border border-gray-200"
                 disabled={submitting}
               >
                 Cancel
               </Button>
               <Button 
                 type="button" 
-                variant="navy"
-                className="text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+                variant="outline"
+                className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
                 onClick={submitCounterOffer}
                 disabled={submitting}
               >
@@ -363,9 +364,9 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
 
   if (offerStatus === 'accepted') {
     return (
-      <div className="bg-[#E8F4FF] border-2 border-black p-4 mb-4">
+      <div className="bg-blue-50 border border-blue-200 p-4 mb-4 rounded-lg">
         <div className="flex items-center">
-          <CheckCircle size={20} className="text-[#0d2f72] mr-2" />
+          <CheckCircle size={20} className="text-blue-600 mr-2" />
           <div className="font-bold">Offer Accepted!</div>
         </div>
         <p className="mt-2">
@@ -374,14 +375,14 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         
         {!showSuccessDetails ? (
           <Button 
-            variant="navy" 
+            variant="outline" 
             onClick={() => setShowSuccessDetails(true)}
-            className="mt-2 w-full bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
+            className="mt-2 w-full bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
           >
             Next Steps <ArrowRight size={16} className="ml-1" />
           </Button>
         ) : (
-          <div className="mt-4 p-4 border-2 border-[#0d2f72] bg-white">
+          <div className="mt-4 p-4 border border-blue-200 bg-white rounded-lg">
             <h3 className="font-bold text-lg mb-2">Next Steps</h3>
             <p className="mb-4">Contact the seller directly to coordinate the next steps in your transaction:</p>
             
