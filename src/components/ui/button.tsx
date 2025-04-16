@@ -10,17 +10,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white/30 text-black backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 search-glow layer-2",
-        destructive: "bg-white/30 text-black backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 search-glow layer-2",
-        outline: "border border-white/30 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-black shadow-lg search-glow layer-2",
-        secondary: "bg-white/30 text-black backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 search-glow layer-2",
+        default: "bg-white/20 text-black backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/20 search-glow layer-2",
+        destructive: "bg-white/20 text-black backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/20 search-glow layer-2",
+        outline: "border border-white/20 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-black shadow-lg search-glow layer-2",
+        secondary: "bg-white/20 text-black backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/20 search-glow layer-2",
         ghost: "hover:bg-accent hover:text-accent-foreground search-glow layer-1",
         link: "text-black underline-offset-4 hover:underline layer-1",
-        warning: "bg-white/30 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 search-glow layer-2",
-        glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 text-black shadow-lg search-glow layer-2",
-        navy: "bg-white/30 text-black backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 property-card-glow layer-2",
-        red: "bg-white/30 text-black backdrop-blur-md rounded-xl hover:bg-white/40 shadow-lg border border-white/30 property-card-glow layer-2",
-        translucent: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl text-black hover:bg-white/40 transition-all shadow-md search-glow layer-2",
+        warning: "bg-white/20 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/20 search-glow layer-2",
+        glass: "bg-white/20 backdrop-blur-md border border-white/20 rounded-xl hover:bg-white/30 text-black shadow-lg search-glow layer-2",
+        navy: "bg-white/20 text-black backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/20 property-card-glow layer-2",
+        red: "bg-white/20 text-black backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/20 property-card-glow layer-2",
+        translucent: "bg-white/20 backdrop-blur-md border border-white/20 rounded-xl text-black hover:bg-white/30 transition-all shadow-md search-glow layer-2",
       },
       size: {
         default: "h-10 px-4 py-2",

@@ -33,7 +33,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
       return (
-        <span className="font-medium text-sm sm:text-base break-words glass px-2 py-1 rounded-lg backdrop-blur-sm">
+        <span className="font-medium text-sm sm:text-base break-words glass-content px-2 py-1 rounded-lg backdrop-blur-sm">
           {fullAddress}{location ? `, ${location}` : ''}
         </span>
       );
@@ -42,7 +42,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     return (
       <span className="font-medium text-sm sm:text-base">
         <span 
-          className="cursor-pointer text-black font-bold hover:underline glass px-2 py-1 rounded-lg backdrop-blur-sm"
+          className="cursor-pointer text-black font-bold hover:underline glass-content px-2 py-1 rounded-lg backdrop-blur-sm"
           onClick={onShowAddressClick}
         >
           Join Waitlist For Address
@@ -53,41 +53,41 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   };
 
   return (
-    <div className="glass-card backdrop-blur-lg border border-white/30 shadow-lg p-4 sm:p-6 rounded-xl property-card-glow layer-1">
+    <div className="glass-card backdrop-blur-lg border border-white/20 shadow-lg p-4 sm:p-6 rounded-xl property-card-glow layer-1">
       <div className="flex items-center gap-2 mb-2">
-        <div className="bg-white/30 backdrop-blur-md text-black px-2 sm:px-3 py-1 border border-white/30 font-bold inline-flex items-center text-xs sm:text-sm rounded-lg property-card-glow layer-2">
-          {belowMarket}% BELOW MARKET
+        <div className="bg-white/20 backdrop-blur-md text-black px-2 sm:px-3 py-1 border border-white/20 font-bold inline-flex items-center text-xs sm:text-sm rounded-lg property-card-glow layer-2">
+          <span className="rainbow-text">{belowMarket}%</span> BELOW MARKET
         </div>
       </div>
       
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 break-words text-black layer-2">{title}</h1>
       
-      <div className="flex items-start sm:items-center mb-4 flex-wrap glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2">
-        <MapPin size={16} className="mr-1 sm:mr-2 text-pink-500 mt-1 sm:mt-0" />
+      <div className="flex items-start sm:items-center mb-4 flex-wrap glass-content p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm layer-2">
+        <MapPin size={16} className="mr-1 sm:mr-2 rainbow-text mt-1 sm:mt-0" />
         {renderLocation()}
       </div>
       
       <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
-        <div className="glass backdrop-blur-lg border border-white/30 p-2 sm:p-4 rounded-lg property-card-glow layer-2">
+        <div className="glass-content backdrop-blur-lg border border-white/10 p-2 sm:p-4 rounded-lg property-card-glow layer-2">
           <div className="text-lg sm:text-2xl font-bold rainbow-text">{formatCurrency(price)}</div>
           <div className="text-xs sm:text-sm text-black">Listing Price</div>
         </div>
-        <div className="glass backdrop-blur-lg border border-white/30 p-2 sm:p-4 rounded-lg layer-2">
+        <div className="glass-content backdrop-blur-lg border border-white/10 p-2 sm:p-4 rounded-lg layer-2">
           <div className="text-base sm:text-xl font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
           <div className="text-xs sm:text-sm text-black">Market Value</div>
         </div>
       </div>
       
-      <div className="flex justify-between pt-2 sm:pt-3 border-t border-white/30 mb-4 sm:mb-6 text-sm sm:text-base">
-        <div className="flex items-center glass px-3 py-1 rounded-lg backdrop-blur-sm border border-white/20 layer-2">
+      <div className="flex justify-between pt-2 sm:pt-3 border-t border-white/20 mb-4 sm:mb-6 text-sm sm:text-base">
+        <div className="flex items-center glass-content px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10 layer-2">
           <span className="font-bold text-black">{beds}</span>
           <span className="ml-1 text-black">Beds</span>
         </div>
-        <div className="flex items-center glass px-3 py-1 rounded-lg backdrop-blur-sm border border-white/20 layer-2">
+        <div className="flex items-center glass-content px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10 layer-2">
           <span className="font-bold text-black">{baths}</span>
           <span className="ml-1 text-black">Baths</span>
         </div>
-        <div className="flex items-center glass px-3 py-1 rounded-lg backdrop-blur-sm border border-white/20 layer-2">
+        <div className="flex items-center glass-content px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10 layer-2">
           <span className="font-bold text-black">{sqft?.toLocaleString()}</span>
           <span className="ml-1 text-black">sqft</span>
         </div>

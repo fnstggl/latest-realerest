@@ -59,7 +59,7 @@ const PropertyDetail: React.FC = () => {
           const formattedOffers = data.map(offer => ({
             id: offer.id,
             amount: Number(offer.offer_amount),
-            buyerName: "Real Buyer"
+            buyerName: "Anonymous buyer"
           }));
           
           setRealOffers(formattedOffers);
@@ -74,19 +74,11 @@ const PropertyDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
+      <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
         <Navbar />
         <div className="container mx-auto px-4 py-12">
-          <div className="animate-pulse">
-            <div className="h-8 bg-white/30 backdrop-blur-md rounded-lg w-1/3 mb-4"></div>
-            <div className="h-96 bg-white/30 backdrop-blur-md rounded-lg w-full mb-6"></div>
-            <div className="h-6 bg-white/30 backdrop-blur-md rounded-lg w-1/2 mb-2"></div>
-            <div className="h-6 bg-white/30 backdrop-blur-md rounded-lg w-1/4 mb-6"></div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="h-20 bg-white/30 backdrop-blur-md rounded-lg"></div>
-              <div className="h-20 bg-white/30 backdrop-blur-md rounded-lg"></div>
-              <div className="h-20 bg-white/30 backdrop-blur-md rounded-lg"></div>
-            </div>
+          <div className="loading-container">
+            <div className="gradient-blob"></div>
           </div>
         </div>
       </div>
@@ -95,7 +87,7 @@ const PropertyDetail: React.FC = () => {
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
+      <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
         <Navbar />
         <div className="container mx-auto px-4 py-12 text-center">
           <h1 className="text-3xl font-bold mb-4 rainbow-text">Property Not Found</h1>
@@ -112,10 +104,15 @@ const PropertyDetail: React.FC = () => {
                              property?.estimatedRehab !== undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
+    <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 relative overflow-hidden">
+      {/* Background blobs */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100/40 rounded-full filter blur-3xl"></div>
+      <div className="absolute top-60 -right-20 w-80 h-80 bg-purple-100/40 rounded-full filter blur-3xl"></div>
+      <div className="absolute bottom-20 left-60 w-72 h-72 bg-pink-100/30 rounded-full filter blur-3xl"></div>
+      
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8">
           <Button 
             asChild
