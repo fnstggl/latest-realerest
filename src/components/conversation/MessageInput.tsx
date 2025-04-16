@@ -27,20 +27,20 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, sending }) =
   };
 
   return (
-    <div className="border-t-4 border-black p-4">
+    <div className="border-t border-gray-200 p-4 bg-white/80">
       <div className="flex items-end space-x-2">
         <Textarea
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
-          className="resize-none border-2 border-black focus:ring-0"
+          className="resize-none border border-gray-200 focus:border-[#0892D0] focus:ring-[#0892D0]/20"
           rows={2}
         />
         <Button 
           onClick={handleSendMessage}
           disabled={!newMessage.trim() || sending}
-          className="h-20 w-20 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all bg-[#0d2f72] text-white flex items-center justify-center"
+          className="h-16 w-16 bg-[#0892D0] hover:bg-[#0892D0]/90 text-white flex items-center justify-center"
         >
           <Send size={20} />
         </Button>

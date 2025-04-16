@@ -35,8 +35,8 @@ const Messages: React.FC = () => {
             </div>
           </div>
           
-          <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
-            <div className="border-b-4 border-black p-4 bg-gray-50">
+          <div className="bg-white/90 border border-gray-200 rounded-lg shadow-sm">
+            <div className="border-b border-gray-200 p-4 bg-gray-50">
               <h2 className="text-xl font-bold">Conversations</h2>
             </div>
             

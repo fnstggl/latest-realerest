@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -46,7 +45,6 @@ const Conversation: React.FC = () => {
           ? conversation.participant2 
           : conversation.participant1;
           
-        // Get user profile info
         const { data: profileData } = await supabase
           .from('profiles')
           .select('name')
@@ -71,12 +69,10 @@ const Conversation: React.FC = () => {
         const messageData = await fetchMessages(id);
         setMessages(messageData);
         
-        // Look for property information in messages
         console.log("Messages data:", messageData);
         let propertyId = null;
         let relatedOfferId = null;
         
-        // Find a message with property information
         for (const message of messageData) {
           if (message.propertyId && message.relatedOfferId) {
             propertyId = message.propertyId;
@@ -85,7 +81,6 @@ const Conversation: React.FC = () => {
           }
         }
         
-        // If found a property ID, fetch its details
         if (propertyId) {
           console.log("Found property ID:", propertyId);
           const { data: propertyData, error } = await supabase
@@ -105,11 +100,6 @@ const Conversation: React.FC = () => {
               : undefined;
               
             setPropertyInfo({
-              id: propertyId,
-              title: propertyData.title,
-              image: imageUrl
-            });
-            console.log("Set property info:", {
               id: propertyId,
               title: propertyData.title,
               image: imageUrl
@@ -224,9 +214,9 @@ const Conversation: React.FC = () => {
               variant="outline" 
               size="sm"
               onClick={() => navigate('/messages')}
-              className="border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center"
+              className="flex items-center gap-1 hover:border-[#0892D0] hover:text-[#0892D0]"
             >
-              <ArrowLeft size={16} className="mr-1" />
+              <ArrowLeft size={16} />
               Back
             </Button>
             
@@ -241,12 +231,12 @@ const Conversation: React.FC = () => {
               >
                 <div className="flex flex-col items-end mr-3">
                   <span className="text-sm font-semibold">About Property:</span>
-                  <span className="text-blue-600 flex items-center text-sm hover:underline">
+                  <span className="text-[#0892D0] flex items-center text-sm hover:underline">
                     {propertyInfo.title}
                     <ExternalLink size={14} className="ml-1" />
                   </span>
                 </div>
-                <div className="h-16 w-16 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+                <div className="h-16 w-16 rounded-md border border-gray-200 shadow-sm overflow-hidden">
                   <img 
                     src={propertyInfo.image || '/placeholder.svg'} 
                     alt={propertyInfo.title} 
@@ -257,7 +247,7 @@ const Conversation: React.FC = () => {
             )}
           </div>
           
-          <Card className="flex-1 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+          <Card className="flex-1 border border-gray-200 shadow-sm flex flex-col bg-white/90 rounded-lg">
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {loading ? (
                 <div className="space-y-4">

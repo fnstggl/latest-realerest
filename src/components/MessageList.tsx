@@ -58,7 +58,7 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
         <p className="text-gray-500 mb-4">You haven't messaged anyone yet.</p>
         <Button 
           onClick={() => navigate('/search')}
-          className="neo-button-primary"
+          className="bg-[#0892D0] hover:bg-[#0892D0]/90 text-white"
         >
           Find Properties
         </Button>
@@ -79,7 +79,7 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
             <div className="flex items-start">
               {conversation.propertyImage && (
                 <div 
-                  className="h-16 w-16 rounded-md border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] overflow-hidden mr-3 flex-shrink-0 cursor-pointer"
+                  className="h-16 w-16 rounded-md border border-gray-200 shadow-sm overflow-hidden mr-3 flex-shrink-0 cursor-pointer"
                   onClick={(e) => handlePropertyClick(e, conversation.propertyId)}
                 >
                   <img 
@@ -97,7 +97,7 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
                 
                 {conversation.propertyId && conversation.propertyTitle && (
                   <div 
-                    className="flex items-center text-sm text-blue-600 cursor-pointer hover:underline mb-1"
+                    className="flex items-center text-sm text-[#0892D0] cursor-pointer hover:underline mb-1"
                     onClick={(e) => handlePropertyClick(e, conversation.propertyId)}
                   >
                     <Home size={14} className="mr-1" />
@@ -117,7 +117,7 @@ const MessageList: React.FC<MessageListProps> = ({ conversations, loading }) => 
                   {formatDistanceToNow(new Date(conversation.latestMessage.timestamp), { addSuffix: true })}
                 </p>
                 {isUnread && (
-                  <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded mt-1 inline-block">
+                  <div className="bg-[#0892D0] px-2 py-1 text-xs font-bold rounded mt-1 inline-block text-white">
                     NEW
                   </div>
                 )}

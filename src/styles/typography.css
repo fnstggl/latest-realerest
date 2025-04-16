@@ -38,7 +38,7 @@
   
   /* Electric blue glow */
   .electric-blue-glow {
-    color: #0892D0;
+    color: white;
     position: relative;
     display: inline-block;
     text-shadow: 0 0 10px rgba(8, 146, 208, 0.7), 0 0 20px rgba(8, 146, 208, 0.5), 0 0 30px rgba(8, 146, 208, 0.3);

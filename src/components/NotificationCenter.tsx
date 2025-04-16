@@ -108,21 +108,21 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
         >
           <Bell size={20} className="text-black" />
           {unreadCount > 0 && showIndicator && (
-            <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-[#0892D0] text-[10px] font-bold text-white">
+            <span className="absolute -top-1 -right-1 bg-[#0892D0] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0 border border-white/40 shadow-md rounded-xl backdrop-blur-md" align="end">
-        <div className="border-b border-gray-200 p-4 bg-white/80">
+      <PopoverContent className="w-80 p-0 border border-gray-200 shadow-md rounded-lg bg-white/95 backdrop-blur-sm" align="end">
+        <div className="border-b border-gray-200 p-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-bold">Notifications</h3>
             <Button 
               variant="ghost" 
               size="sm"
               onClick={handleMarkAllAsRead}
-              className="text-xs font-bold"
+              className="text-xs text-[#0892D0] hover:text-[#0892D0]/80 font-medium"
             >
               Mark all as read
             </Button>
