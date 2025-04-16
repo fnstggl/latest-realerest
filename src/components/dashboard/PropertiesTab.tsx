@@ -72,25 +72,25 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
   return (
     <>
       {isLoading ? (
-        <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
           <p className="mb-6">Loading your properties...</p>
         </div>
       ) : myProperties.length > 0 ? (
         <div className="grid md:grid-cols-1 gap-6">
           {myProperties.map((property) => (
-            <div key={property.id} className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+            <div key={property.id} className="layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden shadow-lg hover:translate-y-[-5px] transition-all">
                   <div className="flex flex-col md:flex-row">
                     <div className="w-full md:w-1/3">
                       <img 
                         src={property.image} 
                         alt={property.title} 
-                        className="h-64 w-full object-cover border-b-4 md:border-b-0 md:border-r-4 border-black"
+                        className="h-64 w-full object-cover"
                       />
                     </div>
                     <div className="p-6 flex-1">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-2xl font-bold">{property.title}</h3>
-                        <div className="bg-[#d60013] text-white px-3 py-1 border-2 border-black font-bold">
+                        <div className="bg-[#d60013] text-white px-3 py-1 rounded-lg font-bold">
                           {Math.round(property.belowMarket)}% BELOW MARKET
                         </div>
                       </div>
@@ -108,15 +108,15 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                       </div>
                       
                       <div className="flex gap-4">
-                        <Button asChild className="neo-button" variant="outline">
+                        <Button asChild variant="glass" className="shadow-lg">
                           <Link to={`/property/${property.id}`}>View Listing</Link>
                         </Button>
-                        <Button asChild className="neo-button-primary">
+                        <Button asChild variant="glass" className="bg-white/50 shadow-lg">
                           <Link to={`/property/${property.id}/edit`}>Edit</Link>
                         </Button>
                         <Button 
                           variant="destructive" 
-                          className="bg-black text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                          className="bg-[#d60013] text-white border border-white/40 shadow-lg"
                           onClick={() => handleUnlistProperty(property.id)}
                         >
                           <Trash2 size={18} className="mr-2" />
@@ -126,13 +126,13 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     </div>
                   </div>
                   
-                  <div className="border-t-4 border-black p-4 bg-gray-50">
+                  <div className="border-t border-white/20 p-4 bg-white/30 backdrop-blur-sm">
                     <div className="flex justify-between items-center">
                       <div>
                         <span className="font-bold mr-2">Waitlist:</span>
                         {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                       </div>
-                      <Button asChild className="neo-button" variant="outline">
+                      <Button asChild variant="glass" className="shadow-lg">
                         <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
                           Manage Waitlist
                         </Link>
@@ -143,17 +143,18 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
           ))}
         </div>
       ) : (
-        <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
           <Building2 size={48} className="mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-4">No Properties Listed</h3>
           <p className="mb-6">You haven't listed any properties yet.</p>
           <Button 
             asChild
-            className="neo-button-primary"
+            variant="glass"
+            className="bg-white shadow-lg hover:translate-y-[-5px] transition-all"
           >
             <Link to="/sell/create">
               <Plus size={18} className="mr-2" />
-              Add Your First Property
+              <span className="text-gradient-primary">Add Your First Property</span>
             </Link>
           </Button>
         </div>

@@ -15,7 +15,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
       <Button 
         type="submit" 
         disabled={isSubmitting} 
-        className="w-full py-6 text-white font-bold text-xl rounded-xl layer-3 glass-card backdrop-blur-lg border border-white/40 hover:translate-y-[-5px] transition-all disabled:opacity-70 bg-[#d60013]"
+        className="w-full py-6 text-white font-bold text-xl rounded-xl bg-white shadow-lg border border-white/40 hover:translate-y-[-5px] transition-all disabled:opacity-70"
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">

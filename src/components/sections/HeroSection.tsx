@@ -34,11 +34,9 @@ const HeroSection: React.FC = () => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-4 mx-auto text-center leading-tight">
               Find a home you love...
             </h1>
-            <div className="apple-glow-text mb-4 md:mb-6 shadow-2xl layer-2 mx-auto text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center leading-tight">
-                at a price you'll love more
-              </h1>
-            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center leading-tight mb-4 md:mb-6 text-gradient-primary">
+              at a price you'll love more
+            </h1>
             <p className="text-foreground mb-6 md:mb-8 text-base md:text-lg mx-auto max-w-2xl text-center">
               Helping families buy homes they were told they couldn't afford.
             </p>

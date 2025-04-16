@@ -58,11 +58,11 @@ const Dashboard: React.FC = () => {
             </div>
             
             <Button 
-              className="layer-3 glass-card backdrop-blur-lg border border-white/40 hover:translate-y-[-5px] transition-all"
+              className="layer-3 glass-card backdrop-blur-lg border border-white/40 hover:translate-y-[-5px] transition-all bg-white"
               onClick={() => navigate('/sell/create')}
             >
               <Plus size={18} className="mr-2" />
-              Add Property
+              <span className="text-gradient-primary">Add Property</span>
             </Button>
           </div>
           
