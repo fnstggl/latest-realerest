@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -83,7 +82,6 @@ const OffersTab: React.FC = () => {
         console.log("Raw property offers data:", propertyOffers);
         
         const offersWithDetails = await Promise.all(propertyOffers.map(async offer => {
-          // Get property details
           const { data: property } = await supabase
             .from('property_listings')
             .select('title, price')
@@ -92,13 +90,11 @@ const OffersTab: React.FC = () => {
             
           console.log(`Property for offer ${offer.id}:`, property);
           
-          // Get buyer profile details using both direct profile query and auth.users as backup
           let buyerName = 'Unknown User';
           let buyerEmail = null;
           let buyerPhone = null;
           
           try {
-            // First try to get profile name directly
             const { data: buyerProfile, error: profileError } = await supabase
               .from('profiles')
               .select('name, email, phone')
@@ -119,7 +115,6 @@ const OffersTab: React.FC = () => {
               }
             }
             
-            // If no name found, try to get email from the getUserDisplayName utility
             if (buyerName === 'Unknown User') {
               const displayName = await getUserDisplayName(offer.user_id);
               if (displayName && displayName !== 'Unknown User') {
@@ -133,7 +128,6 @@ const OffersTab: React.FC = () => {
             console.error(`Error processing buyer details for ${offer.user_id}:`, error);
           }
           
-          // Get counter offers
           const { data: counterOffers } = await supabase
             .from('counter_offers')
             .select('*')
@@ -444,17 +438,17 @@ const OffersTab: React.FC = () => {
                   {offer.status === "pending" && (
                     <>
                       <Button 
-                        onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="font-bold border"
+                        onClick={() => handleOfferAction(offer.id, "accepted")}
+                        className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept
                       </Button>
                       
                       <Button 
-                        onClick={() => handleCounterOffer(offer)} 
+                        onClick={() => handleCounterOffer(offer)}
                         variant="outline"
-                        className="font-bold"
+                        className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
                       >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
@@ -465,17 +459,17 @@ const OffersTab: React.FC = () => {
                   {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && (
                     <>
                       <Button 
-                        onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="font-bold border"
+                        onClick={() => handleOfferAction(offer.id, "accepted")}
+                        className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
                       </Button>
                       
                       <Button 
-                        onClick={() => handleCounterOffer(offer)} 
+                        onClick={() => handleCounterOffer(offer)}
                         variant="outline"
-                        className="font-bold"
+                        className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
                       >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter Again
@@ -484,9 +478,9 @@ const OffersTab: React.FC = () => {
                   )}
                   
                   <Button 
-                    onClick={() => handleMessageBuyer(offer)} 
-                    variant="outline" 
-                    className="font-bold"
+                    onClick={() => handleMessageBuyer(offer)}
+                    variant="outline"
+                    className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
                   >
                     <MessageSquare size={16} className="mr-2" />
                     Message Buyer
@@ -558,6 +552,7 @@ const OffersTab: React.FC = () => {
               type="button" 
               onClick={submitCounterOffer} 
               disabled={submitting}
+              className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
             >
               <ArrowRightLeft size={18} className="mr-2" />
               {submitting ? "Sending..." : "Send Counter Offer"}

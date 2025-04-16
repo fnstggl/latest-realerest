@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -67,7 +66,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
           setOfferAmount(data.offer_amount);
           setOfferId(data.id);
           
-          // Fetch counter offers if they exist
           if (data.id) {
             const { data: counterOfferData, error: counterOfferError } = await supabase
               .from('counter_offers')
@@ -80,7 +78,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
             } else if (counterOfferData) {
               setCounterOffers(counterOfferData);
               
-              // If there are counter offers, set the initial counter amount to the last counter offer
               if (counterOfferData.length > 0) {
                 const latestOffer = [...counterOfferData].sort(
                   (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -101,7 +98,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
     
     checkOfferStatus();
     
-    // Set up realtime subscriptions for offer and counter offer updates
     const offerChannel = supabase
       .channel('property_offers_changes')
       .on('postgres_changes', 
@@ -126,7 +122,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
           table: 'counter_offers'
         },
         (payload) => {
-          // Only refresh if this counter offer is related to our offer
           if (offerId && payload.new && payload.new.offer_id === offerId) {
             checkOfferStatus();
           }
@@ -149,13 +144,12 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
     
     setSubmitting(true);
     try {
-      // 1. Insert the counter offer record
       const { data: counterOffer, error: counterOfferError } = await supabase
         .from('counter_offers')
         .insert({
           offer_id: offerId,
           amount: counterOfferAmount,
-          from_seller: false, // this is from buyer since we're in the property detail page
+          from_seller: false
         })
         .select('*')
         .single();
@@ -166,7 +160,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         return;
       }
       
-      // 2. Get the seller ID for the notification
       const { data: offerData, error: offerError } = await supabase
         .from('property_offers')
         .select('seller_id, property_id')
@@ -179,7 +172,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         return;
       }
       
-      // 3. Get property title for the notification
       const { data: propertyData, error: propertyError } = await supabase
         .from('property_listings')
         .select('title')
@@ -192,7 +184,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
       
       const propertyTitle = propertyData?.title || "your property";
       
-      // 4. Send notification to the seller
       await supabase
         .from('notifications')
         .insert({
@@ -210,7 +201,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
           read: false
         });
       
-      // 5. Add the new counter offer to our local state
       setCounterOffers([...counterOffers, {
         id: counterOffer.id,
         offer_id: offerId,
@@ -234,7 +224,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
       return offerAmount;
     }
     
-    // Sort counter offers by date and get the latest
     const sortedCounterOffers = [...counterOffers].sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
@@ -315,7 +304,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         <div className="flex gap-2 mt-4">
           <Button 
             variant="navy" 
-            className="w-full"
+            className="bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
             onClick={() => handleCounterOffer()}
           >
             <ArrowRightLeft size={16} className="mr-2" />
@@ -323,7 +312,6 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
           </Button>
         </div>
         
-        {/* Counter Offer Dialog */}
         <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
           <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
             <DialogHeader>
@@ -388,7 +376,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
           <Button 
             variant="navy" 
             onClick={() => setShowSuccessDetails(true)}
-            className="mt-2 w-full"
+            className="mt-2 w-full bg-white/80 text-black border border-white/40 rounded-lg hover:bg-white/90 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all shadow-sm"
           >
             Next Steps <ArrowRight size={16} className="ml-1" />
           </Button>
