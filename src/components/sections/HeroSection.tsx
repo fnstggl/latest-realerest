@@ -40,7 +40,7 @@ const HeroSection: React.FC = () => {
               </h1>
             </div>
             <p className="text-foreground mb-6 md:mb-8 text-sm md:text-base mx-auto max-w-2xl text-center">
-              Realer Estate does real estate better. We exclusively offer below-market priced homes, and the best part is — they're available to everyone
+              Helping families buy homes they were told they couldn't afford.
             </p>
             <div className="glass-card p-1 mb-6 md:mb-8 shadow-xl search-glow rounded-xl mx-auto w-full max-w-2xl">
               <SearchBar className="" />
