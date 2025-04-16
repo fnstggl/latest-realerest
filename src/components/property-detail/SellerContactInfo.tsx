@@ -25,20 +25,20 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
       
       <div className="space-y-2">
         <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
-          <User size={16} className="mr-2 electric-blue-glow" />
+          <User size={16} className="mr-2 text-[#0892D0]" />
           <span className="text-black">{name || 'Property Owner'}</span>
         </div>
         
         {email && (
           <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
-            <Mail size={16} className="mr-2 electric-blue-glow" />
+            <Mail size={16} className="mr-2 text-[#0892D0]" />
             <a href={`mailto:${email}`} className="hover:underline text-black">{email}</a>
           </div>
         )}
         
         {phone && (
           <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
-            <Phone size={16} className="mr-2 electric-blue-glow" />
+            <Phone size={16} className="mr-2 text-[#0892D0]" />
             <a href={`tel:${phone}`} className="hover:underline text-black">{phone}</a>
           </div>
         )}

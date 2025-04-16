@@ -26,17 +26,17 @@
     animation: gradientShift 4s ease infinite;
   }
   
-  /* Gradient backgrounds */
+  /* Gradient backgrounds - updated to electric blue */
   .bg-gradient-purple-pink {
-    background: linear-gradient(135deg, rgba(147,39,143,1) 0%, rgba(234,172,232,1) 100%);
+    background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
   }
   
   .bg-gradient-blue-purple {
-    background: linear-gradient(135deg, #3C79F5 0%, #6C42F5 100%);
+    background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
   }
   
   .bg-gradient-orange-pink {
-    background: linear-gradient(135deg, #FF5C00 0%, #FF3CAC 100%);
+    background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
   }
   
   /* Text gradients */
@@ -64,13 +64,14 @@
     color: transparent;
   }
   
+  /* Electric blue glow - updated */
   .search-glow {
-    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px 0 rgba(8, 146, 208, 0.5);
     transition: box-shadow 0.3s ease;
   }
   
   .search-glow:hover {
-    box-shadow: 0 0 15px 0 rgba(255, 255, 255, 0.5), 0 0 30px 0 rgba(255, 92, 0, 0.3);
+    box-shadow: 0 0 15px 0 rgba(8, 146, 208, 0.7), 0 0 30px 0 rgba(8, 146, 208, 0.4);
   }
   
   /* Electric blue glow */

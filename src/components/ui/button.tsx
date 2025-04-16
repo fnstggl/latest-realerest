@@ -10,17 +10,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white/40 text-black backdrop-blur-md rounded-xl hover:bg-white/50 shadow-lg border border-white/40 layer-hover layer-2",
-        destructive: "bg-white/40 text-black backdrop-blur-md rounded-xl hover:bg-white/50 shadow-lg border border-white/40 layer-hover layer-2",
-        outline: "border border-white/40 bg-white/30 hover:bg-white/40 backdrop-blur-md rounded-xl text-black shadow-lg layer-hover layer-1",
-        secondary: "bg-white/40 text-black backdrop-blur-md rounded-xl hover:bg-white/50 shadow-lg border border-white/40 layer-hover layer-2",
+        default: "bg-white/40 text-black backdrop-blur-md rounded-xl hover:bg-white/50 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
+        destructive: "bg-white/40 text-black backdrop-blur-md rounded-xl hover:bg-white/50 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
+        outline: "border border-white/40 bg-white/30 hover:bg-white/40 hover:border-[#0892D0] backdrop-blur-md rounded-xl text-black shadow-lg layer-hover layer-1",
+        secondary: "bg-white/40 text-black backdrop-blur-md rounded-xl hover:bg-white/50 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
         ghost: "hover:bg-accent hover:text-accent-foreground layer-hover layer-1",
-        link: "text-black underline-offset-4 hover:underline layer-1",
-        warning: "bg-white/40 text-amber-500 backdrop-blur-md rounded-xl hover:bg-white/50 shadow-lg border border-white/40 layer-hover layer-2",
-        glass: "bg-white/50 backdrop-blur-md border border-white/40 rounded-xl hover:bg-white/60 text-black shadow-lg layer-hover layer-2",
-        navy: "bg-white/50 text-black backdrop-blur-md rounded-xl hover:bg-white/60 shadow-lg border border-white/40 layer-hover layer-2",
-        red: "bg-white/50 text-black backdrop-blur-md rounded-xl hover:bg-white/60 shadow-lg border border-white/40 layer-hover layer-2",
-        translucent: "bg-white/50 backdrop-blur-md border border-white/40 rounded-xl text-black hover:bg-white/60 transition-all shadow-md layer-hover layer-2",
+        link: "text-black underline-offset-4 hover:underline hover:text-[#0892D0] layer-1",
+        warning: "bg-white/40 text-[#0892D0] backdrop-blur-md rounded-xl hover:bg-white/50 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
+        glass: "bg-white/50 backdrop-blur-md border border-white/40 rounded-xl hover:bg-white/60 hover:border-[#0892D0] text-black shadow-lg layer-hover layer-2",
+        navy: "bg-white/50 text-black backdrop-blur-md rounded-xl hover:bg-white/60 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
+        red: "bg-white/50 text-black backdrop-blur-md rounded-xl hover:bg-white/60 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
+        translucent: "bg-white/50 backdrop-blur-md border border-white/40 rounded-xl text-black hover:bg-white/60 hover:border-[#0892D0] transition-all shadow-md layer-hover layer-2",
       },
       size: {
         default: "h-10 px-4 py-2",

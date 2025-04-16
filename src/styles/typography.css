@@ -56,23 +56,20 @@
     font-weight: bold;
   }
   
-  /* Purple text */
+  /* Blue text */
   .purple-text {
-    color: var(--purple-primary);
+    color: #0892D0;
     font-weight: bold;
   }
   
-  /* Gradient hover text effect for links */
+  /* Gradient hover text effect for links - changed to electric blue */
   .gradient-hover-text {
     position: relative;
     transition: all 0.3s ease;
   }
   
   .gradient-hover-text:hover {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 15px rgba(108, 66, 245, 0.4), 0 0 30px rgba(217, 70, 239, 0.2);
+    color: #0892D0;
+    text-shadow: 0 0 10px rgba(8, 146, 208, 0.5), 0 0 20px rgba(8, 146, 208, 0.3);
   }
 }

@@ -85,7 +85,7 @@ const FeaturedProperties: React.FC = () => {
             ) : (
               <div className="glass-card p-12 text-center shadow-xl">
                 <h3 className="text-2xl font-bold text-foreground mb-6">No properties have been listed yet.</h3>
-                <Button className="glass shadow-lg search-glow" onClick={() => navigate('/sell/create')}>
+                <Button className="glass shadow-lg electric-blue-button" onClick={() => navigate('/sell/create')}>
                   List Your Property
                 </Button>
               </div>
@@ -94,11 +94,11 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 search-glow"
+                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 electric-blue-button"
               >
                 <span className="text-gradient-static">View All Properties</span>
-                <div className="glass-button-icon w-8 h-8 rounded-full flex items-center justify-center shadow-lg bg-white/20 backdrop-blur-md border border-white/30 layer-3 search-glow">
-                  <ArrowRight size={18} className="text-[#FF5C00]" />
+                <div className="glass-button-icon w-8 h-8 rounded-full flex items-center justify-center shadow-lg bg-white/20 backdrop-blur-md border border-white/30">
+                  <ArrowRight size={18} className="text-[#0892D0]" />
                 </div>
               </Button>
             </div>
