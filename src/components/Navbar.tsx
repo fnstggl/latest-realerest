@@ -70,11 +70,17 @@ const Navbar: React.FC = () => {
               </Button>
             ) : (
               <>
-                <Button variant="glass" className="w-full justify-center font-bold text-foreground" onClick={handleSignIn}>
+                <Button 
+                  className="w-full justify-center font-bold text-foreground auth-button" 
+                  onClick={handleSignIn}
+                >
                   Log In
                 </Button>
                 
-                <Button variant="glass" className="w-full justify-center font-bold" onClick={handleSignUp}>
+                <Button 
+                  className="w-full justify-center font-bold auth-button" 
+                  onClick={handleSignUp}
+                >
                   Sign up
                 </Button>
               </>
@@ -134,8 +140,7 @@ const Navbar: React.FC = () => {
           ) : (
             <>
               <Button 
-                variant="glass" 
-                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
+                className="auth-button glass-translucent font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
                 onClick={handleSignIn}
               >
                 <LogIn size={18} className="mr-2" />
@@ -143,8 +148,7 @@ const Navbar: React.FC = () => {
               </Button>
               
               <Button 
-                variant="glass" 
-                className="font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
+                className="auth-button glass-translucent font-bold text-xs sm:text-base py-1 px-2 sm:py-2 sm:px-4" 
                 onClick={handleSignUp}
               >
                 Sign up

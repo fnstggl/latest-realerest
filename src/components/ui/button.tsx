@@ -20,6 +20,7 @@ const buttonVariants = cva(
         glass: "bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/30 text-foreground shadow-lg search-glow layer-2",
         navy: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow layer-2",
         red: "bg-white/30 text-white backdrop-blur-md rounded-xl hover:bg-white/30 shadow-lg border border-white/30 search-glow layer-2",
+        translucent: "auth-button text-foreground", // New variant for the transparent auth buttons
       },
       size: {
         default: "h-10 px-4 py-2",
