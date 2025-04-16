@@ -1,0 +1,47 @@
+
+@layer utilities {
+  .xs\:inline-block {
+    @media (min-width: 480px) {
+      display: inline-block;
+    }
+  }
+
+  .xs\:hidden {
+    @media (min-width: 480px) {
+      display: none;
+    }
+  }
+
+  .layer-1 {
+    transform: translateZ(10px);
+  }
+
+  .layer-2 {
+    transform: translateZ(20px);
+  }
+
+  .layer-3 {
+    transform: translateZ(30px);
+  }
+
+  .perspective-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+}
+
+.responsive-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+}
+
+.responsive-card {
+  @apply p-3 sm:p-4 md:p-6;
+}
+
+.responsive-padding {
+  @apply p-2 sm:p-4 md:p-6;
+}
+
+.responsive-margin {
+  @apply m-2 sm:m-4 md:m-6;
+}

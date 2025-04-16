@@ -1,0 +1,108 @@
+
+@layer components {
+  /* Enhanced Glassmorphism utilities */
+  .glass {
+    @apply bg-white/20 backdrop-blur-md border border-white/20 rounded-xl shadow-lg;
+  }
+  
+  .glass-card {
+    @apply bg-white/25 backdrop-blur-lg border border-white/30 rounded-xl shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply bg-black/30 backdrop-blur-md border border-white/10 rounded-xl text-white shadow-lg;
+  }
+  
+  .glass-input {
+    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl focus:ring-2 focus:ring-[#FF5C00] focus:border-transparent;
+  }
+  
+  .glass-button {
+    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-xl hover:bg-white/40 transition-all shadow-sm;
+  }
+  
+  /* New super translucent glass style for auth buttons */
+  .glass-translucent {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl transition-all shadow-md;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  /* Auth buttons with gradient glow on hover */
+  .auth-button {
+    position: relative;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    transform: translateY(0);
+  }
+  
+  .auth-button:hover {
+    transform: translateY(-2px);
+  }
+  
+  .auth-button:hover::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.7;
+    filter: blur(3px);
+    animation: gradientShift 3s linear infinite;
+  }
+  
+  .auth-button:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: inherit;
+    backdrop-filter: blur(12px);
+    z-index: -1;
+  }
+  
+  .glass-button-primary {
+    @apply backdrop-blur-md border border-white/30 rounded-xl transition-all text-white shadow-sm;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+  }
+  
+  .glass-button-rainbow {
+    @apply bg-white/30 backdrop-blur-md border border-white/30 rounded-full hover:bg-white/40 transition-all shadow-sm search-glow;
+  }
+  
+  .glass-button-purple {
+    @apply backdrop-blur-md border border-white/30 rounded-full transition-all shadow-sm;
+    background-color: var(--purple-primary);
+  }
+  
+  .glass-banner {
+    @apply bg-white/30 backdrop-blur-lg border border-white/40 rounded-xl shadow-lg;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .glass-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  }
+  
+  .glass-banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  }
+}

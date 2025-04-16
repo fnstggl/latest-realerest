@@ -1,0 +1,214 @@
+
+@layer components {
+  /* Rainbow glow card - matches reference image */
+  .rainbow-glow-card {
+    position: relative;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .rainbow-glow-card:hover::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    padding: 3px;
+    background: linear-gradient(90deg, #FF5C00, #D946EF, #3C79F5, #00C9FF, #ff3CAC);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 1;
+    filter: blur(3px);
+    z-index: 0;
+    animation: animateGlow 3s linear infinite;
+    background-size: 400% 100%;
+  }
+  
+  /* Rainbow price */
+  .rainbow-price {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    position: relative;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover .rainbow-price::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(90deg, #FF5C00, #D946EF, #3C79F5, #00C9FF, #ff3CAC);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    filter: blur(2px);
+    animation: animateGlow 3s linear infinite;
+    background-size: 400% 100%;
+  }
+  
+  /* Rainbow badge for discount */
+  .rainbow-badge {
+    background: rgba(255, 255, 255, 0.85);
+    position: relative;
+    font-weight: bold;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover .rainbow-badge::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(90deg, #FF5C00, #D946EF, #3C79F5, #00C9FF, #ff3CAC);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    filter: blur(2px);
+    animation: animateGlow 3s linear infinite;
+    background-size: 400% 100%;
+  }
+  
+  /* Rainbow button circle */
+  .rainbow-btn-circle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+  
+  .rainbow-glow-card:hover .rainbow-btn-circle::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(90deg, #FF5C00, #D946EF, #3C79F5, #00C9FF, #ff3CAC);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    filter: blur(2px);
+    animation: animateGlow 3s linear infinite;
+    background-size: 400% 100%;
+  }
+
+  .outline-glow-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    transform: translateY(0) translateZ(0);
+    background-color: rgba(255, 255, 255, 0.85);
+    z-index: 1;
+  }
+  
+  .outline-glow-card:hover {
+    transform: translateY(-5px) translateZ(0);
+  }
+  
+  .outline-glow-card:hover::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    border-radius: inherit;
+    opacity: 0.8;
+    filter: blur(3px);
+    animation: gradientShift 3s linear infinite;
+  }
+  
+  .outline-glow-card:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  /* Property card glow effect - outline only on hover */
+  .property-card-glow {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+  }
+  
+  .property-card-glow:hover::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.8;
+    filter: blur(3px);
+    animation: gradientShift 3s linear infinite;
+  }
+  
+  .property-card-glow:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  .search-glow {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .search-glow:hover::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.6;
+    filter: blur(3px);
+    animation: gradientShift 3s linear infinite;
+  }
+  
+  .search-glow:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  .card-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+  }
+  
+  .card-3d:hover {
+    transform: translateZ(5px);
+  }
+}

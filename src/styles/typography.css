@@ -1,0 +1,69 @@
+
+@layer components {
+  .story-link {
+    @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+  
+  .text-shadow {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Apple-style gradient glowing text */
+  .apple-glow-text {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 0 20px rgba(108, 66, 245, 0.5), 0 0 40px rgba(217, 70, 239, 0.3), 0 0 80px rgba(255, 92, 0, 0.2);
+    font-weight: bold;
+    padding: 0.2em 0.5em;
+    transform: translateZ(20px);
+    filter: brightness(1.1);
+  }
+
+  .apple-glow-text-small {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 0 15px rgba(108, 66, 245, 0.4), 0 0 30px rgba(217, 70, 239, 0.2), 0 0 60px rgba(255, 92, 0, 0.15);
+    font-weight: bold;
+    transform: translateZ(10px);
+    filter: brightness(1.05);
+  }
+  
+  /* Rainbow gradient text for pricing and other highlights */
+  .rainbow-text {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+    font-weight: bold;
+  }
+  
+  /* Purple text */
+  .purple-text {
+    color: var(--purple-primary);
+    font-weight: bold;
+  }
+  
+  /* Gradient hover text effect for links */
+  .gradient-hover-text {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .gradient-hover-text:hover {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 15px rgba(108, 66, 245, 0.4), 0 0 30px rgba(217, 70, 239, 0.2);
+  }
+}

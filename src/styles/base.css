@@ -1,0 +1,74 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 280 10% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 280 10% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 280 10% 10%;
+
+    --primary: 24 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 280 30% 96%;
+    --secondary-foreground: 280 10% 10%;
+
+    --muted: 280 30% 96%;
+    --muted-foreground: 280 5% 45%;
+
+    --accent: 24 100% 50%;
+    --accent-foreground: 24 10% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 280 30% 92%;
+    --input: 280 30% 92%;
+    --ring: 24 100% 50%;
+
+    --radius: 1.25rem;
+    
+    /* Purple colors */
+    --purple-primary: #9b87f5;
+    --purple-secondary: #7E69AB;
+    --purple-tertiary: #6E59A5;
+    --purple-light: #D6BCFA;
+    --purple-vivid: #8B5CF6;
+  }
+
+  body {
+    @apply bg-white text-foreground antialiased;
+    background-attachment: fixed;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html {
+    @apply overflow-x-hidden;
+  }
+
+  @font-face {
+    font-family: 'Futura';
+    src: url('https://fonts.cdnfonts.com/css/futura-pt') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: bold;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Futura', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 700;
+  }
+}
