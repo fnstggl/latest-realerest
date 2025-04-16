@@ -107,14 +107,14 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
   return (
     <>
       {sortedWaitlistUsers.length > 0 ? (
-        <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
-          <div className="border-b-4 border-black p-4 bg-gray-50">
+        <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg overflow-hidden">
+          <div className="border-b border-white/20 p-4 bg-white/30">
             <h2 className="text-xl font-bold">Waitlist Requests</h2>
           </div>
           
           <table className="w-full">
             <thead>
-              <tr className="border-b-4 border-black">
+              <tr className="border-b border-white/20 bg-white/10">
                 <th className="text-left p-4 font-bold">Name</th>
                 <th className="text-left p-4 font-bold">Contact</th>
                 <th className="text-left p-4 font-bold">Property</th>
@@ -124,7 +124,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
             </thead>
             <tbody>
               {sortedWaitlistUsers.map((user) => (
-                <tr key={user.id} className="border-b-2 border-gray-200">
+                <tr key={user.id} className="border-b border-white/10 hover:bg-white/20 transition-colors">
                   <td className="p-4 font-bold">{user.name}</td>
                   <td className="p-4">
                     <div>{user.email}</div>
@@ -132,7 +132,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                   </td>
                   <td className="p-4">{user.property?.title || 'Unknown Property'}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 font-bold ${
+                    <span className={`px-2 py-1 rounded-md font-bold ${
                       user.status === 'accepted' ? 'bg-green-100 text-green-800' : 
                       user.status === 'declined' ? 'bg-red-100 text-red-800' : 
                       'bg-yellow-100 text-yellow-800'
@@ -146,7 +146,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                         <>
                           <Button 
                             size="sm" 
-                            className="bg-green-600 hover:bg-green-700 border-2 border-black"
+                            className="bg-white text-green-600 hover:text-white hover:bg-green-600 border border-white/40 hover:border-green-600 transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(22,163,74,0.5)]"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'accepted', 
@@ -161,7 +161,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                           </Button>
                           <Button 
                             size="sm" 
-                            className="bg-red-600 hover:bg-red-700 border-2 border-black"
+                            className="bg-white text-red-600 hover:text-white hover:bg-red-600 border border-white/40 hover:border-red-600 transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(220,38,38,0.5)]"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'declined', 
@@ -184,8 +184,8 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
           </table>
         </div>
       ) : (
-        <div className="border-4 border-black p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <ClipboardCheck size={48} className="mx-auto mb-4" />
+        <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-12 text-center shadow-lg">
+          <ClipboardCheck size={48} className="mx-auto mb-4 text-gray-400" />
           <h3 className="text-2xl font-bold mb-4">No Waitlist Requests</h3>
           <p>You don't have any waitlist requests for your properties yet.</p>
         </div>

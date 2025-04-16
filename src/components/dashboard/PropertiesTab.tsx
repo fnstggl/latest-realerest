@@ -78,68 +78,68 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
       ) : myProperties.length > 0 ? (
         <div className="grid md:grid-cols-1 gap-6">
           {myProperties.map((property) => (
-            <div key={property.id} className="layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden shadow-lg hover:translate-y-[-5px] transition-all">
-                  <div className="flex flex-col md:flex-row">
-                    <div className="w-full md:w-1/3">
-                      <img 
-                        src={property.image} 
-                        alt={property.title} 
-                        className="h-64 w-full object-cover"
-                      />
+            <div key={property.id} className="layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden shadow-lg hover:translate-y-[-5px] transition-all hover:shadow-[0_0_15px_rgba(8,146,208,0.6)] hover:border-[#0892D0]">
+              <div className="flex flex-col md:flex-row">
+                <div className="w-full md:w-1/3">
+                  <img 
+                    src={property.image} 
+                    alt={property.title} 
+                    className="h-64 w-full object-cover"
+                  />
+                </div>
+                <div className="p-6 flex-1">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-2xl font-bold">{property.title}</h3>
+                    <div className="bg-[#0892D0] text-white px-3 py-1 rounded-lg font-bold">
+                      {Math.round(property.belowMarket)}% BELOW MARKET
                     </div>
-                    <div className="p-6 flex-1">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-2xl font-bold">{property.title}</h3>
-                        <div className="bg-[#d60013] text-white px-3 py-1 rounded-lg font-bold">
-                          {Math.round(property.belowMarket)}% BELOW MARKET
-                        </div>
-                      </div>
-                      <p className="text-lg mb-4">{property.location}</p>
-                      
-                      <div className="flex gap-6 mb-6">
-                        <div className="text-2xl font-bold">${property.price.toLocaleString()}</div>
-                        <div className="text-gray-500 line-through">${property.marketPrice.toLocaleString()}</div>
-                      </div>
-                      
-                      <div className="flex gap-6 mb-6">
-                        <div className="font-bold">{property.beds} Beds</div>
-                        <div className="font-bold">{property.baths} Baths</div>
-                        <div className="font-bold">{property.sqft.toLocaleString()} sqft</div>
-                      </div>
-                      
-                      <div className="flex gap-4">
-                        <Button asChild variant="glass" className="shadow-lg">
-                          <Link to={`/property/${property.id}`}>View Listing</Link>
-                        </Button>
-                        <Button asChild variant="glass" className="bg-white/50 shadow-lg">
-                          <Link to={`/property/${property.id}/edit`}>Edit</Link>
-                        </Button>
-                        <Button 
-                          variant="destructive" 
-                          className="bg-[#d60013] text-white border border-white/40 shadow-lg"
-                          onClick={() => handleUnlistProperty(property.id)}
-                        >
-                          <Trash2 size={18} className="mr-2" />
-                          Unlist
-                        </Button>
-                      </div>
-                    </div>
+                  </div>
+                  <p className="text-lg mb-4">{property.location}</p>
+                  
+                  <div className="flex gap-6 mb-6">
+                    <div className="text-2xl font-bold">${property.price.toLocaleString()}</div>
+                    <div className="text-gray-500 line-through">${property.marketPrice.toLocaleString()}</div>
                   </div>
                   
-                  <div className="border-t border-white/20 p-4 bg-white/30 backdrop-blur-sm">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="font-bold mr-2">Waitlist:</span>
-                        {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
-                      </div>
-                      <Button asChild variant="glass" className="shadow-lg">
-                        <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
-                          Manage Waitlist
-                        </Link>
-                      </Button>
-                    </div>
+                  <div className="flex gap-6 mb-6">
+                    <div className="font-bold">{property.beds} Beds</div>
+                    <div className="font-bold">{property.baths} Baths</div>
+                    <div className="font-bold">{property.sqft.toLocaleString()} sqft</div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <Button asChild variant="glass" className="shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
+                      <Link to={`/property/${property.id}`}>View Listing</Link>
+                    </Button>
+                    <Button asChild variant="glass" className="bg-white/50 shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
+                      <Link to={`/property/${property.id}/edit`}>Edit</Link>
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      className="bg-white/50 text-black border border-white/40 shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] hover:text-[#0892D0]"
+                      onClick={() => handleUnlistProperty(property.id)}
+                    >
+                      <Trash2 size={18} className="mr-2" />
+                      Unlist
+                    </Button>
                   </div>
                 </div>
+              </div>
+              
+              <div className="border-t border-white/20 p-4 bg-white/30 backdrop-blur-sm">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="font-bold mr-2">Waitlist:</span>
+                    {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
+                  </div>
+                  <Button asChild variant="glass" className="shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
+                    <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
+                      Manage Waitlist
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       ) : (
@@ -150,11 +150,11 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
           <Button 
             asChild
             variant="glass"
-            className="bg-white shadow-lg hover:translate-y-[-5px] transition-all"
+            className="bg-white shadow-lg hover:translate-y-[-5px] transition-all hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
           >
             <Link to="/sell/create">
               <Plus size={18} className="mr-2" />
-              <span className="text-gradient-primary">Add Your First Property</span>
+              <span className="electric-blue-glow">Add Your First Property</span>
             </Link>
           </Button>
         </div>

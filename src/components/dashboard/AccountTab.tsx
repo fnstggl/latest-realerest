@@ -192,7 +192,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
 
   return (
     <div className="space-y-6">
-      <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
+      <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Account Information</h2>
         </div>
@@ -205,7 +205,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
                 id="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="mt-2 border-2 border-black"
+                className="mt-2 border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
               />
             </div>
             
@@ -214,7 +214,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
               <Input
                 id="email"
                 value={formData.email}
-                className="mt-2 border-2 border-black"
+                className="mt-2 border border-white/40 bg-gray-50"
                 disabled
               />
             </div>
@@ -225,30 +225,34 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
                 id="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                className="mt-2 border-2 border-black"
+                className="mt-2 border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
                 placeholder="Enter your phone number"
               />
             </div>
           </div>
           
-          <Button className="neo-button-primary" disabled={saving} type="submit">
+          <Button 
+            className="bg-[#0892D0] text-white hover:bg-[#0892D0]/90 hover:shadow-[0_0_15px_rgba(8,146,208,0.7)] transition-all" 
+            disabled={saving} 
+            type="submit"
+          >
             {saving ? "Saving Changes..." : "Save Changes"}
           </Button>
         </form>
       </div>
       
-      <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
+      <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
         
         <div className="space-y-4">
-          <div className="p-4 border-2 border-black">
+          <div className="p-4 border border-white/40 rounded-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-lg">Notification Preferences</h3>
                 <p className="text-gray-600">Manage how you receive notifications</p>
               </div>
               <Button 
-                className="neo-button" 
+                className="border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
                 variant="outline"
                 onClick={() => setNotificationDialogOpen(true)}
               >
@@ -258,14 +262,14 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
             </div>
           </div>
           
-          <div className="p-4 border-2 border-black">
+          <div className="p-4 border border-white/40 rounded-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-lg">Password & Security</h3>
                 <p className="text-gray-600">Update your password and security settings</p>
               </div>
               <Button 
-                className="neo-button" 
+                className="border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
                 variant="outline"
                 onClick={() => setPasswordDialogOpen(true)}
               >
@@ -277,13 +281,13 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
         </div>
       </div>
 
-      <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6 mt-6">
+      <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg mt-6">
         <h2 className="text-2xl font-bold mb-6">Account Actions</h2>
         
         <div className="space-y-4">
           <Button 
-            variant="destructive" 
-            className="w-full justify-center font-bold bg-red-600 text-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-red-700"
+            variant="outline" 
+            className="w-full justify-center font-bold bg-white/50 hover:bg-red-50 text-red-600 border border-white/40 hover:border-red-500 hover:shadow-[0_0_10px_rgba(220,38,38,0.4)] transition-all"
             onClick={() => {
               logout();
               navigate('/');
@@ -297,7 +301,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
       
       {/* Notification Preferences Dialog */}
       <Dialog open={notificationDialogOpen} onOpenChange={setNotificationDialogOpen}>
-        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+        <DialogContent className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg">
           <DialogHeader>
             <DialogTitle>Notification Preferences</DialogTitle>
           </DialogHeader>
@@ -341,11 +345,14 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
             <Button 
               variant="outline" 
               onClick={() => setNotificationDialogOpen(false)}
-              className="border-2 border-black"
+              className="border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
             >
               Cancel
             </Button>
-            <Button onClick={handleNotificationUpdate} className="neo-button-primary">
+            <Button 
+              onClick={handleNotificationUpdate} 
+              className="bg-[#0892D0] text-white hover:bg-[#0892D0]/90 hover:shadow-[0_0_15px_rgba(8,146,208,0.7)] transition-all"
+            >
               Save Changes
             </Button>
           </DialogFooter>
@@ -354,7 +361,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
       
       {/* Password Update Dialog */}
       <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
-        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+        <DialogContent className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg">
           <DialogHeader>
             <DialogTitle>Update Password</DialogTitle>
           </DialogHeader>
@@ -370,7 +377,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
                     <FormControl>
                       <Input 
                         type="password" 
-                        className="border-2 border-black" 
+                        className="border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
                         {...field} 
                       />
                     </FormControl>
@@ -388,7 +395,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
                     <FormControl>
                       <Input 
                         type="password" 
-                        className="border-2 border-black" 
+                        className="border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
                         {...field} 
                       />
                     </FormControl>
@@ -406,7 +413,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
                     <FormControl>
                       <Input 
                         type="password" 
-                        className="border-2 border-black" 
+                        className="border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
                         {...field} 
                       />
                     </FormControl>
@@ -420,13 +427,13 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
                   type="button"
                   variant="outline" 
                   onClick={() => setPasswordDialogOpen(false)}
-                  className="border-2 border-black"
+                  className="border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
                 >
                   Cancel
                 </Button>
                 <Button 
                   type="submit" 
-                  className="neo-button-primary"
+                  className="bg-[#0892D0] text-white hover:bg-[#0892D0]/90 hover:shadow-[0_0_15px_rgba(8,146,208,0.7)] transition-all"
                   disabled={updatingPassword}
                 >
                   {updatingPassword ? "Updating..." : "Update Password"}

@@ -58,33 +58,33 @@ const Dashboard: React.FC = () => {
             </div>
             
             <Button 
-              className="layer-3 glass-card backdrop-blur-lg border border-white/40 hover:translate-y-[-5px] transition-all bg-white"
+              className="layer-2 glass-card backdrop-blur-lg border border-white/40 hover:translate-y-[-5px] transition-all bg-white hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
               onClick={() => navigate('/sell/create')}
             >
               <Plus size={18} className="mr-2" />
-              <span className="text-gradient-primary">Add Property</span>
+              <span className="electric-blue-glow">Add Property</span>
             </Button>
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="layer-2 backdrop-blur-md border-2 border-white/30 bg-white/70 shadow-lg">
-              <TabsTrigger value="properties" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+            <TabsList className="layer-2 backdrop-blur-md border border-white/30 bg-white/70 shadow-lg">
+              <TabsTrigger value="properties" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
                 <Home size={18} className="mr-2" />
                 Properties
               </TabsTrigger>
-              <TabsTrigger value="waitlist" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="waitlist" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
                 <ClipboardCheck size={18} className="mr-2" />
                 Waitlist
               </TabsTrigger>
-              <TabsTrigger value="offers" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="offers" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
                 <CreditCard size={18} className="mr-2" />
                 Offers
               </TabsTrigger>
-              <TabsTrigger value="account" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="account" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
                 <User size={18} className="mr-2" />
                 Account
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
                 <Bell size={18} className="mr-2" />
                 Notifications
               </TabsTrigger>

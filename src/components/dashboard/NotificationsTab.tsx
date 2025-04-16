@@ -45,13 +45,13 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
   };
 
   return (
-    <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white overflow-hidden">
-      <div className="border-b-4 border-black p-4 bg-gray-50">
+    <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg overflow-hidden">
+      <div className="border-b border-white/20 p-4 bg-white/30">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Recent Notifications</h2>
           <Button 
             onClick={clearAll}
-            className="neo-button font-bold" 
+            className="font-bold border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
             variant="outline"
           >
             Mark All as Read
@@ -60,11 +60,11 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
       </div>
       
       {notifications.length > 0 ? (
-        <div className="divide-y-2 divide-gray-200">
+        <div className="divide-y divide-gray-100">
           {notifications.map(notification => (
             <div 
               key={notification.id} 
-              className={`p-4 ${!notification.read ? 'bg-blue-50' : ''} cursor-pointer hover:bg-gray-50 transition-colors`}
+              className={`p-4 ${!notification.read ? 'bg-blue-50' : ''} cursor-pointer hover:bg-white/50 hover:border-l-4 hover:border-[#0892D0] transition-all`}
               onClick={() => handleNotificationClick(notification)}
             >
               <div className="flex justify-between items-start">
