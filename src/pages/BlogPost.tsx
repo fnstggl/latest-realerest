@@ -108,7 +108,7 @@ const BlogPost: React.FC = () => {
           <Button 
             variant="glass" 
             asChild 
-            className="mb-6 hover:bg-white/40 property-card-glow"
+            className="mb-6 layer-2 hover:translate-y-[-5px] transition-all"
           >
             <Link to="/blog" className="flex items-center gap-2">
               <ArrowLeft size={16} />
@@ -127,27 +127,27 @@ const BlogPost: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="glass-card backdrop-blur-lg border border-white/30 shadow-lg p-8 rounded-xl property-card-glow"
+              className="layer-3 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 rounded-xl hover:translate-y-[-5px] transition-all"
             >
-              <h1 className="text-4xl font-bold mb-6 rainbow-text">{blogPost.title}</h1>
+              <h1 className="text-4xl font-bold mb-6">{blogPost.title}</h1>
               
               <div className="flex flex-wrap items-center text-sm mb-8 gap-4">
-                <div className="flex items-center glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
+                <div className="flex items-center layer-1 glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
                   <Calendar size={16} className="mr-2 text-pink-500" />
                   <span>{formatDate(blogPost.created_at)}</span>
                 </div>
-                <div className="flex items-center glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
+                <div className="flex items-center layer-1 glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
                   <Clock size={16} className="mr-2 text-pink-500" />
                   <span>{blogPost.read_time} min read</span>
                 </div>
-                <div className="flex items-center glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
+                <div className="flex items-center layer-1 glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
                   <User size={16} className="mr-2 text-pink-500" />
                   <span className="font-medium">{blogPost.author}</span>
                 </div>
               </div>
               
               {blogPost.image && (
-                <div className="mb-8 glass overflow-hidden rounded-xl property-card-glow">
+                <div className="mb-8 layer-2 glass overflow-hidden rounded-xl hover:translate-y-[-5px] transition-all">
                   <img 
                     src={blogPost.image} 
                     alt={blogPost.title} 
@@ -156,33 +156,33 @@ const BlogPost: React.FC = () => {
                 </div>
               )}
               
-              <div className="prose prose-lg max-w-none glass p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
+              <div className="prose prose-lg max-w-none layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
                 {blogPost.content.split('\n\n').map((paragraph, idx) => (
                   <p key={idx} className="mb-4">{paragraph}</p>
                 ))}
               </div>
               
               {property && (
-                <div className="mt-12 glass-card backdrop-blur-lg border border-white/30 shadow-lg p-6 rounded-xl property-card-glow">
-                  <h2 className="text-2xl font-bold mb-4 rainbow-text">Related Property</h2>
+                <div className="mt-12 layer-2 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-6 rounded-xl hover:translate-y-[-5px] transition-all">
+                  <h2 className="text-2xl font-bold mb-4">Related Property</h2>
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="md:w-1/3">
                       <img 
                         src={property.images && property.images.length > 0 ? property.images[0] : '/placeholder.svg'} 
                         alt={property.title}
-                        className="w-full h-40 object-cover rounded-xl glass" 
+                        className="w-full h-40 object-cover rounded-xl layer-1 glass" 
                       />
                     </div>
                     <div className="md:w-2/3 space-y-2">
-                      <h3 className="text-xl font-bold mb-2 rainbow-text">{property.title}</h3>
-                      <p className="glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.location}</p>
+                      <h3 className="text-xl font-bold mb-2">{property.title}</h3>
+                      <p className="layer-1 glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.location}</p>
                       <div className="flex gap-4 mb-4">
-                        <span className="font-medium glass px-2 py-1 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.beds} Beds</span>
-                        <span className="font-medium glass px-2 py-1 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.baths} Baths</span>
-                        <span className="font-medium glass px-2 py-1 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.sqft} SqFt</span>
+                        <span className="font-medium layer-1 glass px-2 py-1 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.beds} Beds</span>
+                        <span className="font-medium layer-1 glass px-2 py-1 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.baths} Baths</span>
+                        <span className="font-medium layer-1 glass px-2 py-1 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.sqft} SqFt</span>
                       </div>
-                      <div className="font-bold text-xl mb-4 rainbow-text">${Number(property.price).toLocaleString()}</div>
-                      <Button asChild variant="translucent" className="property-card-glow">
+                      <div className="font-bold text-xl mb-4">${Number(property.price).toLocaleString()}</div>
+                      <Button asChild variant="translucent" className="layer-3 glass-content hover:translate-y-[-5px] transition-all">
                         <Link to={`/property/${property.id}`} className="flex items-center gap-2">
                           <Home size={16} />
                           View Property
@@ -194,10 +194,10 @@ const BlogPost: React.FC = () => {
               )}
             </motion.div>
           ) : (
-            <div className="text-center py-20 glass-card backdrop-blur-lg border border-white/30 shadow-lg p-8 rounded-xl property-card-glow">
-              <h2 className="text-2xl font-bold mb-4 rainbow-text">Blog post not found</h2>
-              <p className="mb-6 glass p-4 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">Sorry, the blog post you're looking for doesn't exist or has been removed.</p>
-              <Button asChild variant="translucent" className="property-card-glow">
+            <div className="text-center py-20 layer-2 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 rounded-xl hover:translate-y-[-5px] transition-all">
+              <h2 className="text-2xl font-bold mb-4">Blog post not found</h2>
+              <p className="mb-6 layer-1 glass p-4 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">Sorry, the blog post you're looking for doesn't exist or has been removed.</p>
+              <Button asChild variant="translucent" className="layer-3 glass-content hover:translate-y-[-5px] transition-all">
                 <Link to="/blog">Return to Blog</Link>
               </Button>
             </div>

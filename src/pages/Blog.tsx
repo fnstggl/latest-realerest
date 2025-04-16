@@ -147,7 +147,7 @@ const Blog: React.FC = () => {
               <Input
                 type="text"
                 placeholder="Search blog posts..."
-                className="pl-10 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:border-black"
+                className="pl-10 layer-2 glass-content backdrop-blur-lg border border-white/40 focus:ring-0 focus:border-white/50"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
@@ -156,7 +156,7 @@ const Blog: React.FC = () => {
           </div>
           
           <div className="text-center mb-10">
-            <Button asChild className="neo-button-primary">
+            <Button asChild className="layer-3 glass-content backdrop-blur-md border border-white/40 hover:translate-y-[-5px] transition-all">
               <Link to="/sell/create-blog">Create Your SEO Blog Post</Link>
             </Button>
             <p className="mt-4 text-sm text-gray-600">Write articles that link to your property listings to boost visibility on search engines!</p>
@@ -164,7 +164,10 @@ const Blog: React.FC = () => {
           
           {isLoading ? (
             <div className="flex justify-center items-center py-20">
-              <div className="inline-block h-12 w-12 border-4 border-t-[#d60013] border-r-[#d60013] border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+              <div className="loading-container">
+                <div className="gradient-blob"></div>
+                <p className="relative z-10 font-medium">Loading posts...</p>
+              </div>
             </div>
           ) : filteredPosts.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -174,7 +177,7 @@ const Blog: React.FC = () => {
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden group"
+                  className="layer-2 glass-card backdrop-blur-lg border border-white/40 overflow-hidden group transition-all hover:translate-y-[-5px]"
                 >
                   <Link to={`/blog/${post.id}`} className="block">
                     <div className="relative h-48 overflow-hidden">
@@ -188,11 +191,11 @@ const Blog: React.FC = () => {
                   
                   <div className="p-6">
                     <div className="flex items-center text-sm text-gray-600 mb-2">
-                      <div className="flex items-center mr-4">
+                      <div className="flex items-center mr-4 layer-1 glass p-1 px-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
                         <Calendar size={14} className="mr-1" />
                         <span>{post.date}</span>
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center layer-1 glass p-1 px-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
                         <Clock size={14} className="mr-1" />
                         <span>{post.read_time} min read</span>
                       </div>
@@ -204,12 +207,12 @@ const Blog: React.FC = () => {
                       </h2>
                     </Link>
                     
-                    <p className="text-gray-700 mb-4">
+                    <p className="text-gray-700 mb-4 layer-1 glass-content p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
                       {post.excerpt}
                     </p>
                     
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                      <div className="flex items-center">
+                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                      <div className="flex items-center layer-1 glass p-1 px-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
                         <User size={14} className="mr-1 text-[#d60013]" />
                         <span className="text-sm font-medium">{post.author}</span>
                       </div>
@@ -243,10 +246,10 @@ const Blog: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
+            <div className="text-center py-20 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
               <h3 className="text-2xl font-bold mb-2">No blog posts found</h3>
-              <p className="text-gray-600 mb-6">Be the first to publish a blog post!</p>
-              <Button asChild className="neo-button-primary">
+              <p className="text-gray-600 mb-6 layer-1 glass-content p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">Be the first to publish a blog post!</p>
+              <Button asChild className="layer-3 glass-content backdrop-blur-md border border-white/40 hover:translate-y-[-5px] transition-all">
                 <Link to="/sell/create-blog">Create Your First Post</Link>
               </Button>
             </div>
@@ -254,7 +257,7 @@ const Blog: React.FC = () => {
           
           {filteredPosts.length > 6 && (
             <div className="text-center mt-12">
-              <Button className="neo-button-primary">
+              <Button className="layer-3 glass-content backdrop-blur-md border border-white/40 hover:translate-y-[-5px] transition-all">
                 Load More Articles
               </Button>
             </div>
@@ -263,18 +266,18 @@ const Blog: React.FC = () => {
       </div>
       
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <DialogContent className="layer-3 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="layer-1 glass-content p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
               Are you sure you want to delete this blog post? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="layer-1 glass">
               Cancel
             </Button>
-            <Button className="neo-button-primary" onClick={handleDeletePost}>
+            <Button className="layer-3 glass-content backdrop-blur-md border border-white/40 hover:translate-y-[-5px] transition-all" onClick={handleDeletePost}>
               Delete Post
             </Button>
           </DialogFooter>

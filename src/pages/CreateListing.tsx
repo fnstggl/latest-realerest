@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -299,9 +300,12 @@ const CreateListing: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Create New Property Listing</h1>
+          <h1 className="text-3xl font-bold mb-3">Create New Property Listing</h1>
+          <p className="mb-8 text-lg text-gradient-primary">
+            <span className="gradient-hover-text">List your property at a price you'll love more</span>
+          </p>
           
-          <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
+          <div className="layer-3 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 rounded-xl hover:translate-y-[-5px] transition-all">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 {/* Use Suspense to lazy-load components */}

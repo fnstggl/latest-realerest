@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
             </div>
             
             <Button 
-              className="neo-button-primary"
+              className="layer-3 glass-content backdrop-blur-md border border-white/40 hover:translate-y-[-5px] transition-all"
               onClick={() => navigate('/sell/create')}
             >
               <Plus size={18} className="mr-2" />
@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white">
+            <TabsList className="layer-2 backdrop-blur-md border-2 border-white/30 bg-white/70 shadow-lg">
               <TabsTrigger value="properties" className="data-[state=active]:bg-[#d60013] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
                 <Home size={18} className="mr-2" />
                 Properties
@@ -91,7 +91,7 @@ const Dashboard: React.FC = () => {
             </TabsList>
             
             {/* Properties Tab */}
-            <TabsContent value="properties" className="space-y-6">
+            <TabsContent value="properties" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
               <PropertiesTab 
                 myProperties={myProperties}
                 setMyProperties={setMyProperties}
@@ -105,7 +105,7 @@ const Dashboard: React.FC = () => {
             </TabsContent>
             
             {/* Waitlist Tab */}
-            <TabsContent value="waitlist" className="space-y-6">
+            <TabsContent value="waitlist" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
               <WaitlistTab 
                 waitlistUsers={waitlistUsers}
                 setWaitlistUsers={setWaitlistUsers}
@@ -113,17 +113,17 @@ const Dashboard: React.FC = () => {
             </TabsContent>
             
             {/* Offers Tab */}
-            <TabsContent value="offers" className="space-y-6">
+            <TabsContent value="offers" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
               <OffersTab />
             </TabsContent>
             
             {/* Account Tab */}
-            <TabsContent value="account" className="space-y-6">
+            <TabsContent value="account" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
               <AccountTab user={user} logout={logout} />
             </TabsContent>
             
             {/* Notifications Tab */}
-            <TabsContent value="notifications" className="space-y-6">
+            <TabsContent value="notifications" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
               <NotificationsTab 
                 notifications={notifications}
                 markAsRead={markAsRead}

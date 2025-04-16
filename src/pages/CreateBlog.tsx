@@ -202,21 +202,24 @@ const CreateBlog: React.FC = () => {
               Write quality content that will boost your property listings in search engines.
             </p>
             
-            <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mb-10">
+            <div className="layer-2 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 mb-10 rounded-xl hover:translate-y-[-5px] transition-all">
               <h2 className="text-2xl font-bold mb-4">Choose Your Property</h2>
-              <p className="mb-4">Select one of your properties to feature in this blog post:</p>
+              <p className="mb-4 layer-1 glass-content p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">Select one of your properties to feature in this blog post:</p>
               
               {propertiesLoading ? (
                 <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <div className="loading-container">
+                    <div className="gradient-blob"></div>
+                    <p className="relative z-10 font-medium">Loading properties...</p>
+                  </div>
                 </div>
               ) : properties.length === 0 ? (
-                <div className="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
+                <div className="text-center py-6 layer-1 glass-content p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
                   <p className="text-gray-500 mb-2">You don't have any properties listed yet</p>
                   <Button 
                     onClick={() => navigate('/sell/create')} 
                     variant="outline"
-                    className="border-2 border-black"
+                    className="layer-2 glass border border-white/30 hover:translate-y-[-5px] transition-all"
                   >
                     Create Your First Listing
                   </Button>
@@ -224,10 +227,10 @@ const CreateBlog: React.FC = () => {
               ) : (
                 <>
                   <Select onValueChange={handlePropertySelect}>
-                    <SelectTrigger className="w-full border-2 border-black mb-6">
+                    <SelectTrigger className="w-full layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm mb-6">
                       <SelectValue placeholder="Select a property" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="layer-2 glass-card backdrop-blur-lg border border-white/40">
                       {properties.map((property) => (
                         <SelectItem key={property.id} value={property.id}>
                           {property.title} - {formatCurrency(property.price)}
@@ -237,9 +240,9 @@ const CreateBlog: React.FC = () => {
                   </Select>
                   
                   {selectedProperty && (
-                    <Card className="p-4 border-2 border-black mb-6">
+                    <Card className="p-4 layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm mb-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-24 h-24 bg-gray-100 overflow-hidden">
+                        <div className="w-24 h-24 bg-gray-100 overflow-hidden rounded-lg">
                           <img 
                             src={selectedProperty.images?.[0] || "https://placehold.co/200x200?text=Property"} 
                             alt={selectedProperty.title}
@@ -263,7 +266,7 @@ const CreateBlog: React.FC = () => {
                         <Button 
                           onClick={handleGenerateContent} 
                           variant="outline"
-                          className="border-2 border-black w-full flex gap-2"
+                          className="layer-2 glass border border-white/30 w-full flex gap-2 hover:translate-y-[-5px] transition-all"
                           disabled={isGenerating}
                         >
                           {isGenerating ? (
@@ -285,7 +288,7 @@ const CreateBlog: React.FC = () => {
               )}
             </div>
             
-            <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
+            <div className="layer-3 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 rounded-xl hover:translate-y-[-5px] transition-all">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="title" className="block text-lg font-medium mb-2">
@@ -297,7 +300,7 @@ const CreateBlog: React.FC = () => {
                     placeholder="Enter a catchy title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    className="layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm"
                     required
                   />
                 </div>
@@ -312,7 +315,7 @@ const CreateBlog: React.FC = () => {
                     placeholder="A brief summary of your blog post (1-2 sentences)"
                     value={formData.excerpt}
                     onChange={handleChange}
-                    className="border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    className="layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm"
                     required
                   />
                 </div>
@@ -324,7 +327,7 @@ const CreateBlog: React.FC = () => {
                   
                   {formData.content ? (
                     <div className="mb-4">
-                      <div className="border-2 border-gray-300 rounded-md p-4 bg-gray-50">
+                      <div className="layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm rounded-md p-4">
                         <div className="prose max-w-none">
                           {formattedContent}
                         </div>
@@ -333,7 +336,7 @@ const CreateBlog: React.FC = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          className="text-sm"
+                          className="text-sm layer-1 glass hover:translate-y-[-5px] transition-all"
                           onClick={() => {
                             const textarea = document.getElementById('content') as HTMLTextAreaElement;
                             textarea.focus();
@@ -351,7 +354,7 @@ const CreateBlog: React.FC = () => {
                     placeholder="Write your blog post content here..."
                     value={formData.content}
                     onChange={handleChange}
-                    className={`border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-h-[300px] ${
+                    className={`layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm min-h-[300px] ${
                       formData.content ? "sr-only" : ""
                     }`}
                     required
@@ -361,7 +364,7 @@ const CreateBlog: React.FC = () => {
                 <div className="pt-4">
                   <Button 
                     type="submit" 
-                    className="neo-button-primary w-full"
+                    className="layer-3 glass-content backdrop-blur-md border border-white/40 hover:translate-y-[-5px] transition-all w-full"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -377,7 +380,7 @@ const CreateBlog: React.FC = () => {
               </form>
             </div>
             
-            <div className="mt-8">
+            <div className="mt-8 layer-1 glass-content p-5 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
               <h2 className="text-xl font-bold mb-4">SEO Tips:</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Include relevant keywords related to real estate and your property.</li>
