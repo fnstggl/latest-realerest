@@ -34,11 +34,13 @@ const HeroSection: React.FC = () => {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-4 mx-auto text-center leading-tight">
               Find a home you love...
             </h1>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center leading-[1.2] mb-4 md:mb-6 text-gradient-static tracking-normal">
-              at a price you'll love more
-            </h1>
-            <p className="text-foreground mb-6 md:mb-8 text-base md:text-lg mx-auto max-w-2xl text-center">
-              Helping families buy homes they were told they couldn't afford.
+            <div className="mb-4 md:mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center text-gradient-static tracking-normal py-1">
+                at a price you'll love more
+              </h1>
+            </div>
+            <p className="text-foreground mb-6 md:mb-8 text-sm md:text-base mx-auto max-w-2xl text-center">
+              Realer Estate does real estate better. We exclusively offer below-market priced homes, and the best part is — they're available to everyone
             </p>
             <div className="glass-card p-1 mb-6 md:mb-8 shadow-xl search-glow rounded-xl mx-auto w-full max-w-2xl">
               <SearchBar className="" />
