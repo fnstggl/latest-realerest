@@ -29,20 +29,20 @@ const Careers: React.FC = () => {
           <div className="mb-20">
             <h2 className="text-3xl font-bold mb-10 text-center">Our Values</h2>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
-                <div className="w-12 h-12 bg-[#d60013] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black mb-4">1</div>
+              <div className="border-4 border-[#0892D0] p-6 shadow-[8px_8px_0px_0px_rgba(8,146,208,0.3)] bg-white">
+                <div className="w-12 h-12 bg-[#0892D0] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black mb-4">1</div>
                 <h3 className="text-xl font-bold mb-4">Innovation</h3>
                 <p>We're constantly looking for new ways to improve the real estate experience and make home ownership more accessible.</p>
               </div>
               
-              <div className="border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
-                <div className="w-12 h-12 bg-[#d60013] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black mb-4">2</div>
+              <div className="border-4 border-[#0892D0] p-6 shadow-[8px_8px_0px_0px_rgba(8,146,208,0.3)] bg-white">
+                <div className="w-12 h-12 bg-[#0892D0] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black mb-4">2</div>
                 <h3 className="text-xl font-bold mb-4">Transparency</h3>
                 <p>We believe in being honest and direct in everything we do, from our property listings to our approach to business.</p>
               </div>
               
-              <div className="border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
-                <div className="w-12 h-12 bg-[#d60013] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black mb-4">3</div>
+              <div className="border-4 border-[#0892D0] p-6 shadow-[8px_8px_0px_0px_rgba(8,146,208,0.3)] bg-white">
+                <div className="w-12 h-12 bg-[#0892D0] rounded-full text-white flex items-center justify-center font-bold text-lg border-2 border-black mb-4">3</div>
                 <h3 className="text-xl font-bold mb-4">Accessibility</h3>
                 <p>We're committed to making home ownership possible for more people by reducing costs and simplifying the process.</p>
               </div>
@@ -54,13 +54,13 @@ const Careers: React.FC = () => {
             <h2 className="text-3xl font-bold mb-10 text-center">Current Opportunities</h2>
             
             <div className="grid md:grid-cols-2 gap-8 mb-16">
-              <div className="border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+              <div className="border-4 border-[#0892D0] p-6 shadow-[8px_8px_0px_0px_rgba(8,146,208,0.3)] bg-white">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-xl font-bold">Marketing Intern</h3>
                     <p className="text-gray-700">Marketing</p>
                   </div>
-                  <div className="bg-[#d60013] text-white px-2 py-1 border-2 border-black font-bold text-sm">
+                  <div className="bg-[#0892D0] text-white px-2 py-1 border-2 border-black font-bold text-sm">
                     Remote
                   </div>
                 </div>
@@ -68,20 +68,20 @@ const Careers: React.FC = () => {
                 <p className="text-gray-700 mb-4">Help us grow our platform by implementing innovative digital marketing strategies, managing our social media presence, and creating engaging content for our blog.</p>
                 
                 <div className="flex items-center mt-4">
-                  <Mail size={18} className="mr-2 text-[#d60013]" />
-                  <a href="mailto:apply@donedealhome.com" className="font-bold hover:text-[#d60013]">
+                  <Mail size={18} className="mr-2 text-[#0892D0]" />
+                  <a href="mailto:apply@donedealhome.com" className="font-bold hover:text-[#0892D0]">
                     apply@donedealhome.com
                   </a>
                 </div>
               </div>
               
-              <div className="border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
+              <div className="border-4 border-[#0892D0] p-6 shadow-[8px_8px_0px_0px_rgba(8,146,208,0.3)] bg-white">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-xl font-bold">Investment Opportunity</h3>
                     <p className="text-gray-700">Investor Relations</p>
                   </div>
-                  <div className="bg-[#d60013] text-white px-2 py-1 border-2 border-black font-bold text-sm">
+                  <div className="bg-[#0892D0] text-white px-2 py-1 border-2 border-black font-bold text-sm">
                     Flexible
                   </div>
                 </div>
@@ -89,8 +89,8 @@ const Careers: React.FC = () => {
                 <p className="text-gray-700 mb-4">Looking to invest in the future of real estate? We're seeking forward-thinking investors who share our vision of making homeownership more accessible for everyday Americans.</p>
                 
                 <div className="flex items-center mt-4">
-                  <Mail size={18} className="mr-2 text-[#d60013]" />
-                  <a href="mailto:apply@donedealhome.com" className="font-bold hover:text-[#d60013]">
+                  <Mail size={18} className="mr-2 text-[#0892D0]" />
+                  <a href="mailto:apply@donedealhome.com" className="font-bold hover:text-[#0892D0]">
                     apply@donedealhome.com
                   </a>
                 </div>

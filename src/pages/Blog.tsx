@@ -202,7 +202,7 @@ const Blog: React.FC = () => {
                     </div>
                     
                     <Link to={`/blog/${post.id}`} className="block">
-                      <h2 className="text-xl font-bold mb-2 hover:text-[#d60013] transition-colors">
+                      <h2 className="text-xl font-bold mb-2 hover:text-[#0892D0] transition-colors">
                         {post.title}
                       </h2>
                     </Link>
@@ -213,7 +213,7 @@ const Blog: React.FC = () => {
                     
                     <div className="flex items-center justify-between pt-4 border-t border-white/10">
                       <div className="flex items-center layer-1 glass p-1 px-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
-                        <User size={14} className="mr-1 text-[#d60013]" />
+                        <User size={14} className="mr-1 text-[#0892D0]" />
                         <span className="text-sm font-medium">{post.author}</span>
                       </div>
                       
@@ -222,7 +222,7 @@ const Blog: React.FC = () => {
                           <Button 
                             variant="ghost" 
                             size="icon"
-                            className="mr-2 text-red-500 hover:text-red-700 hover:bg-transparent"
+                            className="mr-2 text-[#0892D0] hover:text-[#0892D0]/80 hover:bg-transparent"
                             onClick={() => openDeleteDialog(post.id)}
                           >
                             <Trash2 size={16} />
@@ -231,7 +231,7 @@ const Blog: React.FC = () => {
                         
                         <Button 
                           variant="link" 
-                          className="text-[#d60013] p-0 hover:text-[#d60013]/80 font-bold flex items-center"
+                          className="text-[#0892D0] p-0 hover:text-[#0892D0]/80 font-bold flex items-center"
                           asChild
                         >
                           <Link to={`/blog/${post.id}`}>
