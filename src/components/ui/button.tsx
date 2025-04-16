@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white text-black rounded-lg hover:bg-gray-50 shadow-sm border border-gray-200 transition-all",
-        destructive: "bg-white text-red-500 rounded-lg hover:bg-red-50 shadow-sm border border-red-200 transition-all",
+        default: "bg-[#0892D0] text-white rounded-lg hover:bg-[#077fb4] shadow-sm transition-all",
+        destructive: "bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-sm transition-all",
         outline: "border border-gray-200 bg-white hover:bg-gray-50 rounded-lg text-black shadow-sm transition-all",
-        secondary: "bg-white text-black rounded-lg hover:bg-gray-50 shadow-sm border border-gray-200 transition-all",
-        ghost: "hover:text-[#0892D0] transition-colors",
-        link: "text-black underline-offset-4 hover:underline hover:text-[#0892D0] transition-colors",
-        warning: "bg-white text-[#0892D0] rounded-lg hover:bg-blue-50 shadow-sm border border-[#0892D0] transition-all",
+        secondary: "bg-gray-100 text-black rounded-lg hover:bg-gray-200 shadow-sm transition-all",
+        ghost: "text-gray-700 hover:text-[#0892D0] hover:bg-gray-50 transition-colors",
+        link: "text-[#0892D0] underline-offset-4 hover:underline transition-colors",
+        warning: "bg-amber-500 text-white rounded-lg hover:bg-amber-600 shadow-sm transition-all",
         glass: "bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-black shadow-sm transition-all",
-        navy: "bg-white text-black rounded-lg hover:bg-gray-50 shadow-sm border border-gray-200 transition-all",
-        red: "bg-white text-black rounded-lg hover:bg-gray-50 shadow-sm border border-gray-200 transition-all",
+        navy: "bg-[#0892D0] text-white rounded-lg hover:bg-[#077fb4] shadow-sm transition-all",
+        red: "bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-sm transition-all",
         translucent: "bg-white border border-gray-200 rounded-lg text-black hover:bg-gray-50 transition-all shadow-sm",
       },
       size: {

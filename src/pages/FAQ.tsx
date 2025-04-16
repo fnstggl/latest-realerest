@@ -1,227 +1,113 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '@/components/Navbar';
-import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Search } from 'lucide-react';
-import { Input } from "@/components/ui/input";
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
-
-interface FAQItem {
-  question: string;
-  answer: string;
-  category: 'general' | 'buyers' | 'sellers' | 'listings' | 'account';
-}
-
-const faqs: FAQItem[] = [
-  {
-    question: "What is DoneDeal?",
-    answer: "DoneDeal is a platform that connects buyers with sellers offering properties below market value. We eliminate traditional barriers that typically exist in real estate transactions, creating a more direct and affordable way to buy and sell properties.",
-    category: 'general'
-  },
-  {
-    question: "How does DoneDeal differ from traditional real estate platforms?",
-    answer: "Unlike traditional platforms, DoneDeal specializes in below-market properties and direct seller-to-buyer connections. We have a unique waitlist system that helps serious buyers connect with sellers, and sellers can control who views their property details.",
-    category: 'general'
-  },
-  {
-    question: "How can you offer properties below market value?",
-    answer: "We work with distressed sellers who are motivated to sell their properties quickly, even if it means pricing them below market value. These sellers may be facing situations like pre-foreclosure, pre-probate sales, property liens, job relocations, or simply need a fast sale. By connecting these motivated sellers with ready buyers, we create opportunities for buyers to find great deals while helping sellers achieve their goal of a quick sale.",
-    category: 'general'
-  },
-  {
-    question: "How long do properties typically stay available on DoneDeal?",
-    answer: "Due to the high demand for below-market properties, listings on our platform may sell quickly. The supply of these opportunities is naturally limited, so we encourage serious buyers to act promptly when they find a property they're interested in. This is why we've designed our platform to facilitate fast, efficient transactions between motivated sellers and ready buyers.",
-    category: 'general'
-  },
-  {
-    question: "How do I find properties below market value?",
-    answer: "You can browse our listings directly or use our search function to filter properties by location, price range, and percentage below market value. Each listing clearly shows how much below market value the property is priced.",
-    category: 'buyers'
-  },
-  {
-    question: "What is the waitlist feature?",
-    answer: "When you find a property you're interested in, you can join the waitlist by providing your contact information. The seller then reviews waitlist requests and approves buyers they want to connect with. Once approved, you'll see the full property details and can contact the seller directly.",
-    category: 'buyers'
-  },
-  {
-    question: "How do I know these properties are actually below market value?",
-    answer: "Sellers are required to provide comparable properties and market data when listing. Our system validates these comparables to ensure accuracy. Additionally, each listing shows both the asking price and the calculated market value.",
-    category: 'buyers'
-  },
-  {
-    question: "Why should I act quickly when I see a property I like?",
-    answer: "Below-market properties are in high demand with limited supply. Distressed sellers are often looking for quick transactions, and properties priced significantly below market value don't typically stay available for long. We recommend acting promptly when you find a property that meets your criteria.",
-    category: 'buyers'
-  },
-  {
-    question: "How do I list my property on DoneDeal?",
-    answer: "Simply create a seller account, click on 'List Your Property' and follow the step-by-step process. You'll need to provide details about your property, set your price, upload photos, and provide comparable properties to verify the market value.",
-    category: 'sellers'
-  },
-  {
-    question: "Why should I list my property below market value?",
-    answer: "Listing below market value can attract more potential buyers, lead to faster sales, and often results in simpler transactions with fewer contingencies. By pricing strategically, you can save money on carrying costs and potentially avoid months of your property sitting on the market.",
-    category: 'sellers'
-  },
-  {
-    question: "I'm in a distressed selling situation. Can DoneDeal help me sell quickly?",
-    answer: "Yes, DoneDeal is specifically designed to help sellers who need to move their properties quickly, even at below-market prices. Whether you're facing pre-foreclosure, dealing with an inherited property, have liens, need to relocate for a job, or simply need liquid capital fast, our platform connects you directly with buyers who are ready to move quickly on below-market opportunities.",
-    category: 'sellers'
-  },
-  {
-    question: "How does the waitlist system benefit me as a seller?",
-    answer: "The waitlist system lets you review interested buyers and choose who can see your full property details. This helps screen out non-serious inquiries and protects your privacy. You can also see buyer profiles before deciding to connect with them.",
-    category: 'sellers'
-  },
-  {
-    question: "Can I change or update my listing after it's published?",
-    answer: "Yes, you can update your listing at any time from your dashboard. You can change the price, update photos, modify the description, or make any other changes you need.",
-    category: 'listings'
-  },
-  {
-    question: "How long do listings stay active on DoneDeal?",
-    answer: "Standard listings remain active for 90 days, after which you can easily renew them if the property hasn't sold.",
-    category: 'listings'
-  },
-  {
-    question: "Can I delete my account?",
-    answer: "Yes, you can delete your account at any time from your account settings. If you have active listings, you'll be prompted to either close or transfer them before the account deletion is completed.",
-    category: 'account'
-  }
-];
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const FAQ: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  
-  const toggleFAQ = (index: number) => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
-  
-  const filteredFAQs = faqs.filter(faq => {
-    const matchesSearch = faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
+  const faqs = [
+    {
+      question: "What is Realer Estate?",
+      answer: "Realer Estate is a platform that connects buyers directly with sellers offering properties below market value, eliminating middlemen and reducing costs for everyone involved."
+    },
+    {
+      question: "How does Realer Estate make money?",
+      answer: "We charge a flat 1% fee on completed property transactions, which is significantly lower than traditional real estate commissions (typically 5-6%)."
+    },
+    {
+      question: "Are properties on Realer Estate guaranteed to be below market value?",
+      answer: "While our platform focuses on below-market-value properties, we cannot guarantee that all listings will be below market value as market conditions may change. We encourage buyers to do their own research and due diligence."
+    },
+    {
+      question: "How do I list my property?",
+      answer: "To list your property, create an account, click on 'Sell' in the navigation menu, and follow the steps to complete your listing. You'll need to provide details about your property, set your asking price, and upload photos."
+    },
+    {
+      question: "How do I make an offer on a property?",
+      answer: "Once you've found a property you're interested in, you can make an offer directly through our platform. Simply click the 'Make Offer' button on the property listing page, enter your offer amount, and submit."
+    },
+    {
+      question: "Is Realer Estate available nationwide?",
+      answer: "Yes, Realer Estate is available across the United States. We're constantly expanding our reach to serve more markets effectively."
+    },
+    {
+      question: "How does the offer process work?",
+      answer: "When you make an offer, the seller is notified immediately. They can accept, decline, or counter your offer. If they accept, you'll be connected to complete the transaction. Our platform facilitates the initial negotiation process, but the final closing is handled outside our platform."
+    },
+    {
+      question: "Do I need a real estate agent to use Realer Estate?",
+      answer: "No, you don't need a real estate agent to use our platform. However, you're welcome to involve one if you prefer. Our platform is designed to be user-friendly for both buyers and sellers to connect directly."
+    },
+    {
+      question: "What if I have a dispute with a buyer/seller?",
+      answer: "We encourage open communication through our platform's messaging system. If you encounter issues that can't be resolved directly, please contact our support team who will assist in mediating the situation."
+    },
+    {
+      question: "Is my personal information secure?",
+      answer: "Yes, we take data security very seriously. We use industry-standard encryption and security practices to protect your personal information. Please review our Privacy Policy for more details."
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 lg:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          className="max-w-4xl mx-auto"
         >
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold mb-4">Frequently Asked Questions</h1>
-            <p className="text-xl max-w-2xl mx-auto">Find answers to common questions about using DoneDeal to buy or sell properties.</p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Find answers to the most common questions about Realer Estate.</p>
           </div>
           
-          <div className="max-w-3xl mx-auto">
-            <div className="relative mb-8">
-              <Input
-                type="text"
-                placeholder="Search FAQ..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:border-black"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-            </div>
-            
-            <div className="flex flex-wrap gap-2 mb-8">
-              <Button 
-                className={`font-bold text-sm py-1 px-3 ${activeCategory === 'all' ? 'bg-[#d60013] text-white' : 'bg-white text-black'} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all`}
-                onClick={() => setActiveCategory('all')}
+          <Card className="border-none shadow-sm mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">General Questions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                {faqs.map((faq, index) => (
+                  <AccordionItem key={index} value={`item-${index}`}>
+                    <AccordionTrigger className="text-left font-bold text-[#0892D0]">{faq.question}</AccordionTrigger>
+                    <AccordionContent className="text-gray-700">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-none shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">Still have questions?</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center py-6">
+              <p className="text-gray-700 mb-6">Our support team is here to help with any other questions you might have.</p>
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
               >
-                All
-              </Button>
-              <Button 
-                className={`font-bold text-sm py-1 px-3 ${activeCategory === 'general' ? 'bg-[#d60013] text-white' : 'bg-white text-black'} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all`}
-                onClick={() => setActiveCategory('general')}
-              >
-                General
-              </Button>
-              <Button 
-                className={`font-bold text-sm py-1 px-3 ${activeCategory === 'buyers' ? 'bg-[#d60013] text-white' : 'bg-white text-black'} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all`}
-                onClick={() => setActiveCategory('buyers')}
-              >
-                For Buyers
-              </Button>
-              <Button 
-                className={`font-bold text-sm py-1 px-3 ${activeCategory === 'sellers' ? 'bg-[#d60013] text-white' : 'bg-white text-black'} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all`}
-                onClick={() => setActiveCategory('sellers')}
-              >
-                For Sellers
-              </Button>
-              <Button 
-                className={`font-bold text-sm py-1 px-3 ${activeCategory === 'listings' ? 'bg-[#d60013] text-white' : 'bg-white text-black'} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all`}
-                onClick={() => setActiveCategory('listings')}
-              >
-                Listings
-              </Button>
-              <Button 
-                className={`font-bold text-sm py-1 px-3 ${activeCategory === 'account' ? 'bg-[#d60013] text-white' : 'bg-white text-black'} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all`}
-                onClick={() => setActiveCategory('account')}
-              >
-                Account
-              </Button>
-            </div>
-            
-            <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-              {filteredFAQs.length > 0 ? (
-                filteredFAQs.map((faq, index) => (
-                  <div key={index} className={`border-b-2 border-black last:border-b-0`}>
-                    <div 
-                      className={`p-6 cursor-pointer flex justify-between items-center ${activeIndex === index ? 'bg-gray-50' : ''}`}
-                      onClick={() => toggleFAQ(index)}
-                    >
-                      <h3 className="font-bold text-lg pr-8">{faq.question}</h3>
-                      {activeIndex === index ? (
-                        <ChevronUp className="flex-shrink-0 text-[#d60013]" />
-                      ) : (
-                        <ChevronDown className="flex-shrink-0" />
-                      )}
-                    </div>
-                    
-                    {activeIndex === index && (
-                      <div className="p-6 pt-0">
-                        <p className="text-gray-700">{faq.answer}</p>
-                      </div>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div className="p-8 text-center">
-                  <p className="mb-4">No FAQs match your search criteria.</p>
-                  <Button 
-                    variant="link" 
-                    className="text-[#d60013] font-bold"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setActiveCategory('all');
-                    }}
-                  >
-                    Clear filters
-                  </Button>
-                </div>
-              )}
-            </div>
-            
-            <div className="mt-12 text-center">
-              <p className="mb-4">Still have questions?</p>
-              <Button asChild className="neo-button-primary">
-                <Link to="/contact">Contact Us</Link>
-              </Button>
-            </div>
-          </div>
+                <a 
+                  href="/contact" 
+                  className="inline-flex items-center px-6 py-3 rounded-md bg-[#0892D0] text-white font-medium hover:bg-[#077fb4] transition-colors"
+                >
+                  Contact Support
+                </a>
+              </motion.div>
+            </CardContent>
+          </Card>
         </motion.div>
       </div>
       

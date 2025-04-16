@@ -2,142 +2,127 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
+import SiteFooter from '@/components/sections/SiteFooter';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Privacy: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 lg:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="max-w-4xl mx-auto"
         >
-          <div className="mb-12 border-b-4 border-black pb-6">
-            <h1 className="text-5xl font-bold mb-4">Privacy Policy</h1>
-            <p className="text-xl text-gray-700">Last updated: {new Date().toLocaleDateString()}</p>
-          </div>
-          
-          <div className="space-y-12">
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">1. Introduction</h2>
-              <p className="mb-4">
-                At DoneDeal, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website, mobile application, or services.
-              </p>
-              <p>
-                Please read this Privacy Policy carefully. By accessing or using our Platform, you acknowledge that you have read, understood, and agree to be bound by this Privacy Policy.
-              </p>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">2. Information We Collect</h2>
-              <h3 className="text-xl font-bold mb-2">Personal Information</h3>
-              <p className="mb-4">
-                We may collect personal information that you voluntarily provide to us when you register for an account, express interest in a property, list a property, or contact us, including:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mb-4">
-                <li>Name</li>
-                <li>Email address</li>
-                <li>Phone number</li>
-                <li>Mailing address</li>
-                <li>Financial information (for transactions)</li>
-                <li>Property details (for sellers)</li>
-              </ul>
-              
-              <h3 className="text-xl font-bold mb-2">Automatically Collected Information</h3>
-              <p className="mb-4">
-                When you access our Platform, we may automatically collect certain information about your device and usage, including:
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Device type, operating system, and browser type</li>
-                <li>IP address</li>
-                <li>Geographic location</li>
-                <li>Pages visited and features used</li>
-                <li>Time spent on our Platform</li>
-                <li>Referring websites or applications</li>
-              </ul>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">3. How We Use Your Information</h2>
-              <p className="mb-4">We may use your information for various purposes, including to:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Create and manage your account</li>
-                <li>Connect buyers with sellers</li>
-                <li>Process transactions</li>
-                <li>Send notifications about properties, waitlists, or account activities</li>
-                <li>Respond to your inquiries and provide customer support</li>
-                <li>Improve our Platform and user experience</li>
-                <li>Conduct research and analysis</li>
-                <li>Enforce our terms, conditions, and policies</li>
-                <li>Protect our Platform from fraudulent or illegal activity</li>
-              </ul>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">4. Sharing Your Information</h2>
-              <p className="mb-4">We may share your information with:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Other Users:</strong> When you list a property or join a waitlist, certain information may be shared with relevant users.</li>
-                <li><strong>Service Providers:</strong> We may share your information with third-party vendors who provide services on our behalf.</li>
-                <li><strong>Business Partners:</strong> We may share your information with partners who offer complementary services, such as mortgage lenders or home inspectors.</li>
-                <li><strong>Legal Requirements:</strong> We may disclose your information if required by law or in response to valid requests by public authorities.</li>
-              </ul>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">5. Your Privacy Rights</h2>
-              <p className="mb-4">
-                Depending on your location, you may have certain rights regarding your personal information, including:
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Right to access your personal information</li>
-                <li>Right to correct inaccurate information</li>
-                <li>Right to delete your personal information</li>
-                <li>Right to restrict or object to processing</li>
-                <li>Right to data portability</li>
-                <li>Right to withdraw consent</li>
-              </ul>
-              <p className="mt-4">
-                To exercise these rights, please contact us at privacy@donedeal.com.
-              </p>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">6. Security of Your Information</h2>
-              <p className="mb-4">
-                We implement appropriate technical and organizational measures to protect your personal information from unauthorized access, disclosure, alteration, or destruction.
-              </p>
-              <p>
-                However, no method of transmission over the Internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your personal information, we cannot guarantee its absolute security.
-              </p>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">7. Children's Privacy</h2>
-              <p>
-                Our Platform is not intended for individuals under the age of 18. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us.
-              </p>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">8. Changes to This Privacy Policy</h2>
-              <p>
-                We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date at the top.
-              </p>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold mb-4 border-b-2 border-[#d60013] pb-2">9. Contact Us</h2>
-              <p>
-                If you have any questions about this Privacy Policy, please contact us at privacy@donedeal.com.
-              </p>
-            </section>
-          </div>
+          <Card className="mb-8 border-none shadow-sm">
+            <CardHeader className="border-b border-gray-100">
+              <CardTitle className="text-4xl font-bold">Privacy Policy</CardTitle>
+              <p className="text-lg text-gray-500">Last updated: {new Date().toLocaleDateString()}</p>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-8">
+                <section>
+                  <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">1. Introduction</h2>
+                  <p className="mb-4 text-gray-700">
+                    At Realer Estate, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
+                  </p>
+                  <p className="text-gray-700">
+                    Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
+                  </p>
+                </section>
+                
+                <section>
+                  <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">2. Information We Collect</h2>
+                  <p className="mb-4 text-gray-700">We may collect information about you in a variety of ways. The information we may collect includes:</p>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>
+                      <strong>Personal Data:</strong> Personally identifiable information, such as your name, email address, telephone number, and home address, that you voluntarily give to us when you register or when you choose to participate in various activities related to our platform.
+                    </li>
+                    <li>
+                      <strong>Financial Data:</strong> Payment and billing information collected when you purchase a subscription or service.
+                    </li>
+                    <li>
+                      <strong>Derivative Data:</strong> Information our servers automatically collect when you access our platform, such as your IP address, browser type, operating system, access times, and the pages you have viewed.
+                    </li>
+                    <li>
+                      <strong>Mobile Device Data:</strong> Device information, such as your mobile device ID, model, and manufacturer, if you access our platform from a mobile device.
+                    </li>
+                  </ul>
+                </section>
+                
+                <section>
+                  <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">3. How We Use Your Information</h2>
+                  <p className="mb-4 text-gray-700">We may use the information we collect about you for various purposes, including to:</p>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>Create and manage your account</li>
+                    <li>Process transactions and send related information</li>
+                    <li>Send you administrative information, such as updates, security alerts, and support messages</li>
+                    <li>Respond to customer service requests and support needs</li>
+                    <li>Personalize your experience and deliver content and product offerings relevant to your interests</li>
+                    <li>Administer promotions, contests, and surveys</li>
+                    <li>Compile anonymous statistical data for research purposes</li>
+                    <li>Prevent fraudulent transactions, monitor against theft, and protect against criminal activity</li>
+                  </ul>
+                </section>
+                
+                <section>
+                  <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">4. Disclosure of Your Information</h2>
+                  <p className="mb-4 text-gray-700">We may share information we have collected about you in certain situations. Your information may be disclosed as follows:</p>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>
+                      <strong>By Law or to Protect Rights:</strong> If we believe the release of information is necessary to comply with the law, enforce our site policies, or protect ours or others' rights, property, or safety.
+                    </li>
+                    <li>
+                      <strong>Third-Party Service Providers:</strong> We may share your information with third parties that perform services for us or on our behalf, including payment processing, data analysis, email delivery, hosting services, and customer service.
+                    </li>
+                    <li>
+                      <strong>Marketing Communications:</strong> With your consent, or with an opportunity for you to withdraw consent, we may share your information with third parties for marketing purposes.
+                    </li>
+                    <li>
+                      <strong>Business Transfers:</strong> If we are involved in a merger, acquisition, or sale of all or a portion of our assets, your information may be transferred as part of that transaction.
+                    </li>
+                  </ul>
+                </section>
+                
+                <section>
+                  <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">5. Your Rights</h2>
+                  <p className="mb-4 text-gray-700">You have certain rights regarding the personal information we collect about you:</p>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>
+                      <strong>Access:</strong> You have the right to request a copy of the personal information we hold about you.
+                    </li>
+                    <li>
+                      <strong>Rectification:</strong> You have the right to request that we correct any inaccurate personal information we hold about you.
+                    </li>
+                    <li>
+                      <strong>Deletion:</strong> You have the right to request that we delete your personal information.
+                    </li>
+                    <li>
+                      <strong>Opt-out:</strong> You can opt-out of receiving our marketing communications at any time.
+                    </li>
+                  </ul>
+                </section>
+                
+                <section>
+                  <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">6. Contact Us</h2>
+                  <p className="text-gray-700">
+                    If you have questions or comments about this Privacy Policy, please contact us at:
+                    <br />
+                    Email: privacy@realerestate.com
+                    <br />
+                    Phone: (929) 949-5634
+                  </p>
+                </section>
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
       </div>
+      
+      <SiteFooter />
     </div>
   );
 };
