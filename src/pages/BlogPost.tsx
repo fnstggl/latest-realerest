@@ -89,7 +89,7 @@ const BlogPost: React.FC = () => {
       
       {blogPost && (
         <Helmet>
-          <title>{blogPost.title} | DoneDeal Blog</title>
+          <title>{blogPost.title} | Realer Estate Blog</title>
           <meta name="description" content={blogPost.content.substring(0, 160)} />
           <meta property="og:title" content={blogPost.title} />
           <meta property="og:description" content={blogPost.content.substring(0, 160)} />
@@ -182,7 +182,7 @@ const BlogPost: React.FC = () => {
                         <span className="font-medium layer-1 glass px-2 py-1 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">{property.sqft} SqFt</span>
                       </div>
                       <div className="font-bold text-xl mb-4">${Number(property.price).toLocaleString()}</div>
-                      <Button asChild variant="translucent" className="layer-3 glass-content hover:translate-y-[-5px] transition-all">
+                      <Button asChild variant="glass" className="layer-3 glass-content hover:translate-y-[-5px] transition-all">
                         <Link to={`/property/${property.id}`} className="flex items-center gap-2">
                           <Home size={16} />
                           View Property
@@ -197,7 +197,7 @@ const BlogPost: React.FC = () => {
             <div className="text-center py-20 layer-2 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 rounded-xl hover:translate-y-[-5px] transition-all">
               <h2 className="text-2xl font-bold mb-4">Blog post not found</h2>
               <p className="mb-6 layer-1 glass p-4 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">Sorry, the blog post you're looking for doesn't exist or has been removed.</p>
-              <Button asChild variant="translucent" className="layer-3 glass-content hover:translate-y-[-5px] transition-all">
+              <Button asChild variant="glass" className="layer-3 glass-content hover:translate-y-[-5px] transition-all">
                 <Link to="/blog">Return to Blog</Link>
               </Button>
             </div>

@@ -100,7 +100,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   };
 
   return (
-    <div>
+    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
       <h2 className="text-xl font-bold mb-4">Property Images</h2>
       <p className="text-sm text-gray-600 mb-4">
         Recommended: Add up to {MAX_IMAGES} images (less than {MAX_IMAGE_SIZE/1024/1024}MB each) for faster upload times.
@@ -117,7 +117,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         />
         <Button 
           type="button" 
-          className="h-32 w-full border-4 border-black rounded-none hover:bg-gray-50 flex flex-col items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" 
+          className="h-32 w-full layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl flex flex-col items-center justify-center gap-2 hover:translate-y-[-5px] transition-all" 
           onClick={handleImageUpload}
           disabled={isSubmitting || isProcessingImages || images.length >= MAX_IMAGES}
         >
@@ -142,7 +142,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       {images.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {images.map((img, index) => (
-            <div key={index} className="relative border-4 border-black group">
+            <div key={index} className="relative layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden group">
               <img 
                 src={img} 
                 alt={`Property ${index + 1}`} 
@@ -163,7 +163,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       
       {/* Show progress bar during submission */}
       {isSubmitting && uploadProgress > 0 && (
-        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+        <div className="w-full bg-white/30 backdrop-blur-md rounded-full h-2.5 mb-6">
           <div 
             className="bg-[#d60013] h-2.5 rounded-full transition-all duration-300" 
             style={{ width: `${uploadProgress}%` }}

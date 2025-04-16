@@ -72,12 +72,28 @@
     animation: gradientBg 15s ease infinite;
   }
   
+  /* Hover text gradient effect */
+  .gradient-hover-text {
+    position: relative;
+    display: inline-block;
+    transition: all 0.3s ease;
+  }
+  
+  .gradient-hover-text:hover {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 300% 100%;
+    animation: gradientShift 4s ease infinite;
+  }
+  
   @keyframes gradientBg {
     0% {
       background-position: 0% 50%;
     }
     50% {
-      background-position: a00% 50%;
+      background-position: 100% 50%;
     }
     100% {
       background-position: 0% 50%;

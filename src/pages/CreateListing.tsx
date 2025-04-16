@@ -277,7 +277,7 @@ const CreateListing: React.FC = () => {
   // If page is not fully loaded, show a more pleasant loading state
   if (!isPageLoaded) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
         <Navbar />
         <div className="container mx-auto px-4 py-12 flex justify-center items-center">
           <div className="text-center">
@@ -290,7 +290,7 @@ const CreateListing: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <Navbar />
       
       <motion.div 
@@ -301,8 +301,8 @@ const CreateListing: React.FC = () => {
       >
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-3">Create New Property Listing</h1>
-          <p className="mb-8 text-lg text-gradient-primary">
-            <span className="gradient-hover-text">List your property at a price you'll love more</span>
+          <p className="mb-8 text-lg">
+            <span className="text-gradient-primary">List your property at a price you'll love more</span>
           </p>
           
           <div className="layer-3 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 rounded-xl hover:translate-y-[-5px] transition-all">

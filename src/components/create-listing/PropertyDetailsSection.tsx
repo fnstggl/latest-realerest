@@ -12,7 +12,7 @@ interface PropertyDetailsSectionProps {
 
 const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form }) => {
   return (
-    <div>
+    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
       <h2 className="text-xl font-bold mb-4">Property Details</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Bedrooms */}
@@ -26,7 +26,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
                 <Input 
                   type="number" 
                   placeholder="e.g. 3" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -46,7 +46,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
                 <Input 
                   type="number" 
                   placeholder="e.g. 2" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -66,7 +66,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
                 <Input 
                   type="number" 
                   placeholder="e.g. 2000" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>

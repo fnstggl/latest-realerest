@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -22,7 +23,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
   };
 
   return (
-    <div>
+    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
       <h2 className="text-xl font-bold mb-4">Price Information</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Listing Price */}
@@ -36,7 +37,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
                 <Input 
                   type="number" 
                   placeholder="e.g. 450000" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -56,7 +57,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
                 <Input 
                   type="number" 
                   placeholder="e.g. 500000" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -68,7 +69,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
       
       {/* Display discount percentage */}
       {form.watch('price') && form.watch('marketPrice') && (
-        <div className="mt-4 p-4 bg-gray-100 border-2 border-black">
+        <div className="mt-4 p-4 layer-1 glass backdrop-blur-sm border border-white/20 rounded-xl">
           <p className="font-bold">
             Discount: <span className="text-[#ea384c]">{calculateDiscountPercent()}% below market</span>
           </p>
@@ -87,7 +88,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
                 <Input 
                   type="number" 
                   placeholder="e.g. 550000" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -107,7 +108,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
                 <Input 
                   type="number" 
                   placeholder="e.g. 50000" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>

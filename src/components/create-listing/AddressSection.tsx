@@ -21,7 +21,7 @@ interface AddressSectionProps {
 
 const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
   return (
-    <>
+    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm space-y-6">
       <div>
         <h2 className="text-xl font-bold mb-4">Property Address</h2>
         <FormField 
@@ -33,7 +33,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
               <FormControl>
                 <Input 
                   placeholder="e.g. 123 Main St" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -56,7 +56,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                 <FormControl>
                   <Input 
                     placeholder="e.g. Portland" 
-                    className="h-12 rounded-none border-2 border-black" 
+                    className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                     {...field} 
                   />
                 </FormControl>
@@ -77,11 +77,11 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="h-12 rounded-none border-2 border-black">
+                    <SelectTrigger className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="bg-white border-2 border-black max-h-[280px]">
+                  <SelectContent className="bg-white/90 backdrop-blur-md border border-white/40 rounded-xl max-h-[280px]">
                     {usStates.map((state) => (
                       <SelectItem key={state} value={state}>
                         {state}
@@ -104,7 +104,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                 <FormControl>
                   <Input 
                     placeholder="e.g. 97204" 
-                    className="h-12 rounded-none border-2 border-black" 
+                    className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                     {...field} 
                   />
                 </FormControl>
@@ -124,7 +124,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
               <FormControl>
                 <Textarea 
                   placeholder="Describe your property..." 
-                  className="min-h-[120px] rounded-none border-2 border-black" 
+                  className="min-h-[120px] rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -133,7 +133,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
           )}
         />
       </div>
-    </>
+    </div>
   );
 };
 

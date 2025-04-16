@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
   }, [location.state]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <Navbar />
       
       <div className="container mx-auto px-4 py-12">
@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
             </div>
             
             <Button 
-              className="layer-3 glass-content backdrop-blur-md border border-white/40 hover:translate-y-[-5px] transition-all"
+              className="layer-3 glass-card backdrop-blur-lg border border-white/40 hover:translate-y-[-5px] transition-all"
               onClick={() => navigate('/sell/create')}
             >
               <Plus size={18} className="mr-2" />
@@ -91,7 +91,7 @@ const Dashboard: React.FC = () => {
             </TabsList>
             
             {/* Properties Tab */}
-            <TabsContent value="properties" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
+            <TabsContent value="properties" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
               <PropertiesTab 
                 myProperties={myProperties}
                 setMyProperties={setMyProperties}
@@ -105,7 +105,7 @@ const Dashboard: React.FC = () => {
             </TabsContent>
             
             {/* Waitlist Tab */}
-            <TabsContent value="waitlist" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
+            <TabsContent value="waitlist" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
               <WaitlistTab 
                 waitlistUsers={waitlistUsers}
                 setWaitlistUsers={setWaitlistUsers}
@@ -113,17 +113,17 @@ const Dashboard: React.FC = () => {
             </TabsContent>
             
             {/* Offers Tab */}
-            <TabsContent value="offers" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
+            <TabsContent value="offers" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
               <OffersTab />
             </TabsContent>
             
             {/* Account Tab */}
-            <TabsContent value="account" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
+            <TabsContent value="account" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
               <AccountTab user={user} logout={logout} />
             </TabsContent>
             
             {/* Notifications Tab */}
-            <TabsContent value="notifications" className="space-y-6 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg">
+            <TabsContent value="notifications" className="space-y-6 layer-2 glass-card backdrop-blur-lg border border-white/40 p-6 shadow-lg rounded-xl">
               <NotificationsTab 
                 notifications={notifications}
                 markAsRead={markAsRead}

@@ -12,7 +12,7 @@ interface ComparableSectionProps {
 
 const ComparableSection: React.FC<ComparableSectionProps> = ({ form }) => {
   return (
-    <div>
+    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
       <h2 className="text-xl font-bold mb-4">Comparable Properties (Optional)</h2>
       <div className="space-y-4">
         {/* Comparable Address 1 */}
@@ -25,7 +25,7 @@ const ComparableSection: React.FC<ComparableSectionProps> = ({ form }) => {
               <FormControl>
                 <Input 
                   placeholder="Enter address" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -44,7 +44,7 @@ const ComparableSection: React.FC<ComparableSectionProps> = ({ form }) => {
               <FormControl>
                 <Input 
                   placeholder="Enter address" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
@@ -63,7 +63,7 @@ const ComparableSection: React.FC<ComparableSectionProps> = ({ form }) => {
               <FormControl>
                 <Input 
                   placeholder="Enter address" 
-                  className="h-12 rounded-none border-2 border-black" 
+                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
                   {...field} 
                 />
               </FormControl>
