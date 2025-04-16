@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0892D0] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive: "bg-white/40 text-black backdrop-blur-md rounded-xl hover:bg-white/50 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
         outline: "border border-white/40 bg-white/30 hover:bg-white/40 hover:border-[#0892D0] backdrop-blur-md rounded-xl text-black shadow-lg layer-hover layer-1",
         secondary: "bg-white/40 text-black backdrop-blur-md rounded-xl hover:bg-white/50 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
-        ghost: "hover:bg-accent hover:text-accent-foreground layer-hover layer-1",
+        ghost: "hover:bg-accent hover:text-[#0892D0] layer-hover layer-1",
         link: "text-black underline-offset-4 hover:underline hover:text-[#0892D0] layer-1",
         warning: "bg-white/40 text-[#0892D0] backdrop-blur-md rounded-xl hover:bg-white/50 hover:border-[#0892D0] shadow-lg border border-white/40 layer-hover layer-2",
         glass: "bg-white/50 backdrop-blur-md border border-white/40 rounded-xl hover:bg-white/60 hover:border-[#0892D0] text-black shadow-lg layer-hover layer-2",

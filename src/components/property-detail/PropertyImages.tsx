@@ -24,7 +24,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({ mainImage, images = [] 
           {images.map((img, index) => (
             <div 
               key={index} 
-              className={`cursor-pointer ${activeImage === img ? 'border-2 border-[#0892D0]' : 'border border-white/40'} rounded-lg transition-all duration-300`}
+              className={`cursor-pointer ${activeImage === img ? 'border-2 border-[#0892D0] shadow-[0_0_8px_rgba(8,146,208,0.5)]' : 'border border-white/40'} rounded-lg transition-all duration-300`}
               onClick={() => setActiveImage(img)}
             >
               <img 

@@ -76,7 +76,7 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
                   </p>
                 </div>
                 {!notification.read && (
-                  <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded">NEW</div>
+                  <div className="bg-[#0892D0] px-2 py-1 text-xs font-bold rounded text-white">NEW</div>
                 )}
               </div>
             </div>

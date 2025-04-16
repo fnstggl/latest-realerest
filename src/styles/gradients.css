@@ -11,11 +11,9 @@
     content: '';
     position: absolute;
     inset: -2px;
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    background: linear-gradient(90deg, #0892D0, #0892D0 50%, #0892D0 100%);
     border-radius: inherit;
     z-index: -1;
-    background-size: 300% 100%;
-    animation: gradientShift 4s ease infinite;
   }
   
   /* Button with rainbow gradient background */
@@ -58,7 +56,7 @@
   }
   
   .text-gradient-gold {
-    background: linear-gradient(135deg, #FFD700 0%, #FFCC00 50%, #FFC107 100%);
+    background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -82,7 +80,7 @@
   
   /* Animated gradient background */
   .animated-gradient-bg {
-    background: linear-gradient(-45deg, #3C79F5, #6C42F5, #D946EF, #FF5C00, #FF3CAC);
+    background: linear-gradient(-45deg, #0892D0, #54C5F8, #0892D0, #54C5F8);
     background-size: 400% 400%;
     animation: gradientBg 15s ease infinite;
   }

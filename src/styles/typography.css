@@ -30,7 +30,7 @@
     color: transparent;
     position: relative;
     display: inline-block;
-    text-shadow: 0 0 15px rgba(108, 66, 245, 0.4), 0 0 30px rgba(217, 70, 239, 0.2), 0 0 60px rgba(255, 92, 0, 0.15);
+    text-shadow: 0 0 15px rgba(8, 146, 208, 0.4), 0 0 30px rgba(8, 146, 208, 0.2), 0 0 60px rgba(8, 146, 208, 0.15);
     font-weight: bold;
     transform: translateZ(10px);
     filter: brightness(1.05);

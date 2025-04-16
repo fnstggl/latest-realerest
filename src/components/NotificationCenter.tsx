@@ -108,7 +108,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
         >
           <Bell size={20} className="text-black" />
           {unreadCount > 0 && showIndicator && (
-            <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
+            <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-[#0892D0] text-[10px] font-bold text-white">
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
@@ -157,7 +157,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
                       </p>
                     </div>
                     {!notification.read && (
-                      <div className="bg-blue-200 px-2 py-1 text-xs font-bold rounded">
+                      <div className="bg-[#0892D0] px-2 py-1 text-xs font-bold rounded text-white">
                         NEW
                       </div>
                     )}
