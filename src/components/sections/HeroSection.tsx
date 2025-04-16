@@ -30,7 +30,7 @@ const HeroSection: React.FC = () => {
           animate="visible" 
           variants={stagger}
         >
-          <motion.div variants={fadeInUp} className="layer-1 flex flex-col items-center">
+          <motion.div variants={fadeInUp} className="flex flex-col items-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-4 mx-auto text-center leading-tight">
               Find a home you love...
             </h1>
@@ -40,7 +40,7 @@ const HeroSection: React.FC = () => {
             <p className="text-foreground mb-6 md:mb-8 text-base md:text-lg mx-auto max-w-2xl text-center">
               Helping families buy homes they were told they couldn't afford.
             </p>
-            <div className="glass-card p-1 mb-6 md:mb-8 shadow-xl layer-2 search-glow rounded-xl mx-auto w-full max-w-2xl">
+            <div className="glass-card p-1 mb-6 md:mb-8 shadow-xl search-glow rounded-xl mx-auto w-full max-w-2xl">
               <SearchBar className="" />
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mx-auto">

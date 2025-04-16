@@ -36,6 +36,15 @@
     filter: brightness(1.05);
   }
   
+  /* Electric blue glow */
+  .electric-blue-glow {
+    color: #0892D0;
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 0 10px rgba(8, 146, 208, 0.7), 0 0 20px rgba(8, 146, 208, 0.5), 0 0 30px rgba(8, 146, 208, 0.3);
+    font-weight: bold;
+  }
+  
   /* Rainbow gradient text for pricing and other highlights */
   .rainbow-text {
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);

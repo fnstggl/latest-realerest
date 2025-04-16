@@ -73,27 +73,17 @@
     box-shadow: 0 0 15px 0 rgba(255, 255, 255, 0.5), 0 0 30px 0 rgba(255, 92, 0, 0.3);
   }
   
+  /* Electric blue glow */
+  .electric-blue-glow {
+    color: #0892D0;
+    text-shadow: 0 0 10px rgba(8, 146, 208, 0.7), 0 0 20px rgba(8, 146, 208, 0.5);
+  }
+  
   /* Animated gradient background */
   .animated-gradient-bg {
     background: linear-gradient(-45deg, #3C79F5, #6C42F5, #D946EF, #FF5C00, #FF3CAC);
     background-size: 400% 400%;
     animation: gradientBg 15s ease infinite;
-  }
-  
-  /* Hover text gradient effect */
-  .gradient-hover-text {
-    position: relative;
-    display: inline-block;
-    transition: all 0.3s ease;
-  }
-  
-  .gradient-hover-text:hover {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    background-size: 300% 100%;
-    animation: gradientShift 4s ease infinite;
   }
   
   @keyframes gradientBg {
