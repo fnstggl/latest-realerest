@@ -294,7 +294,7 @@ const CreateListing: React.FC = () => {
       <Navbar />
       
       <motion.div 
-        className="container mx-auto px-4 py-12" 
+        className="container mx-auto px-4 pt-28 pb-12" // Adjusted top padding to bring content lower
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -302,7 +302,7 @@ const CreateListing: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-3">Create New Property Listing</h1>
           <p className="mb-8 text-lg">
-            <span className="text-gradient-primary">List your property at a price you'll love more</span>
+            <span className="text-gradient-static">List your property at a price you'll love more</span>
           </p>
           
           <div className="layer-3 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 rounded-xl hover:translate-y-[-5px] transition-all">

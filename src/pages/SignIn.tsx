@@ -104,7 +104,7 @@ const SignIn: React.FC = () => {
             </div>
             <Button 
               type="submit"
-              className="w-full property-card-glow glass-button-primary text-white font-bold"
+              className="w-full property-card-glow glass-button-primary text-[#0892D0] font-bold"
               disabled={isLoading}
             >
               {isLoading ? "Signing In..." : "Sign In"}

@@ -16,12 +16,11 @@
     z-index: -1;
   }
   
-  /* Button with rainbow gradient background */
+  /* Button with rainbow gradient background - now static */
   .btn-rainbow-gradient {
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     color: white;
-    background-size: 300% 100%;
-    animation: gradientShift 4s ease infinite;
+    background-size: 100% 100%; /* Made static by removing animation */
   }
   
   /* Gradient backgrounds - updated to electric blue */
@@ -37,14 +36,13 @@
     background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
   }
   
-  /* Text gradients */
+  /* Text gradients - made static by removing animations */
   .text-gradient-primary {
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    background-size: 300% 100%;
-    animation: gradientShift 4s ease infinite;
+    background-size: 100% 100%; /* Made static */
   }
   
   /* Static gradient text */
@@ -78,13 +76,14 @@
     text-shadow: 0 0 10px rgba(8, 146, 208, 0.7), 0 0 20px rgba(8, 146, 208, 0.5);
   }
   
-  /* Animated gradient background */
+  /* Animated gradient background - made static */
   .animated-gradient-bg {
     background: linear-gradient(-45deg, #0892D0, #54C5F8, #0892D0, #54C5F8);
-    background-size: 400% 400%;
-    animation: gradientBg 15s ease infinite;
+    background-size: 100% 100%; /* Made static by removing animation */
   }
   
+  /* Commented out animation keyframes since we're using static gradients */
+  /*
   @keyframes gradientBg {
     0% {
       background-position: 0% 50%;
@@ -96,4 +95,5 @@
       background-position: 0% 50%;
     }
   }
+  */
 }
