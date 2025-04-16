@@ -3,13 +3,15 @@
   /* Enhanced Glassmorphism utilities */
   .glass {
     @apply bg-white/15 backdrop-blur-md border border-white/20 rounded-xl shadow-lg;
+    position: relative;
+    transform-style: preserve-3d;
   }
   
   .glass-card {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl;
+    @apply backdrop-blur-lg border border-white/20 rounded-xl shadow-xl;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     background-color: rgba(255, 255, 255, 0.75);
   }
   
@@ -115,7 +117,7 @@
   .property-card-glow {
     position: relative;
     z-index: 1;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   
   .property-card-glow::before {
@@ -152,20 +154,53 @@
     background-size: 300% 100%;
   }
   
-  /* Layer system for 3D effect */
+  /* Layer system for 3D effect - Updated with more defined layers */
   .layer-1 {
-    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     position: relative;
+    z-index: 1;
+    transform: translateZ(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .layer-1:hover {
+    transform: translateY(-3px) translateZ(3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
   }
   
   .layer-2 {
-    z-index: 2;
+    background-color: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 10px -2px rgba(0, 0, 0, 0.06);
     position: relative;
+    z-index: 2;
+    transform: translateZ(5px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .layer-2:hover {
+    transform: translateY(-5px) translateZ(8px);
+    box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1);
   }
   
   .layer-3 {
-    z-index: 3;
+    background-color: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 12px 15px -3px rgba(0, 0, 0, 0.08);
     position: relative;
+    z-index: 3;
+    transform: translateZ(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .layer-3:hover {
+    transform: translateY(-7px) translateZ(15px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
   }
   
   /* 3D card effect with more pronounced depth */
@@ -219,19 +254,43 @@
     }
   }
   
-  /* Glass content and layering system */
+  /* Glass content and layering system - Updated with more defined edges */
   .glass-content {
-    @apply bg-white/15 backdrop-blur-sm border border-white/10 rounded-lg p-3;
+    @apply backdrop-blur-sm border border-white/25 rounded-lg p-3;
+    background-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
     transform: translateZ(2px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .glass-content:hover {
+    transform: translateY(-3px) translateZ(5px);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
   }
   
   .glass-header {
-    @apply bg-white/20 backdrop-blur-md border-b border-white/20 p-4 rounded-t-xl;
+    @apply backdrop-blur-md border-b border-white/30 p-4 rounded-t-xl;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
     transform: translateZ(3px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .glass-header:hover {
+    transform: translateY(-3px) translateZ(6px);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
   }
   
   .glass-footer {
-    @apply bg-white/20 backdrop-blur-md border-t border-white/20 p-4 rounded-b-xl;
+    @apply backdrop-blur-md border-t border-white/30 p-4 rounded-b-xl;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 -4px 12px -2px rgba(0, 0, 0, 0.05);
     transform: translateZ(3px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .glass-footer:hover {
+    transform: translateY(-3px) translateZ(6px);
+    box-shadow: 0 -8px 15px -3px rgba(0, 0, 0, 0.1);
   }
 }

@@ -52,11 +52,28 @@
     }
   }
 
+  @keyframes layerHover {
+    from {
+      transform: translateY(0) translateZ(0);
+    }
+    to {
+      transform: translateY(-5px) translateZ(5px);
+    }
+  }
+
   .hover-scale {
     @apply transition-transform duration-200 hover:scale-105;
   }
 
   .glass-button-icon {
     transform: translateZ(15px);
+  }
+  
+  .layer-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .layer-hover:hover {
+    animation: layerHover 0.3s forwards ease-out;
   }
 }

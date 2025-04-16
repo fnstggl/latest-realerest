@@ -40,10 +40,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block perspective-container rainbow-glow-card"
+      className="block perspective-container"
     >
-      <div className="glass-card card-3d h-full backdrop-blur-lg border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10">
-        <div className="relative layer-1">
+      <div className="glass-card h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10">
+        <div className="relative layer-1 rounded-t-lg">
           <img 
             src={validImage} 
             alt={location} 
@@ -53,46 +53,46 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-4 rainbow-badge py-1 px-3 font-bold text-foreground shadow-lg rounded-md transform translate-z-10 layer-3 backdrop-blur-md border border-white/30">
+            <div className="absolute top-4 left-4 layer-3 py-1 px-3 font-bold text-foreground shadow-lg rounded-md backdrop-blur-md border border-white/30">
               {roundedBelowMarket}% OFF
             </div>
           )}
         </div>
         
-        <div className="p-6 layer-2">
+        <div className="p-6 layer-2 rounded-b-lg">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-xl text-foreground layer-1">{address || location.split(',')[0]}</h3>
+            <h3 className="font-bold text-xl text-foreground layer-1 py-1 px-2 rounded-md">{address || location.split(',')[0]}</h3>
             <div className="text-right">
-              <div className="text-2xl font-bold rainbow-price layer-3 px-3 py-1 rounded-lg">
+              <div className="text-2xl font-bold layer-3 px-3 py-1 rounded-lg">
                 {formatCurrency(price)}
               </div>
-              <div className="text-muted-foreground line-through layer-1 mt-1">{formatCurrency(marketPrice)}</div>
+              <div className="text-muted-foreground line-through layer-1 mt-1 px-2 py-1 rounded-md">{formatCurrency(marketPrice)}</div>
             </div>
           </div>
           
-          <div className="flex items-center text-foreground/70 mb-4 layer-2 glass px-3 py-1 rounded-md backdrop-blur-sm shadow-sm inline-block">
+          <div className="flex items-center text-foreground/70 mb-4 layer-2 px-3 py-1 rounded-md backdrop-blur-sm shadow-sm inline-block">
             <MapPin size={18} className="mr-1" />
             <span>{location}</span>
           </div>
           
           <div className="border-t border-white/20 pt-4 mt-2">
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4 text-foreground/80 layer-1">
-                <div className="flex items-center glass px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/20">
+              <div className="flex items-center gap-4 text-foreground/80">
+                <div className="flex items-center layer-1 px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/30">
                   <Bed size={18} className="mr-1" />
                   <span className="font-bold">{beds}</span>
                 </div>
-                <div className="flex items-center glass px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/20">
+                <div className="flex items-center layer-1 px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/30">
                   <Bath size={18} className="mr-1" />
                   <span className="font-bold">{baths}</span>
                 </div>
-                <div className="flex items-center glass px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/20">
+                <div className="flex items-center layer-1 px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/30">
                   <Square size={18} className="mr-1" />
                   <span className="font-bold">{sqft.toLocaleString()} sqft</span>
                 </div>
               </div>
               
-              <div className="rainbow-btn-circle w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 layer-3 transform translate-z-10 backdrop-blur-md">
+              <div className="layer-3 w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition-all duration-300 backdrop-blur-md">
                 <ArrowRight size={20} className="text-foreground" />
               </div>
             </div>

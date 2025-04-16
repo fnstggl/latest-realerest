@@ -25,18 +25,18 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
   Located in a desirable neighborhood, this property won't last long at this price!`;
 
   return (
-    <div className="glass-card backdrop-blur-lg border border-white/20 shadow-lg p-4 sm:p-6 transform transition-all duration-300 perspective-container property-card-glow layer-1">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black layer-1">Property Description</h2>
-      <p className="whitespace-pre-line text-sm sm:text-base glass-content p-4 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm layer-2 text-black">
+    <div className="layer-2 border border-white/20 shadow-lg p-4 sm:p-6 transform transition-all duration-300 perspective-container rounded-xl">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black">Property Description</h2>
+      <p className="whitespace-pre-line text-sm sm:text-base layer-1 p-4 rounded-lg backdrop-blur-sm border border-white/30 shadow-sm text-black">
         {description || defaultDescription}
       </p>
       
       {comparables && comparables.length > 0 && (
-        <div className="mt-6 glass-content p-4 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm layer-2">
-          <h3 className="text-lg sm:text-xl font-bold mb-2 rainbow-text inline-block px-3 py-1 rounded-lg glass backdrop-blur-md border border-white/20 shadow-lg layer-3">Comparable Properties</h3>
+        <div className="mt-6 layer-1 p-4 rounded-lg backdrop-blur-sm border border-white/30 shadow-sm">
+          <h3 className="text-lg sm:text-xl font-bold mb-2 rainbow-text inline-block px-3 py-1 rounded-lg layer-3 backdrop-blur-md border border-white/30 shadow-lg">Comparable Properties</h3>
           <ul className="list-disc pl-5 text-sm sm:text-base mt-4 space-y-2 text-black">
             {comparables.map((address, index) => (
-              <li key={index} className="mb-1 break-words glass-card p-2 backdrop-blur-sm border border-white/10 shadow-sm rounded-md layer-3">{address}</li>
+              <li key={index} className="mb-1 break-words layer-1 p-2 backdrop-blur-sm border border-white/30 shadow-sm rounded-md">{address}</li>
             ))}
           </ul>
         </div>
