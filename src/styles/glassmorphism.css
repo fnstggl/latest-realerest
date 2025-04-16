@@ -107,4 +107,76 @@
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
   }
+  
+  /* Property card specific glow effect */
+  .property-card-glow {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .property-card-glow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(90deg, #3C79F5, #D946EF, #FF5C00, #FF3CAC);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .property-card-glow:hover::before {
+    opacity: 0.7;
+    filter: blur(4px);
+    animation: gradientShift 3s linear infinite;
+  }
+  
+  /* Rainbow text for headings and emphasis */
+  .rainbow-text {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 300% 100%;
+    animation: gradientShift 4s ease infinite;
+  }
+  
+  /* Layer system for 3D effect */
+  .layer-1 {
+    z-index: 1;
+    position: relative;
+  }
+  
+  .layer-2 {
+    z-index: 2;
+    position: relative;
+  }
+  
+  .layer-3 {
+    z-index: 3;
+    position: relative;
+  }
+  
+  /* Animation for gradient shifting */
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  /* 3D card effect */
+  .perspective-container {
+    perspective: 1000px;
+    transition: transform 0.3s ease;
+  }
+  
+  .perspective-container:hover {
+    transform: translateY(-5px);
+  }
 }

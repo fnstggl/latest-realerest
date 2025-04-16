@@ -20,8 +20,8 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   parking = "2-Car Garage"
 }) => {
   return (
-    <div className="glass-card property-card-glow h-full backdrop-blur-lg border border-white/30 shadow-lg p-4 sm:p-6 rounded-xl perspective-container">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 purple-text layer-1">The Numbers</h2>
+    <div className="glass-card property-card-glow h-full backdrop-blur-lg border border-white/30 shadow-lg p-4 sm:p-6 rounded-xl perspective-container layer-1">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 rainbow-text layer-1">The Numbers</h2>
       
       <div className="space-y-4 text-sm sm:text-base">
         <div className="flex justify-between glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2">
@@ -42,16 +42,16 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
         </div>
         
         {afterRepairValue !== undefined && (
-          <div className="flex justify-between glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-3">
+          <div className="flex justify-between glass p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-3">
             <span className="font-bold">ARV:</span>
-            <span className="purple-text">{formatCurrency(afterRepairValue)}</span>
+            <span className="rainbow-text">{formatCurrency(afterRepairValue)}</span>
           </div>
         )}
         
         {estimatedRehab !== undefined && (
-          <div className="flex justify-between glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-3">
+          <div className="flex justify-between glass p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-3">
             <span className="font-bold">Est. Rehab Cost:</span>
-            <span className="purple-text">{formatCurrency(estimatedRehab)}</span>
+            <span className="rainbow-text">{formatCurrency(estimatedRehab)}</span>
           </div>
         )}
       </div>

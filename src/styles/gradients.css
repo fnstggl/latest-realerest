@@ -1,122 +1,86 @@
 
 @layer components {
-  /* Glass button with outline glow */
-  .glow-button-outline {
+  /* Gradient borders */
+  .border-gradient-br-pink-purple-gold {
+    @apply border-2 rounded-xl shadow-lg overflow-hidden;
     position: relative;
-    transition: all 0.3s ease;
-    transform-style: preserve-3d;
-    background: rgba(255, 255, 255, 0.3);
-    z-index: 1;
+    z-index: 0;
   }
-  
-  .glow-button-outline:hover {
-    box-shadow: 0 5px 15px rgba(255, 92, 0, 0.1);
-  }
-  
-  .glow-button-outline:hover span {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 15px rgba(108, 66, 245, 0.4), 0 0 30px rgba(217, 70, 239, 0.2);
-  }
-  
-  .glow-button-outline:hover::before {
-    content: "";
+
+  .border-gradient-br-pink-purple-gold::before {
+    content: '';
     position: absolute;
     inset: -2px;
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     border-radius: inherit;
     z-index: -1;
-    opacity: 0.7;
-    filter: blur(3px);
-    transform: translateZ(-5px);
-    animation: gradientShift 3s linear infinite;
+    background-size: 300% 100%;
+    animation: gradientShift 4s ease infinite;
   }
   
-  .glow-button-outline:hover::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: inherit;
-    z-index: -1;
-  }
-  
-  /* Purple discount badge */
-  .glass-discount-badge-purple {
-    background-color: var(--purple-primary);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Rainbow gradient badge for discounts */
-  .glass-discount-badge-gradient {
+  /* Button with rainbow gradient background */
+  .btn-rainbow-gradient {
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Background with gradient blobs */
-  .white-bg-with-splashes {
-    background: white;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .gradient-blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
-    z-index: -1;
-    animation: float 15s ease-in-out infinite;
+    color: white;
+    background-size: 300% 100%;
+    animation: gradientShift 4s ease infinite;
   }
   
-  .gradient-blob-1 {
-    background: linear-gradient(135deg, #D946EF 0%, #9b87f5 100%);
-    width: 25vw;
-    height: 25vw;
-    top: 10%;
-    left: -5%;
-    animation-delay: 0s;
+  /* Gradient backgrounds */
+  .bg-gradient-purple-pink {
+    background: linear-gradient(135deg, rgba(147,39,143,1) 0%, rgba(234,172,232,1) 100%);
   }
   
-  .gradient-blob-2 {
-    background: linear-gradient(135deg, #FF5C00 0%, #FDBA74 100%);
-    width: 20vw;
-    height: 20vw;
-    top: 20%;
-    right: -5%;
-    animation-delay: -2s;
+  .bg-gradient-blue-purple {
+    background: linear-gradient(135deg, #3C79F5 0%, #6C42F5 100%);
   }
   
-  .gradient-blob-3 {
-    background: linear-gradient(135deg, #8B5CF6 0%, #7E69AB 100%);
-    width: 30vw;
-    height: 30vw;
-    bottom: 5%;
-    left: 20%;
-    animation-delay: -4s;
+  .bg-gradient-orange-pink {
+    background: linear-gradient(135deg, #FF5C00 0%, #FF3CAC 100%);
   }
   
-  .gradient-blob-4 {
-    background: linear-gradient(135deg, #F8A4D8 0%, #FECACA 100%);
-    width: 15vw;
-    height: 15vw;
-    bottom: 15%;
-    right: 5%;
-    animation-delay: -6s;
+  /* Text gradients */
+  .text-gradient-primary {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 300% 100%;
+    animation: gradientShift 4s ease infinite;
   }
   
-  .gradient-blob-5 {
-    background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%);
-    width: 10vw;
-    height: 10vw;
-    top: 40%;
-    left: 30%;
-    animation-delay: -8s;
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #FFD700 0%, #FFCC00 50%, #FFC107 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .search-glow {
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.3);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .search-glow:hover {
+    box-shadow: 0 0 15px 0 rgba(255, 255, 255, 0.5), 0 0 30px 0 rgba(255, 92, 0, 0.3);
+  }
+  
+  /* Animated gradient background */
+  .animated-gradient-bg {
+    background: linear-gradient(-45deg, #3C79F5, #6C42F5, #D946EF, #FF5C00, #FF3CAC);
+    background-size: 400% 400%;
+    animation: gradientBg 15s ease infinite;
+  }
+  
+  @keyframes gradientBg {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: a00% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 }

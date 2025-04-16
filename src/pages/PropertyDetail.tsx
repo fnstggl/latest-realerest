@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -17,11 +18,7 @@ import SiteFooter from '@/components/sections/SiteFooter';
 import { supabase } from '@/integrations/supabase/client';
 
 const PropertyDetail: React.FC = () => {
-  const {
-    id
-  } = useParams<{
-    id: string;
-  }>();
+  const { id } = useParams<{ id: string; }>();
   const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
   const [realOffers, setRealOffers] = useState<Array<{ id: string; amount: number; buyerName: string }>>([]);
   const {
@@ -76,101 +73,162 @@ const PropertyDetail: React.FC = () => {
   }, [id]);
 
   if (loading) {
-    return <div className="min-h-screen bg-white">
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
         <Navbar />
         <div className="container mx-auto px-4 py-12">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 w-1/3 mb-4"></div>
-            <div className="h-96 bg-gray-200 w-full mb-6"></div>
-            <div className="h-6 bg-gray-200 w-1/2 mb-2"></div>
-            <div className="h-6 bg-gray-200 w-1/4 mb-6"></div>
+            <div className="h-8 bg-white/30 backdrop-blur-md rounded-lg w-1/3 mb-4"></div>
+            <div className="h-96 bg-white/30 backdrop-blur-md rounded-lg w-full mb-6"></div>
+            <div className="h-6 bg-white/30 backdrop-blur-md rounded-lg w-1/2 mb-2"></div>
+            <div className="h-6 bg-white/30 backdrop-blur-md rounded-lg w-1/4 mb-6"></div>
             <div className="grid grid-cols-3 gap-4">
-              <div className="h-20 bg-gray-200"></div>
-              <div className="h-20 bg-gray-200"></div>
-              <div className="h-20 bg-gray-200"></div>
+              <div className="h-20 bg-white/30 backdrop-blur-md rounded-lg"></div>
+              <div className="h-20 bg-white/30 backdrop-blur-md rounded-lg"></div>
+              <div className="h-20 bg-white/30 backdrop-blur-md rounded-lg"></div>
             </div>
           </div>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   if (!property) {
-    return <div className="min-h-screen bg-white">
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
         <Navbar />
         <div className="container mx-auto px-4 py-12 text-center">
-          <h1 className="text-3xl font-bold mb-4">Property Not Found</h1>
-          <p className="mb-8">The property you're looking for doesn't exist or has been removed.</p>
-          <Button asChild className="neo-button">
+          <h1 className="text-3xl font-bold mb-4 rainbow-text">Property Not Found</h1>
+          <p className="mb-8 glass p-4 rounded-lg backdrop-blur-md inline-block">The property you're looking for doesn't exist or has been removed.</p>
+          <Button asChild variant="translucent" className="property-card-glow">
             <Link to="/search">Browse Other Properties</Link>
           </Button>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   const showPropertyDetails = property?.afterRepairValue !== undefined || 
                              property?.estimatedRehab !== undefined;
 
-  return <div className="min-h-screen bg-white">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <Link to="/search" className="flex items-center text-black hover:text-[#d0161a] font-bold transition-colors">
-            <ArrowLeft size={18} className="mr-2" />
-            Back to Search
-          </Link>
+          <Button 
+            asChild
+            variant="glass" 
+            className="flex items-center rainbow-text hover:bg-white/40 font-bold transition-colors property-card-glow"
+          >
+            <Link to="/search">
+              <ArrowLeft size={18} className="mr-2" />
+              Back to Search
+            </Link>
+          </Button>
         </div>
         
-        {!isOwner && isApproved && <OfferStatusBanner propertyId={property.id} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail} sellerPhone={property.sellerPhone} />}
+        {!isOwner && isApproved && (
+          <OfferStatusBanner 
+            propertyId={property.id} 
+            sellerName={property.sellerName || 'Property Owner'} 
+            sellerEmail={property.sellerEmail} 
+            sellerPhone={property.sellerPhone} 
+          />
+        )}
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <PropertyImages mainImage={property?.image} images={property?.images} />
           
-          <div className="flex flex-col justify-between">
-            <div>
-              <PropertyHeader title={property?.title} belowMarket={property?.belowMarket} price={property?.price} marketPrice={property?.marketPrice} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} location={property?.location} fullAddress={property?.full_address} showFullAddress={isOwner || isApproved} onShowAddressClick={handleAddressClick} />
-              
-              {isOwner ? <Link to={`/property/${property?.id}/edit`}>
-                  <Button className="w-full bg-black text-white font-bold py-2 border-2 border-black hover:bg-gray-800 neo-shadow-sm transition-colors">
-                    <Cog size={18} className="mr-2" />
-                    Edit Listing
-                  </Button>
-                </Link> : isApproved ? <div className="space-y-4">
-                    <div className="border-2 border-[#0d2f72] p-4 mb-2">
-                      <div className="font-bold text-[#d0161a] mb-2 bg-transparent">Your waitlist request has been approved!</div>
-                      <p>You now have access to view the full property details and contact the seller directly.</p>
-                    </div>
-                  </div> : <WaitlistButton propertyId={property?.id || ''} propertyTitle={property?.title || ''} open={showWaitlistDialog} onOpenChange={setShowWaitlistDialog} />}
-              
-              {property && <PropertyOffers 
+          <div className="flex flex-col justify-between space-y-4">
+            <PropertyHeader 
+              title={property?.title} 
+              belowMarket={property?.belowMarket} 
+              price={property?.price} 
+              marketPrice={property?.marketPrice} 
+              beds={property?.beds} 
+              baths={property?.baths} 
+              sqft={property?.sqft} 
+              location={property?.location} 
+              fullAddress={property?.full_address} 
+              showFullAddress={isOwner || isApproved} 
+              onShowAddressClick={handleAddressClick} 
+            />
+            
+            {isOwner ? (
+              <Link to={`/property/${property?.id}/edit`}>
+                <Button className="w-full glass backdrop-blur-lg border border-white/30 text-pink-600 font-bold py-2 hover:bg-white/40 property-card-glow transition-colors">
+                  <Cog size={18} className="mr-2" />
+                  Edit Listing
+                </Button>
+              </Link> 
+            ) : isApproved ? (
+              <div className="glass-card backdrop-blur-lg border border-white/30 shadow-lg p-4 rounded-xl property-card-glow">
+                <div className="font-bold rainbow-text mb-2">Your waitlist request has been approved!</div>
+                <p>You now have access to view the full property details and contact the seller directly.</p>
+              </div>
+            ) : (
+              <WaitlistButton 
+                propertyId={property?.id || ''} 
+                propertyTitle={property?.title || ''} 
+                open={showWaitlistDialog} 
+                onOpenChange={setShowWaitlistDialog} 
+              />
+            )}
+            
+            {property && (
+              <PropertyOffers 
                 propertyId={property.id} 
                 propertyPrice={property.price} 
                 realOffers={realOffers} 
-              />}
-              
-              {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && <div className="grid grid-cols-2 gap-4 mt-4">
-                  <div className="border-2 border-black p-3">
-                    <div className="text-lg font-bold text-black">{property?.afterRepairValue.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                  })}</div>
-                    <div className="text-xs">After Repair Value</div>
-                  </div>
-                  <div className="border-2 border-black p-3">
-                    <div className="text-lg font-bold text-black">{property?.estimatedRehab.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                  })}</div>
-                    <div className="text-xs">Est. Rehab Cost</div>
-                  </div>
-                </div>}
-            </div>
+              />
+            )}
             
-            <SellerContactInfo name={property?.sellerName} phone={property?.sellerPhone} email={property?.sellerEmail} showContact={shouldShowSellerInfo} sellerId={property?.sellerId} />
+            {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="glass backdrop-blur-lg border border-white/30 p-3 rounded-lg property-card-glow">
+                  <div className="text-lg font-bold rainbow-text">
+                    {property?.afterRepairValue.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD'
+                    })}
+                  </div>
+                  <div className="text-xs">After Repair Value</div>
+                </div>
+                <div className="glass backdrop-blur-lg border border-white/30 p-3 rounded-lg property-card-glow">
+                  <div className="text-lg font-bold rainbow-text">
+                    {property?.estimatedRehab.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD'
+                    })}
+                  </div>
+                  <div className="text-xs">Est. Rehab Cost</div>
+                </div>
+              </div>
+            )}
             
-            {isApproved && property && <div className="mt-3">
-                <MakeOfferButton propertyId={property.id} propertyTitle={property.title} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail || ''} sellerPhone={property.sellerPhone || ''} sellerId={property.sellerId || ''} currentPrice={property.price} />
-              </div>}
+            <SellerContactInfo 
+              name={property?.sellerName} 
+              phone={property?.sellerPhone} 
+              email={property?.sellerEmail} 
+              showContact={shouldShowSellerInfo} 
+              sellerId={property?.sellerId} 
+            />
+            
+            {isApproved && property && (
+              <div className="mt-3">
+                <MakeOfferButton 
+                  propertyId={property.id} 
+                  propertyTitle={property.title} 
+                  sellerName={property.sellerName || 'Property Owner'} 
+                  sellerEmail={property.sellerEmail || ''} 
+                  sellerPhone={property.sellerPhone || ''} 
+                  sellerId={property.sellerId || ''} 
+                  currentPrice={property.price} 
+                />
+              </div>
+            )}
           </div>
         </div>
         
@@ -198,7 +256,8 @@ const PropertyDetail: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>;
+    </div>
+  );
 };
 
 export default PropertyDetail;
