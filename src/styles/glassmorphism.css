@@ -23,7 +23,7 @@
   
   /* Super translucent glass style for auth buttons with improved visibility */
   .glass-translucent {
-    @apply bg-white/20 backdrop-blur-lg border border-white/20 rounded-xl transition-all shadow-md;
+    @apply bg-white/30 backdrop-blur-lg border border-white/30 rounded-xl transition-all shadow-md;
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -33,17 +33,17 @@
   .auth-button {
     position: relative;
     z-index: 1;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
     transform: translateY(0);
-    color: white;
+    color: black;
   }
   
   .auth-button:hover {
     transform: translateY(-2px);
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.4);
   }
   
   .auth-button:hover::before {

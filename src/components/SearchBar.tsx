@@ -33,7 +33,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
         <Button 
           type="submit" 
           variant="glass"
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground font-bold h-10 w-10 flex items-center justify-center rounded-full"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-foreground font-bold h-10 w-10 flex items-center justify-center rounded-full"
           aria-label="Search"
         >
           <Search className="h-5 w-5" />
