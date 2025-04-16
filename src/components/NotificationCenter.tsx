@@ -114,8 +114,8 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0 neo-border neo-shadow-sm" align="end">
-        <div className="border-b-4 border-black p-4 bg-gray-50">
+      <PopoverContent className="w-80 p-0 border border-white/40 shadow-md rounded-xl backdrop-blur-md" align="end">
+        <div className="border-b border-gray-200 p-4 bg-white/80">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-bold">Notifications</h3>
             <Button 

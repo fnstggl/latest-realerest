@@ -9,8 +9,8 @@ const SiteFooter: React.FC = () => {
         <div className="glass-card p-8 rounded-xl mb-6">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <Link to="/" className="flex items-center gap-2 mb-4">
-                <div className="w-12 h-12 bg-gradient-purple rounded-full text-white flex items-center justify-center font-bold text-lg">RE</div>
+              <Link to="/" className="flex items-center gap-2 mb-4 hover:opacity-90 transition-opacity">
+                <div className="w-12 h-12 bg-white rounded-full text-[#0892D0] flex items-center justify-center font-bold text-lg border border-[#0892D0] shadow-[0_0_10px_rgba(8,146,208,0.5)]">RE</div>
                 <span className="font-bold text-foreground text-2xl">Realer Estate</span>
               </Link>
               <p className="text-foreground/80">

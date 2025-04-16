@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import PropertyCard from '@/components/PropertyCard';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { Skeleton } from "@/components/ui/skeleton";
 import { useListings } from '@/hooks/useListings';
+import { Skeleton } from "@/components/ui/skeleton";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -34,8 +33,7 @@ const FeaturedProperties: React.FC = () => {
     >
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <h2 className="text-3xl font-bold text-gradient-static mr-4">Featured</h2>
-          <h2 className="text-3xl font-bold text-foreground">Properties</h2>
+          <h2 className="text-3xl font-bold text-foreground">Featured Properties</h2>
         </div>
         
         <p className="text-xl text-foreground mb-8 max-w-3xl">
@@ -94,12 +92,9 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 electric-blue-button"
+                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 electric-blue-button"
               >
-                <span className="text-gradient-static">View All Properties</span>
-                <div className="glass-button-icon w-8 h-8 rounded-full flex items-center justify-center shadow-lg bg-white/20 backdrop-blur-md border border-white/30">
-                  <ArrowRight size={18} className="text-[#0892D0]" />
-                </div>
+                View All Properties
               </Button>
             </div>
           </>

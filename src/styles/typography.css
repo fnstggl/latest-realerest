@@ -45,19 +45,15 @@
     font-weight: bold;
   }
   
-  /* Rainbow gradient text for pricing and other highlights */
-  .rainbow-text {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    position: relative;
-    display: inline-block;
+  /* Blue outline text for headers */
+  .blue-outline-text {
+    color: white;
+    text-shadow: 0 0 2px #0892D0, 0 0 10px rgba(8, 146, 208, 0.7), 0 0 20px rgba(8, 146, 208, 0.3);
     font-weight: bold;
   }
   
   /* Blue text */
-  .purple-text {
+  .blue-text {
     color: #0892D0;
     font-weight: bold;
   }
