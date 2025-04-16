@@ -43,7 +43,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       className="block perspective-container"
     >
       <div className="glass-card h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10">
-        <div className="relative layer-1 rounded-t-lg">
+        <div className="relative rounded-t-lg">
           <img 
             src={validImage} 
             alt={location} 
@@ -59,18 +59,18 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           )}
         </div>
         
-        <div className="p-6 layer-2 rounded-b-lg">
+        <div className="p-6 rounded-b-lg">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-xl text-foreground layer-1 py-1 px-2 rounded-md">{address || location.split(',')[0]}</h3>
+            <h3 className="font-bold text-xl text-foreground py-1 px-2 rounded-md">{address || location.split(',')[0]}</h3>
             <div className="text-right">
-              <div className="text-2xl font-bold layer-3 px-3 py-1 rounded-lg">
+              <div className="text-2xl font-bold px-3 py-1 rounded-lg">
                 {formatCurrency(price)}
               </div>
-              <div className="text-muted-foreground line-through layer-1 mt-1 px-2 py-1 rounded-md">{formatCurrency(marketPrice)}</div>
+              <div className="text-muted-foreground line-through mt-1 px-2 py-1 rounded-md">{formatCurrency(marketPrice)}</div>
             </div>
           </div>
           
-          <div className="flex items-center text-foreground/70 mb-4 layer-2 px-3 py-1 rounded-md backdrop-blur-sm shadow-sm inline-block">
+          <div className="flex items-center text-foreground/70 mb-4 px-3 py-1 rounded-md">
             <MapPin size={18} className="mr-1" />
             <span>{location}</span>
           </div>
@@ -78,15 +78,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="border-t border-white/20 pt-4 mt-2">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4 text-foreground/80">
-                <div className="flex items-center layer-1 px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/30">
+                <div className="flex items-center px-2 py-1 rounded-lg border border-white/30">
                   <Bed size={18} className="mr-1" />
                   <span className="font-bold">{beds}</span>
                 </div>
-                <div className="flex items-center layer-1 px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/30">
+                <div className="flex items-center px-2 py-1 rounded-lg border border-white/30">
                   <Bath size={18} className="mr-1" />
                   <span className="font-bold">{baths}</span>
                 </div>
-                <div className="flex items-center layer-1 px-2 py-1 rounded-lg shadow-sm backdrop-blur-sm border border-white/30">
+                <div className="flex items-center px-2 py-1 rounded-lg border border-white/30">
                   <Square size={18} className="mr-1" />
                   <span className="font-bold">{sqft.toLocaleString()} sqft</span>
                 </div>

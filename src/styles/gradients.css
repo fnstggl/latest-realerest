@@ -49,6 +49,14 @@
     animation: gradientShift 4s ease infinite;
   }
   
+  /* Static gradient text */
+  .text-gradient-static {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
   .text-gradient-gold {
     background: linear-gradient(135deg, #FFD700 0%, #FFCC00 50%, #FFC107 100%);
     -webkit-background-clip: text;

@@ -34,10 +34,8 @@ const FeaturedProperties: React.FC = () => {
     >
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <div className="apple-glow-text-small inline-block px-4 py-2 rounded-xl shadow-xl layer-2">
-            <h2 className="text-3xl font-bold">Featured</h2>
-          </div>
-          <h2 className="text-3xl font-bold text-foreground ml-4 layer-1">Properties</h2>
+          <h2 className="text-3xl font-bold text-gradient-static mr-4">Featured</h2>
+          <h2 className="text-3xl font-bold text-foreground">Properties</h2>
         </div>
         
         <p className="text-xl text-foreground mb-8 max-w-3xl">
@@ -98,7 +96,7 @@ const FeaturedProperties: React.FC = () => {
                 onClick={() => navigate('/search')} 
                 className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 search-glow"
               >
-                <span className="apple-glow-text-small">View All Properties</span>
+                <span className="text-gradient-static">View All Properties</span>
                 <div className="glass-button-icon w-8 h-8 rounded-full flex items-center justify-center shadow-lg bg-white/20 backdrop-blur-md border border-white/30 layer-3 search-glow">
                   <ArrowRight size={18} className="text-[#FF5C00]" />
                 </div>
