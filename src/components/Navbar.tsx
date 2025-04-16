@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,13 @@ const Navbar: React.FC = () => {
     navigate('/signup');
   };
 
-  // Mobile navigation remains as a sheet
+  const LogoText = () => (
+    <>
+      <div className="w-12 h-12 bg-gradient-purple rounded-full text-white flex items-center justify-center font-bold text-xl shadow-md">RE</div>
+      <span className="font-bold text-foreground text-2xl hidden md:block">Realer Estate</span>
+    </>
+  );
+
   const MobileNavigation = () => (
     <Sheet>
       <SheetTrigger asChild>
@@ -42,7 +47,7 @@ const Navbar: React.FC = () => {
         <div className="flex flex-col gap-6 p-8">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-12 h-12 bg-gradient-purple rounded-full text-white flex items-center justify-center font-bold text-lg">RE</div>
-            <span className="font-bold text-white text-2xl">RealerEstate</span>
+            <span className="font-bold text-white text-2xl">Realer Estate</span>
           </Link>
           
           <nav className="flex flex-col space-y-2">
@@ -105,8 +110,7 @@ const Navbar: React.FC = () => {
           {isMobile && <MobileNavigation />}
           
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-gradient-purple rounded-full text-white flex items-center justify-center font-bold text-xl shadow-md">RE</div>
-            <span className="font-bold text-foreground text-2xl hidden md:block">RealerEstate</span>
+            <LogoText />
           </Link>
         </div>
         

@@ -11,7 +11,7 @@ const SiteFooter: React.FC = () => {
             <div>
               <Link to="/" className="flex items-center gap-2 mb-4">
                 <div className="w-12 h-12 bg-gradient-purple rounded-full text-white flex items-center justify-center font-bold text-lg">RE</div>
-                <span className="font-bold text-foreground text-2xl">RealerEstate</span>
+                <span className="font-bold text-foreground text-2xl">Realer Estate</span>
               </Link>
               <p className="text-foreground/80">
                 Connecting families to affordable housing—fast.
@@ -49,7 +49,7 @@ const SiteFooter: React.FC = () => {
         </div>
         
         <div className="text-center text-foreground/70">
-          <p className="font-medium">© {new Date().getFullYear()} RealerEstate. All rights reserved.</p>
+          <p className="font-medium">© {new Date().getFullYear()} Realer Estate. All rights reserved.</p>
         </div>
       </div>
     </footer>
