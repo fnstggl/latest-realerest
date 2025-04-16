@@ -26,15 +26,15 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
 
   return (
     <div className="glass-card backdrop-blur-lg border border-white/30 shadow-lg p-4 sm:p-6 transform transition-all duration-300 perspective-container property-card-glow layer-1">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 rainbow-text layer-1">Property Description</h2>
-      <p className="whitespace-pre-line text-sm sm:text-base glass p-4 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black layer-1">Property Description</h2>
+      <p className="whitespace-pre-line text-sm sm:text-base glass p-4 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2 text-black">
         {description || defaultDescription}
       </p>
       
       {comparables && comparables.length > 0 && (
         <div className="mt-6 glass p-4 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2">
           <h3 className="text-lg sm:text-xl font-bold mb-2 rainbow-text inline-block px-3 py-1 rounded-lg glass backdrop-blur-md border border-white/30 shadow-lg layer-3">Comparable Properties</h3>
-          <ul className="list-disc pl-5 text-sm sm:text-base mt-4 space-y-2">
+          <ul className="list-disc pl-5 text-sm sm:text-base mt-4 space-y-2 text-black">
             {comparables.map((address, index) => (
               <li key={index} className="mb-1 break-words glass-card p-2 backdrop-blur-sm border border-white/20 shadow-sm rounded-md layer-3">{address}</li>
             ))}

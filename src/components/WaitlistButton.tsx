@@ -205,8 +205,8 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       case 'accepted':
         return (
           <Button 
-            variant="navy"
-            className="w-full text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+            variant="glass"
+            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg glass-card property-card-glow"
             onClick={() => window.location.reload()}
           >
             <Check size={18} className="mr-2" />
@@ -216,8 +216,8 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       case 'declined':
         return (
           <Button 
-            variant="red"
-            className="w-full text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center cursor-not-allowed"
+            variant="glass"
+            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg glass-card property-card-glow"
             disabled
           >
             <X size={18} className="mr-2" />
@@ -227,7 +227,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       case 'pending':
         return (
           <Button 
-            className="w-full bg-gray-200 text-black font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center cursor-not-allowed"
+            className="w-full bg-white/30 backdrop-blur-lg text-black font-bold py-2 rounded-xl glass-card property-card-glow"
             disabled
           >
             <Check size={18} className="mr-2" />
@@ -237,8 +237,8 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       default:
         return (
           <Button 
-            variant="navy"
-            className="w-full text-white font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center"
+            variant="glass"
+            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg glass-card property-card-glow"
             onClick={handleJoinWaitlist}
           >
             <ClipboardList size={18} className="mr-2" />
@@ -253,7 +253,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       {getWaitlistButtonContent()}
       
       <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+        <DialogContent className="glass-card backdrop-blur-lg border border-white/30 shadow-lg rounded-xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Join Property Waitlist</DialogTitle>
             <DialogDescription>
@@ -270,11 +270,11 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                 placeholder="Enter your phone number" 
                 value={phone} 
                 onChange={(e) => setPhone(e.target.value)}
-                className="mt-2 border-2 border-black focus:ring-0"
+                className="mt-2 glass-input"
               />
             </div>
             
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 glass p-2 rounded-lg backdrop-blur-sm">
               Once you join the waitlist, the seller will review your request and may contact you with more information about the property.
             </p>
           </div>
@@ -284,15 +284,15 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
               type="button" 
               variant="outline" 
               onClick={handleDialogClose}
-              className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              className="font-bold glass-card property-card-glow"
             >
               <X size={18} className="mr-2" />
               Cancel
             </Button>
             <Button 
               type="button" 
-              variant="navy"
-              className="text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+              variant="glass"
+              className="text-black font-bold glass-card property-card-glow"
               onClick={handleSubmit}
               disabled={submitting}
             >

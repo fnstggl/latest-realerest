@@ -21,25 +21,25 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   
   return (
     <div className="glass-card backdrop-blur-lg border border-white/30 shadow-lg p-4 rounded-xl property-card-glow mb-4">
-      <h3 className="text-lg font-bold mb-3 rainbow-text">Seller Information</h3>
+      <h3 className="text-lg font-bold mb-3 text-black">Seller Information</h3>
       
       <div className="space-y-2">
         <div className="flex items-center glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
           <User size={16} className="mr-2 text-pink-500" />
-          <span>{name || 'Property Owner'}</span>
+          <span className="text-black">{name || 'Property Owner'}</span>
         </div>
         
         {email && (
           <div className="flex items-center glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
             <Mail size={16} className="mr-2 text-pink-500" />
-            <a href={`mailto:${email}`} className="hover:underline">{email}</a>
+            <a href={`mailto:${email}`} className="hover:underline text-black">{email}</a>
           </div>
         )}
         
         {phone && (
           <div className="flex items-center glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
             <Phone size={16} className="mr-2 text-pink-500" />
-            <a href={`tel:${phone}`} className="hover:underline">{phone}</a>
+            <a href={`tel:${phone}`} className="hover:underline text-black">{phone}</a>
           </div>
         )}
         

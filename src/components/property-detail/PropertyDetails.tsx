@@ -21,36 +21,36 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
 }) => {
   return (
     <div className="glass-card property-card-glow h-full backdrop-blur-lg border border-white/30 shadow-lg p-4 sm:p-6 rounded-xl perspective-container layer-1">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 rainbow-text layer-1">The Numbers</h2>
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black layer-1">The Numbers</h2>
       
       <div className="space-y-4 text-sm sm:text-base">
         <div className="flex justify-between glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2">
-          <span className="font-bold">Property Type:</span>
-          <span>{propertyType}</span>
+          <span className="font-bold text-black">Property Type:</span>
+          <span className="text-black">{propertyType}</span>
         </div>
         <div className="flex justify-between glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2">
-          <span className="font-bold">Year Built:</span>
-          <span>{yearBuilt}</span>
+          <span className="font-bold text-black">Year Built:</span>
+          <span className="text-black">{yearBuilt}</span>
         </div>
         <div className="flex justify-between glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2">
-          <span className="font-bold">Lot Size:</span>
-          <span>{lotSize}</span>
+          <span className="font-bold text-black">Lot Size:</span>
+          <span className="text-black">{lotSize}</span>
         </div>
         <div className="flex justify-between glass p-2 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-2">
-          <span className="font-bold">Parking:</span>
-          <span>{parking}</span>
+          <span className="font-bold text-black">Parking:</span>
+          <span className="text-black">{parking}</span>
         </div>
         
         {afterRepairValue !== undefined && (
           <div className="flex justify-between glass p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-3">
-            <span className="font-bold">ARV:</span>
+            <span className="font-bold text-black">ARV:</span>
             <span className="rainbow-text">{formatCurrency(afterRepairValue)}</span>
           </div>
         )}
         
         {estimatedRehab !== undefined && (
           <div className="flex justify-between glass p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm layer-3">
-            <span className="font-bold">Est. Rehab Cost:</span>
+            <span className="font-bold text-black">Est. Rehab Cost:</span>
             <span className="rainbow-text">{formatCurrency(estimatedRehab)}</span>
           </div>
         )}
