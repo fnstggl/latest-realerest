@@ -1,23 +1,23 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
-
 const Careers: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-6xl mx-auto"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.5
+      }} className="max-w-6xl mx-auto">
           {/* Hero Section - Apple-style */}
           <div className="text-center mb-20">
             <h1 className="text-6xl font-bold mb-6">Join Our Team</h1>
@@ -75,9 +75,7 @@ const Careers: React.FC = () => {
                 
                 <div className="flex items-center mt-6">
                   <Mail size={18} className="mr-2 text-[#0892D0]" />
-                  <a href="mailto:apply@donedealhome.com" className="font-medium text-[#0892D0] hover:underline">
-                    apply@donedealhome.com
-                  </a>
+                  <a href="mailto:apply@donedealhome.com" className="font-medium text-[#0892D0] hover:underline">apply@realerestate.com</a>
                 </div>
               </div>
               
@@ -98,9 +96,7 @@ const Careers: React.FC = () => {
                 
                 <div className="flex items-center mt-6">
                   <Mail size={18} className="mr-2 text-[#0892D0]" />
-                  <a href="mailto:invest@donedealhome.com" className="font-medium text-[#0892D0] hover:underline">
-                    invest@donedealhome.com
-                  </a>
+                  <a href="mailto:invest@donedealhome.com" className="font-medium text-[#0892D0] hover:underline">invest@realerestate.com</a>
                 </div>
               </div>
             </div>
@@ -109,10 +105,7 @@ const Careers: React.FC = () => {
               <p className="text-xl text-gray-600 mb-8">
                 We're a small but growing team. Check back for more opportunities in the future!
               </p>
-              <Button 
-                className="bg-[#0892D0] hover:bg-[#0882C0] text-white px-8 py-6 rounded-full text-lg"
-                onClick={() => window.location.href = 'mailto:careers@donedealhome.com'}
-              >
+              <Button className="bg-[#0892D0] hover:bg-[#0882C0] text-white px-8 py-6 rounded-full text-lg" onClick={() => window.location.href = 'mailto:careers@donedealhome.com'}>
                 Contact Our Team
               </Button>
             </div>
@@ -121,8 +114,6 @@ const Careers: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>
-  );
+    </div>;
 };
-
 export default Careers;
