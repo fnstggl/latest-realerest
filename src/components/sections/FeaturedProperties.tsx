@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -91,9 +90,8 @@ const FeaturedProperties: React.FC = () => {
                 onClick={() => navigate('/search')} 
                 className="font-bold text-xs sm:text-sm md:text-base shadow-lg bg-white hover:bg-white transform transition-all duration-300 hover:-translate-y-1 relative group overflow-hidden border border-transparent rounded-lg"
               >
-                <span className="text-gradient-static relative z-10">View All Properties</span>
+                <span className="text-black relative z-10">View All Properties</span>
                 
-                {/* Rainbow border hover effect - adds a gradient outline only on hover */}
                 <span 
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
