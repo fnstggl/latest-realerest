@@ -23,7 +23,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-lg font-medium">Verifying authentication...</p>
+        <p className="text-sm sm:text-base md:text-lg font-medium">Verifying authentication...</p>
       </div>
     );
   }
