@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import PropertyCard from '@/components/PropertyCard';
 import { motion } from 'framer-motion';
 import { useListings } from '@/hooks/useListings';
-import { Skeleton } from "@/components/ui/skeleton";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -14,11 +12,15 @@ const fadeInUp = {
 
 const FeaturedProperties: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    listings,
-    loading,
-    error
-  } = useListings(6); // Get 6 featured properties
+  const { listings, loading, error } = useListings(6);
+
+  if (loading) {
+    return (
+      <div className="min-h-[300px] flex justify-center items-center">
+        <div className="gradient-blob"></div>
+      </div>
+    );
+  }
 
   return (
     <motion.section 
@@ -46,12 +48,6 @@ const FeaturedProperties: React.FC = () => {
             <Button className="glass-button shadow-lg" onClick={() => window.location.reload()}>
               Try Again
             </Button>
-          </div>
-        ) : loading ? (
-          <div className="min-h-[300px] flex justify-center items-center">
-            <div className="loading-container">
-              <div className="gradient-blob"></div>
-            </div>
           </div>
         ) : (
           <>

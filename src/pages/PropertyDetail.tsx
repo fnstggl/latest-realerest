@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -75,14 +74,11 @@ const PropertyDetail: React.FC = () => {
   }, [id]);
 
   if (loading) {
-    return <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
-        <Navbar />
-        <div className="container mx-auto px-4 py-12">
-          <div className="loading-container">
-            <div className="gradient-blob"></div>
-          </div>
-        </div>
-      </div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 flex items-center justify-center">
+        <div className="gradient-blob"></div>
+      </div>
+    );
   }
 
   if (!property) {
