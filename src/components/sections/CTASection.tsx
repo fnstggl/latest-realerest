@@ -1,30 +1,32 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  hidden: {
+    opacity: 0,
+    y: 20
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6
+    }
+  }
 };
-
 const CTASection: React.FC = () => {
-  return (
-    <motion.section 
-      className="py-16 relative overflow-hidden"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-      variants={fadeInUp}
-    >
+  return <motion.section className="py-16 relative overflow-hidden" initial="hidden" whileInView="visible" viewport={{
+    once: true,
+    amount: 0.2
+  }} variants={fadeInUp}>
       <div className="container px-4 lg:px-8 mx-auto flex justify-center">
         <div className="glass-card grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 backdrop-blur-lg border border-white/30 shadow-2xl max-w-5xl w-full">
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
-              <span className="electric-blue-glow px-3 mx-2 py-1 font-bold rounded-lg inline-block">
+              <span className="electric-blue-glow px-3 mx-2 py-1 font-bold rounded-lg inline-block text-[#f7f9fe]">
                 dream home?
               </span>
             </h2>
@@ -41,18 +43,12 @@ const CTASection: React.FC = () => {
             </div>
           </div>
           <div className="overflow-hidden rounded-xl shadow-2xl border border-white/30 backdrop-blur-md">
-            <AspectRatio ratio={16/9} className="w-full">
-              <img 
-                src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" 
-                alt="Modern home exterior at sunset with warm lighting" 
-                className="w-full h-full object-cover rounded-lg"
-              />
+            <AspectRatio ratio={16 / 9} className="w-full">
+              <img src="/lovable-uploads/90c52d44-966c-481c-bdd7-ebc3b04ffdc8.png" alt="Modern home exterior at sunset with warm lighting" className="w-full h-full object-cover rounded-lg" />
             </AspectRatio>
           </div>
         </div>
       </div>
-    </motion.section>
-  );
+    </motion.section>;
 };
-
 export default CTASection;
