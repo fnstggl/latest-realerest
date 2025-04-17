@@ -48,17 +48,49 @@ const HeroSection: React.FC = () => {
             <div className="flex flex-row gap-3 sm:gap-4 justify-center mx-auto">
               <Button 
                 asChild 
-                variant="glass" 
-                className="font-bold text-xs sm:text-sm md:text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 search-glow"
+                className="font-bold text-xs sm:text-sm md:text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
               >
-                <Link to="/search">Find Homes</Link>
+                <Link to="/search">
+                  <span className="relative z-10">Find Homes</span>
+                  <span 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                    style={{
+                      background: "transparent",
+                      border: "2px solid transparent",
+                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                      backgroundOrigin: "border-box",
+                      backgroundClip: "border-box",
+                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                      WebkitMaskComposite: "xor",
+                      maskComposite: "exclude",
+                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                      filter: "blur(2px)"
+                    }}
+                  ></span>
+                </Link>
               </Button>
               <Button 
                 asChild 
-                variant="glass" 
-                className="font-bold text-xs sm:text-sm md:text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 search-glow"
+                className="font-bold text-xs sm:text-sm md:text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
               >
-                <Link to="/about">Learn More</Link>
+                <Link to="/about">
+                  <span className="relative z-10">Learn More</span>
+                  <span 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                    style={{
+                      background: "transparent",
+                      border: "2px solid transparent",
+                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                      backgroundOrigin: "border-box",
+                      backgroundClip: "border-box",
+                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                      WebkitMaskComposite: "xor",
+                      maskComposite: "exclude",
+                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                      filter: "blur(2px)"
+                    }}
+                  ></span>
+                </Link>
               </Button>
             </div>
           </motion.div>
