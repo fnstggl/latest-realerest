@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -6,21 +5,22 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
-
 const About: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.5 }} 
-          className="max-w-4xl mx-auto"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.5
+      }} className="max-w-4xl mx-auto">
           <div className="mb-12">
-            <h1 className="text-5xl font-bold mb-4">About DoneDeal</h1>
+            <h1 className="text-5xl font-bold mb-4">About Realer Estate</h1>
             <div className="h-2 w-32 bg-[#0892D0] shadow-md rounded-full"></div>
           </div>
           
@@ -34,34 +34,20 @@ const About: React.FC = () => {
             <div className="bg-white border border-white/40 shadow-md p-8 rounded-xl">
               <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">For Buyers</h2>
               <ul className="space-y-3">
-                {[
-                  "Buy a home faster than you can say \"sold\"",
-                  "Save your cash for the home, not the agent.",
-                  "Know you're paying a fair price—always.",
-                  "No fees. No middlemen. Just the keys."
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start border border-gray-100 bg-white p-3 rounded-lg shadow-sm">
+                {["Buy a home faster than you can say \"sold\"", "Save your cash for the home, not the agent.", "Know you're paying a fair price—always.", "No fees. No middlemen. Just the keys."].map((item, index) => <li key={index} className="flex items-start border border-gray-100 bg-white p-3 rounded-lg shadow-sm">
                     <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#0892D0]" />
                     <span className="text-base">{item}</span>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
             </div>
             
             <div className="bg-white border border-white/40 shadow-md p-8 rounded-xl">
               <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">For Sellers</h2>
               <ul className="space-y-3">
-                {[
-                  "List your home in 1 minute, sell it in 2.",
-                  "Zero fees, zero commissions, forever.",
-                  "Sell your home, skip the headache.",
-                  "Get a great offer on your home... today."
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start border border-gray-100 bg-white p-3 rounded-lg shadow-sm">
+                {["List your home in 1 minute, sell it in 2.", "Zero fees, zero commissions, forever.", "Sell your home, skip the headache.", "Get a great offer on your home... today."].map((item, index) => <li key={index} className="flex items-start border border-gray-100 bg-white p-3 rounded-lg shadow-sm">
                     <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#0892D0]" />
                     <span className="text-base">{item}</span>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
             </div>
           </div>
@@ -97,8 +83,6 @@ const About: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>
-  );
+    </div>;
 };
-
 export default About;
