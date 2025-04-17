@@ -111,10 +111,10 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     </Button>
                     <Button 
                       asChild 
-                      variant="gradient"
+                      variant="apple"
                     >
                       <Link to={`/property/${property.id}/edit`}>
-                        <span className="text-gradient-static font-medium">Edit Listing</span>
+                        <span className="apple-glow-text-small">Edit Listing</span>
                         
                         {/* Rainbow gradient border on hover */}
                         <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-md" style={{
@@ -164,12 +164,12 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
           <p className="mb-6">You haven't listed any properties yet.</p>
           <Button 
             asChild
-            variant="glass"
+            variant="apple"
             className="bg-white shadow-lg hover:translate-y-[-5px] transition-all hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
           >
             <Link to="/sell/create">
               <Plus size={18} className="mr-2" />
-              <span className="electric-blue-glow">Add Your First Property</span>
+              <span className="apple-glow-text-small">Add Your First Property</span>
             </Link>
           </Button>
         </div>

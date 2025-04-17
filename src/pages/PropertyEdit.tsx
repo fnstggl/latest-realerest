@@ -354,11 +354,11 @@ const PropertyEdit: React.FC = () => {
             <div className="flex justify-end pt-4">
               <Button
                 type="submit"
-                variant="gradient"
+                variant="apple"
                 disabled={saving}
               >
                 <Save size={18} className="mr-2" />
-                <span className="text-gradient-static">{saving ? "Saving..." : "Save Changes"}</span>
+                <span className="apple-glow-text-small">{saving ? "Saving..." : "Save Changes"}</span>
                 
                 <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-md" style={{
                   background: "transparent",

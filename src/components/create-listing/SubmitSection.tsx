@@ -15,7 +15,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
       <Button 
         type="submit" 
         disabled={isSubmitting} 
-        variant="gradient"
+        variant="apple"
         className="w-full py-6 text-xl rounded-xl disabled:opacity-70"
       >
         {isSubmitting ? (
@@ -24,7 +24,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
             <span>Creating Listing...</span>
           </div>
         ) : (
-          <span className="relative z-10 text-gradient-static font-bold">Create Listing</span>
+          <span className="apple-glow-text-small">Create Listing</span>
         )}
         
         {/* Rainbow border hover effect - OUTLINE ONLY */}
