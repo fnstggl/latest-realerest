@@ -89,7 +89,7 @@
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    background: linear-gradient(90deg, #0EA5E9, #33C3F0, #1EAEDB);
     filter: blur(20px);
     animation: blobMove 4s infinite alternate ease-in-out, pulse 2s infinite ease-in-out;
     opacity: 0.7;
