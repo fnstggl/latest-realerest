@@ -62,7 +62,7 @@ const About: React.FC = () => {
           <div className="bg-white/80 border border-white/40 shadow-md p-8 rounded-xl mb-12">
             <h2 className="text-2xl font-bold mb-4">How We Offer Below-Market Properties</h2>
             <p className="text-lg mb-4">We work directly with motivated sellers who are looking to sell their homes below market value to sell them faster. This may be due to a number of reasons, including pre-foreclosure situations, pre-probate sales, property liens, job relocations, or they simply don't want to go through all the chaos of realtors and the months-long process of trying to get their home sold on their own.</p>
-            <p className="text-lg mb-4">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on DoneDeal are actually great deals. These homes are meant to be sold fast rather than for the highest possible price, creating an opportunity for substantial savings.</p>
+            <p className="text-lg mb-4">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are actually great deals. These homes are meant to be sold fast rather than for the highest possible price, creating an opportunity for substantial savings.</p>
             <p className="text-lg">
               Due to the high demand for below-market properties, listings on our platform may not stay available for long. The supply of these opportunities is naturally limited, so we encourage serious buyers to act quickly when they find a property they're interested in.
             </p>
