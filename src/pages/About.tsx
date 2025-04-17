@@ -27,7 +27,7 @@ const About: React.FC = () => {
           <div className="bg-white/80 border border-white/40 shadow-md p-8 rounded-xl mb-12">
             <h2 className="text-2xl font-bold mb-4">Our Story</h2>
             <p className="text-lg mb-6">We were two students in NYC trying to figure out how anyone was supposed to buy a home. Everywhere we looked, it felt impossible. Prices were too high, listings were outdated or gone, and everything moved fast — unless you had cash, connections, or perfect timing, you were out of luck. We couldn't understand why something as basic as finding an affordable home felt this broken.</p>
-            <p className="text-lg">It felt hopeless. But instead of giving up, we started building. We knew there had to be a better way—something faster, simpler, and actually made for people like us. So we created DoneDeal to connect real buyers with real homes, without all the games. No middlemen. No hidden fees. No jumping through hoops. Just a clear path toward ownership for people who've been told they don't belong in the market.</p>
+            <p className="text-lg">It felt hopeless. But instead of giving up, we started building. We knew there had to be a better way—something faster, simpler, and actually made for people like us. So we created DoneDeal to connect real buyers with real homes, without all the nonsense. No middlemen. No hidden fees. No jumping through hoops. Just a clear path toward ownership for people who've been told they don't belong in the market.</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 mb-12">
