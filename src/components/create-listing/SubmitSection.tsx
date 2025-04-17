@@ -15,7 +15,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
       <Button 
         type="submit" 
         disabled={isSubmitting} 
-        className="w-full py-6 text-white font-bold text-xl rounded-xl bg-white shadow-lg border border-white/40 hover:translate-y-[-5px] transition-all disabled:opacity-70"
+        className="w-full py-6 text-white font-bold text-xl rounded-xl border border-transparent hover:border-[#0892D0] hover:shadow-[0_0_15px_rgba(8,146,208,0.5)] transition-all disabled:opacity-70 bg-transparent relative overflow-hidden group"
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
@@ -23,8 +23,11 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
             <span>Creating Listing...</span>
           </div>
         ) : (
-          <span className="text-gradient-primary">Create Listing</span>
+          <span className="relative z-10 text-gradient-primary">Create Listing</span>
         )}
+        
+        {/* Rainbow border hover effect */}
+        <span className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-radial from-[#0892D0]/30 to-transparent"></span>
       </Button>
       
       {isSubmitting && (

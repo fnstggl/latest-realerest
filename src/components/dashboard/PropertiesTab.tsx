@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -57,11 +56,9 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
         return;
       }
       
-      // Update UI
       const updatedProperties = myProperties.filter(property => property.id !== propertyId);
       setMyProperties(updatedProperties);
       
-      // Show success message
       toast.success("Property unlisted successfully");
     } catch (error) {
       console.error("Exception unlisting property:", error);
@@ -111,8 +108,11 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <Button asChild variant="glass" className="shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
                       <Link to={`/property/${property.id}`}>View Listing</Link>
                     </Button>
-                    <Button asChild variant="glass" className="bg-white/50 shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
-                      <Link to={`/property/${property.id}/edit`}>Edit</Link>
+                    <Button 
+                      asChild 
+                      className="bg-white text-[#0892D0] border border-transparent hover:border-[#0892D0] hover:bg-white/10 transition-all shadow-lg"
+                    >
+                      <Link to={`/property/${property.id}/edit`}>Edit Listing</Link>
                     </Button>
                     <Button 
                       variant="destructive" 
