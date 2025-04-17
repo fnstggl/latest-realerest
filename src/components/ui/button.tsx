@@ -17,10 +17,11 @@ const buttonVariants = cva(
         ghost: "text-gray-700 hover:text-[#0892D0] hover:bg-gray-50 transition-colors",
         link: "text-[#0892D0] underline-offset-4 hover:underline transition-colors",
         warning: "bg-amber-500 text-white rounded-lg hover:bg-amber-600 shadow-sm transition-all",
-        glass: "bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-black shadow-sm transition-all",
+        glass: "bg-white border border-gray-200 rounded-lg hover:bg-white text-black shadow-sm transition-all",
         navy: "bg-[#0892D0] text-white rounded-lg hover:bg-[#077fb4] shadow-sm transition-all",
         red: "bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-sm transition-all",
-        translucent: "bg-white border border-gray-200 rounded-lg text-black hover:bg-gray-50 transition-all shadow-sm",
+        translucent: "bg-white border border-gray-200 rounded-lg text-black hover:bg-white transition-all shadow-sm",
+        gradient: "bg-white hover:bg-white relative group overflow-hidden border border-transparent",
       },
       size: {
         default: "h-10 px-4 py-2",

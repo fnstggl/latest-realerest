@@ -111,7 +111,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     </Button>
                     <Button 
                       asChild 
-                      className="bg-white border border-transparent relative group overflow-hidden"
+                      className="bg-white border border-transparent hover:bg-white relative group overflow-hidden"
                     >
                       <Link to={`/property/${property.id}/edit`}>
                         <span className="text-gradient-static">Edit Listing</span>
@@ -123,7 +123,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                           border: "2px solid transparent",
                           backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
                           backgroundOrigin: "border-box",
-                          backgroundClip: "padding-box, border-box",
+                          backgroundClip: "content-box, border-box",
                           boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
                           filter: "blur(0.5px)"
                         }}></span>

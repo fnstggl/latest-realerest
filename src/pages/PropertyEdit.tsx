@@ -354,7 +354,7 @@ const PropertyEdit: React.FC = () => {
             <div className="flex justify-end pt-4">
               <Button
                 type="submit"
-                className="bg-white relative group overflow-hidden border border-transparent"
+                className="bg-white hover:bg-white relative group overflow-hidden border border-transparent"
                 disabled={saving}
               >
                 <Save size={18} className="mr-2" />
@@ -366,7 +366,7 @@ const PropertyEdit: React.FC = () => {
                   border: "2px solid transparent",
                   backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
                   backgroundOrigin: "border-box",
-                  backgroundClip: "padding-box, border-box",
+                  backgroundClip: "content-box, border-box",
                   boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
                   filter: "blur(0.5px)"
                 }}></span>
