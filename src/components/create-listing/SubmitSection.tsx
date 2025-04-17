@@ -15,7 +15,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
       <Button 
         type="submit" 
         disabled={isSubmitting} 
-        className="w-full py-6 text-xl rounded-xl disabled:opacity-70 relative bg-white hover:bg-white text-black"
+        className="w-full py-6 text-xl rounded-xl disabled:opacity-70 relative bg-white hover:bg-white text-black group"
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
@@ -26,25 +26,19 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
           <span className="apple-glow-text-small relative z-10">Create Listing</span>
         )}
         
-        {/* Rainbow border hover effect - OUTLINE ONLY */}
+        {/* Rainbow border hover effect - adds a gradient outline only on hover */}
         <span 
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl pointer-events-none" 
-          style={{
-            background: "transparent",
-            border: "2px solid transparent",
-            boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
-            filter: "blur(0.5px)"
-          }}
-        ></span>
-        <span 
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl pointer-events-none" 
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
           style={{
             background: "transparent",
             border: "2px solid transparent",
             backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
             backgroundOrigin: "border-box",
             backgroundClip: "border-box",
-            boxShadow: "none"
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+            boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
           }}
         ></span>
       </Button>

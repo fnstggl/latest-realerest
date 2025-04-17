@@ -32,7 +32,11 @@ const Navbar: React.FC = () => {
 
   const LogoText = () => (
     <>
-      <div className="w-12 h-12 bg-white border-2 border-[#0892D0] rounded-full text-[#0892D0] flex items-center justify-center font-bold text-xl shadow-[0_0_10px_rgba(8,146,208,0.5)]">RE</div>
+      <img 
+        src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" 
+        alt="Realer Estate Logo" 
+        className="w-12 h-12 object-contain"
+      />
       <span className="font-bold text-foreground text-2xl hidden md:block">Realer Estate</span>
     </>
   );
@@ -47,7 +51,11 @@ const Navbar: React.FC = () => {
       <SheetContent side="left" className="w-[300px] glass-dark border-r p-0">
         <div className="flex flex-col gap-6 p-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-white border-2 border-[#0892D0] rounded-full text-[#0892D0] flex items-center justify-center font-bold text-lg shadow-[0_0_10px_rgba(8,146,208,0.5)]">RE</div>
+            <img 
+              src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" 
+              alt="Realer Estate Logo" 
+              className="w-12 h-12 object-contain"
+            />
             <span className="font-bold text-white text-2xl">Realer Estate</span>
           </Link>
           

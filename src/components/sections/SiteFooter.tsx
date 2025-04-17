@@ -9,7 +9,11 @@ const SiteFooter: React.FC = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4 hover:opacity-90 transition-opacity">
-              <div className="w-10 h-10 bg-white rounded-full text-[#0892D0] flex items-center justify-center font-bold text-lg border border-[#0892D0] shadow-sm">RE</div>
+              <img 
+                src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" 
+                alt="Realer Estate Logo" 
+                className="w-10 h-10 object-contain"
+              />
               <span className="font-bold text-black text-xl">Realer Estate</span>
             </Link>
             <p className="text-gray-600">
