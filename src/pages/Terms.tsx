@@ -1,22 +1,22 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 const Terms: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16 lg:py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-4xl mx-auto"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.5
+      }} className="max-w-4xl mx-auto">
           <Card className="mb-8 border-none shadow-sm">
             <CardHeader className="border-b border-gray-100">
               <CardTitle className="text-4xl font-bold">Terms of Service</CardTitle>
@@ -26,9 +26,7 @@ const Terms: React.FC = () => {
               <div className="space-y-8">
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">1. Introduction</h2>
-                  <p className="mb-4 text-gray-700">
-                    Welcome to DoneDeal. By accessing or using our website, mobile application, or services, you agree to be bound by these Terms of Service.
-                  </p>
+                  <p className="mb-4 text-gray-700">Welcome to Realer Estate. By accessing or using our website, mobile application, or services, you agree to be bound by these Terms of Service.</p>
                   <p className="text-gray-700">
                     If you do not agree with any part of these terms, you may not use our services.
                   </p>
@@ -37,7 +35,7 @@ const Terms: React.FC = () => {
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">2. Definitions</h2>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li><strong>"Company", "We", "Us", "Our"</strong> refers to DoneDeal.</li>
+                    <li className=""><strong>"Company", "We", "Us", "Our"</strong> refers to DoneDeal.</li>
                     <li><strong>"Platform"</strong> refers to our website, mobile applications, and services.</li>
                     <li><strong>"User", "You", "Your"</strong> refers to individuals who access or use our Platform.</li>
                     <li><strong>"Buyer"</strong> refers to Users seeking to purchase properties.</li>
@@ -139,8 +137,6 @@ const Terms: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>
-  );
+    </div>;
 };
-
 export default Terms;
