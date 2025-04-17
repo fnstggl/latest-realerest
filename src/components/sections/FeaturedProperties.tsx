@@ -89,9 +89,25 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="glass-button font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 electric-blue-button"
+                className="font-bold text-xs sm:text-sm md:text-base shadow-lg bg-white hover:bg-white transform transition-all duration-300 hover:-translate-y-1 relative group overflow-hidden border border-transparent rounded-lg"
               >
-                View All Properties
+                <span className="text-gradient-static relative z-10">View All Properties</span>
+                
+                {/* Rainbow border hover effect - adds a gradient outline only on hover */}
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
+                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+                  }}
+                ></span>
               </Button>
             </div>
           </>

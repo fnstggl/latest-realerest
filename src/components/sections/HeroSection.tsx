@@ -45,7 +45,7 @@ const HeroSection: React.FC = () => {
             <div className="glass-card p-1 mb-4 sm:mb-6 md:mb-8 shadow-xl search-glow rounded-xl mx-auto w-full max-w-2xl">
               <SearchBar className="" />
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mx-auto">
+            <div className="flex flex-row gap-3 sm:gap-4 justify-center mx-auto">
               <Button 
                 asChild 
                 variant="glass" 
