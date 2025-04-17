@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { ClipboardList, X, Check } from 'lucide-react';
@@ -227,11 +228,26 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         return (
           <Button 
             variant="glass"
-            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg border-gradient-br-pink-purple-gold rainbow-glow-card"
-            onClick={handleJoinWaitlist}
+            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg bg-white hover:bg-white group"
           >
             <ClipboardList size={18} className="mr-2" />
-            <span className="text-gradient-static">Join Waitlist</span>
+            <span className="text-gradient-static relative z-10">Join Waitlist</span>
+            
+            {/* Rainbow border hover effect - adds a gradient outline only on hover */}
+            <span 
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
+              style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+              }}
+            ></span>
           </Button>
         );
     }

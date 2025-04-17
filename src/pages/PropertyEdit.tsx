@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -354,22 +355,27 @@ const PropertyEdit: React.FC = () => {
             <div className="flex justify-end pt-4">
               <Button
                 type="submit"
-                variant="apple"
+                className="bg-white hover:bg-white text-black font-bold px-6 py-2 relative group overflow-hidden rounded-xl"
                 disabled={saving}
               >
                 <Save size={18} className="mr-2" />
-                <span className="apple-glow-text-small">{saving ? "Saving..." : "Save Changes"}</span>
+                <span className="relative z-10">{saving ? "Saving..." : "Save Changes"}</span>
                 
-                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-md" style={{
-                  background: "transparent",
-                  padding: "1px",
-                  border: "2px solid transparent",
-                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                  backgroundOrigin: "border-box",
-                  backgroundClip: "content-box, border-box",
-                  boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
-                  filter: "blur(0.5px)"
-                }}></span>
+                {/* Rainbow border hover effect - adds a gradient outline only on hover */}
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
+                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+                  }}
+                ></span>
               </Button>
             </div>
           </form>
