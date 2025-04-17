@@ -15,8 +15,8 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
       <Button 
         type="submit" 
         disabled={isSubmitting} 
-        variant="apple"
-        className="w-full py-6 text-xl rounded-xl disabled:opacity-70 relative group"
+        variant="default"
+        className="w-full py-6 text-xl rounded-xl disabled:opacity-70 relative group bg-white hover:bg-white"
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
@@ -35,7 +35,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
             border: "2px solid transparent",
             backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
             backgroundOrigin: "border-box",
-            backgroundClip: "content-box, border-box",
+            backgroundClip: "border-box",
             boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
             filter: "blur(0.5px)"
           }}
