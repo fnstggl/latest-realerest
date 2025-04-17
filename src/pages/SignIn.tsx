@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -8,19 +7,22 @@ import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuth();
+  const {
+    login,
+    isAuthenticated
+  } = useAuth();
 
   // Extract return path from location state, if present
-  const returnPath = (location.state as { returnPath?: string })?.returnPath || '/dashboard';
+  const returnPath = (location.state as {
+    returnPath?: string;
+  })?.returnPath || '/dashboard';
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -28,19 +30,17 @@ const SignIn: React.FC = () => {
       navigate(returnPath);
     }
   }, [isAuthenticated, navigate, returnPath]);
-
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
     setIsLoading(true);
-    
+
     // Basic validation
     if (!email || !password) {
       setLoginError("Email and password are required");
       setIsLoading(false);
       return;
     }
-    
     try {
       await login(email, password);
       // No need for navigation here; the useEffect will handle it
@@ -51,15 +51,9 @@ const SignIn: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  return (
-    <div className="flex min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
+  return <div className="flex min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <div className="w-full p-8 flex flex-col">
-        <Button 
-          variant="glass" 
-          className="w-fit mb-8 property-card-glow"
-          onClick={() => navigate('/')}
-        >
+        <Button variant="glass" className="w-fit mb-8 property-card-glow" onClick={() => navigate('/')}>
           <ArrowLeft className="mr-2" size={18} />
           Back
         </Button>
@@ -70,43 +64,21 @@ const SignIn: React.FC = () => {
             <p className="text-gray-600">Sign in to continue to DoneDeal.</p>
           </div>
         
-          {loginError && (
-            <Alert variant="destructive" className="mb-6 glass backdrop-blur-md">
+          {loginError && <Alert variant="destructive" className="mb-6 glass backdrop-blur-md">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{loginError}</AlertDescription>
-            </Alert>
-          )}
+            </Alert>}
           
           <form onSubmit={handleSignIn} className="space-y-6">
             <div>
               <Label htmlFor="email" className="font-bold text-black">Email</Label>
-              <Input 
-                type="email" 
-                id="email" 
-                placeholder="Enter your email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="mt-2 glass-input"
-              />
+              <Input type="email" id="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-2 glass-input" />
             </div>
             <div>
               <Label htmlFor="password" className="font-bold text-black">Password</Label>
-              <Input 
-                type="password" 
-                id="password" 
-                placeholder="Enter your password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="mt-2 glass-input"
-              />
+              <Input type="password" id="password" placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-2 glass-input" />
             </div>
-            <Button 
-              type="submit"
-              className="w-full property-card-glow glass-button-primary text-[#0892D0] font-bold"
-              disabled={isLoading}
-            >
+            <Button type="submit" disabled={isLoading} className="w-full property-card-glow glass-button-primary font-bold text-white">
               {isLoading ? "Signing In..." : "Sign In"}
             </Button>
             <p className="text-sm text-gray-600 text-center">
@@ -115,8 +87,6 @@ const SignIn: React.FC = () => {
           </form>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default SignIn;
