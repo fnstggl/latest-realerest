@@ -110,7 +110,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     </Button>
                     <Button 
                       asChild 
-                      className="bg-white text-[#0892D0] border border-transparent hover:border-[#0892D0] hover:bg-white/10 transition-all shadow-lg"
+                      className="bg-white text-[#0892D0] border border-transparent hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all"
                     >
                       <Link to={`/property/${property.id}/edit`}>Edit Listing</Link>
                     </Button>
