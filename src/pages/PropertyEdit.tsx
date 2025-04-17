@@ -354,7 +354,7 @@ const PropertyEdit: React.FC = () => {
             <div className="flex justify-end pt-4">
               <Button
                 type="submit"
-                className="bg-white hover:bg-white relative group overflow-hidden border border-transparent"
+                variant="gradient"
                 disabled={saving}
               >
                 <Save size={18} className="mr-2" />

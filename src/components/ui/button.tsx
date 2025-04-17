@@ -21,7 +21,7 @@ const buttonVariants = cva(
         navy: "bg-[#0892D0] text-white rounded-lg hover:bg-[#077fb4] shadow-sm transition-all",
         red: "bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-sm transition-all",
         translucent: "bg-white border border-gray-200 rounded-lg text-black hover:bg-white transition-all shadow-sm",
-        gradient: "bg-white hover:bg-white relative group overflow-hidden border border-transparent",
+        gradient: "bg-white hover:bg-white relative group overflow-hidden border border-transparent rounded-lg",
       },
       size: {
         default: "h-10 px-4 py-2",

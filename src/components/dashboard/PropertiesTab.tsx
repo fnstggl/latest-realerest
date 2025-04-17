@@ -111,10 +111,10 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     </Button>
                     <Button 
                       asChild 
-                      className="bg-white border border-transparent hover:bg-white relative group overflow-hidden"
+                      variant="gradient"
                     >
                       <Link to={`/property/${property.id}/edit`}>
-                        <span className="text-gradient-static">Edit Listing</span>
+                        <span className="text-gradient-static font-medium">Edit Listing</span>
                         
                         {/* Rainbow gradient border on hover */}
                         <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-md" style={{
