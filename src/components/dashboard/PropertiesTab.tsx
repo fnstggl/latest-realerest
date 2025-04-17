@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -110,9 +111,23 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     </Button>
                     <Button 
                       asChild 
-                      className="bg-white text-[#0892D0] border border-transparent hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all"
+                      className="bg-white border border-transparent relative group overflow-hidden"
                     >
-                      <Link to={`/property/${property.id}/edit`}>Edit Listing</Link>
+                      <Link to={`/property/${property.id}/edit`}>
+                        <span className="text-gradient-static">Edit Listing</span>
+                        
+                        {/* Rainbow gradient border on hover */}
+                        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-md" style={{
+                          background: "transparent",
+                          padding: "1px",
+                          border: "2px solid transparent",
+                          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                          backgroundOrigin: "border-box",
+                          backgroundClip: "padding-box, border-box",
+                          boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                          filter: "blur(0.5px)"
+                        }}></span>
+                      </Link>
                     </Button>
                     <Button 
                       variant="destructive" 

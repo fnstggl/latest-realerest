@@ -15,6 +15,7 @@ import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
 import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { supabase } from '@/integrations/supabase/client';
+
 const PropertyDetail: React.FC = () => {
   const {
     id
@@ -34,12 +35,15 @@ const PropertyDetail: React.FC = () => {
     isApproved,
     shouldShowSellerInfo
   } = usePropertyDetail(id);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
   const handleAddressClick = () => {
     setShowWaitlistDialog(true);
   };
+
   useEffect(() => {
     if (!id) return;
     const fetchRealOffers = async () => {
@@ -68,6 +72,7 @@ const PropertyDetail: React.FC = () => {
     };
     fetchRealOffers();
   }, [id]);
+
   if (loading) {
     return <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
         <Navbar />
@@ -78,6 +83,7 @@ const PropertyDetail: React.FC = () => {
         </div>
       </div>;
   }
+
   if (!property) {
     return <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
         <Navbar />
@@ -90,7 +96,9 @@ const PropertyDetail: React.FC = () => {
         </div>
       </div>;
   }
+
   const showPropertyDetails = property?.afterRepairValue !== undefined || property?.estimatedRehab !== undefined;
+
   return <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 relative overflow-hidden">
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100/40 rounded-full filter blur-3xl"></div>
       <div className="absolute top-60 -right-20 w-80 h-80 bg-purple-100/40 rounded-full filter blur-3xl"></div>
@@ -117,9 +125,20 @@ const PropertyDetail: React.FC = () => {
             <PropertyHeader title={property?.title} belowMarket={property?.belowMarket} price={property?.price} marketPrice={property?.marketPrice} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} location={property?.location} fullAddress={property?.full_address} showFullAddress={isOwner || isApproved} onShowAddressClick={handleAddressClick} />
             
             {isOwner ? <Link to={`/property/${property?.id}/edit`}>
-                <Button className="w-full glass backdrop-blur-lg border border-white/40 text-pink-600 font-bold py-2 hover:bg-white/50 transition-colors layer-2">
-                  <Cog size={18} className="mr-2 bg-white" />
-                  Edit Listing
+                <Button className="w-full bg-white backdrop-blur-lg border border-transparent text-gradient-static font-bold py-2 hover:bg-white relative group overflow-hidden rounded-full">
+                  <Cog size={18} className="mr-2" />
+                  <span className="relative z-10">Edit Listing</span>
+                  
+                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" style={{
+                    background: "transparent",
+                    padding: "1px",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "padding-box, border-box",
+                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                    filter: "blur(0.5px)"
+                  }}></span>
                 </Button>
               </Link> : isApproved ? <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
                 <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
@@ -171,4 +190,5 @@ const PropertyDetail: React.FC = () => {
       <SiteFooter />
     </div>;
 };
+
 export default PropertyDetail;

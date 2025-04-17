@@ -205,7 +205,7 @@ const PropertyEdit: React.FC = () => {
         <div className="mb-8">
           <Button 
             variant="ghost" 
-            className="flex items-center text-black hover:text-[#d60013] font-bold transition-colors"
+            className="flex items-center text-black hover:text-[#0892D0] font-bold transition-colors"
             onClick={() => navigate(`/property/${id}`)}
           >
             <ArrowLeft size={18} className="mr-2" />
@@ -354,11 +354,22 @@ const PropertyEdit: React.FC = () => {
             <div className="flex justify-end pt-4">
               <Button
                 type="submit"
-                className="neo-button-primary"
+                className="bg-white relative group overflow-hidden border border-transparent"
                 disabled={saving}
               >
                 <Save size={18} className="mr-2" />
-                {saving ? "Saving..." : "Save Changes"}
+                <span className="text-gradient-static">{saving ? "Saving..." : "Save Changes"}</span>
+                
+                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-md" style={{
+                  background: "transparent",
+                  padding: "1px",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "padding-box, border-box",
+                  boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                  filter: "blur(0.5px)"
+                }}></span>
               </Button>
             </div>
           </form>
