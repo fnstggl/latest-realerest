@@ -40,10 +40,16 @@ const Messages: React.FC = () => {
               <h2 className="text-xl font-bold">Conversations</h2>
             </div>
             
-            <MessageList 
-              conversations={conversations}
-              loading={loading}
-            />
+            {loading ? (
+              <div className="min-h-[300px] flex items-center justify-center p-8">
+                <div className="gradient-blob"></div>
+              </div>
+            ) : (
+              <MessageList 
+                conversations={conversations}
+                loading={false}
+              />
+            )}
           </div>
         </motion.div>
       </div>

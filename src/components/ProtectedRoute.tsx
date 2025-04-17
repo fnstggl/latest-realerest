@@ -23,10 +23,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="inline-block h-12 w-12 border-4 border-t-[#d60013] border-r-[#d60013] border-b-transparent border-l-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-xl font-bold">Checking authentication...</p>
-        </div>
+        <div className="gradient-blob"></div>
       </div>
     );
   }

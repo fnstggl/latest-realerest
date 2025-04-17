@@ -198,6 +198,14 @@ const Conversation: React.FC = () => {
     return groups;
   }, {});
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="gradient-blob"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
