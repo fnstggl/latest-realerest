@@ -16,7 +16,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
         type="submit" 
         disabled={isSubmitting} 
         variant="apple"
-        className="w-full py-6 text-xl rounded-xl disabled:opacity-70"
+        className="w-full py-6 text-xl rounded-xl disabled:opacity-70 relative group"
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
@@ -28,16 +28,18 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
         )}
         
         {/* Rainbow border hover effect - OUTLINE ONLY */}
-        <span className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" style={{
-          background: "transparent",
-          padding: "1px",
-          border: "2px solid transparent",
-          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-          backgroundOrigin: "border-box",
-          backgroundClip: "content-box, border-box",
-          boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
-          filter: "blur(0.5px)"
-        }}></span>
+        <span 
+          className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl pointer-events-none" 
+          style={{
+            background: "transparent",
+            border: "2px solid transparent",
+            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+            backgroundOrigin: "border-box",
+            backgroundClip: "content-box, border-box",
+            boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+            filter: "blur(0.5px)"
+          }}
+        ></span>
       </Button>
       
       {isSubmitting && (
