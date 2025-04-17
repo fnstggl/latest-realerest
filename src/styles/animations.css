@@ -61,7 +61,7 @@
     animation: layerHover 0.3s forwards ease-out;
   }
 
-  /* Loading container */
+  /* Loading container - removed all loading animations */
   .loading-container {
     position: relative;
     width: 100%;

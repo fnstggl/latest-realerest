@@ -42,13 +42,10 @@ const PropertyEdit = lazy(() => import("./pages/PropertyEdit"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Conversation = lazy(() => import("./pages/Conversation"));
 
-// Loading fallback for lazy loaded components
+// Simple loading fallback for lazy loaded components
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
-    <div className="text-center">
-      <div className="inline-block h-12 w-12 border-4 border-t-[#d60013] border-r-[#d60013] border-b-transparent border-l-transparent rounded-full animate-spin mb-4"></div>
-      <p className="text-xl font-bold">Loading...</p>
-    </div>
+    <p className="text-xl font-bold">Loading page...</p>
   </div>
 );
 

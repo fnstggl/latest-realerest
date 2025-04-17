@@ -18,7 +18,7 @@ const FeaturedProperties: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-[300px] flex justify-center items-center">
-        <div className="gradient-blob"></div>
+        <p>Loading properties...</p>
       </div>
     );
   }

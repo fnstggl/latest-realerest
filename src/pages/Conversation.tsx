@@ -202,7 +202,7 @@ const Conversation: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        {/* Removed loading animation */}
+        <p className="text-lg font-medium">Loading conversation...</p>
       </div>
     );
   }
