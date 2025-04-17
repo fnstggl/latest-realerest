@@ -101,7 +101,7 @@ const PropertyDetail: React.FC = () => {
       <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8">
           <Button asChild variant="glass" className="flex items-center text-black hover:bg-white/40 font-bold transition-colors layer-hover layer-2">
-            <Link to="/search">
+            <Link to="/search" className="bg-white text-glass-blue">
               <ArrowLeft size={18} className="mr-2" />
               Back to Search
             </Link>
