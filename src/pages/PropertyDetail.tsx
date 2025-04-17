@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -125,7 +126,7 @@ const PropertyDetail: React.FC = () => {
             <PropertyHeader title={property?.title} belowMarket={property?.belowMarket} price={property?.price} marketPrice={property?.marketPrice} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} location={property?.location} fullAddress={property?.full_address} showFullAddress={isOwner || isApproved} onShowAddressClick={handleAddressClick} />
             
             {isOwner ? 
-              <Link to={`/property/${property?.id}/edit`}>
+              <Link to={`/property/${property?.id}/edit`} className="w-full">
                 <Button className="w-full bg-white hover:bg-white text-black font-bold py-2 relative group overflow-hidden rounded-xl">
                   <Cog size={18} className="mr-2" />
                   <span className="text-gradient-static relative z-10">Edit Listing</span>
