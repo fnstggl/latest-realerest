@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Loader2, Upload, X } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import { toast } from "sonner";
 
 interface ImageUploaderProps {
@@ -123,7 +123,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         >
           {isProcessingImages ? (
             <>
-              <Loader2 size={24} className="animate-spin" />
               <span className="font-bold">Processing images...</span>
             </>
           ) : (

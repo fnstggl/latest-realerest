@@ -19,11 +19,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
   }, [isAuthenticated, isLoading, location.state]);
 
-  // Show loading indicator while checking authentication
+  // Show blank div while checking authentication
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="gradient-blob"></div>
+        {/* Removed loading animation */}
       </div>
     );
   }

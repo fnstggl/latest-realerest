@@ -42,7 +42,7 @@ const Messages: React.FC = () => {
             
             {loading ? (
               <div className="min-h-[300px] flex items-center justify-center p-8">
-                <div className="gradient-blob"></div>
+                {/* Removed loading animation */}
               </div>
             ) : (
               <MessageList 

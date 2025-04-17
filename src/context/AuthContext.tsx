@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.log('Auth loading timeout reached, forcing completion');
             setIsLoading(false);
           }
-        }, 3000); // 3 second timeout
+        }, 1500); // Reduced from 3000 to 1500ms for faster loading
 
         // Then check for existing session
         const { data: { session } } = await supabase.auth.getSession();
@@ -194,14 +194,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // State will be cleared by the auth state listener
   };
 
-  // Don't render children until we've checked for an existing session
+  // Don't render loading indicator, just render a blank div
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-t-[#d60013] border-b-[#d60013] border-l-gray-200 border-r-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg font-semibold">Loading...</p>
-        </div>
+        {/* Removed loading animation */}
       </div>
     );
   }
