@@ -17,7 +17,9 @@ const FeaturedProperties: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-[300px] flex justify-center items-center">
-        <p>Loading properties...</p>
+        <div className="loading-container">
+          <div className="pulsing-circle" />
+        </div>
       </div>
     );
   }

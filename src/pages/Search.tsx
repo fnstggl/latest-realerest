@@ -157,11 +157,13 @@ const Search: React.FC = () => {
               </div>
             </div>
             
-            {loading ? <div className="flex justify-center items-center py-16">
-                <div className="loading-container">
-                  <div className="gradient-blob"></div>
-                </div>
-              </div> : filteredProperties.length === 0 ? <div className="text-center py-16 bg-white rounded-xl neo-container">
+            {loading ? (
+    <div className="flex justify-center items-center py-16">
+      <div className="loading-container">
+        <div className="pulsing-circle" />
+      </div>
+    </div>
+  ) : filteredProperties.length === 0 ? <div className="text-center py-16 bg-white rounded-xl neo-container">
                 <h2 className="text-xl font-semibold mb-2">No properties found</h2>
                 <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
                 <Button onClick={() => handleFilterChange({
