@@ -32,9 +32,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   const roundedBelowMarket = Math.round(belowMarket);
   const validImage = image || '/placeholder.svg';
   
-  // Split location into components (assuming format: "City, State ZIP")
-  const locationParts = location.split(',');
-  const city = locationParts[0]?.trim() || '';
+  // Safely handle location parsing with default values if location is undefined
+  const locationParts = location ? location.split(',') : ['Unknown', ''];
+  const city = locationParts[0]?.trim() || 'Unknown';
   const stateZip = locationParts[1]?.trim() || '';
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -51,7 +51,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         <div className="relative">
           <img 
             src={validImage} 
-            alt={location} 
+            alt={location || 'Property'} 
             className="h-[240px] w-full object-cover" 
             onError={handleImageError} 
             loading="lazy" 
@@ -66,7 +66,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         
         <div className="p-6 flex-1 flex flex-col">
           <h3 className="font-bold text-lg text-foreground mb-3 truncate">
-            {address || location.split(',')[0]}
+            {address || (location ? location.split(',')[0] : 'Property Listing')}
           </h3>
           
           <div className="mb-2">
@@ -78,7 +78,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           
           <div className="flex items-center text-foreground/70 mb-4">
             <MapPin size={16} className="mr-1 shrink-0" />
-            <span className="truncate">{`${city}, ${stateZip}`}</span>
+            <span className="truncate">{location || 'Unknown location'}</span>
           </div>
           
           <div className="border-t border-white/20 pt-4 mt-auto">

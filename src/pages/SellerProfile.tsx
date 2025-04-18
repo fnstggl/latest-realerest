@@ -1,13 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useProperties } from '@/hooks/useProperties';
 import Navbar from '@/components/Navbar';
-import PropertyCard from '@/components/PropertyCard';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Property } from '@/hooks/useProperties';
+import PropertyCard from '@/components/PropertyCard';
 
 const SellerProfile = () => {
   const { sellerId } = useParams();
@@ -103,7 +102,19 @@ const SellerProfile = () => {
           ) : properties && properties.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {properties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard 
+                  key={property.id}
+                  id={property.id}
+                  price={property.price}
+                  marketPrice={property.marketPrice}
+                  image={property.image || '/placeholder.svg'}
+                  location={property.location}
+                  address={property.title}
+                  beds={property.beds}
+                  baths={property.baths}
+                  sqft={property.sqft}
+                  belowMarket={property.belowMarket}
+                />
               ))}
             </div>
           ) : (
