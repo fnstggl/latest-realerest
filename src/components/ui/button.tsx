@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -19,7 +20,7 @@ const buttonVariants = cva(
         glass: "bg-white border border-gray-200 rounded-lg hover:bg-white text-black shadow-sm transition-all",
         navy: "bg-[#0892D0] text-white rounded-lg hover:bg-[#077fb4] shadow-sm transition-all",
         red: "bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-sm transition-all",
-        translucent: "bg-white border border-transparent text-black hover:bg-white transition-all shadow-sm relative overflow-hidden group", // Removed specific border
+        translucent: "bg-white border border-transparent text-black hover:bg-white transition-all shadow-sm relative overflow-hidden group",
         gradient: "bg-white hover:bg-white relative group overflow-hidden border border-transparent rounded-lg",
         apple: "bg-white hover:bg-white relative group overflow-hidden border border-transparent rounded-lg",
       },
@@ -46,14 +47,15 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      >
-        {props.children}
-        {variant === "translucent" && (
+    
+    if (variant === "translucent") {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+        >
+          {props.children}
           <span 
             className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
             style={{
@@ -69,8 +71,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               filter: "blur(1px)"
             }}
           ></span>
-        )}
-      </Comp>
+        </Comp>
+      )
+    }
+    
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
     )
   }
 )
