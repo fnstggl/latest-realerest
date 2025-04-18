@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,6 @@ import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,7 +30,6 @@ const SignIn: React.FC = () => {
       navigate(returnPath);
     }
   }, [isAuthenticated, navigate, returnPath]);
-  
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
@@ -54,7 +51,6 @@ const SignIn: React.FC = () => {
       setIsLoading(false);
     }
   };
-  
   return <div className="flex min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <div className="w-full p-4 sm:p-6 md:p-8 flex flex-col">
         <Button variant="glass" className="w-fit mb-4 sm:mb-6 md:mb-8 property-card-glow" onClick={() => navigate('/')}>
@@ -65,7 +61,7 @@ const SignIn: React.FC = () => {
         <div className="mx-auto w-full max-w-md glass-card backdrop-blur-lg border border-white/30 p-4 sm:p-6 md:p-8 rounded-xl shadow-lg property-card-glow">
           <div className="mb-4 sm:mb-6 md:mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 text-black">Welcome Back</h1>
-            <p className="text-gray-600 text-sm sm:text-base">Sign in to continue to DoneDeal.</p>
+            <p className="text-gray-600 text-sm sm:text-base">Sign in to continue to Realer Estate.</p>
           </div>
         
           {loginError && <Alert variant="destructive" className="mb-4 sm:mb-6 glass backdrop-blur-md">
@@ -93,5 +89,4 @@ const SignIn: React.FC = () => {
       </div>
     </div>;
 };
-
 export default SignIn;
