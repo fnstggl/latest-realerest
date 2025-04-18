@@ -78,11 +78,11 @@ const Dashboard: React.FC = () => {
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             <TabsList className="bg-white border border-gray-200 shadow-sm">
-              <TabsTrigger value="properties" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
+              <TabsTrigger value="properties" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
                 <Home size={18} className="mr-2" />
                 Properties
                 <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -95,11 +95,11 @@ const Dashboard: React.FC = () => {
                   }}
                 />
               </TabsTrigger>
-              <TabsTrigger value="waitlist" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
+              <TabsTrigger value="waitlist" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
                 <ClipboardCheck size={18} className="mr-2" />
                 Waitlist
                 <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -113,11 +113,11 @@ const Dashboard: React.FC = () => {
                 />
               </TabsTrigger>
               
-              <TabsTrigger value="offers" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
+              <TabsTrigger value="offers" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
                 <CreditCard size={18} className="mr-2" />
                 Offers
                 <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -130,11 +130,11 @@ const Dashboard: React.FC = () => {
                   }}
                 />
               </TabsTrigger>
-              <TabsTrigger value="account" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
+              <TabsTrigger value="account" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
                 <User size={18} className="mr-2" />
                 Account
                 <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -147,11 +147,11 @@ const Dashboard: React.FC = () => {
                   }}
                 />
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
+              <TabsTrigger value="notifications" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
                 <Bell size={18} className="mr-2" />
                 Notifications
                 <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
