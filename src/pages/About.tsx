@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -33,40 +32,44 @@ const About: React.FC = () => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div className="bg-white relative">
-              <span className="absolute inset-0 rounded-xl pointer-events-none" style={{
-                padding: '1px',
+            <div className="relative">
+              <div className="absolute inset-0 rounded-xl" style={{
                 background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)',
+                padding: '1px',
                 WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                 WebkitMaskComposite: 'xor',
                 maskComposite: 'exclude'
               }} />
-              <div className="bg-white border border-white/40 shadow-md p-8 rounded-xl relative z-10">
+              <div className="bg-white p-8 rounded-xl relative">
                 <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">For Buyers</h2>
                 <ul className="space-y-3">
-                  {["Buy a home faster than you can say \"sold\"", "Save your cash for the home, not the agent.", "Know you're paying a fair price—always.", "No fees. No middlemen. Just the keys."].map((item, index) => <li key={index} className="flex items-start border border-gray-100 bg-white p-3 rounded-lg shadow-sm">
-                    <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#0892D0]" />
-                    <span className="text-base">{item}</span>
-                  </li>)}
+                  {["Buy a home faster than you can say \"sold\"", "Save your cash for the home, not the agent.", "Know you're paying a fair price—always.", "No fees. No middlemen. Just the keys."].map((item, index) => (
+                    <li key={index} className="flex items-start border border-gray-100 bg-white p-3 rounded-lg shadow-sm">
+                      <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#0892D0]" />
+                      <span className="text-base">{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
             
-            <div className="bg-white relative">
-              <span className="absolute inset-0 rounded-xl pointer-events-none" style={{
-                padding: '1px',
+            <div className="relative">
+              <div className="absolute inset-0 rounded-xl" style={{
                 background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)',
+                padding: '1px',
                 WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                 WebkitMaskComposite: 'xor',
                 maskComposite: 'exclude'
               }} />
-              <div className="bg-white border border-white/40 shadow-md p-8 rounded-xl relative z-10">
+              <div className="bg-white p-8 rounded-xl relative">
                 <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">For Sellers</h2>
                 <ul className="space-y-3">
-                  {["List your home in 1 minute, sell it in 2.", "Zero fees, zero commissions, forever.", "Sell your home, skip the headache.", "Get a great offer on your home... today."].map((item, index) => <li key={index} className="flex items-start border border-gray-100 bg-white p-3 rounded-lg shadow-sm">
-                    <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#0892D0]" />
-                    <span className="text-base">{item}</span>
-                  </li>)}
+                  {["List your home in 1 minute, sell it in 2.", "Zero fees, zero commissions, forever.", "Sell your home, skip the headache.", "Get a great offer on your home... today."].map((item, index) => (
+                    <li key={index} className="flex items-start border border-gray-100 bg-white p-3 rounded-lg shadow-sm">
+                      <CheckCircle2 size={20} className="mr-2 mt-1 flex-shrink-0 text-[#0892D0]" />
+                      <span className="text-base">{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
