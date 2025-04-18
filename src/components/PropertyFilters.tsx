@@ -20,8 +20,8 @@ const PropertyFilters: React.FC<FiltersProps> = ({
 }) => {
   const [filters, setFilters] = useState<FilterState>({
     propertyType: "any",
-    minPrice: 100000,
-    maxPrice: 1000000,
+    minPrice: 0,
+    maxPrice: 2000001,
     bedrooms: "any",
     bathrooms: "any",
     belowMarket: 0
@@ -37,11 +37,11 @@ const PropertyFilters: React.FC<FiltersProps> = ({
   };
 
   const priceOptions = [
-    5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000,
+    0, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000,
     100000, 200000, 300000, 400000, 500000, 750000, 1000000, 1500000, 2000000
   ];
 
-  const belowMarketOptions = Array.from({ length: 21 }, (_, i) => i * 5);
+  const belowMarketOptions = [0, ...Array.from({ length: 20 }, (_, i) => (i + 1) * 5)];
 
   return (
     <div className="bg-white p-6 neo-container">
@@ -90,13 +90,26 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                   <SelectValue placeholder="Min Price" />
                 </SelectTrigger>
                 <SelectContent>
-                  {priceOptions.map((price) => (
+                  <SelectItem value="0" className="relative">
+                    Any
+                    {filters.minPrice === 0 && (
+                      <span
+                        className="absolute inset-0 rounded-lg pointer-events-none"
+                        style={{
+                          padding: '1px',
+                          background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                          WebkitMaskComposite: 'xor',
+                          maskComposite: 'exclude'
+                        }}
+                      />
+                    )}
+                  </SelectItem>
+                  {priceOptions.slice(1).map((price) => (
                     <SelectItem 
                       key={price} 
                       value={price.toString()}
-                      className={`relative ${
-                        filters.minPrice === price ? "border-transparent" : ""
-                      }`}
+                      className="relative"
                     >
                       ${price.toLocaleString()}
                       {filters.minPrice === price && (
@@ -113,7 +126,6 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                       )}
                     </SelectItem>
                   ))}
-                  <SelectItem value="2000001">$2,000,000+</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -126,13 +138,26 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                   <SelectValue placeholder="Max Price" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="2000001" className="relative">
+                    Any
+                    {filters.maxPrice === 2000001 && (
+                      <span
+                        className="absolute inset-0 rounded-lg pointer-events-none"
+                        style={{
+                          padding: '1px',
+                          background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                          WebkitMaskComposite: 'xor',
+                          maskComposite: 'exclude'
+                        }}
+                      />
+                    )}
+                  </SelectItem>
                   {priceOptions.map((price) => (
                     <SelectItem 
                       key={price} 
                       value={price.toString()}
-                      className={`relative ${
-                        filters.maxPrice === price ? "border-transparent" : ""
-                      }`}
+                      className="relative"
                     >
                       ${price.toLocaleString()}
                       {filters.maxPrice === price && (
@@ -144,7 +169,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                             WebkitMaskComposite: 'xor',
                             maskComposite: 'exclude'
-                          }}
+                        }}
                         />
                       )}
                     </SelectItem>
@@ -170,11 +195,9 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                 <SelectItem 
                   key={percentage} 
                   value={percentage.toString()}
-                  className={`relative ${
-                    filters.belowMarket === percentage ? "border-transparent" : ""
-                  }`}
+                  className="relative"
                 >
-                  {percentage}% below market
+                  {percentage === 0 ? 'Any' : `${percentage}% below market`}
                   {filters.belowMarket === percentage && (
                     <span
                       className="absolute inset-0 rounded-lg pointer-events-none"
@@ -231,7 +254,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
         <Button onClick={() => {
           const defaultFilters = {
             propertyType: "any",
-            minPrice: 100000,
+            minPrice: 0,
             maxPrice: 1000000,
             bedrooms: "any",
             bathrooms: "any",
