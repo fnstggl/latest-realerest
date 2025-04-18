@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -99,7 +100,8 @@ const PropertyDetail: React.FC = () => {
   }
 
   if (!property) {
-    return <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
         <Navbar />
         <div className="container mx-auto px-4 py-12 text-center">
           <h1 className="text-3xl font-bold mb-4 text-black">Property Not Found</h1>
@@ -108,12 +110,14 @@ const PropertyDetail: React.FC = () => {
             <Link to="/search">Browse Other Properties</Link>
           </Button>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   const showPropertyDetails = property?.afterRepairValue !== undefined || property?.estimatedRehab !== undefined;
 
-  return <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 relative overflow-hidden">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 relative overflow-hidden">
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100/40 rounded-full filter blur-3xl"></div>
       <div className="absolute top-60 -right-20 w-80 h-80 bg-purple-100/40 rounded-full filter blur-3xl"></div>
       <div className="absolute bottom-20 left-60 w-72 h-72 bg-pink-100/30 rounded-full filter blur-3xl"></div>
