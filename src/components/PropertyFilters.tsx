@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -43,6 +44,9 @@ const PropertyFilters: React.FC<FiltersProps> = ({
 
   const belowMarketOptions = [0, ...Array.from({ length: 20 }, (_, i) => (i + 1) * 5)];
 
+  // Gradient for selected items - removed orange (#FF5C00)
+  const selectedGradient = 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)';
+
   return (
     <div className="bg-white p-6 neo-container">
       <div className="space-y-6">
@@ -66,7 +70,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                     className="absolute inset-0 rounded-lg pointer-events-none"
                     style={{
                       padding: '1px',
-                      background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                      background: selectedGradient,
                       WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                       WebkitMaskComposite: 'xor',
                       maskComposite: 'exclude'
@@ -97,7 +101,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                         className="absolute inset-0 rounded-lg pointer-events-none"
                         style={{
                           padding: '1px',
-                          background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                          background: selectedGradient,
                           WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                           WebkitMaskComposite: 'xor',
                           maskComposite: 'exclude'
@@ -117,7 +121,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                           className="absolute inset-0 rounded-lg pointer-events-none"
                           style={{
                             padding: '1px',
-                            background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                            background: selectedGradient,
                             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                             WebkitMaskComposite: 'xor',
                             maskComposite: 'exclude'
@@ -145,7 +149,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                         className="absolute inset-0 rounded-lg pointer-events-none"
                         style={{
                           padding: '1px',
-                          background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                          background: selectedGradient,
                           WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                           WebkitMaskComposite: 'xor',
                           maskComposite: 'exclude'
@@ -165,7 +169,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                           className="absolute inset-0 rounded-lg pointer-events-none"
                           style={{
                             padding: '1px',
-                            background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                            background: selectedGradient,
                             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                             WebkitMaskComposite: 'xor',
                             maskComposite: 'exclude'
@@ -174,7 +178,21 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                       )}
                     </SelectItem>
                   ))}
-                  <SelectItem value="2000001">$2,000,000+</SelectItem>
+                  <SelectItem value="2000001" className="relative">
+                    $2,000,000+
+                    {filters.maxPrice === 2000001 && (
+                      <span
+                        className="absolute inset-0 rounded-lg pointer-events-none"
+                        style={{
+                          padding: '1px',
+                          background: selectedGradient,
+                          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                          WebkitMaskComposite: 'xor',
+                          maskComposite: 'exclude'
+                        }}
+                      />
+                    )}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -195,7 +213,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                 <SelectItem 
                   key={percentage} 
                   value={percentage.toString()}
-                  className="relative"
+                  className="relative hover:bg-gray-100"
                 >
                   {percentage === 0 ? 'Any' : `${percentage}% below market`}
                   {filters.belowMarket === percentage && (
@@ -203,7 +221,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                       className="absolute inset-0 rounded-lg pointer-events-none"
                       style={{
                         padding: '1px',
-                        background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                        background: selectedGradient,
                         WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                         WebkitMaskComposite: 'xor',
                         maskComposite: 'exclude'
@@ -236,7 +254,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                         className="absolute inset-0 rounded-lg pointer-events-none"
                         style={{
                           padding: '1px',
-                          background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                          background: selectedGradient,
                           WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                           WebkitMaskComposite: 'xor',
                           maskComposite: 'exclude'
@@ -268,7 +286,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                         className="absolute inset-0 rounded-lg pointer-events-none"
                         style={{
                           padding: '1px',
-                          background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                          background: selectedGradient,
                           WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                           WebkitMaskComposite: 'xor',
                           maskComposite: 'exclude'
