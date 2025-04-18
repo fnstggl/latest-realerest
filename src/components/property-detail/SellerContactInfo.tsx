@@ -38,6 +38,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   }
   
   const isPending = waitlistStatus === 'pending';
+  const displayName = name || 'Property Owner';
   
   return (
     <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mb-4">
@@ -49,7 +50,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform"
         >
           <User size={16} className="mr-2 text-black" />
-          <span className="text-black">{name}</span>
+          <span className="text-black">{displayName}</span>
           <span className="text-sm text-gray-500 ml-2">(View listings)</span>
           
           {/* Gradient border on hover */}
@@ -72,7 +73,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
         {/* Always show contact information section, but vary content based on waitlist status */}
         {isPending ? (
           <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
-            <Clock size={16} className="mr-2 text-amber-500" />
+            <Clock size={16} className="mr-2 text-black" />
             <span className="text-gray-600">Contact details will be available once your waitlist request is approved</span>
           </div>
         ) : (
@@ -168,7 +169,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
             disabled
             className="w-full mt-2 text-gray-500 font-bold py-2 rounded-xl backdrop-blur-lg bg-white/50"
           >
-            <Clock size={18} className="mr-2" />
+            <Clock size={18} className="mr-2 text-black" />
             <span>Messaging Available After Approval</span>
           </Button>
         )}

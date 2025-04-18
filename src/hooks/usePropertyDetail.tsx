@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -57,7 +58,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
         
         console.log("Waitlist data returned:", data);
         
-        if (data) {
+        if (data && typeof data === 'object' && 'status' in data) {
           const status = data.status;
           setWaitlistStatus(status);
           
@@ -162,11 +163,20 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
               } else if (userData) {
                 console.log("Found user email from auth:", userData);
                 sellerEmail = userData;
+                
+                // Extract name from email for better display
+                const emailParts = userData.split('@');
+                if (emailParts.length > 0) {
+                  // Convert something like "john.doe" to "John Doe"
+                  sellerName = emailParts[0]
+                    .replace(/\./g, ' ')
+                    .replace(/\b\w/g, l => l.toUpperCase());
+                }
               }
               
               if (user && user.id === propertyData.user_id) {
                 console.log("Property owner is the current user, using their info");
-                sellerName = user.name || 'Property Owner';
+                sellerName = user.name || sellerName;
                 sellerEmail = user.email || sellerEmail;
               }
             }
