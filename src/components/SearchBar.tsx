@@ -26,7 +26,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
           placeholder="Search by city, address, or zip code..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-6 py-4 text-lg glass-input text-foreground focus:outline-none rounded-xl bg-white/75 backdrop-blur-sm border border-white/20 transition-all duration-300 group-hover:border-transparent relative z-10"
+          className="w-full px-6 py-4 text-lg glass-input text-foreground rounded-xl bg-white/75 backdrop-blur-sm border border-white/20 transition-all duration-300 group-hover:border-transparent relative z-10 focus:outline-none focus:ring-0 focus:border-transparent focus:drop-shadow-[0_0_15px_rgba(217,70,239,0.3)]"
         />
       </div>
     </form>
