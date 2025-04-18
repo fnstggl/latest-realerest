@@ -231,7 +231,7 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
           </div>
           
           <Button 
-            className="relative bg-white text-black border border-transparent hover:bg-white transition-all rounded-lg" 
+            className="relative bg-white text-black border border-transparent hover:bg-white/90 transition-all rounded-lg" 
             disabled={saving} 
             type="submit"
           >
@@ -257,14 +257,14 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
         <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
         
         <div className="space-y-4">
-          <div className="p-4 border border-white/40 rounded-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all">
+          <div className="p-4 border border-white/40 rounded-lg transition-all">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-lg">Notification Preferences</h3>
                 <p className="text-gray-600">Manage how you receive notifications</p>
               </div>
               <Button 
-                className="border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
+                className="border border-white/40 hover:bg-gray-50" 
                 variant="outline"
                 onClick={() => setNotificationDialogOpen(true)}
               >
@@ -274,14 +274,14 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
             </div>
           </div>
           
-          <div className="p-4 border border-white/40 rounded-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] transition-all">
+          <div className="p-4 border border-white/40 rounded-lg transition-all">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-lg">Password & Security</h3>
                 <p className="text-gray-600">Update your password and security settings</p>
               </div>
               <Button 
-                className="border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
+                className="border border-white/40 hover:bg-gray-50" 
                 variant="outline"
                 onClick={() => setPasswordDialogOpen(true)}
               >
