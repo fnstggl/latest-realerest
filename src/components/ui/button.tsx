@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -69,7 +70,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                 WebkitMaskComposite: "xor",
                 maskComposite: "exclude",
-                filter: "none" // Removed box-shadow to eliminate blue glow
+                filter: "none", // Explicitly remove any glow or blur effects
+                boxShadow: "none" // Ensure no box shadow remains
               }}
             />
           </React.Fragment>
