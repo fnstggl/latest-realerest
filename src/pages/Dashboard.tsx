@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Home, User, Bell, ClipboardCheck, Plus, CreditCard } from "lucide-react";
 import { motion } from "framer-motion";
@@ -18,6 +18,7 @@ import { useProperties } from "@/hooks/useProperties";
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     user,
     logout
@@ -38,15 +39,26 @@ const Dashboard: React.FC = () => {
     setIsLoading
   } = useProperties(user?.id);
 
-  // Set active tab based on navigation state if provided
+  // Update the active tab based on URL search parameters
   useEffect(() => {
-    if (location.state?.activeTab) {
-      setActiveTab(location.state.activeTab);
-      // Clear the state to avoid persisting it
-      window.history.replaceState({}, document.title);
+    const tab = searchParams.get('tab');
+    if (tab) {
+      setActiveTab(tab);
     }
-  }, [location.state]);
+    
+    // Property ID can be used by the waitlist tab to filter
+    const propertyId = searchParams.get('propertyId');
+    if (propertyId && tab === 'waitlist') {
+      // You can pass this to the WaitlistTab component if needed
+    }
+  }, [searchParams]);
   
+  // Handle tab changes
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value });
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -78,7 +90,7 @@ const Dashboard: React.FC = () => {
             </Button>
           </div>
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-8">
             <TabsList className="bg-white border border-gray-200 shadow-sm">
               <TabsTrigger value="properties" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
                 <Home size={18} className="mr-2" />
@@ -169,11 +181,24 @@ const Dashboard: React.FC = () => {
             </TabsList>
             
             <TabsContent value="properties" className="space-y-6">
-              <PropertiesTab myProperties={myProperties} setMyProperties={setMyProperties} waitlistUsers={waitlistUsers} showAddForm={showAddForm} setShowAddForm={setShowAddForm} isLoading={isLoading} setIsLoading={setIsLoading} user={user} />
+              <PropertiesTab 
+                myProperties={myProperties} 
+                setMyProperties={setMyProperties} 
+                waitlistUsers={waitlistUsers} 
+                showAddForm={showAddForm} 
+                setShowAddForm={setShowAddForm} 
+                isLoading={isLoading} 
+                setIsLoading={setIsLoading} 
+                user={user} 
+              />
             </TabsContent>
             
             <TabsContent value="waitlist" className="space-y-6">
-              <WaitlistTab waitlistUsers={waitlistUsers} setWaitlistUsers={setWaitlistUsers} />
+              <WaitlistTab 
+                waitlistUsers={waitlistUsers} 
+                setWaitlistUsers={setWaitlistUsers} 
+                propertyFilter={searchParams.get('propertyId')} 
+              />
             </TabsContent>
             
             <TabsContent value="offers" className="space-y-6">

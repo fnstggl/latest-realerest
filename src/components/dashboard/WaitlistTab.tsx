@@ -1,74 +1,31 @@
-
-import React, { useCallback } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ClipboardCheck, Check, X, MessageCircle } from "lucide-react";
-import { toast } from "sonner";
+import { Check, Clock, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Link, useNavigate } from "react-router-dom";
-import { useMessages } from "@/hooks/useMessages";
-
-interface WaitlistUser {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  propertyId: string;
-  property?: {
-    title: string;
-  };
-  status: "pending" | "accepted" | "declined";
-  createdAt: string; // Added for sorting
-}
+import { toast } from "sonner";
+import { WaitlistUser } from "@/hooks/useProperties";
 
 interface WaitlistTabProps {
   waitlistUsers: WaitlistUser[];
   setWaitlistUsers: React.Dispatch<React.SetStateAction<WaitlistUser[]>>;
+  propertyFilter?: string | null;
 }
 
-const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUsers }) => {
-  const navigate = useNavigate();
-  const { getOrCreateConversation } = useMessages();
+const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUsers, propertyFilter }) => {
+  const [isLoading, setIsLoading] = useState(false);
   
-  const handleMessageClick = async (userId: string) => {
-    try {
-      // First get the user's actual user_id from the waitlist request
-      const { data: userData, error: userError } = await supabase
-        .from('waitlist_requests')
-        .select('user_id')
-        .eq('id', userId)
-        .single();
-        
-      if (userError) {
-        console.error("Error fetching user data:", userError);
-        toast.error("Could not find this user's details");
-        return;
-      }
-      
-      if (!userData?.user_id) {
-        toast.error("Could not find user information");
-        return;
-      }
-      
-      // Create or get existing conversation
-      const conversationId = await getOrCreateConversation(userData.user_id);
-      
-      if (conversationId) {
-        // Navigate to the specific conversation
-        navigate(`/messages/${conversationId}`);
-      } else {
-        toast.error("Could not create conversation with this user");
-      }
-    } catch (error) {
-      console.error("Error starting conversation:", error);
-      toast.error("Failed to start conversation");
-    }
-  };
+  // Filter waitlist users if propertyFilter is provided
+  const filteredUsers = propertyFilter 
+    ? waitlistUsers.filter(user => user.propertyId === propertyFilter)
+    : waitlistUsers;
 
-  const handleUpdateWaitlistStatus = async (userId: string, newStatus: "accepted" | "declined", propertyId: string, propertyTitle: string, requesterName: string, userEmail: string) => {
+  const handleStatusChange = async (userId: string, status: "accepted" | "declined") => {
     try {
+      setIsLoading(true);
+      
       const { error } = await supabase
         .from('waitlist_requests')
-        .update({ status: newStatus })
+        .update({ status })
         .eq('id', userId);
         
       if (error) {
@@ -77,193 +34,112 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
         return;
       }
       
-      // Update UI
-      const updatedUsers = waitlistUsers.map(user => 
-        user.id === userId ? { ...user, status: newStatus } : user
+      // Update UI without a page refresh
+      setWaitlistUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === userId ? { ...user, status } : user
+        )
       );
       
-      setWaitlistUsers(updatedUsers);
-      
-      // Send notification to the user about their waitlist status
-      try {
-        // First get the user's actual user_id from the waitlist request
-        const { data: userData, error: userError } = await supabase
-          .from('waitlist_requests')
-          .select('user_id')
-          .eq('id', userId)
-          .single();
-          
-        if (userError) {
-          console.error("Error fetching user data:", userError);
-          throw userError;
-        }
-        
-        // Create notification with appropriate message based on status
-        const notificationTitle = newStatus === "accepted" ? 
-          "Waitlist Request Approved!" : 
-          "Waitlist Request Declined";
-          
-        const notificationMessage = newStatus === "accepted" ? 
-          `Great news! Your waitlist request for ${propertyTitle} has been approved. You can now view the full property details.` : 
-          `Unfortunately, your waitlist request for ${propertyTitle} has been declined.`;
-          
-        await supabase
-          .from('notifications')
-          .insert({
-            user_id: userData.user_id,
-            title: notificationTitle,
-            message: notificationMessage,
-            type: newStatus === "accepted" ? "success" : "error",
-            properties: {
-              propertyId,
-              propertyTitle,
-              status: newStatus
-            },
-            read: false
-          });
-          
-      } catch (error) {
-        console.error("Error sending notification to user:", error);
-      }
-      
-      if (newStatus === "accepted") {
-        toast.success(`${requesterName} accepted to waitlist! A notification has been sent to ${userEmail}.`);
-      } else {
-        toast.success(`${requesterName} declined from waitlist. A notification has been sent to ${userEmail}.`);
-      }
+      toast.success(`Request ${status === "accepted" ? "approved" : "declined"}`);
     } catch (error) {
-      console.error("Error updating waitlist status:", error);
-      toast.error("Failed to update status");
+      console.error("Exception updating waitlist status:", error);
+      toast.error("Failed to update waitlist status");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Sort waitlist users by created_at in descending order (newest first)
-  const sortedWaitlistUsers = [...waitlistUsers].sort((a, b) => {
-    const dateA = new Date(a.createdAt || 0).getTime();
-    const dateB = new Date(b.createdAt || 0).getTime();
-    return dateB - dateA; // Descending order (newest first)
-  });
-
   return (
-    <>
-      {sortedWaitlistUsers.length > 0 ? (
-        <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg overflow-hidden">
-          <div className="border-b border-white/20 p-4 bg-white/30">
-            <h2 className="text-xl font-bold">Waitlist Requests</h2>
+    <div className="space-y-4">
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <h2 className="text-xl font-bold mb-4">Waitlist Requests</h2>
+        
+        {propertyFilter && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg text-blue-800 border border-blue-200">
+            <p className="font-medium">Filtered by property ID: {propertyFilter}</p>
           </div>
-          
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/20 bg-white/10">
-                <th className="text-left p-4 font-bold">Name</th>
-                <th className="text-left p-4 font-bold">Contact</th>
-                <th className="text-left p-4 font-bold">Property</th>
-                <th className="text-left p-4 font-bold">Status</th>
-                <th className="text-left p-4 font-bold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedWaitlistUsers.map((user) => (
-                <tr key={user.id} className="border-b border-white/10 hover:bg-white/20 transition-colors">
-                  <td className="p-4 font-bold">{user.name}</td>
-                  <td className="p-4">
-                    <div>{user.email}</div>
-                    <div>{user.phone}</div>
-                    <div className="mt-2">
-                      <Button 
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleMessageClick(user.id)}
-                        className="hover:bg-white/20 text-black font-bold px-0"
-                      >
-                        <MessageCircle size={16} className="mr-1" />
-                        Message buyer
-                      </Button>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <Link 
-                      to={`/property/${user.propertyId}`}
-                      className="text-[#0892D0] hover:underline"
-                    >
-                      {user.property?.title || 'Unknown Property'}
-                    </Link>
-                  </td>
-                  <td className="p-4">
-                    <span className={`relative inline-flex px-3 py-1 rounded-md font-bold ${
-                      user.status === 'accepted' ? 'bg-white text-black' : 
-                      user.status === 'declined' ? 'bg-red-100 text-red-800' : 
-                      'bg-white border border-black text-black'
-                    }`}>
-                      {user.status.toUpperCase()}
-                      {user.status === 'accepted' && (
-                        <span 
-                          className="absolute inset-0 rounded-md pointer-events-none"
-                          style={{
-                            background: "transparent",
-                            border: "2px solid transparent",
-                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                            backgroundOrigin: "border-box",
-                            backgroundClip: "border-box",
-                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude"
-                          }}
-                        />
-                      )}
+        )}
+        
+        {filteredUsers.length === 0 ? (
+          <div className="text-center py-8">
+            <Clock className="mx-auto text-gray-400 mb-2" size={32} />
+            <p className="text-gray-500">No waitlist requests found.</p>
+            {propertyFilter && (
+              <Button 
+                variant="outline" 
+                className="mt-4"
+                onClick={() => window.location.href = '/dashboard?tab=waitlist'}
+              >
+                View all requests
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {filteredUsers.map((user) => (
+              <div
+                key={user.id}
+                className="border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between bg-white"
+              >
+                <div className="mb-4 md:mb-0">
+                  <h3 className="font-bold text-lg">{user.name}</h3>
+                  <p className="text-gray-600">{user.email}</p>
+                  {user.phone && (
+                    <p className="text-gray-600">{user.phone}</p>
+                  )}
+                  <div className="mt-2">
+                    <span className="text-sm text-gray-500">
+                      Interested in:{" "}
+                      <span className="font-medium text-black">
+                        {user.property?.title || "Unknown Property"}
+                      </span>
                     </span>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex gap-2">
-                      {user.status === 'pending' && (
-                        <>
-                          <Button 
-                            size="sm" 
-                            className="bg-white text-[#0892D0] hover:text-white hover:bg-[#0892D0] border border-white/40 hover:border-[#0892D0] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
-                            onClick={() => handleUpdateWaitlistStatus(
-                              user.id, 
-                              'accepted', 
-                              user.propertyId, 
-                              user.property?.title || 'Property', 
-                              user.name,
-                              user.email
-                            )}
-                          >
-                            <Check size={16} className="mr-1" />
-                            <span className="font-extrabold">Accept</span>
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            className="bg-white text-[#FF5C00] hover:text-white hover:bg-[#FF5C00] border border-white/40 hover:border-[#FF5C00] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(255,92,0,0.5)]"
-                            onClick={() => handleUpdateWaitlistStatus(
-                              user.id, 
-                              'declined', 
-                              user.propertyId, 
-                              user.property?.title || 'Property', 
-                              user.name,
-                              user.email
-                            )}
-                          >
-                            <X size={16} className="mr-1" />
-                            <span className="font-extrabold">Decline</span>
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-12 text-center shadow-lg">
-          <ClipboardCheck size={48} className="mx-auto mb-4 text-gray-400" />
-          <h3 className="text-2xl font-bold mb-4">No Waitlist Requests</h3>
-          <p>You don't have any waitlist requests for your properties yet.</p>
-        </div>
-      )}
-    </>
+                  </div>
+                  <div className="mt-1">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      user.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : user.status === "accepted"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}>
+                      {user.status === "pending" && <Clock size={12} className="mr-1" />}
+                      {user.status === "accepted" && <Check size={12} className="mr-1" />}
+                      {user.status === "declined" && <X size={12} className="mr-1" />}
+                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                
+                {user.status === "pending" && (
+                  <div className="space-x-2 flex">
+                    <Button
+                      variant="outline"
+                      className="border-green-500 text-green-600 hover:bg-green-50"
+                      disabled={isLoading}
+                      onClick={() => handleStatusChange(user.id, "accepted")}
+                    >
+                      <Check size={16} className="mr-1" />
+                      Approve
+                    </Button>
+                    <Button
+                      variant="outline" 
+                      className="border-red-500 text-red-600 hover:bg-red-50"
+                      disabled={isLoading}
+                      onClick={() => handleStatusChange(user.id, "declined")}
+                    >
+                      <X size={16} className="mr-1" />
+                      Decline
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

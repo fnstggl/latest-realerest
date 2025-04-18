@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -24,7 +25,7 @@ interface PropertiesTabProps {
   showAddForm: boolean;
   setShowAddForm: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
-  setIsLoading: React.SetStateAction<boolean>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   user: any;
 }
 const PropertiesTab: React.FC<PropertiesTabProps> = ({
@@ -166,10 +167,10 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                   </div>
                   <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
                     <Link 
-                      to={{
-                        pathname: "/dashboard",
-                        search: "?tab=waitlist",
-                        state: { activeTab: 'waitlist', propertyId: property.id }
+                      to={`/dashboard?tab=waitlist&propertyId=${property.id}`}
+                      onClick={(e) => {
+                        // Handle setting the active tab via URL parameters instead of state
+                        // The parent Dashboard component will use URL parameters to set the active tab
                       }}
                     >
                       Manage Waitlist
