@@ -1,13 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
 interface FiltersProps {
   onFilterChange: (filters: FilterState) => void;
 }
-
 interface FilterState {
   propertyType: string;
   priceRange: [number, number];
@@ -15,7 +12,6 @@ interface FilterState {
   bathrooms: string;
   belowMarket: number;
 }
-
 const PropertyFilters: React.FC<FiltersProps> = ({
   onFilterChange
 }) => {
@@ -26,7 +22,6 @@ const PropertyFilters: React.FC<FiltersProps> = ({
     bathrooms: "any",
     belowMarket: 0
   });
-
   const handleFilterChange = (key: keyof FilterState, value: any) => {
     const newFilters = {
       ...filters,
@@ -35,7 +30,6 @@ const PropertyFilters: React.FC<FiltersProps> = ({
     setFilters(newFilters);
     onFilterChange(newFilters);
   };
-
   return <div className="bg-white p-6 neo-container">
       <div className="space-y-6">
         <div>
@@ -119,9 +113,8 @@ const PropertyFilters: React.FC<FiltersProps> = ({
           bathrooms: "any",
           belowMarket: 0
         });
-      }} variant="link" className="w-full neo-button-primary text-white">Reset Filters</Button>
+      }} variant="link" className="w-full neo-button-primary text-black">Reset Filters</Button>
       </div>
     </div>;
 };
-
 export default PropertyFilters;
