@@ -108,12 +108,16 @@ const SignIn: React.FC = () => {
                 {isLoading ? "Signing In..." : "Sign In"}
               </Button>
               <span 
-                className="absolute inset-0 rounded-lg" 
+                className="absolute inset-0 rounded-lg pointer-events-none" 
                 style={{
                   background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
                   padding: "1.5px",
                   content: "''",
                   zIndex: 0,
+                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
                 }}
               />
             </div>
