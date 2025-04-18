@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { toast } from "sonner";
+
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,20 +51,25 @@ const SignIn: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   return <div className="flex min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <div className="w-full p-4 sm:p-6 md:p-8 flex flex-col">
-        <Button variant="glass" className="w-fit mb-4 sm:mb-6 md:mb-8 property-card-glow" onClick={() => navigate('/')}>
+        <Button 
+          variant="glass" 
+          className="w-fit mb-4 sm:mb-6 md:mb-8" 
+          onClick={() => navigate('/')}
+        >
           <ArrowLeft className="mr-1 sm:mr-2" size={16} />
           <span className="text-sm sm:text-base">Back</span>
         </Button>
         
-        <div className="mx-auto w-full max-w-md glass-card backdrop-blur-lg border border-white/30 p-4 sm:p-6 md:p-8 rounded-xl shadow-lg property-card-glow">
+        <div className="mx-auto w-full max-w-md bg-white/75 backdrop-blur-lg border border-white/30 p-4 sm:p-6 md:p-8 rounded-xl shadow-lg">
           <div className="mb-4 sm:mb-6 md:mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 text-black">Welcome Back</h1>
             <p className="text-gray-600 text-sm sm:text-base">Sign in to continue to Realer Estate.</p>
           </div>
         
-          {loginError && <Alert variant="destructive" className="mb-4 sm:mb-6 glass backdrop-blur-md">
+          {loginError && <Alert variant="destructive" className="mb-4 sm:mb-6 bg-white/75 backdrop-blur-md">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription className="text-xs sm:text-sm">{loginError}</AlertDescription>
             </Alert>}
@@ -72,21 +77,52 @@ const SignIn: React.FC = () => {
           <form onSubmit={handleSignIn} className="space-y-4 sm:space-y-6">
             <div>
               <Label htmlFor="email" className="font-bold text-black text-sm sm:text-base">Email</Label>
-              <Input type="email" id="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 sm:mt-2 glass-input text-sm sm:text-base" />
+              <Input 
+                type="email" 
+                id="email" 
+                placeholder="Enter your email" 
+                value={email} 
+                onChange={e => setEmail(e.target.value)} 
+                required 
+                className="mt-1 sm:mt-2 bg-white border-gray-200 focus:border-gray-300 focus:ring-0 text-sm sm:text-base" 
+              />
             </div>
             <div>
               <Label htmlFor="password" className="font-bold text-black text-sm sm:text-base">Password</Label>
-              <Input type="password" id="password" placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 sm:mt-2 glass-input text-sm sm:text-base" />
+              <Input 
+                type="password" 
+                id="password" 
+                placeholder="Enter your password" 
+                value={password} 
+                onChange={e => setPassword(e.target.value)} 
+                required 
+                className="mt-1 sm:mt-2 bg-white border-gray-200 focus:border-gray-300 focus:ring-0 text-sm sm:text-base" 
+              />
             </div>
-            <Button type="submit" disabled={isLoading} className="w-full property-card-glow glass-button-primary font-bold text-white text-sm sm:text-base py-2">
-              {isLoading ? "Signing In..." : "Sign In"}
-            </Button>
+            <div className="relative">
+              <Button 
+                type="submit" 
+                disabled={isLoading} 
+                className="w-full bg-white text-black font-bold text-sm sm:text-base py-2 relative z-10"
+              >
+                {isLoading ? "Signing In..." : "Sign In"}
+              </Button>
+              <span className="absolute inset-0 rounded-lg pointer-events-none" 
+                    style={{
+                      background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                      padding: "1.5px",
+                      content: "''",
+                      zIndex: 0,
+                    }}
+              />
+            </div>
             <p className="text-xs sm:text-sm text-gray-600 text-center">
-              Don't have an account? <Link to="/signup" className="text-black font-bold hover:underline rainbow-text">Sign Up</Link>
+              Don't have an account? <Link to="/signup" className="text-black font-bold">Sign Up</Link>
             </p>
           </form>
         </div>
       </div>
     </div>;
 };
+
 export default SignIn;
