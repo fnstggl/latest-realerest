@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -150,15 +149,17 @@ const PropertyDetail: React.FC = () => {
               showFullAddress={isOwner || isApproved} 
               onShowAddressClick={handleAddressClick} 
             />
-            
-            {/* Show Seller Contact Info first for better visibility */}
-            <SellerContactInfo 
-              name={property?.sellerName} 
-              phone={property?.sellerPhone} 
-              email={property?.sellerEmail} 
-              showContact={shouldShowSellerInfo} 
-              sellerId={property?.sellerId} 
-            />
+
+            {/* Show Seller Contact Info */}
+            {property && (
+              <SellerContactInfo 
+                name={property.sellerName} 
+                phone={property.sellerPhone} 
+                email={property.sellerEmail} 
+                showContact={shouldShowSellerInfo} 
+                sellerId={property.sellerId}
+              />
+            )}
             
             {isOwner ? (
               <Link to={`/property/${property?.id}/edit`} className="w-full">

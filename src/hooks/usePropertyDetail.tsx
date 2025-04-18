@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,14 +47,10 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           .select('status')
           .eq('property_id', propertyId)
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
           
         if (error) {
-          if (error.code !== 'PGRST116') { // No rows returned (not in waitlist)
-            console.error("Error checking waitlist status:", error);
-          } else {
-            console.log("User is not on waitlist for this property");
-          }
+          console.error("Error checking waitlist status:", error);
           return;
         }
         
@@ -84,7 +79,15 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
         (payload) => {
           console.log("Waitlist status changed:", payload);
           if (payload.new) {
-            setIsApproved(payload.new.status === 'accepted');
+            const isUserApproved = payload.new.status === 'accepted';
+            setIsApproved(isUserApproved);
+            if (isUserApproved) {
+              toast.success("Your waitlist request has been approved!");
+              // Refresh the page to update UI with seller contact info
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+            }
           }
         }
       )
