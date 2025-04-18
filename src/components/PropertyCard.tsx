@@ -69,9 +69,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             {address || location.split(',')[0]}
           </h3>
           
-          <div className="flex items-center justify-between mb-2">
+          <div className="mb-2">
             <div className="text-xl font-bold">{formatCurrency(price)}</div>
-            <div className="text-muted-foreground line-through">{formatCurrency(marketPrice)}</div>
+            <div className="text-muted-foreground text-sm line-through">Avg. Market Price: {formatCurrency(marketPrice)}</div>
           </div>
           
           <div className="flex items-center text-foreground/70 mb-4">
