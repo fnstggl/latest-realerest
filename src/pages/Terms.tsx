@@ -1,8 +1,10 @@
+
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 const Terms: React.FC = () => {
   return <div className="min-h-screen bg-white">
       <Navbar />
@@ -35,7 +37,7 @@ const Terms: React.FC = () => {
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">2. Definitions</h2>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    <li className=""><strong>"Company", "We", "Us", "Our"</strong> refers to DoneDeal.</li>
+                    <li className=""><strong>"Company", "We", "Us", "Our"</strong> refers to Realer Estate.</li>
                     <li><strong>"Platform"</strong> refers to our website, mobile applications, and services.</li>
                     <li><strong>"User", "You", "Your"</strong> refers to individuals who access or use our Platform.</li>
                     <li><strong>"Buyer"</strong> refers to Users seeking to purchase properties.</li>
