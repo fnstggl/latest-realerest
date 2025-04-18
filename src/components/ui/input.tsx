@@ -15,7 +15,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           ref={ref}
           {...props}
         />
-        <span className="absolute inset-[-2px] rounded-lg opacity-0 peer-focus:opacity-100 transition-opacity duration-300 pointer-events-none" style={{
+        <span className="absolute inset-0 rounded-md opacity-0 peer-focus:opacity-100 transition-opacity duration-300 pointer-events-none" style={{
           background: "transparent",
           border: "2px solid transparent",
           backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",

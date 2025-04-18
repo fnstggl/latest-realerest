@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -20,21 +21,9 @@ const AddressSection: React.FC<AddressSectionProps> = ({
         field
       }) => <FormItem>
               <FormLabel className="text-black font-bold">Full Property Address</FormLabel>
-              <div className="relative">
-                <FormControl>
-                  <Input placeholder="e.g. 123 Main St" className="h-12 rounded-xl border-black/10 focus:border-transparent transition-all duration-300" {...field} />
-                </FormControl>
-                <span className="absolute inset-0 rounded-xl opacity-0 peer-focus:opacity-100 pointer-events-none transition-opacity" style={{
-            background: "transparent",
-            border: "2px solid transparent",
-            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-            backgroundOrigin: "border-box",
-            backgroundClip: "border-box",
-            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude"
-          }} />
-              </div>
+              <FormControl>
+                <Input placeholder="e.g. 123 Main St" className="h-12 rounded-xl border-black/10" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>} />
       </div>
@@ -96,21 +85,9 @@ const AddressSection: React.FC<AddressSectionProps> = ({
         field
       }) => <FormItem className="mt-6">
               <FormLabel className="text-black font-bold">Description</FormLabel>
-              <div className="relative">
-                <FormControl>
-                  <Textarea placeholder="Describe your property..." className="min-h-[120px] rounded-xl border-black/10 focus:border-transparent transition-all duration-300" {...field} />
-                </FormControl>
-                <span className="absolute inset-0 rounded-xl opacity-0 peer-focus:opacity-100 pointer-events-none transition-opacity" style={{
-            background: "transparent",
-            border: "2px solid transparent",
-            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-            backgroundOrigin: "border-box",
-            backgroundClip: "border-box",
-            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude"
-          }} />
-              </div>
+              <FormControl>
+                <Textarea placeholder="Describe your property..." className="min-h-[120px] rounded-xl border-black/10" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>} />
       </div>
