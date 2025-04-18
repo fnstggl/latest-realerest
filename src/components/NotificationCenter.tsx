@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -104,7 +103,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
         <Button 
           variant="ghost" 
           size="icon"
-          className="relative"
+          className="relative hover:bg-transparent"  // Remove hover background
         >
           <Bell size={20} className="text-black" />
           {unreadCount > 0 && showIndicator && (

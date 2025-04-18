@@ -13,7 +13,7 @@ const ChatIcon: React.FC = () => {
     <Button 
       variant="ghost" 
       size="icon"
-      className="relative"
+      className="relative hover:bg-transparent"  // Remove hover background
       onClick={() => navigate('/messages')}
     >
       <MessageSquare size={20} className="text-black" />

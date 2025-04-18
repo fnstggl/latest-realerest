@@ -137,8 +137,8 @@ const Navbar: React.FC = () => {
               <ChatIcon />
               
               <Button 
-                variant="glass" 
-                className="p-1 sm:p-2 glass text-xs sm:text-base relative text-foreground border-transparent hover:bg-white/10" 
+                variant="ghost" 
+                className="p-1 sm:p-2 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent"
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={isMobile ? 14 : 20} className="mr-1 sm:mr-2" />
