@@ -19,17 +19,13 @@ function GradientText({
   return (
     <motion.div
       className={cn(
-        "relative inline-flex overflow-hidden",
-        className,
+        "relative inline-block",
+        className
       )}
       {...props}
     >
-      {children}
-      <span className="pointer-events-none absolute inset-0">
-        <span className="pointer-events-none absolute -top-1/2 h-[30vw] w-[30vw] animate-gradient-1 bg-[#3C79F5] mix-blend-overlay blur-[1rem]"></span>
-        <span className="pointer-events-none absolute right-0 top-0 h-[30vw] w-[30vw] animate-gradient-2 bg-[#6C42F5] mix-blend-overlay blur-[1rem]"></span>
-        <span className="pointer-events-none absolute bottom-0 left-0 h-[30vw] w-[30vw] animate-gradient-3 bg-[#D946EF] mix-blend-overlay blur-[1rem]"></span>
-        <span className="pointer-events-none absolute -bottom-1/2 right-0 h-[30vw] w-[30vw] animate-gradient-4 bg-[#FF3CAC] mix-blend-overlay blur-[1rem]"></span>
+      <span className="bg-gradient-to-r from-[#0892D0] via-[#3C79F5] via-[#6C42F5] via-[#D946EF] via-[#FF5C00] to-[#FF3CAC] bg-clip-text text-transparent bg-[length:200%] animate-gradient-text">
+        {children}
       </span>
     </motion.div>
   );

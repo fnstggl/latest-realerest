@@ -150,6 +150,14 @@ export default {
 					'0%, 100%': { transform: 'translate(0%, 0%) rotate(0deg)' },
 					'50%': { transform: 'translate(-20%, -20%) rotate(-180deg)' },
 				},
+				'gradient-text': {
+					'0%, 100%': {
+						'background-position': '0% 50%'
+					},
+					'50%': {
+						'background-position': '100% 50%'
+					},
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -161,6 +169,7 @@ export default {
 				'gradient-2': 'gradient-2 15s ease infinite',
 				'gradient-3': 'gradient-3 15s ease infinite',
 				'gradient-4': 'gradient-4 15s ease infinite',
+				'gradient-text': 'gradient-text 8s ease infinite',
 			},
 			backgroundImage: {
 				'gradient-purple': 'linear-gradient(135deg, #8B5CF6 0%, #7E69AB 100%)',
