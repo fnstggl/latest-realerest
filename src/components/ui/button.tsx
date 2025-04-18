@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -20,7 +19,7 @@ const buttonVariants = cva(
         glass: "bg-white border border-gray-200 rounded-lg hover:bg-white text-black shadow-sm transition-all",
         navy: "bg-[#0892D0] text-white rounded-lg hover:bg-[#077fb4] shadow-sm transition-all",
         red: "bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-sm transition-all",
-        translucent: "bg-white border border-transparent text-black hover:bg-white transition-all shadow-sm relative overflow-hidden group",
+        translucent: "bg-white border-transparent text-black hover:bg-white transition-all shadow-sm relative overflow-hidden group rounded-full", // Updated to rounded-full and removed border
         gradient: "bg-white hover:bg-white relative group overflow-hidden border border-transparent rounded-lg",
         apple: "bg-white hover:bg-white relative group overflow-hidden border border-transparent rounded-lg",
       },
@@ -57,7 +56,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         >
           {props.children}
           <span 
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
             style={{
               background: "transparent",
               border: "2px solid transparent",
