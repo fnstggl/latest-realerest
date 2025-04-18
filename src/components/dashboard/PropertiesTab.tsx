@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -25,7 +24,7 @@ interface PropertiesTabProps {
   showAddForm: boolean;
   setShowAddForm: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoading: React.SetStateAction<boolean>;
   user: any;
 }
 const PropertiesTab: React.FC<PropertiesTabProps> = ({
@@ -166,7 +165,13 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                   </div>
                   <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
-                    <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
+                    <Link 
+                      to={{
+                        pathname: "/dashboard",
+                        search: "?tab=waitlist",
+                        state: { activeTab: 'waitlist', propertyId: property.id }
+                      }}
+                    >
                       Manage Waitlist
                       <span 
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
