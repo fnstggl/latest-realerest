@@ -85,6 +85,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
 
   const createNotifications = async (propertyOwnerId: string, propertyTitle: string) => {
     try {
+      // Create notification for property owner
       await supabase
         .from('notifications')
         .insert({
@@ -101,6 +102,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           read: false
         });
       
+      // Create notification for the user who requested to join (database only, no toast)
       await supabase
         .from('notifications')
         .insert({
@@ -115,13 +117,13 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           read: false
         });
       
+      // Only add this notification once to the UI context system
       addNotification(
         'Waitlist Request Submitted',
         `You've successfully joined the waitlist for: ${propertyTitle}`,
         'success'
       );
       
-      console.log('Notifications created for both parties');
     } catch (error) {
       console.error('Error creating notifications:', error);
     }
@@ -173,9 +175,12 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           throw new Error("Failed to join waitlist");
         }
       } else {
+        // Create notifications only once
         await createNotifications(propertyOwnerId, propertyTitle);
         
         setWaitlistStatus('pending');
+        
+        // Use only one toast notification
         toast.success("Successfully joined the waitlist!");
       }
     } catch (error) {
