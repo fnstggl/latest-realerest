@@ -20,14 +20,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         <span className="absolute inset-0 rounded-[12px] opacity-0 peer-focus-visible:opacity-100 transition-opacity duration-300 pointer-events-none" style={{
           background: "transparent",
           border: "2px solid transparent",
-          borderRadius: "inherit",
-          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-          backgroundOrigin: "border-box",
-          backgroundClip: "padding-box, border-box",
-          WebkitMask: 
-            "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-          WebkitMaskComposite: "xor",
-          maskComposite: "exclude"
+          borderImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%) 1",
+          boxShadow: "0 0 5px rgba(212, 70, 239, 0.5)"
         }} />
       </div>
     )
