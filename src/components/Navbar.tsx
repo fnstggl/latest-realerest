@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -139,12 +138,12 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="ghost" 
-                className="p-1 sm:p-2 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent hover:text-inherit cursor-default"
+                className="p-1 sm:p-2 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent cursor-pointer"
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={isMobile ? 14 : 20} className="mr-1 sm:mr-2" />
                 <span className="font-bold text-xs sm:text-sm">{user?.name || 'Account'}</span>
-                
+              
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-[#0892D0] text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-[10px] sm:text-xs">
                     {unreadCount}
