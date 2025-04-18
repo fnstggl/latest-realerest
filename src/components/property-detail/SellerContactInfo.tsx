@@ -3,7 +3,6 @@ import React from 'react';
 import { Phone, Mail, User, MessageSquare, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { toast } from 'sonner';
 
 interface SellerContactInfoProps {
   name?: string;
@@ -49,8 +48,8 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           to={`/search?seller=${sellerId}`} 
           className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform"
         >
-          <User size={16} className="mr-2 text-[#0892D0]" />
-          <span className="text-black">{name || 'Property Owner'}</span>
+          <User size={16} className="mr-2 text-black" />
+          <span className="text-black">{name}</span>
           <span className="text-sm text-gray-500 ml-2">(View listings)</span>
           
           {/* Gradient border on hover */}
@@ -70,7 +69,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           />
         </Link>
         
-        {/* Show contact information based on waitlist status */}
+        {/* Always show contact information section, but vary content based on waitlist status */}
         {isPending ? (
           <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
             <Clock size={16} className="mr-2 text-amber-500" />
@@ -80,7 +79,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           <>
             {email && (
               <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
-                <Mail size={16} className="mr-2 text-[#0892D0]" />
+                <Mail size={16} className="mr-2 text-black" />
                 <a href={`mailto:${email}`} className="text-black hover:underline">{email}</a>
                 
                 {/* Gradient border on hover */}
@@ -103,7 +102,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
             
             {phone && (
               <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
-                <Phone size={16} className="mr-2 text-[#0892D0]" />
+                <Phone size={16} className="mr-2 text-black" />
                 <a href={`tel:${phone}`} className="text-black hover:underline">{phone}</a>
                 
                 {/* Gradient border on hover */}

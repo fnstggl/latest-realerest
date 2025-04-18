@@ -57,19 +57,20 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
         
         console.log("Waitlist data returned:", data);
         
-        if (data && data.status) {
-          // Make TypeScript happy by checking if status exists on data
-          const status = data.status as string;
+        if (data) {
+          const status = data.status;
           setWaitlistStatus(status);
           
           const isUserApproved = status === 'accepted';
           setIsApproved(isUserApproved);
           console.log(`User waitlist status: ${status}, isApproved set to: ${isUserApproved}`);
         } else {
-          console.log("No waitlist data found or status is null");
+          console.log("No waitlist data found");
+          setWaitlistStatus(null);
+          setIsApproved(false);
         }
       } catch (error) {
-        console.error("Exception checking waitlist approval:", error);
+        console.error("Exception checking waitlist status:", error);
       }
     };
     
@@ -257,7 +258,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
   }, [propertyId, user]);
 
   // Calculate if user should see seller information
-  // IMPORTANT: Show seller info if user is owner OR if they're in the waitlist
+  // IMPORTANT: Show seller info if user is owner OR if they're in the waitlist (pending or approved)
   const shouldShowSellerInfo = isOwner || isApproved || waitlistStatus === 'pending';
   
   // Debug logs to identify issues
