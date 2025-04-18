@@ -23,8 +23,8 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           backgroundOrigin: "border-box",
           backgroundClip: "padding-box, border-box",
           WebkitMask: 
-            "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0) border-box",
-          WebkitMaskComposite: "destination-out",
+            "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
           maskComposite: "exclude"
         }} />
       </div>
