@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -139,7 +138,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="glass" 
-                className="p-1 sm:p-2 glass text-xs sm:text-base relative text-foreground border border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.7)]"
+                className="p-1 sm:p-2 glass text-xs sm:text-base relative text-foreground border-transparent hover:bg-white/10" 
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={isMobile ? 14 : 20} className="mr-1 sm:mr-2" />
@@ -179,4 +178,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-
