@@ -68,4 +68,13 @@
     color: #0892D0;
     text-shadow: 0 0 10px rgba(8, 146, 208, 0.5), 0 0 20px rgba(8, 146, 208, 0.3);
   }
+
+  /* Gradient text styles for navigation */
+  .nav-text-gradient {
+    transition: background-position 0.3s ease;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-size: 200% 100%;
+  }
 }

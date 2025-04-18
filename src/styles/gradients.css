@@ -1,3 +1,4 @@
+
 @layer components {
   /* Gradient borders */
   .border-gradient-br-pink-purple-gold {
@@ -101,18 +102,58 @@
     opacity: 0.5;
   }
 
-/* Navbar gradient hover effect */
-.nav-gradient-hover {
-  background: linear-gradient(90deg, #3C79F5, #D946EF 50%, #FF3CAC);
-  background-size: 400% 100%;
-  background-position: 0% 50%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: all 0.3s ease;
-}
+  /* Navbar gradient hover effect - text only */
+  .nav-gradient-hover {
+    position: relative;
+    color: #333;
+    transition: color 0.3s ease;
+  }
 
-.nav-gradient-hover:hover {
-  background-position: 100% 50%;
-}
+  /* Default state shows normal text color */
+  .nav-gradient-hover::before {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  /* Each link gets its own segment of the gradient */
+  .nav-home:hover {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .nav-browse:hover {
+    background: linear-gradient(90deg, #6C42F5, #FF5C00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .nav-sell:hover {
+    background: linear-gradient(90deg, #FF5C00, #D946EF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .nav-about:hover {
+    background: linear-gradient(90deg, #D946EF, #FF3CAC);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .nav-contact:hover {
+    background: linear-gradient(90deg, #FF3CAC, #3C79F5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
