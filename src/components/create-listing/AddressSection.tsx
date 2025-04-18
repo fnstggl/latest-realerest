@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,6 @@ import { formSchema } from '@/components/create-listing/formSchema';
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// List of US states
 export const usStates = [
   "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
   "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
@@ -22,7 +22,7 @@ interface AddressSectionProps {
 
 const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
   return (
-    <div className="p-6 rounded-xl border border-black/10 bg-white">
+    <div className="rounded-xl border border-black/10 bg-white p-6">
       <div>
         <h2 className="text-xl font-bold mb-4">Property Address</h2>
         <FormField 
@@ -34,7 +34,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
               <FormControl>
                 <Input 
                   placeholder="e.g. 123 Main St" 
-                  className="h-12 rounded-xl" 
+                  className="h-12 rounded-xl border-black/10" 
                   {...field} 
                 />
               </FormControl>
@@ -47,7 +47,6 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
       <div>
         <h2 className="text-xl font-bold mb-4">Basic Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* City field */}
           <FormField 
             control={form.control} 
             name="city" 
@@ -57,7 +56,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                 <FormControl>
                   <Input 
                     placeholder="e.g. Portland" 
-                    className="h-12 rounded-xl" 
+                    className="h-12 rounded-xl border-black/10" 
                     {...field} 
                   />
                 </FormControl>
@@ -66,7 +65,6 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
             )}
           />
           
-          {/* State field */}
           <FormField 
             control={form.control} 
             name="state" 
@@ -78,14 +76,31 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="h-12 rounded-xl">
+                    <SelectTrigger className="h-12 rounded-xl border-black/10">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="rounded-xl max-h-[280px]">
+                  <SelectContent className="rounded-xl max-h-[280px] bg-white border border-black/10">
                     {usStates.map((state) => (
-                      <SelectItem key={state} value={state}>
+                      <SelectItem 
+                        key={state} 
+                        value={state}
+                        className="relative hover:bg-transparent focus:bg-transparent active:bg-transparent"
+                      >
                         {state}
+                        <span 
+                          className="absolute inset-0 rounded-lg opacity-0 hover:opacity-100 pointer-events-none transition-opacity"
+                          style={{
+                            background: "transparent",
+                            border: "2px solid transparent",
+                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                            backgroundOrigin: "border-box",
+                            backgroundClip: "border-box",
+                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude"
+                          }}
+                        ></span>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -95,7 +110,6 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
             )}
           />
           
-          {/* ZIP Code field */}
           <FormField 
             control={form.control} 
             name="zipCode" 
@@ -105,7 +119,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                 <FormControl>
                   <Input 
                     placeholder="e.g. 97204" 
-                    className="h-12 rounded-xl" 
+                    className="h-12 rounded-xl border-black/10" 
                     {...field} 
                   />
                 </FormControl>
@@ -115,7 +129,6 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
           />
         </div>
         
-        {/* Description textarea */}
         <FormField 
           control={form.control} 
           name="description" 
@@ -125,7 +138,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
               <FormControl>
                 <Textarea 
                   placeholder="Describe your property..." 
-                  className="min-h-[120px] rounded-xl" 
+                  className="min-h-[120px] rounded-xl border-black/10" 
                   {...field} 
                 />
               </FormControl>

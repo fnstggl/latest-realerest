@@ -14,7 +14,7 @@ interface PropertyTypeSectionProps {
 
 const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
   return (
-    <div className="p-6 rounded-xl border border-black/10 bg-white">
+    <div className="rounded-xl border border-black/10 bg-white p-6">
       <h2 className="text-xl font-bold mb-4">Property Type</h2>
       <FormField 
         control={form.control} 
@@ -27,21 +27,8 @@ const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-12 rounded-xl bg-white relative">
+                <SelectTrigger className="h-12 rounded-xl bg-white relative border-black/10">
                   <SelectValue placeholder="Select property type" />
-                  <span 
-                    className="absolute inset-0 rounded-xl pointer-events-none"
-                    style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude"
-                    }}
-                  ></span>
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="bg-white border border-black/10 rounded-xl">
