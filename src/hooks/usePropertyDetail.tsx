@@ -22,6 +22,10 @@ interface PropertyDetail {
   estimatedRehab?: number;
   belowMarket: number;
   createdAt: string;
+  sellerId?: string;
+  sellerName?: string;
+  sellerEmail?: string;
+  sellerPhone?: string;
 }
 
 interface SellerInfo {
@@ -40,7 +44,10 @@ export function usePropertyDetail(propertyId: string | undefined) {
   const [error, setError] = useState<string | null>(null);
   const [sellerInfo, setSellerInfo] = useState<SellerInfo | null>(null);
   const [showContact, setShowContact] = useState(false);
-  const [waitlistStatus, setWaitlistStatus] = useState<WaitlistStatus | null>(null);
+  const [waitlistStatus, setWaitlistStatus] = useState<'pending' | 'accepted' | 'declined' | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
+  const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
   const { user } = useAuth();
   
   const fetchProperty = useCallback(async () => {
@@ -91,10 +98,17 @@ export function usePropertyDetail(propertyId: string | undefined) {
         afterRepairValue: data.after_repair_value ? Number(data.after_repair_value) : undefined,
         estimatedRehab: data.estimated_rehab ? Number(data.estimated_rehab) : undefined,
         belowMarket: Math.round(((Number(data.market_price) - Number(data.price)) / Number(data.market_price)) * 100),
-        createdAt: data.created_at
+        createdAt: data.created_at,
+        sellerId: data.user_id
       };
       
       setProperty(formattedProperty);
+      
+      // Check if user is the owner of this property
+      if (user && user.id === data.user_id) {
+        setIsOwner(true);
+        setShowContact(true);
+      }
       
       // Fetch seller info
       await fetchSellerInfo(data.user_id);
@@ -131,6 +145,15 @@ export function usePropertyDetail(propertyId: string | undefined) {
           email: profileData.email,
           phone: profileData.phone
         });
+        
+        if (property) {
+          setProperty({
+            ...property,
+            sellerName: profileData.name,
+            sellerEmail: profileData.email,
+            sellerPhone: profileData.phone
+          });
+        }
       } else {
         // Fallback to just getting the email from RPC function
         const { data: emailData, error: emailError } = await supabase
@@ -143,10 +166,20 @@ export function usePropertyDetail(propertyId: string | undefined) {
         
         if (emailData) {
           const emailName = emailData.split('@')[0];
+          const name = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+          
           setSellerInfo({
-            name: emailName.charAt(0).toUpperCase() + emailName.slice(1),
+            name: name,
             email: emailData
           });
+          
+          if (property) {
+            setProperty({
+              ...property,
+              sellerName: name,
+              sellerEmail: emailData
+            });
+          }
         }
       }
     } catch (err) {
@@ -168,20 +201,28 @@ export function usePropertyDetail(propertyId: string | undefined) {
         return;
       }
       
+      console.log("Current waitlist status:", data?.status);
+      
       if (data) {
-        setWaitlistStatus({ status: data.status as 'pending' | 'accepted' | 'declined' });
+        setWaitlistStatus(data.status as 'pending' | 'accepted' | 'declined');
         
         // Show contact info if waitlist request was accepted
         if (data.status === 'accepted') {
+          setIsApproved(true);
           setShowContact(true);
+          setShouldShowSellerInfo(true);
+        } else if (data.status === 'pending') {
+          setShouldShowSellerInfo(true);
         }
       } else {
         // No waitlist request found
-        setWaitlistStatus({ status: null });
+        setWaitlistStatus(null);
         
         // If this is the property owner, show contact info
         if (property && property.userId === userId) {
+          setIsOwner(true);
           setShowContact(true);
+          setShouldShowSellerInfo(true);
         }
       }
     } catch (err) {
@@ -203,7 +244,10 @@ export function usePropertyDetail(propertyId: string | undefined) {
     error,
     sellerInfo,
     showContact,
-    waitlistStatus: waitlistStatus?.status || null,
-    refreshProperty
+    waitlistStatus,
+    refreshProperty,
+    isOwner,
+    isApproved,
+    shouldShowSellerInfo
   };
 }

@@ -1,333 +1,238 @@
-import React, { useState, useEffect, useCallback } from 'react';
+
+import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { ClipboardList, X, Check, Clock } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ArrowRight, UserCheck } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
-import { supabase } from '@/integrations/supabase/client';
-import { useNotifications } from '@/context/NotificationContext';
+import { useNavigate } from "react-router-dom";
 
 interface WaitlistButtonProps {
   propertyId: string;
   propertyTitle: string;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 const WaitlistButton: React.FC<WaitlistButtonProps> = ({ 
   propertyId, 
-  propertyTitle, 
-  open: externalOpen, 
-  onOpenChange: externalOnOpenChange 
+  propertyTitle,
+  open,
+  onOpenChange
 }) => {
   const { user } = useAuth();
-  const { addNotification } = useNotifications();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [waitlistStatus, setWaitlistStatus] = useState<'pending' | 'accepted' | 'declined' | null>(null);
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (externalOpen !== undefined) {
-      setDialogOpen(externalOpen);
-    }
-  }, [externalOpen]);
+  // Pre-fill user info if available
+  React.useEffect(() => {
+    if (user) {
+      const fetchUserProfile = async () => {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("name, email, phone")
+          .eq("id", user.id)
+          .maybeSingle();
 
-  const checkWaitlistStatus = useCallback(async () => {
-    if (!user?.id) return null;
-    
-    try {
-      const { data, error } = await supabase
-        .from('waitlist_requests')
-        .select('status')
-        .eq('property_id', propertyId)
-        .eq('user_id', user.id)
-        .single();
-        
-      if (error && error.code !== 'PGRST116') {
-        console.error("Error checking waitlist status:", error);
-        return null;
-      }
-      
-      return data ? data.status as 'pending' | 'accepted' | 'declined' : null;
-    } catch (error) {
-      console.error("Exception checking waitlist status:", error);
-      return null;
-    }
-  }, [user?.id, propertyId]);
-
-  useEffect(() => {
-    const checkStatus = async () => {
-      const status = await checkWaitlistStatus();
-      console.log("Current waitlist status:", status);
-      setWaitlistStatus(status);
-    };
-    
-    checkStatus();
-    
-    // Set up a subscription to listen for waitlist status changes
-    const waitlistChannel = supabase
-      .channel('waitlist_status_changes')
-      .on('postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'waitlist_requests',
-          filter: user?.id ? `user_id=eq.${user.id} AND property_id=eq.${propertyId}` : undefined
-        },
-        (payload) => {
-          console.log("Waitlist status changed:", payload);
-          if (payload.new) {
-            const newStatus = payload.new.status as 'pending' | 'accepted' | 'declined';
-            setWaitlistStatus(newStatus);
-            
-            if (newStatus === 'accepted') {
-              toast.success("Your waitlist request has been approved!");
-              // Refresh the page to update UI with seller contact info
-              setTimeout(() => {
-                window.location.reload();
-              }, 1500);
-            } else if (newStatus === 'declined') {
-              toast.error("Your waitlist request has been declined.");
-            }
-          }
+        if (data && !error) {
+          setName(data.name || "");
+          setEmail(data.email || "");
+          setPhone(data.phone || "");
+        } else if (user.email) {
+          setEmail(user.email);
         }
-      )
-      .subscribe();
-      
-    return () => {
-      supabase.removeChannel(waitlistChannel);
-    };
-  }, [user?.id, propertyId, checkWaitlistStatus]);
+      };
 
-  const handleJoinWaitlist = () => {
-    setDialogOpen(true);
-    if (externalOnOpenChange) {
-      externalOnOpenChange(true);
+      fetchUserProfile();
     }
-  };
+  }, [user]);
 
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-    setSubmitting(false);
-    if (externalOnOpenChange) {
-      externalOnOpenChange(false);
-    }
-  };
-
-  const createNotifications = async (propertyOwnerId: string, propertyTitle: string) => {
-    try {
-      // Create notification for property owner
-      await supabase
-        .from('notifications')
-        .insert({
-          user_id: propertyOwnerId,
-          title: 'New Waitlist Request',
-          message: `${user?.name || 'Someone'} is interested in your property: ${propertyTitle}`,
-          type: 'new_listing',
-          properties: {
-            propertyId,
-            propertyTitle,
-            requesterId: user?.id,
-            requesterName: user?.name
-          },
-          read: false
-        });
-      
-      // Only create in-app notification, no toast needed here since we'll show one later
-      addNotification(
-        'Waitlist Request Submitted',
-        `You've successfully joined the waitlist for: ${propertyTitle}`,
-        'success'
-      );
-      
-    } catch (error) {
-      console.error('Error creating notifications:', error);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!phone) {
-      toast.error("Please enter your phone number");
-      return;
-    }
-    
+  const handleJoinWaitlist = useCallback(async () => {
     if (!user) {
-      toast.error("You must be logged in to join the waitlist");
+      navigate("/sign-in", { state: { from: `/property/${propertyId}` } });
       return;
     }
-    
-    setSubmitting(true);
-    
+
+    if (!name.trim()) {
+      toast.error("Please provide your name");
+      return;
+    }
+
     try {
-      const { data: propertyData, error: propertyError } = await supabase
-        .from('property_listings')
-        .select('user_id')
-        .eq('id', propertyId)
-        .single();
-      
-      if (propertyError) {
-        console.error("Error fetching property data:", propertyError);
-        throw new Error("Failed to fetch property data");
-      }
-      
-      const propertyOwnerId = propertyData.user_id;
-      
-      const { error: insertError } = await supabase
-        .from('waitlist_requests')
+      setLoading(true);
+
+      // 1. Add to waitlist_requests table
+      const { data, error } = await supabase
+        .from("waitlist_requests")
         .insert({
           property_id: propertyId,
           user_id: user.id,
-          name: user.name || 'Anonymous User',
-          email: user.email || 'No Email',
-          phone: phone,
-          status: 'pending'
-        });
-      
-      if (insertError) {
-        if (insertError.code === '23505') {
-          toast.error("You're already on the waitlist for this property");
+          name: name.trim(),
+          email: email.trim() || user.email,
+          phone: phone.trim(),
+          status: "pending"
+        })
+        .select()
+        .single();
+
+      if (error) {
+        if (error.code === "23505") {
+          // This is the code for unique_violation
+          // Don't show toast, just close silently
+          onOpenChange(false);
+          return;
         } else {
-          console.error("Error joining waitlist:", insertError);
-          throw new Error("Failed to join waitlist");
+          throw error;
         }
-      } else {
-        // Create notifications only once
-        await createNotifications(propertyOwnerId, propertyTitle);
-        
-        setWaitlistStatus('pending');
-        
-        // Use only one toast notification
-        toast.success("Successfully joined the waitlist!");
       }
+
+      // 2. Get the property owner's ID
+      const { data: propertyData, error: propertyError } = await supabase
+        .from("property_listings")
+        .select("user_id")
+        .eq("id", propertyId)
+        .single();
+
+      if (propertyError) {
+        console.error("Error getting property owner:", propertyError);
+      } else if (propertyData) {
+        // 3. Add notification for property owner
+        await supabase
+          .from("notifications")
+          .insert({
+            user_id: propertyData.user_id,
+            title: "New Waitlist Request",
+            message: `${name} has joined the waitlist for ${propertyTitle}`,
+            type: "new_listing",
+            properties: {
+              waitlistRequestId: data?.id,
+              propertyId,
+              propertyTitle,
+              requesterName: name,
+              requesterEmail: email || user.email,
+              requesterPhone: phone || ""
+            }
+          });
+      }
+
+      // No toast notification, just close silently
+      onOpenChange(false);
     } catch (error) {
       console.error("Error joining waitlist:", error);
       toast.error("Failed to join waitlist. Please try again.");
     } finally {
-      setDialogOpen(false);
-      if (externalOnOpenChange) {
-        externalOnOpenChange(false);
-      }
-      setSubmitting(false);
+      setLoading(false);
     }
-  };
-
-  const getWaitlistButtonContent = () => {
-    switch (waitlistStatus) {
-      case 'accepted':
-        return (
-          <Button 
-            variant="glass"
-            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg border-gradient-br-pink-purple-gold property-card-glow"
-            onClick={() => window.location.reload()}
-          >
-            <Check size={18} className="mr-2" />
-            Waitlist Approved - View Details
-          </Button>
-        );
-      case 'declined':
-        return (
-          <Button 
-            variant="glass"
-            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg glass-card property-card-glow"
-            disabled
-          >
-            <X size={18} className="mr-2" />
-            Waitlist Declined
-          </Button>
-        );
-      case 'pending':
-        return (
-          <Button 
-            className="w-full bg-white/30 backdrop-blur-lg text-black font-bold py-2 rounded-xl glass-card property-card-glow"
-            disabled
-          >
-            <Clock size={18} className="mr-2" />
-            In Waitlist - Pending Review
-          </Button>
-        );
-      default:
-        return (
-          <Button 
-            variant="glass"
-            className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg bg-white hover:bg-white group"
-            onClick={handleJoinWaitlist}
-          >
-            <ClipboardList size={18} className="mr-2" />
-            <span className="text-gradient-static relative z-10">Join Waitlist</span>
-            
-            {/* Rainbow border hover effect - adds a gradient outline only on hover */}
-            <span 
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
-              style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-                boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-              }}
-            ></span>
-          </Button>
-        );
-    }
-  };
+  }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange]);
 
   return (
     <>
-      {getWaitlistButtonContent()}
-      
-      <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="glass-card backdrop-blur-lg border border-white/30 shadow-lg rounded-xl">
+      <Button
+        variant="glass"
+        onClick={() => onOpenChange(true)}
+        className="w-full bg-white hover:bg-white group relative overflow-hidden"
+      >
+        <UserCheck size={18} className="mr-2 text-black" />
+        <span className="text-black font-bold relative z-10">
+          Join Waitlist for Full Details
+        </span>
+
+        <span
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+          style={{
+            background: "transparent",
+            border: "2px solid transparent",
+            backgroundImage:
+              "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+            backgroundOrigin: "border-box",
+            backgroundClip: "border-box",
+            WebkitMask:
+              "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+            boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+          }}
+        ></span>
+      </Button>
+
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="bg-white rounded-lg border border-gray-200 shadow-xl sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Join Property Waitlist</DialogTitle>
+            <DialogTitle className="text-xl font-bold">
+              Join Property Waitlist
+            </DialogTitle>
             <DialogDescription>
-              Please provide your phone number to join the waitlist for this property.
+              Submit your details to join the waitlist for this property. The
+              seller will share more information once approved.
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div>
-              <Label htmlFor="phone" className="text-black font-bold">Phone Number</Label>
-              <Input 
-                id="phone" 
-                type="tel" 
-                placeholder="Enter your phone number" 
-                value={phone} 
-                onChange={(e) => setPhone(e.target.value)}
-                className="mt-2 glass-input"
+
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right font-bold">
+                Name
+              </Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
+                className="col-span-3"
               />
             </div>
-            
-            <p className="text-sm text-gray-600 glass p-2 rounded-lg backdrop-blur-sm">
-              Once you join the waitlist, the seller will review your request and may contact you with more information about the property.
-            </p>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right font-bold">
+                Email
+              </Label>
+              <Input
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                type="email"
+                className="col-span-3"
+              />
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phone" className="text-right font-bold">
+                Phone
+              </Label>
+              <Input
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Optional"
+                className="col-span-3"
+              />
+            </div>
           </div>
-          
-          <DialogFooter className="flex gap-2">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={handleDialogClose}
-              className="font-bold glass-card property-card-glow"
-            >
-              <X size={18} className="mr-2" />
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button 
-              type="button" 
-              variant="glass"
-              className="text-black font-bold glass-card property-card-glow"
-              onClick={handleSubmit}
-              disabled={submitting}
+            <Button
+              onClick={handleJoinWaitlist}
+              disabled={loading}
+              className="bg-black hover:bg-black text-white"
             >
-              <Check size={18} className="mr-2" />
-              {submitting ? "Submitting..." : "Submit"}
+              {loading ? "Submitting..." : "Submit Request"}
+              {!loading && <ArrowRight size={16} className="ml-2" />}
             </Button>
           </DialogFooter>
         </DialogContent>

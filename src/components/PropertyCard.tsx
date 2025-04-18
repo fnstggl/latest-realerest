@@ -32,7 +32,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   const roundedBelowMarket = Math.round(belowMarket);
   const validImage = image || '/placeholder.svg';
   
-  // Safely handle location parsing with default values if location is undefined
+  // Safely handle location parsing with proper checks
   const locationParts = location ? location.split(',') : ['Unknown', ''];
   const city = locationParts[0]?.trim() || 'Unknown';
   const stateZip = locationParts[1]?.trim() || '';

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -18,11 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const PropertyDetail: React.FC = () => {
-  const {
-    id
-  } = useParams<{
-    id: string;
-  }>();
+  const { id } = useParams<{ id: string }>();
   const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
   const [realOffers, setRealOffers] = useState<Array<{
     id: string;
@@ -32,11 +29,14 @@ const PropertyDetail: React.FC = () => {
   
   const {
     property,
-    loading,
+    isLoading,
+    error,
+    sellerInfo,
+    waitlistStatus,
     isOwner,
     isApproved,
-    waitlistStatus,
-    shouldShowSellerInfo
+    shouldShowSellerInfo,
+    refreshProperty
   } = usePropertyDetail(id);
 
   // Log values for debugging
@@ -61,12 +61,13 @@ const PropertyDetail: React.FC = () => {
     
     const fetchRealOffers = async () => {
       try {
-        const {
-          data,
-          error
-        } = await supabase.from('property_offers').select('id, offer_amount, user_id').eq('property_id', id).eq('is_interested', true).order('offer_amount', {
-          ascending: false
-        }).limit(3);
+        const { data, error } = await supabase
+          .from('property_offers')
+          .select('id, offer_amount, user_id')
+          .eq('property_id', id)
+          .eq('is_interested', true)
+          .order('offer_amount', { ascending: false })
+          .limit(3);
         
         if (error) {
           console.error("Error fetching real offers:", error);
@@ -92,7 +93,7 @@ const PropertyDetail: React.FC = () => {
     fetchRealOffers();
   }, [id]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 flex items-center justify-center">
         <div className="text-lg font-semibold">Loading property details...</div>
@@ -135,11 +136,18 @@ const PropertyDetail: React.FC = () => {
           </Button>
         </div>
         
-        {!isOwner && isApproved && <OfferStatusBanner propertyId={property.id} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail} sellerPhone={property.sellerPhone} />}
+        {!isOwner && isApproved && property && (
+          <OfferStatusBanner 
+            propertyId={property.id} 
+            sellerName={property.sellerName || 'Property Owner'} 
+            sellerEmail={property.sellerEmail} 
+            sellerPhone={property.sellerPhone} 
+          />
+        )}
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="space-y-6">
-            <PropertyImages mainImage={property?.image} images={property?.images} />
+            <PropertyImages mainImage={property?.images[0]} images={property?.images} />
             
             <PropertyDescription 
               description={property?.description} 
@@ -147,7 +155,7 @@ const PropertyDetail: React.FC = () => {
               baths={property?.baths} 
               sqft={property?.sqft} 
               belowMarket={property?.belowMarket} 
-              comparables={shouldShowSellerInfo ? property?.comparables : undefined} 
+              comparables={shouldShowSellerInfo ? property?.comparableAddresses : undefined} 
             />
           </div>
           
@@ -161,19 +169,19 @@ const PropertyDetail: React.FC = () => {
               baths={property?.baths} 
               sqft={property?.sqft} 
               location={property?.location} 
-              fullAddress={property?.full_address} 
+              fullAddress={property?.fullAddress} 
               showFullAddress={isOwner || isApproved} 
               onShowAddressClick={handleAddressClick} 
             />
 
-            {/* Show Seller Contact Info for all users with waitlist status (pending or approved) */}
+            {/* Show Seller Contact Info for users who are owners or have a waitlist status (pending or approved) */}
             {property && shouldShowSellerInfo && (
               <div className="mb-4">
                 <SellerContactInfo 
                   name={property.sellerName} 
                   phone={property.sellerPhone} 
-                  email={property.sellerEmail} 
-                  showContact={true} 
+                  email={property.sellerEmail}
+                  showContact={true}
                   sellerId={property.sellerId}
                   waitlistStatus={waitlistStatus}
                 />
