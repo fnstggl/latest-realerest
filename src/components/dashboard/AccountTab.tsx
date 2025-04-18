@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -232,11 +231,24 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
           </div>
           
           <Button 
-            className="bg-[#0892D0] text-white hover:bg-[#0892D0]/90 hover:shadow-[0_0_15px_rgba(8,146,208,0.7)] transition-all" 
+            className="relative bg-white text-black border border-transparent hover:bg-white transition-all" 
             disabled={saving} 
             type="submit"
           >
             {saving ? "Saving Changes..." : "Save Changes"}
+            <span 
+              className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+              style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude"
+              }}
+            />
           </Button>
         </form>
       </div>
