@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -62,7 +61,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
       {isLoading ? <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
           <p className="mb-6">Loading your properties...</p>
         </div> : myProperties.length > 0 ? <div className="grid md:grid-cols-1 gap-6">
-          {myProperties.map(property => <div key={property.id} className="layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden shadow-lg transition-all">
+          {myProperties.map(property => <div key={property.id} className="layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden shadow-lg transition-transform hover:-translate-y-1">
               <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-1/3">
                   <img src={property.image} alt={property.title} className="h-64 w-full object-cover" />
