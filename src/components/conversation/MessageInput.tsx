@@ -37,16 +37,16 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, sending }) =
           className="resize-none border border-gray-200 focus:border-gray-300 focus:ring-transparent"
           rows={2}
         />
-        <div className="relative rounded-lg overflow-hidden">
+        <div className="relative rounded-lg overflow-hidden group">
           <Button 
             onClick={handleSendMessage}
             disabled={!newMessage.trim() || sending}
-            className="h-16 w-16 bg-white text-black flex items-center justify-center relative z-10"
+            className="h-16 w-16 bg-white hover:bg-white text-black flex items-center justify-center relative z-10"
           >
             <Send size={20} className="relative z-10" />
           </Button>
           <span 
-            className="absolute inset-0 pointer-events-none z-0"
+            className="absolute inset-0 pointer-events-none z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             style={{
               background: "transparent",
               border: "2px solid transparent",
