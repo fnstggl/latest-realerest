@@ -154,12 +154,10 @@ const CreateListing: React.FC = () => {
       navigate('/signin');
       return;
     }
-
     if (imageFiles.length === 0) {
       toast.error("Please upload at least one image");
       return;
     }
-
     setIsSubmitting(true);
     setUploadProgress(0);
 
@@ -291,15 +289,22 @@ const CreateListing: React.FC = () => {
         </div>
       </div>;
   }
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      <motion.div className="container mx-auto px-4 py-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+      <motion.div className="container mx-auto px-4 py-12" initial={{
+      opacity: 0,
+      y: 20
+    }} animate={{
+      opacity: 1,
+      y: 0
+    }} transition={{
+      duration: 0.5
+    }}>
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-3 my-[30px]">Create New Property Listing</h1>
           <p className="mb-8 text-lg">
-            <span className="text-gradient-primary">List your home in 60 seconds.</span>
+            <span className="text-gradient-primary">List your property in 60 seconds.</span>
           </p>
           
           <div className="bg-white border border-black/10 p-8 rounded-xl">
@@ -326,15 +331,7 @@ const CreateListing: React.FC = () => {
                 </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>
-                  <ImageUploader 
-                    images={images} 
-                    setImages={setImages} 
-                    imageFiles={imageFiles} 
-                    setImageFiles={setImageFiles} 
-                    isSubmitting={isSubmitting} 
-                    uploadProgress={uploadProgress} 
-                    isProcessingImages={isProcessingImages} 
-                  />
+                  <ImageUploader images={images} setImages={setImages} imageFiles={imageFiles} setImageFiles={setImageFiles} isSubmitting={isSubmitting} uploadProgress={uploadProgress} isProcessingImages={isProcessingImages} />
                 </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>
@@ -345,8 +342,6 @@ const CreateListing: React.FC = () => {
           </div>
         </div>
       </motion.div>
-    </div>
-  );
+    </div>;
 };
-
 export default CreateListing;
