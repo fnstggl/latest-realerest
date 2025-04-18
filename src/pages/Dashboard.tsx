@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -14,15 +13,20 @@ import OffersTab from "@/components/dashboard/OffersTab";
 import AccountTab from "@/components/dashboard/AccountTab";
 import NotificationsTab from "@/components/dashboard/NotificationsTab";
 import { useProperties } from "@/hooks/useProperties";
-
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const {
+    user,
+    logout
+  } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [showAddForm, setShowAddForm] = useState(false);
-  const { notifications, markAsRead, clearAll } = useNotifications();
-  
+  const {
+    notifications,
+    markAsRead,
+    clearAll
+  } = useNotifications();
   const {
     myProperties,
     setMyProperties,
@@ -40,27 +44,26 @@ const Dashboard: React.FC = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-6 py-12 max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.5
+      }}>
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-bold">Dashboard</h1>
+              <h1 className="text-4xl font-bold mx-0 my-[35px]">Dashboard</h1>
               <p className="text-lg">Manage your properties and waitlists</p>
             </div>
             
-            <Button 
-              className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl"
-              onClick={() => navigate('/sell/create')}
-            >
+            <Button className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl" onClick={() => navigate('/sell/create')}>
               <Plus size={18} className="mr-2" />
               <span>Add Property</span>
             </Button>
@@ -92,24 +95,12 @@ const Dashboard: React.FC = () => {
             
             {/* Properties Tab */}
             <TabsContent value="properties" className="space-y-6">
-              <PropertiesTab 
-                myProperties={myProperties}
-                setMyProperties={setMyProperties}
-                waitlistUsers={waitlistUsers}
-                showAddForm={showAddForm}
-                setShowAddForm={setShowAddForm}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-                user={user}
-              />
+              <PropertiesTab myProperties={myProperties} setMyProperties={setMyProperties} waitlistUsers={waitlistUsers} showAddForm={showAddForm} setShowAddForm={setShowAddForm} isLoading={isLoading} setIsLoading={setIsLoading} user={user} />
             </TabsContent>
             
             {/* Waitlist Tab */}
             <TabsContent value="waitlist" className="space-y-6">
-              <WaitlistTab 
-                waitlistUsers={waitlistUsers}
-                setWaitlistUsers={setWaitlistUsers}
-              />
+              <WaitlistTab waitlistUsers={waitlistUsers} setWaitlistUsers={setWaitlistUsers} />
             </TabsContent>
             
             {/* Offers Tab */}
@@ -124,17 +115,11 @@ const Dashboard: React.FC = () => {
             
             {/* Notifications Tab */}
             <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
-              <NotificationsTab 
-                notifications={notifications}
-                markAsRead={markAsRead}
-                clearAll={clearAll}
-              />
+              <NotificationsTab notifications={notifications} markAsRead={markAsRead} clearAll={clearAll} />
             </TabsContent>
           </Tabs>
         </motion.div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
