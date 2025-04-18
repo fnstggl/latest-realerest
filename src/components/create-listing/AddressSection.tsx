@@ -40,7 +40,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
       </div>
       
       <div>
-        <h2 className="text-xl font-bold mb-4 my-[10px]">Basic Information</h2>
+        <h2 className="text-xl font-bold mb-4 my-[15px]">Basic Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FormField control={form.control} name="city" render={({
           field
