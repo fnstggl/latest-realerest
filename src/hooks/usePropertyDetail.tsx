@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -247,6 +248,39 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     fetchProperty();
   }, [propertyId, user]);
 
+  // Check if the user has an active waitlist request for this property
+  useEffect(() => {
+    if (!user?.id || !propertyId) return;
+    
+    const checkPendingWaitlistRequest = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('waitlist_requests')
+          .select('status')
+          .eq('property_id', propertyId)
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (error) {
+          console.error("Error checking pending waitlist:", error);
+          return;
+        }
+        
+        // Set isApproved to true if the status is 'accepted'
+        if (data && data.status === 'accepted') {
+          console.log("User has an accepted waitlist request");
+          setIsApproved(true);
+        } else {
+          console.log("User waitlist status:", data?.status || "none");
+        }
+      } catch (error) {
+        console.error("Error checking waitlist status:", error);
+      }
+    };
+    
+    checkPendingWaitlistRequest();
+  }, [propertyId, user?.id]);
+
   // Calculate if user should see seller information
   const shouldShowSellerInfo = isOwner || isApproved;
   
@@ -265,6 +299,6 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     loading,
     isOwner,
     isApproved,
-    shouldShowSellerInfo: isOwner || isApproved
+    shouldShowSellerInfo
   };
 };

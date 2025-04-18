@@ -154,7 +154,7 @@ const PropertyDetail: React.FC = () => {
               onShowAddressClick={handleAddressClick} 
             />
 
-            {/* Seller Contact Info - Make sure it's always visible for approved users */}
+            {/* Always show Seller Contact Info for approved users */}
             {property && shouldShowSellerInfo && (
               <div className="mb-4">
                 <SellerContactInfo 
@@ -246,8 +246,9 @@ const PropertyDetail: React.FC = () => {
           </div>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          <div className="md:col-span-2">
+        {/* Make the property description box flush with the image box by making the grid 2-column instead of 3-column */}
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
+          <div className="">
             <PropertyDescription 
               description={property?.description} 
               beds={property?.beds} 
