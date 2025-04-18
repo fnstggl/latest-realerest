@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -223,10 +222,23 @@ const Conversation: React.FC = () => {
               variant="outline" 
               size="sm"
               onClick={() => navigate('/messages')}
-              className="flex items-center gap-1 hover:border-[#0892D0] hover:text-[#0892D0]"
+              className="flex items-center gap-1 relative group hover:border-transparent"
             >
               <ArrowLeft size={16} />
               Back
+              <span 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-md z-[-1]" 
+                style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                }}
+              />
             </Button>
             
             <div>
