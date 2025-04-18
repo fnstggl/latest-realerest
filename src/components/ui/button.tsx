@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -20,7 +19,7 @@ const buttonVariants = cva(
         glass: "bg-white border border-gray-200 rounded-lg hover:bg-white text-black shadow-sm transition-all",
         navy: "bg-[#0892D0] text-white rounded-lg hover:bg-[#077fb4] shadow-sm transition-all",
         red: "bg-red-500 text-white rounded-lg hover:bg-red-600 shadow-sm transition-all",
-        translucent: "bg-white border-transparent text-black hover:bg-white transition-all shadow-sm relative overflow-hidden group rounded-full", // Updated to rounded-full and removed border
+        translucent: "bg-white border-transparent text-black hover:bg-white transition-all shadow-sm relative overflow-hidden group rounded-full", // Removed blue hover glow
         gradient: "bg-white hover:bg-white relative group overflow-hidden border border-transparent rounded-lg",
         apple: "bg-white hover:bg-white relative group overflow-hidden border border-transparent rounded-lg",
       },
@@ -70,8 +69,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                 WebkitMaskComposite: "xor",
                 maskComposite: "exclude",
-                boxShadow: "0 0 10px rgba(217, 70, 239, 0.5)",
-                filter: "blur(1px)"
+                filter: "none" // Removed box-shadow to eliminate blue glow
               }}
             />
           </React.Fragment>
