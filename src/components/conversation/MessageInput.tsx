@@ -37,26 +37,31 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, sending }) =
           className="resize-none border border-gray-200 focus:border-gray-300 focus:ring-transparent"
           rows={2}
         />
-        <div className="relative rounded-lg overflow-hidden group">
+        <div className="relative rounded-lg group">
           <Button 
             onClick={handleSendMessage}
             disabled={!newMessage.trim() || sending}
             className="h-16 w-16 bg-white hover:bg-white text-black flex items-center justify-center relative z-10"
+            style={{ borderRadius: "0.5rem" }} // Explicitly set border radius to match the outer span
           >
             <Send size={20} className="relative z-10" />
           </Button>
           <span 
-            className="absolute inset-0 pointer-events-none z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             style={{
-              background: "transparent",
-              border: "2px solid transparent",
-              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "border-box",
+              position: "absolute",
+              top: "0",
+              left: "0",
+              right: "0", 
+              bottom: "0",
+              borderRadius: "0.5rem",
+              padding: "2px",
+              background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+              maskImage: "linear-gradient(#fff 0 0)",
+              maskComposite: "exclude",
               WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
               WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-              borderRadius: "0.5rem" // Matches the Button's rounded-lg
+              pointerEvents: "none"
             }}
           />
         </div>
