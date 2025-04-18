@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -100,27 +101,15 @@ const SignIn: React.FC = () => {
               />
             </div>
             <div className="relative">
-              <Button 
-                type="submit" 
-                disabled={isLoading} 
-                className="w-full bg-white hover:bg-white text-black font-bold text-sm sm:text-base py-2 relative z-10"
-              >
-                {isLoading ? "Signing In..." : "Sign In"}
-              </Button>
-              <span 
-                className="absolute inset-0 rounded-full pointer-events-none" 
-                style={{
-                  background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                  padding: "2px",
-                  content: "''",
-                  zIndex: 0,
-                  maskImage: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude",
-                  opacity: 1
-                }}
-              />
+              <div className="gradient-border-container">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="gradient-border-button w-full"
+                >
+                  {isLoading ? "Signing In..." : "Sign In"}
+                </button>
+              </div>
             </div>
             <p className="text-xs sm:text-sm text-gray-600 text-center">
               Don't have an account? <Link to="/signup" className="text-black font-bold hover:text-black">Sign Up</Link>
