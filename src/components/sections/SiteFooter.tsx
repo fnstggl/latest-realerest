@@ -1,24 +1,15 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-
 const SiteFooter: React.FC = () => {
-  return (
-    <footer className="bg-white py-12 border-t border-gray-100">
+  return <footer className="bg-white py-12 border-t border-gray-100">
       <div className="container px-4 lg:px-8 mx-auto">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4 hover:opacity-90 transition-opacity">
-              <img 
-                src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" 
-                alt="Realer Estate Logo" 
-                className="w-10 h-10 object-contain"
-              />
+              <img src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" alt="Realer Estate Logo" className="w-10 h-10 object-contain" />
               <span className="font-bold text-black text-xl">Realer Estate</span>
             </Link>
-            <p className="text-gray-600">
-              Connecting families to affordable housing—fast.
-            </p>
+            <p className="text-gray-600">Connecting families with affordable housing—fast.</p>
           </div>
           
           <div>
@@ -54,8 +45,6 @@ const SiteFooter: React.FC = () => {
           <p className="font-medium">© {new Date().getFullYear()} Realer Estate. All rights reserved.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default SiteFooter;
