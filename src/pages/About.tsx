@@ -21,7 +21,7 @@ const About: React.FC = () => {
       }} className="max-w-4xl mx-auto">
           <div className="mb-12">
             <h1 className="text-5xl font-bold mb-4">About Realer Estate</h1>
-            <div className="h-2 w-32 bg-[#0892D0] shadow-md rounded-full"></div>
+            
           </div>
           
           <div className="bg-white/80 border border-white/40 shadow-md p-8 rounded-xl mb-12">
