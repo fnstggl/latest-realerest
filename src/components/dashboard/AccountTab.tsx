@@ -231,13 +231,13 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
           </div>
           
           <Button 
-            className="relative bg-white text-black border border-transparent hover:bg-white transition-all" 
+            className="relative bg-white text-black border border-transparent hover:bg-white transition-all rounded-lg" 
             disabled={saving} 
             type="submit"
           >
             {saving ? "Saving Changes..." : "Save Changes"}
             <span 
-              className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+              className="absolute inset-[-2px] opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none z-[-1] rounded-lg"
               style={{
                 background: "transparent",
                 border: "2px solid transparent",
