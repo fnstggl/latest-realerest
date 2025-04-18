@@ -156,7 +156,7 @@ const Navbar: React.FC = () => {
             <>
               <Button 
                 variant="translucent"
-                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-black h-7 sm:h-9" 
+                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-black h-7 sm:h-9" 
                 onClick={handleSignIn}
               >
                 <LogIn size={14} className="mr-1 sm:mr-2" />
@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="translucent"
-                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-black h-7 sm:h-9" 
+                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-black h-7 sm:h-9" 
                 onClick={handleSignUp}
               >
                 Sign up
@@ -179,3 +179,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
