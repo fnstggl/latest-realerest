@@ -103,21 +103,22 @@ const SignIn: React.FC = () => {
               <Button 
                 type="submit" 
                 disabled={isLoading} 
-                className="w-full bg-white text-black font-bold text-sm sm:text-base py-2 relative z-10"
+                className="w-full bg-white hover:bg-white text-black font-bold text-sm sm:text-base py-2 relative z-10"
               >
                 {isLoading ? "Signing In..." : "Sign In"}
               </Button>
-              <span className="absolute inset-0 rounded-lg pointer-events-none" 
-                    style={{
-                      background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                      padding: "1.5px",
-                      content: "''",
-                      zIndex: 0,
-                    }}
+              <span 
+                className="absolute inset-0 rounded-lg" 
+                style={{
+                  background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                  padding: "1.5px",
+                  content: "''",
+                  zIndex: 0,
+                }}
               />
             </div>
             <p className="text-xs sm:text-sm text-gray-600 text-center">
-              Don't have an account? <Link to="/signup" className="text-black font-bold">Sign Up</Link>
+              Don't have an account? <Link to="/signup" className="text-black font-bold hover:text-black">Sign Up</Link>
             </p>
           </form>
         </div>
