@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -158,7 +157,7 @@ const PropertyDetail: React.FC = () => {
               />
             }
             
-            {property && <PropertyOffers propertyId={property.id} propertyPrice={property.price} realOffers={realOffers} />}
+            {property && <PropertyOffers propertyId={property.id} realOffers={realOffers} />}
             
             {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && <div className="grid grid-cols-2 gap-4">
                 <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">

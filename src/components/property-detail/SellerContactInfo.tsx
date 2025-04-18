@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { Phone, Mail, User } from 'lucide-react';
+import { Phone, Mail, User, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
 
 interface SellerContactInfoProps {
   name?: string;
@@ -24,23 +26,106 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
       <h3 className="text-lg font-bold mb-3 text-black">Seller Information</h3>
       
       <div className="space-y-2">
-        <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
+        <Link 
+          to={`/search?seller=${sellerId}`} 
+          className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform"
+        >
           <User size={16} className="mr-2 text-[#0892D0]" />
           <span className="text-black">{name || 'Property Owner'}</span>
-        </div>
+          <span className="text-sm text-gray-500 ml-2">(View listings)</span>
+          
+          {/* Gradient border on hover */}
+          <span 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+            style={{
+              background: "transparent",
+              border: "2px solid transparent",
+              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "border-box",
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+            }}
+          />
+        </Link>
         
         {email && (
-          <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
+          <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
             <Mail size={16} className="mr-2 text-[#0892D0]" />
-            <a href={`mailto:${email}`} className="hover:underline text-black">{email}</a>
+            <a href={`mailto:${email}`} className="text-black hover:underline">{email}</a>
+            
+            {/* Gradient border on hover */}
+            <span 
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+              style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+              }}
+            />
           </div>
         )}
         
         {phone && (
-          <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
+          <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
             <Phone size={16} className="mr-2 text-[#0892D0]" />
-            <a href={`tel:${phone}`} className="hover:underline text-black">{phone}</a>
+            <a href={`tel:${phone}`} className="text-black hover:underline">{phone}</a>
+            
+            {/* Gradient border on hover */}
+            <span 
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+              style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+              }}
+            />
           </div>
+        )}
+        
+        {sellerId && (
+          <Link 
+            to={`/messages?seller=${sellerId}`}
+            className="w-full mt-2 block"
+          >
+            <Button 
+              variant="glass"
+              className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg bg-white hover:bg-white group relative overflow-hidden"
+            >
+              <MessageSquare size={18} className="mr-2" />
+              <span className="text-gradient-static relative z-10">Message Seller</span>
+              
+              {/* Gradient border on hover */}
+              <span 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
+                style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                  boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+                }}
+              />
+            </Button>
+          </Link>
         )}
         
         {!email && !phone && (
