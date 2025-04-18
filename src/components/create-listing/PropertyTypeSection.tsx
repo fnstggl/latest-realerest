@@ -27,8 +27,20 @@ const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-12 rounded-xl bg-white relative border-black/10">
+                <SelectTrigger className="h-12 rounded-xl bg-white relative border border-black/10 hover:border-transparent transition-all duration-300">
                   <SelectValue placeholder="Select property type" />
+                  <span className="absolute inset-0 rounded-xl opacity-0 hover:opacity-100 pointer-events-none transition-opacity"
+                    style={{
+                      background: "transparent",
+                      border: "2px solid transparent",
+                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                      backgroundOrigin: "border-box",
+                      backgroundClip: "border-box",
+                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                      WebkitMaskComposite: "xor",
+                      maskComposite: "exclude"
+                    }}
+                  />
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="bg-white border border-black/10 rounded-xl">
@@ -36,11 +48,11 @@ const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
                   <SelectItem 
                     key={type} 
                     value={type}
-                    className="relative hover:bg-transparent focus:bg-transparent active:bg-transparent"
+                    className="relative hover:bg-transparent focus:bg-transparent active:bg-transparent group"
                   >
                     {type}
                     <span 
-                      className="absolute inset-0 rounded-lg opacity-0 hover:opacity-100 pointer-events-none transition-opacity"
+                      className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity"
                       style={{
                         background: "transparent",
                         border: "2px solid transparent",
@@ -51,7 +63,7 @@ const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
                         WebkitMaskComposite: "xor",
                         maskComposite: "exclude"
                       }}
-                    ></span>
+                    />
                   </SelectItem>
                 ))}
               </SelectContent>

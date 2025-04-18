@@ -31,13 +31,27 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-black font-bold">Full Property Address</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="e.g. 123 Main St" 
-                  className="h-12 rounded-xl border-black/10" 
-                  {...field} 
+              <div className="relative">
+                <FormControl>
+                  <Input 
+                    placeholder="e.g. 123 Main St" 
+                    className="h-12 rounded-xl border-black/10 focus:border-transparent transition-all duration-300" 
+                    {...field} 
+                  />
+                </FormControl>
+                <span className="absolute inset-0 rounded-xl opacity-0 peer-focus:opacity-100 pointer-events-none transition-opacity"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }}
                 />
-              </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -76,7 +90,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="h-12 rounded-xl border-black/10">
+                    <SelectTrigger className="h-12 rounded-xl border-black/10 hover:border-transparent transition-all duration-300">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                   </FormControl>
@@ -85,11 +99,11 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                       <SelectItem 
                         key={state} 
                         value={state}
-                        className="relative hover:bg-transparent focus:bg-transparent active:bg-transparent"
+                        className="relative hover:bg-transparent focus:bg-transparent active:bg-transparent group"
                       >
                         {state}
                         <span 
-                          className="absolute inset-0 rounded-lg opacity-0 hover:opacity-100 pointer-events-none transition-opacity"
+                          className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity"
                           style={{
                             background: "transparent",
                             border: "2px solid transparent",
@@ -100,7 +114,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                             WebkitMaskComposite: "xor",
                             maskComposite: "exclude"
                           }}
-                        ></span>
+                        />
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -135,13 +149,27 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
           render={({ field }) => (
             <FormItem className="mt-6">
               <FormLabel className="text-black font-bold">Description</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Describe your property..." 
-                  className="min-h-[120px] rounded-xl border-black/10" 
-                  {...field} 
+              <div className="relative">
+                <FormControl>
+                  <Textarea 
+                    placeholder="Describe your property..." 
+                    className="min-h-[120px] rounded-xl border-black/10 focus:border-transparent transition-all duration-300" 
+                    {...field} 
+                  />
+                </FormControl>
+                <span className="absolute inset-0 rounded-xl opacity-0 peer-focus:opacity-100 pointer-events-none transition-opacity"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }}
                 />
-              </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}
