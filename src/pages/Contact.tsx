@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
@@ -112,11 +111,25 @@ const Contact: React.FC = () => {
                       <Button 
                         type="submit" 
                         disabled={submitting} 
-                        className="w-full"
-                        variant="default"
+                        className="w-full relative bg-white text-black border border-transparent hover:bg-white group"
+                        variant="ghost"
                       >
                         <Send size={18} className="mr-2" />
                         {submitting ? "Sending..." : "Send Message"}
+                        <span 
+                          className="absolute inset-[-2px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 -z-10"
+                          style={{
+                            background: "transparent",
+                            border: "2px solid transparent",
+                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                            backgroundOrigin: "border-box",
+                            backgroundClip: "border-box",
+                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude",
+                            borderRadius: "inherit"
+                          }}
+                        />
                       </Button>
                     </div>
                   </form>
