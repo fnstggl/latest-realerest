@@ -48,7 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     
-    // Special handling for translucent variant
+    // For the translucent variant, we need to ensure that we wrap the content properly
     if (variant === "translucent") {
       return (
         <Comp
@@ -56,22 +56,25 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           ref={ref}
           {...props}
         >
-          {children}
-          <span 
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
-            style={{
-              background: "transparent",
-              border: "2px solid transparent",
-              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "border-box",
-              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-              boxShadow: "0 0 10px rgba(217, 70, 239, 0.5)",
-              filter: "blur(1px)"
-            }}
-          ></span>
+          {/* We need to ensure any children are properly wrapped */}
+          <React.Fragment>
+            {children}
+            <span 
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
+              style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                boxShadow: "0 0 10px rgba(217, 70, 239, 0.5)",
+                filter: "blur(1px)"
+              }}
+            />
+          </React.Fragment>
         </Comp>
       )
     }
