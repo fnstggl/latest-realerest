@@ -211,7 +211,7 @@ const Conversation: React.FC = () => {
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-6 flex-1 flex flex-col">
+      <div className="container mx-auto px-4 py-6 flex-1 flex flex-col mt-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

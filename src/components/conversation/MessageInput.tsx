@@ -28,16 +28,18 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, sending }) =
 
   return (
     <div className="border-t border-gray-200 p-4 bg-white/80">
-      <div className="flex items-end space-x-2">
-        <Textarea
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
-          className="resize-none border border-gray-200 focus:border-gray-300 focus:ring-transparent"
-          rows={2}
-        />
-        <div className="relative rounded-lg group">
+      <div className="flex items-end gap-2 max-w-[1400px] mx-auto">
+        <div className="flex-1">
+          <Textarea
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a message..."
+            className="resize-none border border-gray-200 focus:border-gray-300 focus:ring-transparent w-full"
+            rows={2}
+          />
+        </div>
+        <div className="relative rounded-lg group flex-shrink-0">
           <Button 
             onClick={handleSendMessage}
             disabled={!newMessage.trim() || sending}
