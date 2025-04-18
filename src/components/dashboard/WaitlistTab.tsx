@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, Check, X, MessageCircle } from "lucide-react";
@@ -117,7 +118,6 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
               <tr className="border-b border-white/20 bg-white/10">
                 <th className="text-left p-4 font-bold">Name</th>
                 <th className="text-left p-4 font-bold">Contact</th>
-                <th className="text-left p-4 font-bold">Message</th>
                 <th className="text-left p-4 font-bold">Property</th>
                 <th className="text-left p-4 font-bold">Status</th>
                 <th className="text-left p-4 font-bold">Actions</th>
@@ -130,17 +130,17 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                   <td className="p-4">
                     <div>{user.email}</div>
                     <div>{user.phone}</div>
-                  </td>
-                  <td className="p-4">
-                    <Button 
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => window.location.href = `/messages/${user.id}`}
-                      className="hover:bg-white/20"
-                    >
-                      <MessageCircle size={16} className="mr-1" />
-                      Message
-                    </Button>
+                    <div className="mt-2">
+                      <Button 
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => window.location.href = `/messages/${user.id}`}
+                        className="hover:bg-white/20 text-black font-bold px-0"
+                      >
+                        <MessageCircle size={16} className="mr-1" />
+                        Message buyer
+                      </Button>
+                    </div>
                   </td>
                   <td className="p-4">
                     <Link 
