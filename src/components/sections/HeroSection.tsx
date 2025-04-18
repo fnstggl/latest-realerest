@@ -34,7 +34,14 @@ const HeroSection: React.FC = () => {
               Find a home you love...
             </h1>
             <div className="mb-2 sm:mb-4 md:mb-6">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center text-gradient-static tracking-normal py-1">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center text-gradient-static tracking-normal py-1"
+                style={{
+                  background: 'linear-gradient(90deg, #1EAEDB, #9b87f5 20%, #D946EF 40%, #F97316 80%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  color: 'transparent'
+                }}
+              >
                 at a price you'll love more
               </h1>
             </div>
