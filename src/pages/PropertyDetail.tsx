@@ -150,17 +150,19 @@ const PropertyDetail: React.FC = () => {
               onShowAddressClick={handleAddressClick} 
             />
 
-            {/* Show Seller Contact Info */}
-            {property && (
-              <SellerContactInfo 
-                name={property.sellerName} 
-                phone={property.sellerPhone} 
-                email={property.sellerEmail} 
-                showContact={shouldShowSellerInfo} 
-                sellerId={property.sellerId}
-              />
+            {/* Seller Contact Info - Make sure it's always visible for approved users */}
+            {property && shouldShowSellerInfo && (
+              <div className="mb-4">
+                <SellerContactInfo 
+                  name={property.sellerName} 
+                  phone={property.sellerPhone} 
+                  email={property.sellerEmail} 
+                  showContact={true} 
+                  sellerId={property.sellerId}
+                />
+              </div>
             )}
-            
+
             {isOwner ? (
               <Link to={`/property/${property?.id}/edit`} className="w-full">
                 <Button className="w-full bg-white hover:bg-white text-black font-bold py-2 relative group overflow-hidden rounded-xl">
@@ -264,7 +266,8 @@ const PropertyDetail: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>;
+    </div>
+  );
 };
 
 export default PropertyDetail;

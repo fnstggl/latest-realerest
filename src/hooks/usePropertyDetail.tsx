@@ -54,7 +54,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           return;
         }
         
-        if (data) {
+        if (data && data.status) {
           const isUserApproved = data.status === 'accepted';
           setIsApproved(isUserApproved);
           console.log(`User waitlist status: ${data.status}, isApproved set to: ${isUserApproved}`);
@@ -78,15 +78,12 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
         },
         (payload) => {
           console.log("Waitlist status changed:", payload);
-          if (payload.new) {
+          if (payload.new && payload.new.status) {
             const isUserApproved = payload.new.status === 'accepted';
             setIsApproved(isUserApproved);
             if (isUserApproved) {
               toast.success("Your waitlist request has been approved!");
-              // Refresh the page to update UI with seller contact info
-              setTimeout(() => {
-                window.location.reload();
-              }, 1500);
+              window.location.reload();
             }
           }
         }
@@ -268,6 +265,6 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     loading,
     isOwner,
     isApproved,
-    shouldShowSellerInfo
+    shouldShowSellerInfo: isOwner || isApproved
   };
 };
