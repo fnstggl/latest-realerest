@@ -9,14 +9,12 @@ import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 const Contact: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -31,21 +29,22 @@ const Contact: React.FC = () => {
       setSubmitting(false);
     }, 1500);
   };
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16 lg:py-24">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.5 }} 
-          className="max-w-6xl mx-auto"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.5
+      }} className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold mb-4">Contact Us</h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">We'd love to hear from you! Reach out with any questions or feedback.</p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Please feel free to reach out with any questions or feedback for us. We're listening.</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8">
@@ -58,78 +57,39 @@ const Contact: React.FC = () => {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="font-medium">Your Name</Label>
-                      <Input 
-                        id="name" 
-                        type="text" 
-                        placeholder="Enter your name" 
-                        value={name} 
-                        onChange={e => setName(e.target.value)} 
-                        required 
-                        className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" 
-                      />
+                      <Input id="name" type="text" placeholder="Enter your name" value={name} onChange={e => setName(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="email" className="font-medium">Email Address</Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        placeholder="Enter your email" 
-                        value={email} 
-                        onChange={e => setEmail(e.target.value)} 
-                        required 
-                        className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" 
-                      />
+                      <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="subject" className="font-medium">Subject</Label>
-                      <Input 
-                        id="subject" 
-                        type="text" 
-                        placeholder="What's this about?" 
-                        value={subject} 
-                        onChange={e => setSubject(e.target.value)} 
-                        required 
-                        className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" 
-                      />
+                      <Input id="subject" type="text" placeholder="What's this about?" value={subject} onChange={e => setSubject(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="message" className="font-medium">Your Message</Label>
-                      <Textarea 
-                        id="message" 
-                        placeholder="Type your message here..." 
-                        value={message} 
-                        onChange={e => setMessage(e.target.value)} 
-                        required 
-                        className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0] min-h-[150px]" 
-                      />
+                      <Textarea id="message" placeholder="Type your message here..." value={message} onChange={e => setMessage(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0] min-h-[150px]" />
                     </div>
                     
                     <div>
-                      <Button 
-                        type="submit" 
-                        disabled={submitting} 
-                        className="w-full relative bg-white text-black border border-transparent hover:bg-white group"
-                        variant="ghost"
-                      >
+                      <Button type="submit" disabled={submitting} className="w-full relative bg-white text-black border border-transparent hover:bg-white group" variant="ghost">
                         <Send size={18} className="mr-2" />
                         {submitting ? "Sending..." : "Send Message"}
-                        <span 
-                          className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                          style={{
-                            background: "transparent",
-                            border: "2px solid transparent",
-                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                            backgroundOrigin: "border-box",
-                            backgroundClip: "border-box",
-                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude",
-                            borderRadius: "inherit"
-                          }}
-                        />
+                        <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{
+                        background: "transparent",
+                        border: "2px solid transparent",
+                        backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                        backgroundOrigin: "border-box",
+                        backgroundClip: "border-box",
+                        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        WebkitMaskComposite: "xor",
+                        maskComposite: "exclude",
+                        borderRadius: "inherit"
+                      }} />
                       </Button>
                     </div>
                   </form>
@@ -188,8 +148,6 @@ const Contact: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>
-  );
+    </div>;
 };
-
 export default Contact;
