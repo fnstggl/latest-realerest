@@ -20,7 +20,7 @@ const About: React.FC = () => {
         duration: 0.5
       }} className="max-w-4xl mx-auto">
           <div className="mb-12">
-            <h1 className="text-5xl font-bold mb-4 font-playfair font-bold italic">Rethinking Real Estate. </h1>
+            <h1 className="text-5xl font-bold mb-4 font-playfair font-bold italic my-[30px]">Rethinking Real Estate. </h1>
             
           </div>
           
