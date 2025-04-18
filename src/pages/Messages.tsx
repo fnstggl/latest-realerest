@@ -42,7 +42,9 @@ const Messages: React.FC = () => {
             
             {loading ? (
               <div className="min-h-[300px] flex items-center justify-center p-4 sm:p-8">
-                <p className="text-sm sm:text-base">Loading conversations...</p>
+                <div className="loading-container">
+                  <div className="pulsing-circle" />
+                </div>
               </div>
             ) : (
               <MessageList 

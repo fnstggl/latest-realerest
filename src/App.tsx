@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -42,10 +43,12 @@ const Messages = lazy(() => import("./pages/Messages"));
 const Conversation = lazy(() => import("./pages/Conversation"));
 const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 
-// Simple loading fallback for lazy loaded components
+// Updated loading fallback to use the pulsing circle animation
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
-    <p className="text-xl font-bold">Loading page...</p>
+    <div className="loading-container">
+      <div className="pulsing-circle" />
+    </div>
   </div>
 );
 

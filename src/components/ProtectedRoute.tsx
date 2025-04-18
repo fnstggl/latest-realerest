@@ -19,11 +19,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
   }, [isAuthenticated, isLoading, location.state]);
 
-  // Show simple text while checking authentication
+  // Show loading animation while checking authentication
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-sm sm:text-base md:text-lg font-medium">Verifying authentication...</p>
+        <div className="loading-container">
+          <div className="pulsing-circle" />
+        </div>
       </div>
     );
   }
