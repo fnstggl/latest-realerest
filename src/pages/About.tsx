@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -32,15 +33,8 @@ const About: React.FC = () => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-xl" style={{
-                background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)',
-                padding: '1px',
-                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                WebkitMaskComposite: 'xor',
-                maskComposite: 'exclude'
-              }} />
-              <div className="bg-white p-8 rounded-xl relative">
+            <div className="border-gradient-card rounded-xl overflow-hidden">
+              <div className="bg-white p-8 rounded-xl h-full">
                 <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">For Buyers</h2>
                 <ul className="space-y-3">
                   {["Buy a home faster than you can say \"sold\"", "Save your cash for the home, not the agent.", "Know you're paying a fair price—always.", "No fees. No middlemen. Just the keys."].map((item, index) => (
@@ -53,15 +47,8 @@ const About: React.FC = () => {
               </div>
             </div>
             
-            <div className="relative">
-              <div className="absolute inset-0 rounded-xl" style={{
-                background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)',
-                padding: '1px',
-                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                WebkitMaskComposite: 'xor',
-                maskComposite: 'exclude'
-              }} />
-              <div className="bg-white p-8 rounded-xl relative">
+            <div className="border-gradient-card rounded-xl overflow-hidden">
+              <div className="bg-white p-8 rounded-xl h-full">
                 <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">For Sellers</h2>
                 <ul className="space-y-3">
                   {["List your home in 1 minute, sell it in 2.", "Zero fees, zero commissions, forever.", "Sell your home, skip the headache.", "Get a great offer on your home... today."].map((item, index) => (

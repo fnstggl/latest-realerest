@@ -28,6 +28,27 @@
     z-index: 0;
   }
   
+  /* Border gradient card specifically for About page sections */
+  .border-gradient-card {
+    position: relative;
+    display: block;
+  }
+  
+  .border-gradient-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: 1;
+  }
+  
   /* Border gradient */
   .border-gradient-br-pink-purple-gold {
     position: relative;
