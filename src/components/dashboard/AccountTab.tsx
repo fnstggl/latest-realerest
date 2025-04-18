@@ -230,26 +230,28 @@ const AccountTab: React.FC<AccountTabProps> = ({ user, logout }) => {
             </div>
           </div>
           
-          <Button 
-            className="relative bg-white text-black border border-transparent hover:bg-white/90 transition-all rounded-lg" 
-            disabled={saving} 
-            type="submit"
-          >
-            {saving ? "Saving Changes..." : "Save Changes"}
-            <span 
-              className="absolute inset-[-2px] opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none z-[-1] rounded-lg"
-              style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude"
-              }}
-            />
-          </Button>
+          <div className="relative">
+            <button 
+              type="submit" 
+              disabled={saving}
+              className="bg-white text-black border border-transparent px-4 py-2 rounded-lg hover:bg-white/90 transition-all relative"
+            >
+              {saving ? "Saving Changes..." : "Save Changes"}
+              <span 
+                className="absolute inset-[-2px] -z-10 rounded-lg opacity-100 transition-all"
+                style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude"
+                }}
+              />
+            </button>
+          </div>
         </form>
       </div>
       
