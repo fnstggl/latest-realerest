@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
@@ -30,18 +29,15 @@ export const useListings = (limit?: number) => {
         setLoading(true);
         setError(null);
         
-        // Create a query for real data from Supabase
         let query = supabase
           .from('property_listings')
           .select('*')
           .order('created_at', { ascending: false });
           
-        // Apply limit if provided
         if (limit) {
           query = query.limit(limit);
         }
         
-        // Execute the query
         const { data, error } = await query;
         
         if (error) throw error;

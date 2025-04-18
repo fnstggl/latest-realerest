@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,7 @@ const fadeInUp = {
 
 const FeaturedProperties: React.FC = () => {
   const navigate = useNavigate();
-  const { listings, loading, error } = useListings(3); // Limit to 3 featured properties
+  const { listings, loading, error } = useListings(3);
 
   if (loading) {
     return (
@@ -77,7 +76,8 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="font-bold glass-button shadow-lg"
+                variant="translucent"
+                className="font-bold"
               >
                 View All Properties
               </Button>
