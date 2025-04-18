@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -63,7 +62,7 @@ const HeroSection: React.FC = () => {
                       WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                       WebkitMaskComposite: "xor",
                       maskComposite: "exclude",
-                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5), 0 0 30px rgba(108, 66, 245, 0.3)",
                       filter: "blur(2px)"
                     }}
                   ></span>
@@ -86,7 +85,7 @@ const HeroSection: React.FC = () => {
                       WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                       WebkitMaskComposite: "xor",
                       maskComposite: "exclude",
-                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5), 0 0 30px rgba(108, 66, 245, 0.3)",
                       filter: "blur(2px)"
                     }}
                   ></span>
