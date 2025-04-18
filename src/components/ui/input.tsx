@@ -18,11 +18,13 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         <span className="absolute inset-0 rounded-md opacity-0 peer-focus:opacity-100 transition-opacity duration-300 pointer-events-none" style={{
           background: "transparent",
           border: "2px solid transparent",
+          borderRadius: "inherit",
           backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
           backgroundOrigin: "border-box",
-          backgroundClip: "border-box",
-          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-          WebkitMaskComposite: "xor",
+          backgroundClip: "padding-box, border-box",
+          WebkitMask: 
+            "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0) border-box",
+          WebkitMaskComposite: "destination-out",
           maskComposite: "exclude",
         }} />
       </div>
