@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -25,6 +24,7 @@ export default {
 			fontFamily: {
 				sans: ['Helvetica', 'Arial', 'sans-serif'],
 				futura: ['Futura', 'Helvetica', 'Arial', 'sans-serif'],
+				'editorial': ['Playfair Display', 'Georgia', 'serif'], // A serif font that mimics the style
 			},
 			colors: {
 				border: 'hsl(var(--border))',
