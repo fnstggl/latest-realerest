@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ const CTASection: React.FC = () => {
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
-              <span className="text-gradient-static px-3 mx-2 py-1 font-bold rounded-lg inline-block">
+              <span className="font-playfair font-bold italic px-3 mx-2 py-1 rounded-lg inline-block">
                 dream home?
               </span>
             </h2>

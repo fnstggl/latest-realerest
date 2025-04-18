@@ -25,6 +25,7 @@ export default {
 				sans: ['Helvetica', 'Arial', 'sans-serif'],
 				futura: ['Futura', 'Helvetica', 'Arial', 'sans-serif'],
 				'editorial': ['Playfair Display', 'Georgia', 'serif'], // A serif font that mimics the style
+				'playfair': ['Playfair Display', 'serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
