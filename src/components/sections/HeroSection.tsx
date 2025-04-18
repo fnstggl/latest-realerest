@@ -62,8 +62,8 @@ const HeroSection: React.FC = () => {
                       WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                       WebkitMaskComposite: "xor",
                       maskComposite: "exclude",
-                      boxShadow: "0 0 20px rgba(217, 70, 239, 0.7), 0 0 35px rgba(108, 66, 245, 0.5), 0 0 50px rgba(255, 92, 0, 0.3)",
-                      filter: "blur(3px)"
+                      boxShadow: "0 0 20px rgba(217, 70, 239, 0.8), 0 0 35px rgba(108, 66, 245, 0.6), 0 0 50px rgba(255, 92, 0, 0.4), 0 0 65px rgba(255, 60, 172, 0.3)",
+                      filter: "blur(4px)"
                     }}
                   ></span>
                 </Link>
@@ -85,8 +85,8 @@ const HeroSection: React.FC = () => {
                       WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                       WebkitMaskComposite: "xor",
                       maskComposite: "exclude",
-                      boxShadow: "0 0 20px rgba(217, 70, 239, 0.7), 0 0 35px rgba(108, 66, 245, 0.5), 0 0 50px rgba(255, 92, 0, 0.3)",
-                      filter: "blur(3px)"
+                      boxShadow: "0 0 20px rgba(217, 70, 239, 0.8), 0 0 35px rgba(108, 66, 245, 0.6), 0 0 50px rgba(255, 92, 0, 0.4), 0 0 65px rgba(255, 60, 172, 0.3)",
+                      filter: "blur(4px)"
                     }}
                   ></span>
                 </Link>
