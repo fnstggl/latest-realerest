@@ -32,7 +32,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   const roundedBelowMarket = Math.round(belowMarket);
   const validImage = image || '/placeholder.svg';
   
-  // Safely handle location parsing with proper checks
   const locationParts = location ? location.split(',') : ['Unknown', ''];
   const city = locationParts[0]?.trim() || 'Unknown';
   const stateZip = locationParts[1]?.trim() || '';
@@ -58,8 +57,23 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           />
           
           {belowMarket > 0 && (
-            <div className="absolute top-4 left-4 layer-3 py-1 px-3 font-bold text-foreground shadow-lg rounded-md backdrop-blur-md border border-white/30">
-              {roundedBelowMarket}% OFF
+            <div className="absolute top-4 left-4 layer-3 py-1 px-3 font-bold text-foreground shadow-lg rounded-md backdrop-blur-md border border-white/30 group overflow-hidden">
+              <span className="relative z-10">{roundedBelowMarket}% OFF</span>
+              <span 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                  boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                  filter: "blur(2px)"
+                }}
+              ></span>
             </div>
           )}
         </div>
