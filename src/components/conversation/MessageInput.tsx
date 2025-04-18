@@ -34,16 +34,31 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, sending }) =
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
-          className="resize-none border border-gray-200 focus:border-[#0892D0] focus:ring-[#0892D0]/20"
+          className="resize-none border border-gray-200 focus:border-gray-300 focus:ring-transparent"
           rows={2}
         />
-        <Button 
-          onClick={handleSendMessage}
-          disabled={!newMessage.trim() || sending}
-          className="h-16 w-16 bg-[#0892D0] hover:bg-[#0892D0]/90 text-white flex items-center justify-center"
-        >
-          <Send size={20} />
-        </Button>
+        <div className="relative">
+          <Button 
+            onClick={handleSendMessage}
+            disabled={!newMessage.trim() || sending}
+            className="h-16 w-16 bg-white text-black flex items-center justify-center relative overflow-hidden"
+          >
+            <span 
+              className="absolute inset-0 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude"
+            }}
+            />
+            <Send size={20} className="relative z-10" />
+          </Button>
+        </div>
       </div>
     </div>
   );
