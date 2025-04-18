@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input } from "@/components/ui/input";
 
 interface SearchBarProps {
   className?: string;
@@ -22,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
   return (
     <form onSubmit={handleSearch} className={`relative w-full max-w-3xl ${className} group`}>
       <div className="relative flex w-full before:absolute before:-inset-1 before:rounded-xl before:opacity-0 group-hover:before:opacity-100 before:transition-opacity before:duration-300 before:bg-gradient-to-r before:from-[#3C79F5] before:via-[#D946EF] before:to-[#FF3CAC] before:blur-lg before:-z-10">
-        <Input
+        <input
           type="text"
           placeholder="Search by city, address, or zip code..."
           value={query}
