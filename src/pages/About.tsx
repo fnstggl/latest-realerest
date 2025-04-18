@@ -20,8 +20,8 @@ const About: React.FC = () => {
         duration: 0.5
       }} className="max-w-4xl mx-auto">
           <div className="mb-12">
-            <h1 className="text-5xl font-bold mb-4 font-playfair font-bold italic my-[30px]">Rethinking Real Estate. </h1>
-            
+            <h1 className="text-5xl font-bold mb-4">About Realer Estate</h1>
+            <div className="h-2 w-32 bg-[#0892D0] shadow-md rounded-full"></div>
           </div>
           
           <div className="bg-white/80 border border-white/40 shadow-md p-8 rounded-xl mb-12">
@@ -69,7 +69,7 @@ const About: React.FC = () => {
           </div>
           
           <div className="text-center bg-white/80 border border-white/40 shadow-md p-6 rounded-xl">
-            <h2 className="text-3xl font-bold mb-6 blue-outline-text">Ready to experience Realer Estate?</h2>
+            <h2 className="text-3xl font-bold mb-6">Ready to experience Realer Estate?</h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild variant="default" className="font-bold shadow-sm hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
                 <Link to="/search">Find Properties</Link>
