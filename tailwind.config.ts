@@ -133,43 +133,14 @@ export default {
 						transform: 'scale(1)',
 						opacity: '1'
 					}
-				},
-				'gradient-1': {
-					'0%, 100%': { transform: 'translate(0%, 0%) rotate(0deg)' },
-					'50%': { transform: 'translate(20%, 20%) rotate(180deg)' },
-				},
-				'gradient-2': {
-					'0%, 100%': { transform: 'translate(0%, 0%) rotate(0deg)' },
-					'50%': { transform: 'translate(-20%, 20%) rotate(-180deg)' },
-				},
-				'gradient-3': {
-					'0%, 100%': { transform: 'translate(0%, 0%) rotate(0deg)' },
-					'50%': { transform: 'translate(20%, -20%) rotate(180deg)' },
-				},
-				'gradient-4': {
-					'0%, 100%': { transform: 'translate(0%, 0%) rotate(0deg)' },
-					'50%': { transform: 'translate(-20%, -20%) rotate(-180deg)' },
-				},
-				'gradient-text': {
-					'0%, 100%': {
-						'background-position': '0% 50%'
-					},
-					'50%': {
-						'background-position': '100% 50%'
-					},
-				},
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
 				'scale-in': 'scale-in 0.3s ease-out',
-				'enter': 'fade-in 0.5s ease-out, scale-in 0.3s ease-out',
-				'gradient-1': 'gradient-1 15s ease infinite',
-				'gradient-2': 'gradient-2 15s ease infinite',
-				'gradient-3': 'gradient-3 15s ease infinite',
-				'gradient-4': 'gradient-4 15s ease infinite',
-				'gradient-text': 'gradient-text 8s ease infinite',
+				'enter': 'fade-in 0.5s ease-out, scale-in 0.3s ease-out'
 			},
 			backgroundImage: {
 				'gradient-purple': 'linear-gradient(135deg, #8B5CF6 0%, #7E69AB 100%)',
