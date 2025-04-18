@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, Check, X, MessageCircle } from "lucide-react";
@@ -134,7 +133,10 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                       <Button 
                         size="sm"
                         variant="ghost"
-                        onClick={() => window.location.href = `/messages/${user.id}`}
+                        onClick={() => {
+                          // First get or create a conversation with this user
+                          window.location.href = `/messages?userId=${user.id}`;
+                        }}
                         className="hover:bg-white/20 text-black font-bold px-0"
                       >
                         <MessageCircle size={16} className="mr-1" />
@@ -191,7 +193,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                             )}
                           >
                             <Check size={16} className="mr-1" />
-                            Accept
+                            <span className="font-extrabold">Accept</span>
                           </Button>
                           <Button 
                             size="sm" 
@@ -206,7 +208,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                             )}
                           >
                             <X size={16} className="mr-1" />
-                            Decline
+                            <span className="font-extrabold">Decline</span>
                           </Button>
                         </>
                       )}
