@@ -31,6 +31,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 }) => {
   const roundedBelowMarket = Math.round(belowMarket);
   const validImage = image || '/placeholder.svg';
+  
+  // Split location into components (assuming format: "City, State ZIP")
+  const locationParts = location.split(',');
+  const city = locationParts[0]?.trim() || '';
+  const stateZip = locationParts[1]?.trim() || '';
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.onerror = null;
@@ -40,14 +45,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block perspective-container"
+      className="block perspective-container h-full"
     >
-      <div className="glass-card h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10">
-        <div className="relative rounded-t-lg">
+      <div className="glass-card h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col">
+        <div className="relative">
           <img 
             src={validImage} 
             alt={location} 
-            className="h-[240px] w-full object-cover rounded-t-lg" 
+            className="h-[240px] w-full object-cover" 
             onError={handleImageError} 
             loading="lazy" 
           />
@@ -59,23 +64,22 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           )}
         </div>
         
-        <div className="p-6 rounded-b-lg">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-xl text-foreground py-1 px-2 rounded-md">{address || location.split(',')[0]}</h3>
-            <div className="text-right">
-              <div className="text-2xl font-bold px-3 py-1 rounded-lg">
-                {formatCurrency(price)}
-              </div>
-              <div className="text-muted-foreground line-through mt-1 px-2 py-1 rounded-md">{formatCurrency(marketPrice)}</div>
-            </div>
+        <div className="p-6 flex-1 flex flex-col">
+          <h3 className="font-bold text-lg text-foreground mb-3 truncate">
+            {address || location.split(',')[0]}
+          </h3>
+          
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-xl font-bold">{formatCurrency(price)}</div>
+            <div className="text-muted-foreground line-through">{formatCurrency(marketPrice)}</div>
           </div>
           
-          <div className="flex items-center text-foreground/70 mb-4 px-3 py-1 rounded-md">
-            <MapPin size={18} className="mr-1" />
-            <span>{location}</span>
+          <div className="flex items-center text-foreground/70 mb-4">
+            <MapPin size={16} className="mr-1 shrink-0" />
+            <span className="truncate">{`${city}, ${stateZip}`}</span>
           </div>
           
-          <div className="border-t border-white/20 pt-4 mt-2">
+          <div className="border-t border-white/20 pt-4 mt-auto">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4 text-foreground/80">
                 <div className="flex items-center px-2 py-1 rounded-lg border border-white/30">
@@ -99,7 +103,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
                     backgroundOrigin: "border-box",
                     backgroundClip: "border-box",
                     WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
