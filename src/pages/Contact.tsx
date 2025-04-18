@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
@@ -117,7 +118,7 @@ const Contact: React.FC = () => {
                         <Send size={18} className="mr-2" />
                         {submitting ? "Sending..." : "Send Message"}
                         <span 
-                          className="absolute inset-[-2px] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 -z-10"
+                          className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                           style={{
                             background: "transparent",
                             border: "2px solid transparent",
