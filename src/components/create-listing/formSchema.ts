@@ -13,12 +13,6 @@ export const formSchema = z.object({
   }),
   marketPrice: z.string().min(1, {
     message: "Market price is required"
-  }).refine((marketPrice, ctx) => {
-    const marketPriceNum = Number(marketPrice);
-    const priceNum = Number(ctx.parent.price);
-    return marketPriceNum >= priceNum;
-  }, {
-    message: "Market price must be equal to or greater than the listing price"
   }),
   city: z.string().min(2, {
     message: "City is required"
@@ -46,4 +40,11 @@ export const formSchema = z.object({
   comparableAddress1: z.string().optional(),
   comparableAddress2: z.string().optional(),
   comparableAddress3: z.string().optional()
+}).refine((data) => {
+  const marketPriceNum = Number(data.marketPrice);
+  const priceNum = Number(data.price);
+  return marketPriceNum >= priceNum;
+}, {
+  message: "Market price must be equal to or greater than the listing price",
+  path: ["marketPrice"] // This specifies which field the error should be attached to
 });
