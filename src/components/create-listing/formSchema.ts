@@ -13,6 +13,12 @@ export const formSchema = z.object({
   }),
   marketPrice: z.string().min(1, {
     message: "Market price is required"
+  }).refine((marketPrice, ctx) => {
+    const marketPriceNum = Number(marketPrice);
+    const priceNum = Number(ctx.parent.price);
+    return marketPriceNum >= priceNum;
+  }, {
+    message: "Market price must be equal to or greater than the listing price"
   }),
   city: z.string().min(2, {
     message: "City is required"

@@ -154,6 +154,12 @@ const CreateListing: React.FC = () => {
       navigate('/signin');
       return;
     }
+
+    if (imageFiles.length === 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }
+
     setIsSubmitting(true);
     setUploadProgress(0);
 
