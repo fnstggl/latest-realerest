@@ -131,15 +131,15 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                   </td>
                   <td className="p-4">{user.property?.title || 'Unknown Property'}</td>
                   <td className="p-4">
-                    <span className={`relative px-3 py-1 rounded-md font-bold bg-white text-black ${
-                      user.status === 'accepted' ? 'gradient-border' : 
+                    <span className={`relative inline-flex px-3 py-1 rounded-md font-bold ${
+                      user.status === 'accepted' ? 'bg-white text-black' : 
                       user.status === 'declined' ? 'bg-red-100 text-red-800' : 
-                      'bg-yellow-100 text-yellow-800'
+                      'bg-white border border-black text-black'
                     }`}>
                       {user.status.toUpperCase()}
                       {user.status === 'accepted' && (
                         <span 
-                          className="absolute inset-0 opacity-100 rounded-md pointer-events-none"
+                          className="absolute inset-0 rounded-md pointer-events-none"
                           style={{
                             background: "transparent",
                             border: "2px solid transparent",
