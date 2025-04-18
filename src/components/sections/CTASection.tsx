@@ -30,9 +30,7 @@ const CTASection: React.FC = () => {
                 dream home?
               </span>
             </h2>
-            <p className="text-xl mb-8 text-foreground/80">
-              Get started today and discover properties below market value in your desired location.
-            </p>
+            <p className="text-xl mb-8 text-foreground/80">Find affordable homes that don't make you compromise on size, location or safety. </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl border border-white/30 electric-blue-button">
                 <Link to="/search">Find Homes</Link>
