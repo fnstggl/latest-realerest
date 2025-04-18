@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Search, Menu, User, LogIn } from 'lucide-react';
+import { Menu, User } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { motion } from 'framer-motion';
@@ -158,7 +158,6 @@ const Navbar: React.FC = () => {
                 className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-black h-7 sm:h-9" 
                 onClick={handleSignIn}
               >
-                <LogIn size={14} className="mr-1 sm:mr-2" />
                 Log In
               </Button>
               
