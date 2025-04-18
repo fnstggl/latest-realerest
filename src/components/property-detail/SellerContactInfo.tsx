@@ -3,6 +3,7 @@ import React from 'react';
 import { Phone, Mail, User, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { toast } from 'sonner';
 
 interface SellerContactInfoProps {
   name?: string;
@@ -19,7 +20,27 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   showContact,
   sellerId
 }) => {
-  if (!showContact) return null;
+  // Make sure we're doing proper debugging
+  console.log("SellerContactInfo rendering:", { 
+    showContact, 
+    name, 
+    email, 
+    phone, 
+    sellerId 
+  });
+
+  // Return null early if we shouldn't display contact info
+  if (!showContact) {
+    console.log("SellerContactInfo not showing because showContact is false");
+    return null;
+  }
+  
+  const handleMessageSeller = () => {
+    if (!sellerId) {
+      toast.error("Unable to message seller at this time");
+      return;
+    }
+  };
   
   return (
     <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mb-4">

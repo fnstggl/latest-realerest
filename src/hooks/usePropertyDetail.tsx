@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,11 +35,14 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
   const [isApproved, setIsApproved] = useState(false);
   const { user } = useAuth();
 
+  // Check waitlist status when user or propertyId changes
   useEffect(() => {
     if (!user?.id || !propertyId) return;
     
     const checkWaitlistStatus = async () => {
       try {
+        console.log(`Checking waitlist status for user ${user.id} and property ${propertyId}`);
+        
         const { data, error } = await supabase
           .from('waitlist_requests')
           .select('status')
@@ -46,24 +50,52 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           .eq('user_id', user.id)
           .single();
           
-        if (error && error.code !== 'PGRST116') {
-          console.error("Error checking waitlist status:", error);
+        if (error) {
+          if (error.code !== 'PGRST116') { // No rows returned (not in waitlist)
+            console.error("Error checking waitlist status:", error);
+          } else {
+            console.log("User is not on waitlist for this property");
+          }
           return;
         }
         
         if (data) {
           const isUserApproved = data.status === 'accepted';
           setIsApproved(isUserApproved);
-          console.log("Waitlist status:", data.status, "isApproved set to:", isUserApproved);
+          console.log(`User waitlist status: ${data.status}, isApproved set to: ${isUserApproved}`);
         }
       } catch (error) {
-        console.error("Error checking waitlist approval:", error);
+        console.error("Exception checking waitlist approval:", error);
       }
     };
     
     checkWaitlistStatus();
+    
+    // Set up a subscription to listen for waitlist changes
+    const waitlistChannel = supabase
+      .channel('waitlist_status_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'waitlist_requests',
+          filter: `user_id=eq.${user.id} AND property_id=eq.${propertyId}`
+        },
+        (payload) => {
+          console.log("Waitlist status changed:", payload);
+          if (payload.new) {
+            setIsApproved(payload.new.status === 'accepted');
+          }
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(waitlistChannel);
+    };
   }, [user?.id, propertyId]);
 
+  // Fetch property details
   useEffect(() => {
     const fetchProperty = async () => {
       if (!propertyId) return;
@@ -169,6 +201,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           
           if (user?.id && user.id === propertyData.user_id) {
             setIsOwner(true);
+            console.log("User is the property owner");
           }
         } else {
           fallbackToLocalStorage();
@@ -214,7 +247,10 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     fetchProperty();
   }, [propertyId, user]);
 
+  // Calculate if user should see seller information
   const shouldShowSellerInfo = isOwner || isApproved;
+  
+  // Debug logs to identify issues
   console.log("Debug - isOwner:", isOwner, "isApproved:", isApproved, "shouldShowSellerInfo:", shouldShowSellerInfo);
   if (property) {
     console.log("Debug - Seller data to display:", {

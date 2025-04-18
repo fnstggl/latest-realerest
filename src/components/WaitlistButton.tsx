@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
-import { ClipboardList, X, Check } from 'lucide-react';
+import { ClipboardList, X, Check, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -29,6 +28,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   const [phone, setPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [waitlistStatus, setWaitlistStatus] = useState<'pending' | 'accepted' | 'declined' | null>(null);
+  const [checkingStatus, setCheckingStatus] = useState(false);
 
   useEffect(() => {
     if (externalOpen !== undefined) {
@@ -39,6 +39,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   const checkWaitlistStatus = useCallback(async () => {
     if (!user?.id) return null;
     
+    setCheckingStatus(true);
     try {
       const { data, error } = await supabase
         .from('waitlist_requests')
@@ -56,16 +57,53 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     } catch (error) {
       console.error("Exception checking waitlist status:", error);
       return null;
+    } finally {
+      setCheckingStatus(false);
     }
   }, [user?.id, propertyId]);
 
   useEffect(() => {
     const checkStatus = async () => {
       const status = await checkWaitlistStatus();
+      console.log("Current waitlist status:", status);
       setWaitlistStatus(status);
     };
     
     checkStatus();
+    
+    // Set up a subscription to listen for waitlist status changes
+    const waitlistChannel = supabase
+      .channel('waitlist_status_changes')
+      .on('postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'waitlist_requests', 
+          filter: user?.id ? `user_id=eq.${user.id} AND property_id=eq.${propertyId}` : undefined
+        },
+        (payload) => {
+          console.log("Waitlist status changed:", payload);
+          if (payload.new) {
+            const newStatus = payload.new.status as 'pending' | 'accepted' | 'declined';
+            setWaitlistStatus(newStatus);
+            
+            if (newStatus === 'accepted') {
+              toast.success("Your waitlist request has been approved!");
+              // Refresh the page to update UI with seller contact info
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+            } else if (newStatus === 'declined') {
+              toast.error("Your waitlist request has been declined.");
+            }
+          }
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(waitlistChannel);
+    };
   }, [user?.id, propertyId, checkWaitlistStatus]);
 
   const handleJoinWaitlist = () => {
@@ -195,6 +233,19 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     }
   };
 
+  const handleRefresh = async () => {
+    const status = await checkWaitlistStatus();
+    setWaitlistStatus(status);
+    
+    if (status === 'accepted') {
+      toast.success("Your waitlist request has been approved!");
+      // Refresh the page to update UI with seller contact info
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
+
   const getWaitlistButtonContent = () => {
     switch (waitlistStatus) {
       case 'accepted':
@@ -221,13 +272,24 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         );
       case 'pending':
         return (
-          <Button 
-            className="w-full bg-white/30 backdrop-blur-lg text-black font-bold py-2 rounded-xl glass-card property-card-glow"
-            disabled
-          >
-            <Check size={18} className="mr-2" />
-            In Waitlist - Pending Review
-          </Button>
+          <div className="space-y-2">
+            <Button 
+              className="w-full bg-white/30 backdrop-blur-lg text-black font-bold py-2 rounded-xl glass-card property-card-glow"
+              disabled
+            >
+              <Check size={18} className="mr-2" />
+              In Waitlist - Pending Review
+            </Button>
+            <Button 
+              variant="outline"
+              className="w-full text-black font-bold py-1 rounded-xl glass-card"
+              onClick={handleRefresh}
+              disabled={checkingStatus}
+            >
+              <RefreshCw size={16} className={`mr-2 ${checkingStatus ? 'animate-spin' : ''}`} />
+              {checkingStatus ? 'Checking status...' : 'Refresh Status'}
+            </Button>
+          </div>
         );
       default:
         return (

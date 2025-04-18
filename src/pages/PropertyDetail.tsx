@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -15,6 +16,7 @@ import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
 import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const PropertyDetail: React.FC = () => {
   const {
@@ -28,6 +30,7 @@ const PropertyDetail: React.FC = () => {
     amount: number;
     buyerName: string;
   }>>([]);
+  
   const {
     property,
     loading,
@@ -35,6 +38,14 @@ const PropertyDetail: React.FC = () => {
     isApproved,
     shouldShowSellerInfo
   } = usePropertyDetail(id);
+
+  // Log values for debugging
+  useEffect(() => {
+    console.log("PropertyDetail - isOwner:", isOwner);
+    console.log("PropertyDetail - isApproved:", isApproved);
+    console.log("PropertyDetail - shouldShowSellerInfo:", shouldShowSellerInfo);
+    console.log("PropertyDetail - property:", property);
+  }, [property, isOwner, isApproved, shouldShowSellerInfo]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -46,6 +57,7 @@ const PropertyDetail: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
+    
     const fetchRealOffers = async () => {
       try {
         const {
@@ -54,10 +66,12 @@ const PropertyDetail: React.FC = () => {
         } = await supabase.from('property_offers').select('id, offer_amount, user_id').eq('property_id', id).eq('is_interested', true).order('offer_amount', {
           ascending: false
         }).limit(3);
+        
         if (error) {
           console.error("Error fetching real offers:", error);
           return;
         }
+        
         if (data && data.length > 0) {
           const formattedOffers = data.map(offer => ({
             id: offer.id,
@@ -65,18 +79,22 @@ const PropertyDetail: React.FC = () => {
             buyerName: "Anonymous buyer"
           }));
           setRealOffers(formattedOffers);
+        } else {
+          console.log("No real offers found for this property");
+          setRealOffers([]);
         }
       } catch (error) {
         console.error("Error in fetchRealOffers:", error);
       }
     };
+    
     fetchRealOffers();
   }, [id]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 flex items-center justify-center">
-        {/* Removed loading animation */}
+        <div className="text-lg font-semibold">Loading property details...</div>
       </div>
     );
   }
@@ -119,9 +137,30 @@ const PropertyDetail: React.FC = () => {
           <PropertyImages mainImage={property?.image} images={property?.images} />
           
           <div className="flex flex-col justify-between space-y-4">
-            <PropertyHeader title={property?.title} belowMarket={property?.belowMarket} price={property?.price} marketPrice={property?.marketPrice} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} location={property?.location} fullAddress={property?.full_address} showFullAddress={isOwner || isApproved} onShowAddressClick={handleAddressClick} />
+            <PropertyHeader 
+              title={property?.title} 
+              belowMarket={property?.belowMarket} 
+              price={property?.price} 
+              marketPrice={property?.marketPrice} 
+              beds={property?.beds} 
+              baths={property?.baths} 
+              sqft={property?.sqft} 
+              location={property?.location} 
+              fullAddress={property?.full_address} 
+              showFullAddress={isOwner || isApproved} 
+              onShowAddressClick={handleAddressClick} 
+            />
             
-            {isOwner ? 
+            {/* Show Seller Contact Info first for better visibility */}
+            <SellerContactInfo 
+              name={property?.sellerName} 
+              phone={property?.sellerPhone} 
+              email={property?.sellerEmail} 
+              showContact={shouldShowSellerInfo} 
+              sellerId={property?.sellerId} 
+            />
+            
+            {isOwner ? (
               <Link to={`/property/${property?.id}/edit`} className="w-full">
                 <Button className="w-full bg-white hover:bg-white text-black font-bold py-2 relative group overflow-hidden rounded-xl">
                   <Cog size={18} className="mr-2" />
@@ -142,60 +181,84 @@ const PropertyDetail: React.FC = () => {
                     }}
                   ></span>
                 </Button>
-              </Link> 
-              : isApproved ? 
+              </Link>
+            ) : isApproved ? (
               <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
                 <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
                 <p>You now have access to view the full property details and contact the seller directly.</p>
               </div> 
-              : 
+            ) : (
               <WaitlistButton 
                 propertyId={property?.id || ''} 
                 propertyTitle={property?.title || ''} 
                 open={showWaitlistDialog} 
                 onOpenChange={setShowWaitlistDialog} 
               />
-            }
+            )}
             
-            {property && <PropertyOffers propertyId={property.id} realOffers={realOffers} />}
+            {realOffers.length > 0 && property && (
+              <PropertyOffers propertyId={property.id} realOffers={realOffers} />
+            )}
             
-            {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && <div className="grid grid-cols-2 gap-4">
+            {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && (
+              <div className="grid grid-cols-2 gap-4">
                 <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
                   <div className="text-lg font-bold text-black">
                     {property?.afterRepairValue.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'USD'
-                })}
+                      style: 'currency',
+                      currency: 'USD'
+                    })}
                   </div>
                   <div className="text-xs">After Repair Value</div>
                 </div>
                 <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
                   <div className="text-lg font-bold text-black">
                     {property?.estimatedRehab.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'USD'
-                })}
+                      style: 'currency',
+                      currency: 'USD'
+                    })}
                   </div>
                   <div className="text-xs">Est. Rehab Cost</div>
                 </div>
-              </div>}
+              </div>
+            )}
             
-            <SellerContactInfo name={property?.sellerName} phone={property?.sellerPhone} email={property?.sellerEmail} showContact={shouldShowSellerInfo} sellerId={property?.sellerId} />
-            
-            {isApproved && property && <div className="mt-3">
-                <MakeOfferButton propertyId={property.id} propertyTitle={property.title} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail || ''} sellerPhone={property.sellerPhone || ''} sellerId={property.sellerId || ''} currentPrice={property.price} />
-              </div>}
+            {isApproved && property && (
+              <div className="mt-3">
+                <MakeOfferButton 
+                  propertyId={property.id} 
+                  propertyTitle={property.title} 
+                  sellerName={property.sellerName || 'Property Owner'} 
+                  sellerEmail={property.sellerEmail || ''} 
+                  sellerPhone={property.sellerPhone || ''} 
+                  sellerId={property.sellerId || ''} 
+                  currentPrice={property.price} 
+                />
+              </div>
+            )}
           </div>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="md:col-span-2">
-            <PropertyDescription description={property?.description} beds={property?.beds} baths={property?.baths} sqft={property?.sqft} belowMarket={property?.belowMarket} comparables={shouldShowSellerInfo ? property?.comparables : undefined} />
+            <PropertyDescription 
+              description={property?.description} 
+              beds={property?.beds} 
+              baths={property?.baths} 
+              sqft={property?.sqft} 
+              belowMarket={property?.belowMarket} 
+              comparables={shouldShowSellerInfo ? property?.comparables : undefined} 
+            />
           </div>
           
-          {showPropertyDetails && <div>
-              <PropertyDetails afterRepairValue={property?.afterRepairValue} estimatedRehab={property?.estimatedRehab} />
-            </div>}
+          {showPropertyDetails && (
+            <div>
+              <PropertyDetails 
+                afterRepairValue={property?.afterRepairValue} 
+                estimatedRehab={property?.estimatedRehab} 
+              />
+            </div>
+          )}
         </div>
       </div>
       
