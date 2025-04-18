@@ -1,9 +1,11 @@
-import React from "react";
+
+import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, Check, X, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useMessages } from "@/hooks/useMessages";
 
 interface WaitlistUser {
   id: string;
@@ -24,6 +26,44 @@ interface WaitlistTabProps {
 }
 
 const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUsers }) => {
+  const navigate = useNavigate();
+  const { getOrCreateConversation } = useMessages();
+  
+  const handleMessageClick = async (userId: string) => {
+    try {
+      // First get the user's actual user_id from the waitlist request
+      const { data: userData, error: userError } = await supabase
+        .from('waitlist_requests')
+        .select('user_id')
+        .eq('id', userId)
+        .single();
+        
+      if (userError) {
+        console.error("Error fetching user data:", userError);
+        toast.error("Could not find this user's details");
+        return;
+      }
+      
+      if (!userData?.user_id) {
+        toast.error("Could not find user information");
+        return;
+      }
+      
+      // Create or get existing conversation
+      const conversationId = await getOrCreateConversation(userData.user_id);
+      
+      if (conversationId) {
+        // Navigate to the specific conversation
+        navigate(`/messages/${conversationId}`);
+      } else {
+        toast.error("Could not create conversation with this user");
+      }
+    } catch (error) {
+      console.error("Error starting conversation:", error);
+      toast.error("Failed to start conversation");
+    }
+  };
+
   const handleUpdateWaitlistStatus = async (userId: string, newStatus: "accepted" | "declined", propertyId: string, propertyTitle: string, requesterName: string, userEmail: string) => {
     try {
       const { error } = await supabase
@@ -133,10 +173,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                       <Button 
                         size="sm"
                         variant="ghost"
-                        onClick={() => {
-                          // First get or create a conversation with this user
-                          window.location.href = `/messages?userId=${user.id}`;
-                        }}
+                        onClick={() => handleMessageClick(user.id)}
                         className="hover:bg-white/20 text-black font-bold px-0"
                       >
                         <MessageCircle size={16} className="mr-1" />
