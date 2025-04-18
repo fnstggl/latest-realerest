@@ -42,12 +42,12 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, sending }) =
             onClick={handleSendMessage}
             disabled={!newMessage.trim() || sending}
             className="h-16 w-16 bg-white hover:bg-white text-black flex items-center justify-center relative z-10"
-            style={{ borderRadius: "0.5rem" }} // Explicitly set border radius to match the outer span
+            style={{ borderRadius: "0.5rem" }}
           >
             <Send size={20} className="relative z-10" />
           </Button>
-          <span 
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-visible"
             style={{
               position: "absolute",
               top: "0",
@@ -55,15 +55,23 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, sending }) =
               right: "0", 
               bottom: "0",
               borderRadius: "0.5rem",
-              padding: "2px",
-              background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-              maskImage: "linear-gradient(#fff 0 0)",
-              maskComposite: "exclude",
-              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "xor",
-              pointerEvents: "none"
+              pointerEvents: "none",
             }}
-          />
+          >
+            <div
+              style={{
+                position: "absolute",
+                inset: "-2px",
+                borderRadius: "0.5rem",
+                background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                maskImage: "linear-gradient(#fff 0 0)",
+                maskComposite: "exclude",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                padding: "2px"
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
