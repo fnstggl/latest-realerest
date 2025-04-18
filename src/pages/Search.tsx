@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -133,15 +132,9 @@ const Search: React.FC = () => {
           <div className="flex-1">
             <div className="bg-white rounded-xl p-4 mb-6 neo-container">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <h1 className="font-semibold text-base">
-                    {filteredProperties.length} properties
-                    {searchQuery ? ` for "${searchQuery}"` : ''}
-                  </h1>
-                  {filteredProperties.length !== properties.length && <p className="text-sm text-gray-500">
-                      Filtered from {properties.length} total properties
-                    </p>}
-                </div>
+                <h1 className="font-editorial font-bold italic text-lg">
+                  Below-market homes you can buy today.
+                </h1>
                 
                 <div className="flex items-center gap-4 w-full sm:w-auto">
                   <select className="flex-1 sm:flex-none border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary neo-input" value={sortOption} onChange={e => handleSortChange(e.target.value)}>
