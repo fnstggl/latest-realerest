@@ -169,7 +169,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                             WebkitMaskComposite: 'xor',
                             maskComposite: 'exclude'
-                        }}
+                          }}
                         />
                       )}
                     </SelectItem>
@@ -224,12 +224,27 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="any">Any</SelectItem>
-                <SelectItem value="1">1+</SelectItem>
-                <SelectItem value="2">2+</SelectItem>
-                <SelectItem value="3">3+</SelectItem>
-                <SelectItem value="4">4+</SelectItem>
-                <SelectItem value="5">5+</SelectItem>
+                {["any", "1", "2", "3", "4", "5"].map((value) => (
+                  <SelectItem 
+                    key={value} 
+                    value={value}
+                    className="relative"
+                  >
+                    {value === "any" ? "Any" : `${value}+`}
+                    {filters.bedrooms === value && (
+                      <span
+                        className="absolute inset-0 rounded-lg pointer-events-none"
+                        style={{
+                          padding: '1px',
+                          background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                          WebkitMaskComposite: 'xor',
+                          maskComposite: 'exclude'
+                        }}
+                      />
+                    )}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -241,11 +256,27 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="any">Any</SelectItem>
-                <SelectItem value="1">1+</SelectItem>
-                <SelectItem value="2">2+</SelectItem>
-                <SelectItem value="3">3+</SelectItem>
-                <SelectItem value="4">4+</SelectItem>
+                {["any", "1", "2", "3", "4"].map((value) => (
+                  <SelectItem 
+                    key={value} 
+                    value={value}
+                    className="relative"
+                  >
+                    {value === "any" ? "Any" : `${value}+`}
+                    {filters.bathrooms === value && (
+                      <span
+                        className="absolute inset-0 rounded-lg pointer-events-none"
+                        style={{
+                          padding: '1px',
+                          background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                          WebkitMaskComposite: 'xor',
+                          maskComposite: 'exclude'
+                        }}
+                      />
+                    )}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -255,7 +286,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
           const defaultFilters = {
             propertyType: "any",
             minPrice: 0,
-            maxPrice: 1000000,
+            maxPrice: 2000001,
             bedrooms: "any",
             bathrooms: "any",
             belowMarket: 0
