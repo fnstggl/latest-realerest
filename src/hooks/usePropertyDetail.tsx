@@ -139,49 +139,54 @@ export function usePropertyDetail(propertyId: string | undefined) {
         console.error("Error fetching seller profile:", profileError);
       }
       
+      let sellerName = null;
+      let sellerEmail = null;
+      let sellerPhone = null;
+      
       if (profileData) {
-        setSellerInfo({
-          name: profileData.name,
-          email: profileData.email,
-          phone: profileData.phone
-        });
+        sellerName = profileData.name;
+        sellerEmail = profileData.email;
+        sellerPhone = profileData.phone;
         
-        if (property) {
-          setProperty({
-            ...property,
-            sellerName: profileData.name,
-            sellerEmail: profileData.email,
-            sellerPhone: profileData.phone
-          });
-        }
-      } else {
-        // Fallback to just getting the email from RPC function
+        setSellerInfo({
+          name: sellerName,
+          email: sellerEmail,
+          phone: sellerPhone
+        });
+      } 
+      
+      // If no profile name, fallback to email username
+      if (!sellerName) {
         const { data: emailData, error: emailError } = await supabase
           .rpc('get_user_email', { user_id_param: userId });
         
         if (emailError) {
           console.error("Error getting seller email:", emailError);
-          return;
-        }
-        
-        if (emailData) {
+        } else if (emailData) {
           const emailName = emailData.split('@')[0];
-          const name = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+          sellerName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+          sellerEmail = emailData;
           
           setSellerInfo({
-            name: name,
-            email: emailData
+            name: sellerName,
+            email: sellerEmail
           });
-          
-          if (property) {
-            setProperty({
-              ...property,
-              sellerName: name,
-              sellerEmail: emailData
-            });
-          }
         }
       }
+      
+      // Always update property with seller info regardless of source
+      if (sellerName || sellerEmail || sellerPhone) {
+        setProperty(prevProperty => {
+          if (!prevProperty) return null;
+          return {
+            ...prevProperty,
+            sellerName: sellerName || "Unknown Seller", // Prevent fallback to "Property Owner"
+            sellerEmail,
+            sellerPhone
+          };
+        });
+      }
+      
     } catch (err) {
       console.error("Error fetching seller info:", err);
     }

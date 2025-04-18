@@ -38,7 +38,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   }
   
   const isPending = waitlistStatus === 'pending';
-  const displayName = name || 'Property Owner';
+  const displayName = name || 'Unknown Seller'; // Changed from 'Property Owner' to 'Unknown Seller'
   
   return (
     <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mb-4">
