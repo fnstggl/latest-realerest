@@ -200,7 +200,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
           </div>
           
           <div className="relative">
-            <button type="submit" disabled={saving} className="bg-white text-black border border-transparent px-4 py-2 hover:bg-white/90 transition-all relative rounded-md">
+            <button type="submit" disabled={saving} className="bg-white text-black border border-transparent px-4 py-2 hover:bg-white/90 transition-all relative rounded-md text-xs">
               {saving ? "Saving Changes..." : "Save Changes"}
               <span className="absolute inset-[-2px] -z-10 rounded-lg opacity-100 transition-all" style={{
               background: "transparent",
