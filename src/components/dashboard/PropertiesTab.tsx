@@ -56,6 +56,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
       toast.error("Failed to unlist property");
     }
   };
+
   return <>
       {isLoading ? <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
           <p className="mb-6">Loading your properties...</p>
@@ -89,7 +90,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <Button asChild variant="glass" className="shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
                       <Link to={`/property/${property.id}`}>View Listing</Link>
                     </Button>
-                    <Button asChild variant="outline" className="bg-white text-black border-2 border-black hover:bg-gray-50">
+                    <Button asChild variant="outline" className="bg-white text-black border border-gray-200 hover:bg-gray-50">
                       <Link to={`/property/${property.id}/edit`}>
                         Edit Listing
                       </Link>
