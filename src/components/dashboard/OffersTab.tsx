@@ -344,7 +344,7 @@ const OffersTab: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-lg">
-                      <Link to={`/property/${offer.propertyId}`} className="text-[#0892D0] hover:underline">
+                      <Link to={`/property/${offer.propertyId}`} className="text-black hover:text-[#0892D0]">
                         {offer.property.title}
                       </Link>
                     </CardTitle>
@@ -418,14 +418,31 @@ const OffersTab: React.FC = () => {
                 <div className="flex flex-wrap gap-2 mt-4">
                   {offer.status === "pending" && (
                     <>
-                      <Button onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="font-bold border border-green-500 bg-white hover:bg-green-50 text-green-600 transition-all">
+                      <Button 
+                        onClick={() => handleOfferAction(offer.id, "accepted")} 
+                        className="relative font-bold bg-white text-black border border-transparent hover:bg-white/90 transition-all"
+                      >
                         <CheckCircle size={16} className="mr-2" />
                         Accept
+                        <span 
+                          className="absolute inset-0 opacity-100 rounded-lg pointer-events-none"
+                          style={{
+                            background: "transparent",
+                            border: "2px solid transparent",
+                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                            backgroundOrigin: "border-box",
+                            backgroundClip: "border-box",
+                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude"
+                          }}
+                        />
                       </Button>
                       
-                      <Button onClick={() => handleCounterOffer(offer)} 
-                        className="font-bold border border-[#0892D0] bg-white hover:bg-[#0892D0]/10 text-[#0892D0] transition-all">
+                      <Button 
+                        onClick={() => handleCounterOffer(offer)} 
+                        className="font-bold border border-black bg-white hover:bg-black/5 text-black transition-all"
+                      >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
                       </Button>
@@ -434,14 +451,31 @@ const OffersTab: React.FC = () => {
                   
                   {offer.status === "countered" && !offer.counterOffers[offer.counterOffers.length - 1]?.from_seller && (
                     <>
-                      <Button onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="font-bold border border-green-500 bg-white hover:bg-green-50 text-green-600 transition-all">
+                      <Button 
+                        onClick={() => handleOfferAction(offer.id, "accepted")} 
+                        className="relative font-bold bg-white text-black border border-transparent hover:bg-white/90 transition-all"
+                      >
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
+                        <span 
+                          className="absolute inset-0 opacity-100 rounded-lg pointer-events-none"
+                          style={{
+                            background: "transparent",
+                            border: "2px solid transparent",
+                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                            backgroundOrigin: "border-box",
+                            backgroundClip: "border-box",
+                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude"
+                          }}
+                        />
                       </Button>
                       
-                      <Button onClick={() => handleCounterOffer(offer)} 
-                        className="font-bold border border-[#0892D0] bg-white hover:bg-[#0892D0]/10 text-[#0892D0] transition-all">
+                      <Button 
+                        onClick={() => handleCounterOffer(offer)} 
+                        className="font-bold border border-black bg-white hover:bg-black/5 text-black transition-all"
+                      >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter Again
                       </Button>
