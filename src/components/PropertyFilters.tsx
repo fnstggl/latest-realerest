@@ -1,10 +1,13 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 interface FiltersProps {
   onFilterChange: (filters: FilterState) => void;
 }
+
 interface FilterState {
   propertyType: string;
   priceRange: [number, number];
@@ -12,6 +15,7 @@ interface FilterState {
   bathrooms: string;
   belowMarket: number;
 }
+
 const PropertyFilters: React.FC<FiltersProps> = ({
   onFilterChange
 }) => {
@@ -22,6 +26,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
     bathrooms: "any",
     belowMarket: 0
   });
+
   const handleFilterChange = (key: keyof FilterState, value: any) => {
     const newFilters = {
       ...filters,
@@ -30,21 +35,50 @@ const PropertyFilters: React.FC<FiltersProps> = ({
     setFilters(newFilters);
     onFilterChange(newFilters);
   };
-  return <div className="bg-white p-6 neo-container">
+
+  return (
+    <div className="bg-white p-6 neo-container">
       <div className="space-y-6">
         <div>
           <h3 className="text-lg font-semibold mb-3">Property Type</h3>
           <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-2">
-            {["Any", "House", "Apartment", "Condo", "Duplex"].map(type => <Button key={type} variant={filters.propertyType === type.toLowerCase() ? "default" : "outline"} className={filters.propertyType === type.toLowerCase() ? "neo-button-primary" : "neo-button"} onClick={() => handleFilterChange("propertyType", type.toLowerCase())}>
-                {type}
-              </Button>)}
+            {["Any", "House", "Apartment", "Condo", "Duplex"].map(type => (
+              <Button
+                key={type}
+                variant="outline"
+                className={`relative ${
+                  filters.propertyType === type.toLowerCase()
+                    ? "text-white border-transparent"
+                    : "hover:border-transparent"
+                }`}
+                onClick={() => handleFilterChange("propertyType", type.toLowerCase())}
+              >
+                <span className="relative z-10">{type}</span>
+                {filters.propertyType === type.toLowerCase() && (
+                  <span
+                    className="absolute inset-0 rounded-lg pointer-events-none"
+                    style={{
+                      background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                      opacity: 1,
+                    }}
+                  />
+                )}
+              </Button>
+            ))}
           </div>
         </div>
 
         <div>
           <h3 className="text-lg font-semibold mb-3">Price Range</h3>
           <div className="mt-2 px-2">
-            <Slider defaultValue={[100000, 1000000]} min={0} max={2000000} step={10000} onValueChange={value => handleFilterChange("priceRange", value)} className="my-6" />
+            <Slider
+              defaultValue={[100000, 1000000]}
+              min={0}
+              max={2000000}
+              step={10000}
+              onValueChange={value => handleFilterChange("priceRange", value)}
+              className="my-6"
+            />
             <div className="flex justify-between text-sm text-gray-600">
               <div>${filters.priceRange[0].toLocaleString()}</div>
               <div>${filters.priceRange[1].toLocaleString()}</div>
@@ -55,7 +89,14 @@ const PropertyFilters: React.FC<FiltersProps> = ({
         <div>
           <h3 className="text-lg font-semibold mb-3">Below Market Value</h3>
           <div className="px-2">
-            <Slider defaultValue={[0]} min={0} max={50} step={5} onValueChange={value => handleFilterChange("belowMarket", value[0])} className="my-6" />
+            <Slider
+              defaultValue={[0]}
+              min={0}
+              max={50}
+              step={5}
+              onValueChange={value => handleFilterChange("belowMarket", value[0])}
+              className="my-6"
+            />
             <div className="flex justify-between text-sm text-gray-600">
               <div>0%</div>
               <div>At least {filters.belowMarket}% below</div>
@@ -115,6 +156,8 @@ const PropertyFilters: React.FC<FiltersProps> = ({
         });
       }} variant="link" className="w-full neo-button-primary text-black">Reset Filters</Button>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default PropertyFilters;
