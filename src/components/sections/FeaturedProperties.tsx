@@ -13,12 +13,12 @@ const fadeInUp = {
 
 const FeaturedProperties: React.FC = () => {
   const navigate = useNavigate();
-  const { listings, loading, error } = useListings(6);
+  const { listings, loading, error } = useListings(3); // Limit to 3 featured properties
 
   if (loading) {
     return (
       <div className="min-h-[300px] flex justify-center items-center">
-        <p>Loading properties...</p>
+        <p className="text-lg font-medium text-gray-600">Loading properties...</p>
       </div>
     );
   }
@@ -28,21 +28,18 @@ const FeaturedProperties: React.FC = () => {
       className="py-16 relative overflow-hidden perspective-container"
       initial="hidden" 
       whileInView="visible" 
-      viewport={{
-        once: true,
-        amount: 0.2
-      }} 
+      viewport={{ once: true, amount: 0.2 }}
       variants={fadeInUp}
     >
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <h2 className="text-4xl font-editorial font-bold italic text-foreground tracking-wide">
+          <h2 className="font-editorial font-bold italic text-4xl text-foreground tracking-wide">
             Featured Homes
           </h2>
         </div>
         
         <p className="text-xl text-foreground mb-8 max-w-3xl">
-          Real estate for <span className="font-editorial italic">real people</span>. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
+          Real estate for <span className="font-editorial italic">real people</span>. We only offer below-market homes you can actually afford.
         </p>
         
         {error ? (
@@ -64,24 +61,13 @@ const FeaturedProperties: React.FC = () => {
                     viewport={{ once: true }} 
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
-                    <PropertyCard 
-                      id={property.id} 
-                      price={property.price} 
-                      marketPrice={property.marketPrice} 
-                      image={property.image} 
-                      location={property.location} 
-                      address={property.title} 
-                      beds={property.beds} 
-                      baths={property.baths} 
-                      sqft={property.sqft} 
-                      belowMarket={property.belowMarket} 
-                    />
+                    <PropertyCard {...property} />
                   </motion.div>
                 ))}
               </div>
             ) : (
               <div className="glass-card p-12 text-center shadow-xl">
-                <h3 className="text-2xl font-bold text-foreground mb-6">No properties have been listed yet.</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-6">No properties listed yet</h3>
                 <Button className="glass shadow-lg electric-blue-button" onClick={() => navigate('/sell/create')}>
                   List Your Property
                 </Button>
@@ -91,25 +77,9 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="font-bold text-xs sm:text-sm md:text-base shadow-lg bg-white hover:bg-white transform transition-all duration-300 hover:-translate-y-1 relative group overflow-hidden border border-transparent rounded-lg"
+                className="font-bold glass-button shadow-lg"
               >
-                <span className="text-black relative z-10">View All Properties</span>
-                
-                <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude",
-                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
-                    filter: "blur(2px)"
-                  }}
-                ></span>
+                View All Properties
               </Button>
             </div>
           </>
