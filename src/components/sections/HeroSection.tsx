@@ -35,8 +35,23 @@ const HeroSection: React.FC = () => {
               Find a home you love...
             </h1>
             <div className="mb-2 sm:mb-4 md:mb-6">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center text-gradient-static tracking-normal py-1">
-                at a price you'll love more
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center text-gradient-static relative group">
+                <span className="relative z-10">at a price you'll love more</span>
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
+                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                    filter: "blur(2px)"
+                  }}
+                ></span>
               </h1>
             </div>
             <p className="text-foreground mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center">
