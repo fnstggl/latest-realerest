@@ -122,12 +122,13 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
         
-        <div className="hidden md:flex space-x-6 lg:space-x-8 mx-auto">
-          <Link to="/" className="text-foreground font-semibold hover:text-[#0892D0] transition-all duration-300 text-sm lg:text-base">Home</Link>
-          <Link to="/search" className="text-foreground font-semibold hover:text-[#0892D0] transition-all duration-300 text-sm lg:text-base">Browse</Link>
-          <Link to="/sell/create" className="text-foreground font-semibold hover:text-[#0892D0] transition-all duration-300 text-sm lg:text-base">Sell</Link>
-          <Link to="/about" className="text-foreground font-semibold hover:text-[#0892D0] transition-all duration-300 text-sm lg:text-base">About</Link>
-          <Link to="/contact" className="text-foreground font-semibold hover:text-[#0892D0] transition-all duration-300 text-sm lg:text-base">Contact</Link>
+        <div className="hidden md:flex space-x-6 lg:space-x-8 mx-auto relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ clipPath: 'inset(0 0 0 0)', mixBlendMode: 'color' }} />
+          <Link to="/" className="text-foreground font-semibold transition-all duration-300 text-sm lg:text-base relative">Home</Link>
+          <Link to="/search" className="text-foreground font-semibold transition-all duration-300 text-sm lg:text-base relative">Browse</Link>
+          <Link to="/sell/create" className="text-foreground font-semibold transition-all duration-300 text-sm lg:text-base relative">Sell</Link>
+          <Link to="/about" className="text-foreground font-semibold transition-all duration-300 text-sm lg:text-base relative">About</Link>
+          <Link to="/contact" className="text-foreground font-semibold transition-all duration-300 text-sm lg:text-base relative">Contact</Link>
         </div>
         
         <div className="flex items-center gap-1 xs:gap-2 sm:gap-4">

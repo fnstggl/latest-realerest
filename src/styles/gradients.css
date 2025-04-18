@@ -100,4 +100,19 @@
   .gradient-border-button:disabled::before {
     opacity: 0.5;
   }
+
+/* Navbar gradient hover effect */
+.nav-gradient-hover {
+  background: linear-gradient(90deg, #3C79F5, #D946EF 50%, #FF3CAC);
+  background-size: 400% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.nav-gradient-hover:hover {
+  background-position: 100% 50%;
+}
 }
