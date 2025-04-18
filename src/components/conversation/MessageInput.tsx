@@ -37,27 +37,28 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, sending }) =
           className="resize-none border border-gray-200 focus:border-gray-300 focus:ring-transparent"
           rows={2}
         />
-        <div className="relative">
+        <div className="relative rounded-lg overflow-hidden">
           <Button 
             onClick={handleSendMessage}
             disabled={!newMessage.trim() || sending}
-            className="h-16 w-16 bg-white text-black flex items-center justify-center relative overflow-hidden"
+            className="h-16 w-16 bg-white text-black flex items-center justify-center relative z-10"
           >
-            <span 
-              className="absolute inset-0 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-              style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude"
-            }}
-            />
             <Send size={20} className="relative z-10" />
           </Button>
+          <span 
+            className="absolute inset-0 pointer-events-none z-0"
+            style={{
+              background: "transparent",
+              border: "2px solid transparent",
+              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "border-box",
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              borderRadius: "0.5rem" // Matches the Button's rounded-lg
+            }}
+          />
         </div>
       </div>
     </div>
