@@ -55,8 +55,8 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 sm:p-6 rounded-xl">
       <div className="flex items-center gap-2 mb-2">
         <div className="bg-white/30 backdrop-blur-md text-black px-2 sm:px-3 py-1 border border-white/40 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-          <span className="text-gradient-static mr-1">{belowMarket}%</span> 
-          <span className="text-gradient-static">Below Market</span>
+          <span className="text-black font-playfair font-bold italic mr-1">{belowMarket}%</span> 
+          <span className="text-black font-playfair font-bold italic">Below Market</span>
         </div>
       </div>
       
