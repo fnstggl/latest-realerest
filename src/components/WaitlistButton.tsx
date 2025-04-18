@@ -136,22 +136,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           read: false
         });
       
-      // Create notification for the user who requested to join (database only, no toast)
-      await supabase
-        .from('notifications')
-        .insert({
-          user_id: user?.id,
-          title: 'Waitlist Request Submitted',
-          message: `You've successfully joined the waitlist for: ${propertyTitle}`,
-          type: 'success',
-          properties: {
-            propertyId,
-            propertyTitle
-          },
-          read: false
-        });
-      
-      // Only add this notification once to the UI context system
+      // Only create in-app notification, no toast needed here since we'll show one later
       addNotification(
         'Waitlist Request Submitted',
         `You've successfully joined the waitlist for: ${propertyTitle}`,

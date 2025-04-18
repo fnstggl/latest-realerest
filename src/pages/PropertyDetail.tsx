@@ -138,8 +138,9 @@ const PropertyDetail: React.FC = () => {
         {!isOwner && isApproved && <OfferStatusBanner propertyId={property.id} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail} sellerPhone={property.sellerPhone} />}
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="space-y-8">
+          <div className="space-y-6">
             <PropertyImages mainImage={property?.image} images={property?.images} />
+            
             <PropertyDescription 
               description={property?.description} 
               beds={property?.beds} 

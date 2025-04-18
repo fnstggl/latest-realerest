@@ -1,15 +1,86 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useProperties } from '@/hooks/useProperties';
 import Navbar from '@/components/Navbar';
 import PropertyCard from '@/components/PropertyCard';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { User } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { Property } from '@/hooks/useProperties';
 
 const SellerProfile = () => {
   const { sellerId } = useParams();
-  const { properties, loading } = useProperties({ sellerId });
+  const [sellerName, setSellerName] = useState<string>('Seller');
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch seller properties
+  useEffect(() => {
+    const fetchSellerProperties = async () => {
+      if (!sellerId) return;
+      
+      setLoading(true);
+      try {
+        // Get seller properties
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('*')
+          .eq('user_id', sellerId);
+          
+        if (error) {
+          console.error("Error fetching seller properties:", error);
+          return;
+        }
+        
+        // Get seller name
+        const { data: sellerData, error: sellerError } = await supabase
+          .from('profiles')
+          .select('name')
+          .eq('id', sellerId)
+          .maybeSingle();
+          
+        if (!sellerError && sellerData?.name) {
+          setSellerName(sellerData.name);
+        } else {
+          // Fallback to email
+          const { data: userData, error: userError } = await supabase
+            .rpc('get_user_email', { user_id_param: sellerId });
+            
+          if (!userError && userData) {
+            const emailName = userData.split('@')[0];
+            setSellerName(emailName.charAt(0).toUpperCase() + emailName.slice(1));
+          }
+        }
+        
+        // Format property data
+        if (data && data.length > 0) {
+          const formattedProperties = data.map(prop => ({
+            id: prop.id,
+            title: prop.title || 'Property Listing',
+            price: Number(prop.price) || 0,
+            marketPrice: Number(prop.market_price) || 0,
+            image: prop.images && prop.images.length > 0 
+              ? prop.images[0] 
+              : '/placeholder.svg',
+            location: prop.location || 'Unknown location',
+            beds: prop.beds || 0,
+            baths: prop.baths || 0,
+            sqft: prop.sqft || 0,
+            belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100)
+          }));
+          
+          setProperties(formattedProperties);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchSellerProperties();
+  }, [sellerId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
@@ -22,7 +93,7 @@ const SellerProfile = () => {
               <User size={32} className="text-black" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-black">Seller's Properties</h1>
+              <h1 className="text-2xl font-bold text-black">{sellerName}'s Properties</h1>
               <p className="text-gray-600">Browse all properties from this seller</p>
             </div>
           </div>

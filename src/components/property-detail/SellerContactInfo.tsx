@@ -46,7 +46,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
       
       <div className="space-y-2">
         <Link 
-          to={`/search?seller=${sellerId}`} 
+          to={`/seller/${sellerId}`} 
           className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform"
         >
           <User size={16} className="mr-2 text-black" />
