@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-
 const fadeInUp = {
   hidden: {
     opacity: 0,
@@ -17,7 +16,6 @@ const fadeInUp = {
     }
   }
 };
-
 const CTASection: React.FC = () => {
   return <motion.section className="py-16 relative overflow-hidden" initial="hidden" whileInView="visible" viewport={{
     once: true,
@@ -28,7 +26,7 @@ const CTASection: React.FC = () => {
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               Ready to find your 
-              <span className="font-playfair font-bold italic px-3 mx-2 py-1 rounded-lg inline-block">
+              <span className="font-playfair font-bold italic py-1 rounded-lg inline-block px-0 mx-[4px]">
                 dream home?
               </span>
             </h2>
@@ -53,5 +51,4 @@ const CTASection: React.FC = () => {
       </div>
     </motion.section>;
 };
-
 export default CTASection;
