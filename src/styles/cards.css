@@ -171,7 +171,7 @@
     transform: translateY(-5px) translateZ(0);
   }
   
-  /* Property card glow effect - removed blue glow */
+  /* Property card glow effect - completely removed blue glow */
   .property-card-glow {
     position: relative;
     z-index: 1;
