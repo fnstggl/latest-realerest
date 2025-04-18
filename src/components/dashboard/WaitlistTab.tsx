@@ -1,8 +1,9 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ClipboardCheck, Check, X } from "lucide-react";
+import { ClipboardCheck, Check, X, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 
 interface WaitlistUser {
   id: string;
@@ -116,6 +117,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
               <tr className="border-b border-white/20 bg-white/10">
                 <th className="text-left p-4 font-bold">Name</th>
                 <th className="text-left p-4 font-bold">Contact</th>
+                <th className="text-left p-4 font-bold">Message</th>
                 <th className="text-left p-4 font-bold">Property</th>
                 <th className="text-left p-4 font-bold">Status</th>
                 <th className="text-left p-4 font-bold">Actions</th>
@@ -129,7 +131,25 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                     <div>{user.email}</div>
                     <div>{user.phone}</div>
                   </td>
-                  <td className="p-4">{user.property?.title || 'Unknown Property'}</td>
+                  <td className="p-4">
+                    <Button 
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => window.location.href = `/messages/${user.id}`}
+                      className="hover:bg-white/20"
+                    >
+                      <MessageCircle size={16} className="mr-1" />
+                      Message
+                    </Button>
+                  </td>
+                  <td className="p-4">
+                    <Link 
+                      to={`/property/${user.propertyId}`}
+                      className="text-[#0892D0] hover:underline"
+                    >
+                      {user.property?.title || 'Unknown Property'}
+                    </Link>
+                  </td>
                   <td className="p-4">
                     <span className={`relative inline-flex px-3 py-1 rounded-md font-bold ${
                       user.status === 'accepted' ? 'bg-white text-black' : 
@@ -143,7 +163,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                           style={{
                             background: "transparent",
                             border: "2px solid transparent",
-                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
                             backgroundOrigin: "border-box",
                             backgroundClip: "border-box",
                             WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
@@ -160,7 +180,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                         <>
                           <Button 
                             size="sm" 
-                            className="bg-white text-green-600 hover:text-white hover:bg-green-600 border border-white/40 hover:border-green-600 transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(22,163,74,0.5)]"
+                            className="bg-white text-[#0892D0] hover:text-white hover:bg-[#0892D0] border border-white/40 hover:border-[#0892D0] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'accepted', 
@@ -175,7 +195,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                           </Button>
                           <Button 
                             size="sm" 
-                            className="bg-white text-red-600 hover:text-white hover:bg-red-600 border border-white/40 hover:border-red-600 transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(220,38,38,0.5)]"
+                            className="bg-white text-[#FF5C00] hover:text-white hover:bg-[#FF5C00] border border-white/40 hover:border-[#FF5C00] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(255,92,0,0.5)]"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'declined', 
