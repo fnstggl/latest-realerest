@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, Check, X } from "lucide-react";
@@ -132,12 +131,27 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                   </td>
                   <td className="p-4">{user.property?.title || 'Unknown Property'}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-md font-bold ${
-                      user.status === 'accepted' ? 'bg-green-100 text-green-800' : 
+                    <span className={`relative px-3 py-1 rounded-md font-bold bg-white text-black ${
+                      user.status === 'accepted' ? 'gradient-border' : 
                       user.status === 'declined' ? 'bg-red-100 text-red-800' : 
                       'bg-yellow-100 text-yellow-800'
                     }`}>
                       {user.status.toUpperCase()}
+                      {user.status === 'accepted' && (
+                        <span 
+                          className="absolute inset-0 opacity-100 rounded-md pointer-events-none"
+                          style={{
+                            background: "transparent",
+                            border: "2px solid transparent",
+                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                            backgroundOrigin: "border-box",
+                            backgroundClip: "border-box",
+                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude"
+                          }}
+                        />
+                      )}
                     </span>
                   </td>
                   <td className="p-4">

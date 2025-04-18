@@ -456,11 +456,24 @@ const OffersTab: React.FC = () => {
                 </div>
                 
                 {offer.status === "accepted" && (
-                  <div className="bg-green-100 border border-green-300 p-3 rounded-lg mt-4">
-                    <p className="text-green-800 font-bold">
+                  <div className="relative bg-white border-2 border-transparent p-3 rounded-lg mt-4">
+                    <p className="text-black font-bold">
                       <CheckCircle size={16} className="inline mr-2" />
                       You've accepted this offer. Contact the buyer to proceed with the sale.
                     </p>
+                    <span 
+                      className="absolute inset-0 opacity-100 rounded-lg pointer-events-none"
+                      style={{
+                        background: "transparent",
+                        border: "2px solid transparent",
+                        backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                        backgroundOrigin: "border-box",
+                        backgroundClip: "border-box",
+                        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        WebkitMaskComposite: "xor",
+                        maskComposite: "exclude"
+                      }}
+                    />
                   </div>
                 )}
                 
