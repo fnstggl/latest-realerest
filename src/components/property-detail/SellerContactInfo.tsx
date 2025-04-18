@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Phone, Mail, User, MessageSquare } from 'lucide-react';
+import { Phone, Mail, User, MessageSquare, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
@@ -11,6 +11,7 @@ interface SellerContactInfoProps {
   email?: string | null;
   showContact: boolean;
   sellerId?: string | null;
+  waitlistStatus?: string | null;
 }
 
 const SellerContactInfo: React.FC<SellerContactInfoProps> = ({ 
@@ -18,7 +19,8 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   phone, 
   email, 
   showContact,
-  sellerId
+  sellerId,
+  waitlistStatus
 }) => {
   // Make sure we're doing proper debugging
   console.log("SellerContactInfo rendering:", { 
@@ -26,7 +28,8 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
     name, 
     email, 
     phone, 
-    sellerId 
+    sellerId,
+    waitlistStatus
   });
 
   // Return null early if we shouldn't display contact info
@@ -34,6 +37,8 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
     console.log("SellerContactInfo not showing because showContact is false");
     return null;
   }
+  
+  const isPending = waitlistStatus === 'pending';
   
   return (
     <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mb-4">
@@ -65,53 +70,69 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           />
         </Link>
         
-        {email && (
-          <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
-            <Mail size={16} className="mr-2 text-[#0892D0]" />
-            <a href={`mailto:${email}`} className="text-black hover:underline">{email}</a>
-            
-            {/* Gradient border on hover */}
-            <span 
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-              style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-                boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-              }}
-            />
+        {/* Show contact information based on waitlist status */}
+        {isPending ? (
+          <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
+            <Clock size={16} className="mr-2 text-amber-500" />
+            <span className="text-gray-600">Contact details will be available once your waitlist request is approved</span>
           </div>
+        ) : (
+          <>
+            {email && (
+              <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
+                <Mail size={16} className="mr-2 text-[#0892D0]" />
+                <a href={`mailto:${email}`} className="text-black hover:underline">{email}</a>
+                
+                {/* Gradient border on hover */}
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
+                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+                  }}
+                />
+              </div>
+            )}
+            
+            {phone && (
+              <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
+                <Phone size={16} className="mr-2 text-[#0892D0]" />
+                <a href={`tel:${phone}`} className="text-black hover:underline">{phone}</a>
+                
+                {/* Gradient border on hover */}
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
+                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+                  }}
+                />
+              </div>
+            )}
+            
+            {!email && !phone && (
+              <div className="text-sm text-gray-500 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
+                Contact details are not available for this seller.
+              </div>
+            )}
+          </>
         )}
         
-        {phone && (
-          <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
-            <Phone size={16} className="mr-2 text-[#0892D0]" />
-            <a href={`tel:${phone}`} className="text-black hover:underline">{phone}</a>
-            
-            {/* Gradient border on hover */}
-            <span 
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-              style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-                boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-              }}
-            />
-          </div>
-        )}
-        
-        {sellerId && (
+        {sellerId && !isPending && (
           <Link 
             to={`/messages?seller=${sellerId}`}
             className="w-full mt-2 block"
@@ -142,10 +163,15 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           </Link>
         )}
         
-        {!email && !phone && (
-          <div className="text-sm text-gray-500 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
-            Contact details are not available for this seller.
-          </div>
+        {sellerId && isPending && (
+          <Button 
+            variant="glass"
+            disabled
+            className="w-full mt-2 text-gray-500 font-bold py-2 rounded-xl backdrop-blur-lg bg-white/50"
+          >
+            <Clock size={18} className="mr-2" />
+            <span>Messaging Available After Approval</span>
+          </Button>
         )}
       </div>
     </div>

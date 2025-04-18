@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -36,6 +35,7 @@ const PropertyDetail: React.FC = () => {
     loading,
     isOwner,
     isApproved,
+    waitlistStatus,
     shouldShowSellerInfo
   } = usePropertyDetail(id);
 
@@ -43,9 +43,10 @@ const PropertyDetail: React.FC = () => {
   useEffect(() => {
     console.log("PropertyDetail - isOwner:", isOwner);
     console.log("PropertyDetail - isApproved:", isApproved);
+    console.log("PropertyDetail - waitlistStatus:", waitlistStatus);
     console.log("PropertyDetail - shouldShowSellerInfo:", shouldShowSellerInfo);
     console.log("PropertyDetail - property:", property);
-  }, [property, isOwner, isApproved, shouldShowSellerInfo]);
+  }, [property, isOwner, isApproved, waitlistStatus, shouldShowSellerInfo]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -154,7 +155,7 @@ const PropertyDetail: React.FC = () => {
               onShowAddressClick={handleAddressClick} 
             />
 
-            {/* Always show Seller Contact Info for approved users */}
+            {/* Show Seller Contact Info for all users with waitlist status (pending or approved) */}
             {property && shouldShowSellerInfo && (
               <div className="mb-4">
                 <SellerContactInfo 
@@ -163,6 +164,7 @@ const PropertyDetail: React.FC = () => {
                   email={property.sellerEmail} 
                   showContact={true} 
                   sellerId={property.sellerId}
+                  waitlistStatus={waitlistStatus}
                 />
               </div>
             )}
@@ -194,6 +196,11 @@ const PropertyDetail: React.FC = () => {
                 <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
                 <p>You now have access to view the full property details and contact the seller directly.</p>
               </div> 
+            ) : waitlistStatus === 'pending' ? (
+              <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
+                <div className="font-bold text-black mb-2">Waitlist Request Pending</div>
+                <p>You've joined the waitlist for this property. The seller will review your request soon.</p>
+              </div>
             ) : (
               <WaitlistButton 
                 propertyId={property?.id || ''} 

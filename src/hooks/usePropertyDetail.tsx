@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,6 +32,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
+  const [waitlistStatus, setWaitlistStatus] = useState<string | null>(null);
   const { user } = useAuth();
 
   // Check waitlist status when user or propertyId changes
@@ -55,10 +55,18 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           return;
         }
         
+        console.log("Waitlist data returned:", data);
+        
         if (data && data.status) {
-          const isUserApproved = data.status === 'accepted';
+          // Make TypeScript happy by checking if status exists on data
+          const status = data.status as string;
+          setWaitlistStatus(status);
+          
+          const isUserApproved = status === 'accepted';
           setIsApproved(isUserApproved);
-          console.log(`User waitlist status: ${data.status}, isApproved set to: ${isUserApproved}`);
+          console.log(`User waitlist status: ${status}, isApproved set to: ${isUserApproved}`);
+        } else {
+          console.log("No waitlist data found or status is null");
         }
       } catch (error) {
         console.error("Exception checking waitlist approval:", error);
@@ -248,44 +256,14 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     fetchProperty();
   }, [propertyId, user]);
 
-  // Check if the user has an active waitlist request for this property
-  useEffect(() => {
-    if (!user?.id || !propertyId) return;
-    
-    const checkPendingWaitlistRequest = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('waitlist_requests')
-          .select('status')
-          .eq('property_id', propertyId)
-          .eq('user_id', user.id)
-          .maybeSingle();
-        
-        if (error) {
-          console.error("Error checking pending waitlist:", error);
-          return;
-        }
-        
-        // Set isApproved to true if the status is 'accepted'
-        if (data && data.status === 'accepted') {
-          console.log("User has an accepted waitlist request");
-          setIsApproved(true);
-        } else {
-          console.log("User waitlist status:", data?.status || "none");
-        }
-      } catch (error) {
-        console.error("Error checking waitlist status:", error);
-      }
-    };
-    
-    checkPendingWaitlistRequest();
-  }, [propertyId, user?.id]);
-
   // Calculate if user should see seller information
-  const shouldShowSellerInfo = isOwner || isApproved;
+  // IMPORTANT: Show seller info if user is owner OR if they're in the waitlist
+  const shouldShowSellerInfo = isOwner || isApproved || waitlistStatus === 'pending';
   
   // Debug logs to identify issues
-  console.log("Debug - isOwner:", isOwner, "isApproved:", isApproved, "shouldShowSellerInfo:", shouldShowSellerInfo);
+  console.log("Debug - isOwner:", isOwner, "isApproved:", isApproved, "waitlistStatus:", waitlistStatus);
+  console.log("Debug - shouldShowSellerInfo:", shouldShowSellerInfo);
+  
   if (property) {
     console.log("Debug - Seller data to display:", {
       name: property.sellerName,
@@ -299,6 +277,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     loading,
     isOwner,
     isApproved,
+    waitlistStatus,
     shouldShowSellerInfo
   };
 };
