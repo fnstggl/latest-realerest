@@ -111,13 +111,14 @@ const SignIn: React.FC = () => {
                 className="absolute inset-0 rounded-full pointer-events-none" 
                 style={{
                   background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                  padding: "1.5px",
+                  padding: "2px",
                   content: "''",
                   zIndex: 0,
-                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  maskImage: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                   WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                   WebkitMaskComposite: "xor",
                   maskComposite: "exclude",
+                  opacity: 1
                 }}
               />
             </div>
