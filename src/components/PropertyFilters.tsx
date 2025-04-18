@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -38,8 +37,8 @@ const PropertyFilters: React.FC<FiltersProps> = ({
   };
 
   const priceOptions = [
-    100000, 200000, 300000, 400000, 500000,
-    750000, 1000000, 1500000, 2000000
+    5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000,
+    100000, 200000, 300000, 400000, 500000, 750000, 1000000, 1500000, 2000000
   ];
 
   const belowMarketOptions = Array.from({ length: 21 }, (_, i) => i * 5);
@@ -114,6 +113,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                       )}
                     </SelectItem>
                   ))}
+                  <SelectItem value="2000001">$2,000,000+</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -149,6 +149,7 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                       )}
                     </SelectItem>
                   ))}
+                  <SelectItem value="2000001">$2,000,000+</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -36,6 +37,7 @@ const Search: React.FC = () => {
       if (property.price < filters.minPrice || property.price > filters.maxPrice) {
         return false;
       }
+      // Changed to minimum below market value check
       if (property.belowMarket < filters.belowMarket) {
         return false;
       }
