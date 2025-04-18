@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -139,7 +138,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="ghost" 
-                className="p-1 sm:p-2 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent"
+                className="p-1 sm:p-2 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent cursor-default"
                 onClick={() => navigate('/dashboard')}
               >
                 <User size={isMobile ? 14 : 20} className="mr-1 sm:mr-2" />
