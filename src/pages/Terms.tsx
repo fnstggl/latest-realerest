@@ -99,9 +99,7 @@ const Terms: React.FC = () => {
                 
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">7. Intellectual Property</h2>
-                  <p className="mb-4 text-gray-700">
-                    All content on our Platform, including but not limited to text, graphics, logos, icons, images, audio clips, and software, is the property of DoneDeal or its licensors and is protected by copyright, trademark, and other intellectual property laws.
-                  </p>
+                  <p className="mb-4 text-gray-700">All content on our Platform, including but not limited to text, graphics, logos, icons, images, audio clips, and software, is the property of Realer Estate or its licensors and is protected by copyright, trademark, and other intellectual property laws.</p>
                   <p className="text-gray-700">
                     You may not reproduce, modify, distribute, or create derivative works based on our content without our express written permission.
                   </p>
@@ -109,9 +107,7 @@ const Terms: React.FC = () => {
                 
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">8. Limitation of Liability</h2>
-                  <p className="mb-4 text-gray-700">
-                    To the maximum extent permitted by law, DoneDeal shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or use.
-                  </p>
+                  <p className="mb-4 text-gray-700">To the maximum extent permitted by law, Realer Estate shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or use.</p>
                   <p className="text-gray-700">
                     We are not responsible for the actions or content of third parties, including Sellers and Buyers on our Platform.
                   </p>
@@ -126,9 +122,7 @@ const Terms: React.FC = () => {
                 
                 <section>
                   <h2 className="text-2xl font-bold mb-4 text-[#0892D0]">10. Contact Information</h2>
-                  <p className="text-gray-700">
-                    If you have any questions about these Terms, please contact us at legal@donedeal.com.
-                  </p>
+                  <p className="text-gray-700">If you have any questions about these Terms, please contact us at legal@realerestate.org.</p>
                 </section>
               </div>
             </CardContent>
