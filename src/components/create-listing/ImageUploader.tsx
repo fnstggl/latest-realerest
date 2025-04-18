@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, X } from 'lucide-react';
@@ -100,7 +99,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   };
 
   return (
-    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
+    <div className="p-6 rounded-xl border border-black/10 bg-white">
       <h2 className="text-xl font-bold mb-4">Property Images</h2>
       <p className="text-sm text-gray-600 mb-4">
         Recommended: Add up to {MAX_IMAGES} images (less than {MAX_IMAGE_SIZE/1024/1024}MB each) for faster upload times.
@@ -138,14 +137,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             className="absolute inset-0 rounded-xl pointer-events-none"
             style={{
               background: "transparent",
-              border: "2px solid transparent",
-              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "border-box",
-              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-              boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+              border: "2px solid black"
             }}
           ></span>
         </button>
@@ -155,7 +147,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       {images.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {images.map((img, index) => (
-            <div key={index} className="relative layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden group">
+            <div key={index} className="relative border border-black/10 rounded-xl overflow-hidden group">
               <img 
                 src={img} 
                 alt={`Property ${index + 1}`} 
@@ -176,7 +168,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       
       {/* Show progress bar during submission */}
       {isSubmitting && uploadProgress > 0 && (
-        <div className="w-full bg-white/30 backdrop-blur-md rounded-full h-2.5 mb-6">
+        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
           <div 
             className="bg-[#d60013] h-2.5 rounded-full transition-all duration-300" 
             style={{ width: `${uploadProgress}%` }}

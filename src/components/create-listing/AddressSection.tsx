@@ -1,10 +1,11 @@
-
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { formSchema } from '@/components/create-listing/formSchema';
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // List of US states
 export const usStates = [
@@ -21,7 +22,7 @@ interface AddressSectionProps {
 
 const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
   return (
-    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm space-y-6">
+    <div className="p-6 rounded-xl border border-black/10 bg-white">
       <div>
         <h2 className="text-xl font-bold mb-4">Property Address</h2>
         <FormField 
@@ -33,7 +34,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
               <FormControl>
                 <Input 
                   placeholder="e.g. 123 Main St" 
-                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
+                  className="h-12 rounded-xl" 
                   {...field} 
                 />
               </FormControl>
@@ -56,7 +57,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                 <FormControl>
                   <Input 
                     placeholder="e.g. Portland" 
-                    className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
+                    className="h-12 rounded-xl" 
                     {...field} 
                   />
                 </FormControl>
@@ -77,11 +78,11 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md">
+                    <SelectTrigger className="h-12 rounded-xl">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="bg-white/90 backdrop-blur-md border border-white/40 rounded-xl max-h-[280px]">
+                  <SelectContent className="rounded-xl max-h-[280px]">
                     {usStates.map((state) => (
                       <SelectItem key={state} value={state}>
                         {state}
@@ -104,7 +105,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
                 <FormControl>
                   <Input 
                     placeholder="e.g. 97204" 
-                    className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
+                    className="h-12 rounded-xl" 
                     {...field} 
                   />
                 </FormControl>
@@ -124,7 +125,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
               <FormControl>
                 <Textarea 
                   placeholder="Describe your property..." 
-                  className="min-h-[120px] rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
+                  className="min-h-[120px] rounded-xl" 
                   {...field} 
                 />
               </FormControl>
@@ -136,8 +137,5 @@ const AddressSection: React.FC<AddressSectionProps> = ({ form }) => {
     </div>
   );
 };
-
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default AddressSection;

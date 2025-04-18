@@ -6,7 +6,6 @@ import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { formSchema } from '@/components/create-listing/formSchema';
 
-// Property types for the dropdown
 export const propertyTypes = ["House", "Apartment", "Condo", "Townhouse", "Studio", "Land"];
 
 interface PropertyTypeSectionProps {
@@ -15,7 +14,7 @@ interface PropertyTypeSectionProps {
 
 const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
   return (
-    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
+    <div className="p-6 rounded-xl border border-black/10 bg-white">
       <h2 className="text-xl font-bold mb-4">Property Type</h2>
       <FormField 
         control={form.control} 
@@ -28,14 +27,44 @@ const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md">
+                <SelectTrigger className="h-12 rounded-xl bg-white relative">
                   <SelectValue placeholder="Select property type" />
+                  <span 
+                    className="absolute inset-0 rounded-xl pointer-events-none"
+                    style={{
+                      background: "transparent",
+                      border: "2px solid transparent",
+                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                      backgroundOrigin: "border-box",
+                      backgroundClip: "border-box",
+                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                      WebkitMaskComposite: "xor",
+                      maskComposite: "exclude"
+                    }}
+                  ></span>
                 </SelectTrigger>
               </FormControl>
-              <SelectContent className="bg-white/90 backdrop-blur-md border border-white/40 rounded-xl">
+              <SelectContent className="bg-white border border-black/10 rounded-xl">
                 {propertyTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
+                  <SelectItem 
+                    key={type} 
+                    value={type}
+                    className="relative hover:bg-transparent focus:bg-transparent active:bg-transparent"
+                  >
                     {type}
+                    <span 
+                      className="absolute inset-0 rounded-lg opacity-0 hover:opacity-100 pointer-events-none transition-opacity"
+                      style={{
+                        background: "transparent",
+                        border: "2px solid transparent",
+                        backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                        backgroundOrigin: "border-box",
+                        backgroundClip: "border-box",
+                        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        WebkitMaskComposite: "xor",
+                        maskComposite: "exclude"
+                      }}
+                    ></span>
                   </SelectItem>
                 ))}
               </SelectContent>
