@@ -11,7 +11,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({ mainImage, images = [] 
 
   return (
     <div>
-      <div className="border border-white/40 shadow-lg p-2 rounded-xl mb-4 hover:border-[#0892D0] hover:shadow-[0_0_15px_rgba(8,146,208,0.6)] transition-all">
+      <div className="border border-white/40 shadow-lg p-2 rounded-xl mb-4">
         <img 
           src={activeImage || mainImage} 
           alt="Property image" 
@@ -24,7 +24,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({ mainImage, images = [] 
           {images.map((img, index) => (
             <div 
               key={index} 
-              className={`cursor-pointer ${activeImage === img ? 'border-2 border-[#0892D0] shadow-[0_0_8px_rgba(8,146,208,0.5)]' : 'border border-white/40'} rounded-lg transition-all duration-300 hover:border-[#0892D0] hover:shadow-[0_0_8px_rgba(8,146,208,0.3)]`}
+              className={`cursor-pointer ${activeImage === img ? 'border-2 border-gray-400' : 'border border-white/40'} rounded-lg transition-all duration-300`}
               onClick={() => setActiveImage(img)}
             >
               <img 

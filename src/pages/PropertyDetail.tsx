@@ -138,7 +138,17 @@ const PropertyDetail: React.FC = () => {
         {!isOwner && isApproved && <OfferStatusBanner propertyId={property.id} sellerName={property.sellerName || 'Property Owner'} sellerEmail={property.sellerEmail} sellerPhone={property.sellerPhone} />}
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <PropertyImages mainImage={property?.image} images={property?.images} />
+          <div className="space-y-8">
+            <PropertyImages mainImage={property?.image} images={property?.images} />
+            <PropertyDescription 
+              description={property?.description} 
+              beds={property?.beds} 
+              baths={property?.baths} 
+              sqft={property?.sqft} 
+              belowMarket={property?.belowMarket} 
+              comparables={shouldShowSellerInfo ? property?.comparables : undefined} 
+            />
+          </div>
           
           <div className="flex flex-col justify-between space-y-4">
             <PropertyHeader 
@@ -253,28 +263,16 @@ const PropertyDetail: React.FC = () => {
           </div>
         </div>
         
-        {/* Make the property description box flush with the image box by making the grid 2-column instead of 3-column */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="">
-            <PropertyDescription 
-              description={property?.description} 
-              beds={property?.beds} 
-              baths={property?.baths} 
-              sqft={property?.sqft} 
-              belowMarket={property?.belowMarket} 
-              comparables={shouldShowSellerInfo ? property?.comparables : undefined} 
-            />
-          </div>
-          
-          {showPropertyDetails && (
+        {showPropertyDetails && (
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
             <div>
               <PropertyDetails 
                 afterRepairValue={property?.afterRepairValue} 
                 estimatedRehab={property?.estimatedRehab} 
               />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       
       <SiteFooter />

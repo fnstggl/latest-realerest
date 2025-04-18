@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -41,6 +40,7 @@ const PropertyDetail = lazy(() => import("./pages/PropertyDetail"));
 const PropertyEdit = lazy(() => import("./pages/PropertyEdit"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Conversation = lazy(() => import("./pages/Conversation"));
+const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 
 // Simple loading fallback for lazy loaded components
 const LoadingFallback = () => (
@@ -120,6 +120,7 @@ const App = () => (
           />
           {/* Redirect the /pricing route to the home page */}
           <Route path="/pricing" element={<Navigate to="/" replace />} />
+          <Route path="/seller/:sellerId" element={<SellerProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
