@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -151,13 +150,13 @@ const PropertyDetail: React.FC = () => {
               onShowAddressClick={handleAddressClick} 
             />
 
-            {/* Show Seller Contact Info - Prominently displayed */}
-            {shouldShowSellerInfo && property && (
+            {/* Show Seller Contact Info */}
+            {property && (
               <SellerContactInfo 
                 name={property.sellerName} 
                 phone={property.sellerPhone} 
                 email={property.sellerEmail} 
-                showContact={true} 
+                showContact={shouldShowSellerInfo} 
                 sellerId={property.sellerId}
               />
             )}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -55,7 +54,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           return;
         }
         
-        if (data && 'status' in data) {
+        if (data) {
           const isUserApproved = data.status === 'accepted';
           setIsApproved(isUserApproved);
           console.log(`User waitlist status: ${data.status}, isApproved set to: ${isUserApproved}`);
