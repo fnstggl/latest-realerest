@@ -105,7 +105,7 @@ const SignIn: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="gradient-border-button w-full"
+                  className="gradient-border-button w-full font-futura font-bold"
                 >
                   {isLoading ? "Signing In..." : "Sign In"}
                 </button>
