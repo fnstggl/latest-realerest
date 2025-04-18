@@ -166,13 +166,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                   </div>
                   <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
-                    <Link 
-                      to={`/dashboard?tab=waitlist&propertyId=${property.id}`}
-                      onClick={(e) => {
-                        // Handle setting the active tab via URL parameters instead of state
-                        // The parent Dashboard component will use URL parameters to set the active tab
-                      }}
-                    >
+                    <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
                       Manage Waitlist
                       <span 
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
