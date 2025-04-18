@@ -47,7 +47,7 @@ const HeroSection: React.FC = () => {
             <div className="flex flex-row gap-3 sm:gap-4 justify-center mx-auto">
               <Button 
                 asChild 
-                className="font-bold text-xs sm:text-sm md:text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
+                className="font-bold text-xs sm:text-sm md:text-base shadow-sm backdrop-blur-xl bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
               >
                 <Link to="/search">
                   <span className="relative z-10">Find Homes</span>
@@ -70,7 +70,7 @@ const HeroSection: React.FC = () => {
               </Button>
               <Button 
                 asChild 
-                className="font-bold text-xs sm:text-sm md:text-base shadow-lg backdrop-blur-xl hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
+                className="font-bold text-xs sm:text-sm md:text-base shadow-sm backdrop-blur-xl bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
               >
                 <Link to="/about">
                   <span className="relative z-10">Learn More</span>
