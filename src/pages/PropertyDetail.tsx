@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -148,18 +147,9 @@ const PropertyDetail: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="space-y-6">
             <PropertyImages mainImage={property?.images[0]} images={property?.images} />
-            
-            <PropertyDescription 
-              description={property?.description} 
-              beds={property?.beds} 
-              baths={property?.baths} 
-              sqft={property?.sqft} 
-              belowMarket={property?.belowMarket} 
-              comparables={shouldShowSellerInfo ? property?.comparableAddresses : undefined} 
-            />
           </div>
           
-          <div className="flex flex-col justify-between space-y-4">
+          <div className="flex flex-col space-y-4">
             <PropertyHeader 
               title={property?.title} 
               belowMarket={property?.belowMarket} 
@@ -174,21 +164,27 @@ const PropertyDetail: React.FC = () => {
               onShowAddressClick={handleAddressClick} 
             />
 
-            {/* Show Seller Contact Info for users who are owners or have a waitlist status (pending or approved) */}
-            {property && shouldShowSellerInfo && (
-              <div className="mb-4">
-                <SellerContactInfo 
-                  name={property.sellerName} 
-                  phone={property.sellerPhone} 
-                  email={property.sellerEmail}
-                  showContact={true}
-                  sellerId={property.sellerId}
-                  waitlistStatus={waitlistStatus}
-                />
-              </div>
+            {!isOwner && !isApproved && waitlistStatus !== 'pending' && (
+              <WaitlistButton 
+                propertyId={property?.id || ''} 
+                propertyTitle={property?.title || ''} 
+                open={showWaitlistDialog} 
+                onOpenChange={setShowWaitlistDialog} 
+              />
             )}
 
-            {isOwner ? (
+            {property && shouldShowSellerInfo && (
+              <SellerContactInfo 
+                name={property.sellerName} 
+                phone={property.sellerPhone} 
+                email={property.sellerEmail}
+                showContact={true}
+                sellerId={property.sellerId}
+                waitlistStatus={waitlistStatus}
+              />
+            )}
+
+            {isOwner && (
               <Link to={`/property/${property?.id}/edit`} className="w-full">
                 <Button className="w-full bg-white hover:bg-white text-black font-bold py-2 relative group overflow-hidden rounded-xl">
                   <Cog size={18} className="mr-2" />
@@ -210,7 +206,9 @@ const PropertyDetail: React.FC = () => {
                   ></span>
                 </Button>
               </Link>
-            ) : isApproved ? (
+            )}
+            
+            {isApproved ? (
               <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
                 <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
                 <p>You now have access to view the full property details and contact the seller directly.</p>
@@ -220,14 +218,7 @@ const PropertyDetail: React.FC = () => {
                 <div className="font-bold text-black mb-2">Waitlist Request Pending</div>
                 <p>You've joined the waitlist for this property. The seller will review your request soon.</p>
               </div>
-            ) : (
-              <WaitlistButton 
-                propertyId={property?.id || ''} 
-                propertyTitle={property?.title || ''} 
-                open={showWaitlistDialog} 
-                onOpenChange={setShowWaitlistDialog} 
-              />
-            )}
+            ) : null}
             
             {realOffers.length > 0 && property && (
               <PropertyOffers propertyId={property.id} realOffers={realOffers} />
@@ -270,6 +261,17 @@ const PropertyDetail: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="mt-6">
+          <PropertyDescription 
+            description={property?.description} 
+            beds={property?.beds} 
+            baths={property?.baths} 
+            sqft={property?.sqft} 
+            belowMarket={property?.belowMarket} 
+            comparables={shouldShowSellerInfo ? property?.comparableAddresses : undefined} 
+          />
         </div>
         
         {showPropertyDetails && (
