@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -69,7 +70,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               boxShadow: "0 0 10px rgba(217, 70, 239, 0.5)",
               filter: "blur(1px)"
             }}
-          ></span>
+          />
         </Comp>
       )
     }

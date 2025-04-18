@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -80,10 +81,10 @@ const About: React.FC = () => {
           <div className="text-center bg-white/80 border border-white/40 shadow-md p-6 rounded-xl">
             <h2 className="text-3xl font-bold mb-6">We do real estate differently.</h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild variant="translucent" className="font-bold">
+              <Button variant="translucent" className="font-bold" asChild>
                 <Link to="/search">Find Properties</Link>
               </Button>
-              <Button asChild variant="translucent" className="font-bold">
+              <Button variant="translucent" className="font-bold" asChild>
                 <Link to="/sell/create">List Your Property</Link>
               </Button>
             </div>
