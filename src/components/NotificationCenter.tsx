@@ -124,9 +124,22 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
               variant="ghost" 
               size="sm"
               onClick={handleMarkAllAsRead}
-              className="text-xs text-[#0892D0] hover:text-[#0892D0]/80 font-medium"
+              className="text-xs text-black hover:text-black font-medium relative group overflow-hidden"
             >
-              Mark all as read
+              <span className="relative z-10">Mark all as read</span>
+              <span 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude"
+                }}
+              />
             </Button>
           </div>
         </div>
