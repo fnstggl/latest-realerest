@@ -13,6 +13,7 @@ import OffersTab from "@/components/dashboard/OffersTab";
 import AccountTab from "@/components/dashboard/AccountTab";
 import NotificationsTab from "@/components/dashboard/NotificationsTab";
 import { useProperties } from "@/hooks/useProperties";
+
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,48 +49,120 @@ const Dashboard: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-6 py-12 max-w-6xl">
-        <motion.div initial={{
-        opacity: 0,
-        y: 20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} transition={{
-        duration: 0.5
-      }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-bold mx-0 my-[35px]">Dashboard</h1>
-              <p className="text-lg">Manage your properties and waitlists</p>
+              <h1 className="text-4xl font-bold mx-0 my-[35px] text-black">Dashboard</h1>
+              <p className="text-lg text-black">Manage your properties and waitlists</p>
             </div>
             
-            <Button className="bg-white text-black border border-gray-200 hover:border-[#0892D0] hover:shadow-sm rounded-xl" onClick={() => navigate('/sell/create')}>
+            <Button className="relative bg-white text-black border border-gray-200 group hover:border-transparent transition-all rounded-xl" onClick={() => navigate('/sell/create')}>
               <Plus size={18} className="mr-2" />
               <span>Add Property</span>
+              <span 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
+                style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude"
+                }}
+              />
             </Button>
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             <TabsList className="bg-white border border-gray-200 shadow-sm">
-              <TabsTrigger value="properties" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="properties" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
                 <Home size={18} className="mr-2" />
                 Properties
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }}
+                />
               </TabsTrigger>
-              <TabsTrigger value="waitlist" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              {/* Apply similar gradient border treatment to other tabs */}
+              <TabsTrigger value="waitlist" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
                 <ClipboardCheck size={18} className="mr-2" />
                 Waitlist
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }}
+                />
               </TabsTrigger>
-              <TabsTrigger value="offers" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              
+              <TabsTrigger value="offers" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
                 <CreditCard size={18} className="mr-2" />
                 Offers
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }}
+                />
               </TabsTrigger>
-              <TabsTrigger value="account" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="account" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
                 <User size={18} className="mr-2" />
                 Account
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }}
+                />
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="data-[state=active]:bg-[#0892D0] data-[state=active]:text-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="notifications" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
                 <Bell size={18} className="mr-2" />
                 Notifications
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }}
+                />
               </TabsTrigger>
             </TabsList>
             
@@ -122,4 +195,5 @@ const Dashboard: React.FC = () => {
       </div>
     </div>;
 };
+
 export default Dashboard;

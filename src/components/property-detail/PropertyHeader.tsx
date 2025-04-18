@@ -54,9 +54,22 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   return (
     <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 sm:p-6 rounded-xl">
       <div className="flex items-center gap-2 mb-2">
-        <div className="bg-white/30 backdrop-blur-md text-black px-2 sm:px-3 py-1 border border-white/40 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
+        <div className="relative bg-white text-black px-2 sm:px-3 py-1 group border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg hover:border-transparent transition-all">
           <span className="text-black font-playfair font-bold italic mr-1">{belowMarket}%</span> 
           <span className="text-black font-playfair font-bold italic">Below Market</span>
+          <span 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+            style={{
+              background: "transparent",
+              border: "2px solid transparent",
+              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "border-box",
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude"
+            }}
+          />
         </div>
       </div>
       
