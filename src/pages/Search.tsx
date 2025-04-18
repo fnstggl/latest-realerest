@@ -33,7 +33,7 @@ const Search: React.FC = () => {
 
   const handleFilterChange = (filters: any) => {
     const filtered = properties.filter(property => {
-      if (property.price < filters.priceRange[0] || property.price > filters.priceRange[1]) {
+      if (property.price < filters.minPrice || property.price > filters.maxPrice) {
         return false;
       }
       if (property.belowMarket < filters.belowMarket) {
@@ -171,7 +171,8 @@ const Search: React.FC = () => {
                 <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
                 <Button onClick={() => handleFilterChange({
               propertyType: "any",
-              priceRange: [0, 2000000],
+              minPrice: 0,
+              maxPrice: 2000000,
               bedrooms: "any",
               bathrooms: "any",
               belowMarket: 0

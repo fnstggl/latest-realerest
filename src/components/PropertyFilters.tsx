@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface FiltersProps {
@@ -10,7 +9,8 @@ interface FiltersProps {
 
 interface FilterState {
   propertyType: string;
-  priceRange: [number, number];
+  minPrice: number;
+  maxPrice: number;
   bedrooms: string;
   bathrooms: string;
   belowMarket: number;
@@ -21,7 +21,8 @@ const PropertyFilters: React.FC<FiltersProps> = ({
 }) => {
   const [filters, setFilters] = useState<FilterState>({
     propertyType: "any",
-    priceRange: [100000, 1000000],
+    minPrice: 100000,
+    maxPrice: 1000000,
     bedrooms: "any",
     bathrooms: "any",
     belowMarket: 0
@@ -36,6 +37,13 @@ const PropertyFilters: React.FC<FiltersProps> = ({
     onFilterChange(newFilters);
   };
 
+  const priceOptions = [
+    100000, 200000, 300000, 400000, 500000,
+    750000, 1000000, 1500000, 2000000
+  ];
+
+  const belowMarketOptions = Array.from({ length: 21 }, (_, i) => i * 5);
+
   return (
     <div className="bg-white p-6 neo-container">
       <div className="space-y-6">
@@ -46,9 +54,9 @@ const PropertyFilters: React.FC<FiltersProps> = ({
               <Button
                 key={type}
                 variant="outline"
-                className={`relative ${
+                className={`relative bg-white hover:bg-white ${
                   filters.propertyType === type.toLowerCase()
-                    ? "text-white border-transparent"
+                    ? "border-transparent"
                     : "hover:border-transparent"
                 }`}
                 onClick={() => handleFilterChange("propertyType", type.toLowerCase())}
@@ -58,8 +66,11 @@ const PropertyFilters: React.FC<FiltersProps> = ({
                   <span
                     className="absolute inset-0 rounded-lg pointer-events-none"
                     style={{
-                      background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      opacity: 1,
+                      padding: '1px',
+                      background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                      WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                      WebkitMaskComposite: 'xor',
+                      maskComposite: 'exclude'
                     }}
                   />
                 )}
@@ -70,38 +81,115 @@ const PropertyFilters: React.FC<FiltersProps> = ({
 
         <div>
           <h3 className="text-lg font-semibold mb-3">Price Range</h3>
-          <div className="mt-2 px-2">
-            <Slider
-              defaultValue={[100000, 1000000]}
-              min={0}
-              max={2000000}
-              step={10000}
-              onValueChange={value => handleFilterChange("priceRange", value)}
-              className="my-6"
-            />
-            <div className="flex justify-between text-sm text-gray-600">
-              <div>${filters.priceRange[0].toLocaleString()}</div>
-              <div>${filters.priceRange[1].toLocaleString()}</div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Select 
+                value={filters.minPrice.toString()} 
+                onValueChange={(value) => handleFilterChange("minPrice", parseInt(value))}
+              >
+                <SelectTrigger className="neo-input relative">
+                  <SelectValue placeholder="Min Price" />
+                </SelectTrigger>
+                <SelectContent>
+                  {priceOptions.map((price) => (
+                    <SelectItem 
+                      key={price} 
+                      value={price.toString()}
+                      className={`relative ${
+                        filters.minPrice === price ? "border-transparent" : ""
+                      }`}
+                    >
+                      ${price.toLocaleString()}
+                      {filters.minPrice === price && (
+                        <span
+                          className="absolute inset-0 rounded-lg pointer-events-none"
+                          style={{
+                            padding: '1px',
+                            background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                            WebkitMaskComposite: 'xor',
+                            maskComposite: 'exclude'
+                          }}
+                        />
+                      )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Select 
+                value={filters.maxPrice.toString()} 
+                onValueChange={(value) => handleFilterChange("maxPrice", parseInt(value))}
+              >
+                <SelectTrigger className="neo-input relative">
+                  <SelectValue placeholder="Max Price" />
+                </SelectTrigger>
+                <SelectContent>
+                  {priceOptions.map((price) => (
+                    <SelectItem 
+                      key={price} 
+                      value={price.toString()}
+                      className={`relative ${
+                        filters.maxPrice === price ? "border-transparent" : ""
+                      }`}
+                    >
+                      ${price.toLocaleString()}
+                      {filters.maxPrice === price && (
+                        <span
+                          className="absolute inset-0 rounded-lg pointer-events-none"
+                          style={{
+                            padding: '1px',
+                            background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                            WebkitMaskComposite: 'xor',
+                            maskComposite: 'exclude'
+                          }}
+                        />
+                      )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
 
         <div>
           <h3 className="text-lg font-semibold mb-3">Below Market Value</h3>
-          <div className="px-2">
-            <Slider
-              defaultValue={[0]}
-              min={0}
-              max={50}
-              step={5}
-              onValueChange={value => handleFilterChange("belowMarket", value[0])}
-              className="my-6"
-            />
-            <div className="flex justify-between text-sm text-gray-600">
-              <div>0%</div>
-              <div>At least {filters.belowMarket}% below</div>
-            </div>
-          </div>
+          <Select 
+            value={filters.belowMarket.toString()} 
+            onValueChange={(value) => handleFilterChange("belowMarket", parseInt(value))}
+          >
+            <SelectTrigger className="neo-input relative">
+              <SelectValue placeholder="Select discount" />
+            </SelectTrigger>
+            <SelectContent>
+              {belowMarketOptions.map((percentage) => (
+                <SelectItem 
+                  key={percentage} 
+                  value={percentage.toString()}
+                  className={`relative ${
+                    filters.belowMarket === percentage ? "border-transparent" : ""
+                  }`}
+                >
+                  {percentage}% below market
+                  {filters.belowMarket === percentage && (
+                    <span
+                      className="absolute inset-0 rounded-lg pointer-events-none"
+                      style={{
+                        padding: '1px',
+                        background: 'linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)',
+                        WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                        WebkitMaskComposite: 'xor',
+                        maskComposite: 'exclude'
+                      }}
+                    />
+                  )}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -140,21 +228,19 @@ const PropertyFilters: React.FC<FiltersProps> = ({
         </div>
 
         <Button onClick={() => {
-        setFilters({
-          propertyType: "any",
-          priceRange: [100000, 1000000],
-          bedrooms: "any",
-          bathrooms: "any",
-          belowMarket: 0
-        });
-        onFilterChange({
-          propertyType: "any",
-          priceRange: [100000, 1000000],
-          bedrooms: "any",
-          bathrooms: "any",
-          belowMarket: 0
-        });
-      }} variant="link" className="w-full neo-button-primary text-black">Reset Filters</Button>
+          const defaultFilters = {
+            propertyType: "any",
+            minPrice: 100000,
+            maxPrice: 1000000,
+            bedrooms: "any",
+            bathrooms: "any",
+            belowMarket: 0
+          };
+          setFilters(defaultFilters);
+          onFilterChange(defaultFilters);
+        }} variant="link" className="w-full neo-button-primary text-black">
+          Reset Filters
+        </Button>
       </div>
     </div>
   );
