@@ -1,17 +1,14 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import SearchBar from '@/components/SearchBar';
-import { NoiseDemo } from "@/components/ui/demo";
 
 // Animation variants
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
-
 const stagger = {
   hidden: { opacity: 0 },
   visible: {
@@ -25,11 +22,6 @@ const stagger = {
 const HeroSection: React.FC = () => {
   return (
     <section className="pt-20 sm:pt-24 md:pt-36 pb-8 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
-      {/* Fluid animation background */}
-      <div className="absolute inset-0 overflow-hidden -z-10">
-        <NoiseDemo />
-      </div>
-      
       <div className="container px-4 lg:px-8 mx-auto relative flex justify-center">
         <motion.div 
           className="w-full max-w-5xl text-center mx-auto" 

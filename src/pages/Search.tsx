@@ -93,8 +93,7 @@ const Search: React.FC = () => {
     }
   }, [error]);
 
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <Navbar />
       
       <section className="py-8 bg-white border-b">
@@ -159,51 +158,27 @@ const Search: React.FC = () => {
             </div>
             
             {loading ? (
-              <div className="flex justify-center items-center py-16">
-                <div className="loading-container">
-                  <div className="pulsing-circle" />
-                </div>
-              </div>
-            ) : filteredProperties.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-xl neo-container">
+    <div className="flex justify-center items-center py-16">
+      <div className="loading-container">
+        <div className="pulsing-circle" />
+      </div>
+    </div>
+  ) : filteredProperties.length === 0 ? <div className="text-center py-16 bg-white rounded-xl neo-container">
                 <h2 className="text-xl font-semibold mb-2">No properties found</h2>
                 <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
-                <Button 
-                  onClick={() => handleFilterChange({
-                    propertyType: "any",
-                    minPrice: 0,
-                    maxPrice: 2000000,
-                    bedrooms: "any",
-                    bathrooms: "any",
-                    belowMarket: 0
-                  })} 
-                  className="bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
-                >
-                  <span className="relative z-10">Reset Filters</span>
-                  <span 
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                    style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                      boxShadow: "0 0 10px rgba(217, 70, 239, 0.5)",
-                      filter: "blur(1px)"
-                    }}
-                  />
+                <Button onClick={() => handleFilterChange({
+              propertyType: "any",
+              minPrice: 0,
+              maxPrice: 2000000,
+              bedrooms: "any",
+              bathrooms: "any",
+              belowMarket: 0
+            })} className="neo-button-primary">
+                  Reset Filters
                 </Button>
-              </div>
-            ) : (
-              <div className={isGridView ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-6"}>
-                {filteredProperties.map(property => (
-                  <PropertyCard key={property.id} {...property} />
-                ))}
-              </div>
-            )}
+              </div> : <div className={isGridView ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-6"}>
+                {filteredProperties.map(property => <PropertyCard key={property.id} {...property} />)}
+              </div>}
           </div>
         </div>
       </div>
@@ -213,8 +188,7 @@ const Search: React.FC = () => {
           © {new Date().getFullYear()} DoneDeal. All rights reserved.
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
 
 export default Search;
