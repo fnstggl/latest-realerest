@@ -18,8 +18,11 @@ const ChatIcon: React.FC = () => {
     >
       <MessageSquare size={20} className="text-black" />
       {unreadCount > 0 && (
-        <span className="absolute -top-1 -right-1 bg-[#0892D0] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-          {unreadCount > 99 ? '99+' : unreadCount}
+        <span className="absolute -top-1 -right-1 flex items-center justify-center">
+          <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#0892D0] via-[#54C5F8] to-[#0892D0] animate-spin"></span>
+          <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-medium text-black">
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
         </span>
       )}
     </Button>
