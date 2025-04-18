@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -46,7 +45,9 @@ const Dashboard: React.FC = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-  return <div className="min-h-screen bg-white">
+  
+  return (
+    <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-6 py-12 max-w-6xl">
@@ -166,34 +167,30 @@ const Dashboard: React.FC = () => {
               </TabsTrigger>
             </TabsList>
             
-            {/* Properties Tab */}
             <TabsContent value="properties" className="space-y-6">
               <PropertiesTab myProperties={myProperties} setMyProperties={setMyProperties} waitlistUsers={waitlistUsers} showAddForm={showAddForm} setShowAddForm={setShowAddForm} isLoading={isLoading} setIsLoading={setIsLoading} user={user} />
             </TabsContent>
             
-            {/* Waitlist Tab */}
             <TabsContent value="waitlist" className="space-y-6">
               <WaitlistTab waitlistUsers={waitlistUsers} setWaitlistUsers={setWaitlistUsers} />
             </TabsContent>
             
-            {/* Offers Tab */}
             <TabsContent value="offers" className="space-y-6">
               <OffersTab />
             </TabsContent>
             
-            {/* Account Tab */}
             <TabsContent value="account" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
               <AccountTab user={user} logout={logout} />
             </TabsContent>
             
-            {/* Notifications Tab */}
             <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
               <NotificationsTab notifications={notifications} markAsRead={markAsRead} clearAll={clearAll} />
             </TabsContent>
           </Tabs>
         </motion.div>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default Dashboard;
