@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -91,7 +90,7 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="font-bold text-xs sm:text-sm md:text-base shadow-lg bg-white hover:bg-white transform transition-all duration-300 hover:-translate-y-1 relative group overflow-hidden border border-transparent rounded-lg"
+                className="font-bold text-xs sm:text-sm md:text-base shadow-lg bg-white hover:bg-white relative group overflow-hidden border border-transparent rounded-lg"
               >
                 <span className="text-black relative z-10">View All Properties</span>
                 
