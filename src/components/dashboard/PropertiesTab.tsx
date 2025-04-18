@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -61,7 +62,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
       {isLoading ? <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
           <p className="mb-6">Loading your properties...</p>
         </div> : myProperties.length > 0 ? <div className="grid md:grid-cols-1 gap-6">
-          {myProperties.map(property => <div key={property.id} className="layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden shadow-lg hover:translate-y-[-5px] transition-all group">
+          {myProperties.map(property => <div key={property.id} className="layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden shadow-lg transition-all">
               <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-1/3">
                   <img src={property.image} alt={property.title} className="h-64 w-full object-cover" />
@@ -69,7 +70,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                 <div className="p-6 flex-1">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-2xl font-bold text-black">{property.title}</h3>
-                    <div className="relative bg-white text-black px-3 py-1 font-bold inline-flex items-center text-sm rounded-lg group-hover:border-transparent transition-colors">
+                    <div className="relative bg-white text-black px-3 py-1 font-bold inline-flex items-center text-sm rounded-lg group transition-colors">
                       <span>{Math.round(property.belowMarket)}% BELOW MARKET</span>
                       <span 
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
@@ -101,7 +102,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                   </div>
                   
                   <div className="flex gap-4">
-                    <Button asChild variant="glass" className="relative bg-white text-black group hover:border-transparent transition-all">
+                    <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
                       <Link to={`/property/${property.id}`}>
                         View Listing
                         <span 
@@ -119,7 +120,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                         />
                       </Link>
                     </Button>
-                    <Button asChild variant="outline" className="relative bg-white text-black border border-gray-200 group hover:border-transparent transition-all">
+                    <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
                       <Link to={`/property/${property.id}/edit`}>
                         Edit Listing
                         <span 
@@ -137,7 +138,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                         />
                       </Link>
                     </Button>
-                    <Button variant="destructive" className="relative bg-white text-black border border-gray-200 group hover:border-transparent transition-all" onClick={() => handleUnlistProperty(property.id)}>
+                    <Button className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all" onClick={() => handleUnlistProperty(property.id)}>
                       <Trash2 size={18} className="mr-2" />
                       Unlist
                       <span 
@@ -164,7 +165,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <span className="font-bold mr-2">Waitlist:</span>
                     {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                   </div>
-                  <Button asChild variant="glass" className="relative bg-white text-black group hover:border-transparent transition-all">
+                  <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
                     <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
                       Manage Waitlist
                       <span 
@@ -189,7 +190,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
           <Building2 size={48} className="mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-4 text-black">No Properties Listed</h3>
           <p className="mb-6 text-black">You haven't listed any properties yet.</p>
-          <Button asChild variant="glass" className="relative bg-white text-black group hover:border-transparent transition-all">
+          <Button asChild variant="glass" className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
             <Link to="/sell/create">
               <Plus size={18} className="mr-2" />
               Add Your First Property

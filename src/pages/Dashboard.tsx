@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -56,11 +57,11 @@ const Dashboard: React.FC = () => {
               <p className="text-lg text-black">Manage your properties and waitlists</p>
             </div>
             
-            <Button className="relative bg-white text-black border border-gray-200 group hover:border-transparent transition-all rounded-xl" onClick={() => navigate('/sell/create')}>
+            <Button className="relative bg-white text-black border border-gray-200 hover:bg-white transition-all rounded-xl" onClick={() => navigate('/sell/create')}>
               <Plus size={18} className="mr-2" />
               <span>Add Property</span>
               <span 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
+                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
                 style={{
                   background: "transparent",
                   border: "2px solid transparent",
@@ -77,11 +78,11 @@ const Dashboard: React.FC = () => {
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             <TabsList className="bg-white border border-gray-200 shadow-sm">
-              <TabsTrigger value="properties" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="properties" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
                 <Home size={18} className="mr-2" />
                 Properties
                 <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -94,12 +95,11 @@ const Dashboard: React.FC = () => {
                   }}
                 />
               </TabsTrigger>
-              {/* Apply similar gradient border treatment to other tabs */}
-              <TabsTrigger value="waitlist" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="waitlist" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
                 <ClipboardCheck size={18} className="mr-2" />
                 Waitlist
                 <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -113,11 +113,11 @@ const Dashboard: React.FC = () => {
                 />
               </TabsTrigger>
               
-              <TabsTrigger value="offers" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="offers" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
                 <CreditCard size={18} className="mr-2" />
                 Offers
                 <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -130,11 +130,11 @@ const Dashboard: React.FC = () => {
                   }}
                 />
               </TabsTrigger>
-              <TabsTrigger value="account" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="account" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
                 <User size={18} className="mr-2" />
                 Account
                 <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -147,11 +147,11 @@ const Dashboard: React.FC = () => {
                   }}
                 />
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="group relative text-black data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold">
+              <TabsTrigger value="notifications" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white">
                 <Bell size={18} className="mr-2" />
                 Notifications
                 <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 data-[state=active]:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",

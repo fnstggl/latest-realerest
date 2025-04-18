@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -54,11 +55,11 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   return (
     <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 sm:p-6 rounded-xl">
       <div className="flex items-center gap-2 mb-2">
-        <div className="relative bg-white text-black px-2 sm:px-3 py-1 group border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg hover:border-transparent transition-all">
+        <div className="relative bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg hover:bg-white transition-all">
           <span className="text-black font-playfair font-bold italic mr-1">{belowMarket}%</span> 
           <span className="text-black font-playfair font-bold italic">Below Market</span>
           <span 
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+            className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
             style={{
               background: "transparent",
               border: "2px solid transparent",
