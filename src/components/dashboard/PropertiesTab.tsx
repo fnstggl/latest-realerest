@@ -89,21 +89,9 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <Button asChild variant="glass" className="shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
                       <Link to={`/property/${property.id}`}>View Listing</Link>
                     </Button>
-                    <Button asChild variant="apple">
+                    <Button asChild variant="outline" className="bg-white text-black border-2 border-black hover:bg-gray-50">
                       <Link to={`/property/${property.id}/edit`}>
-                        <span className="apple-glow-text-small">Edit Listing</span>
-                        
-                        {/* Rainbow gradient border on hover */}
-                        <span style={{
-                    background: "transparent",
-                    padding: "1px",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "content-box, border-box",
-                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
-                    filter: "blur(0.5px)"
-                  }} className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-md text-black"></span>
+                        Edit Listing
                       </Link>
                     </Button>
                     <Button variant="destructive" className="bg-white/50 text-black border border-white/40 shadow-lg hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] hover:text-[#0892D0]" onClick={() => handleUnlistProperty(property.id)}>
