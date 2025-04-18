@@ -115,9 +115,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           accept="image/*"
           disabled={isSubmitting || isProcessingImages || images.length >= MAX_IMAGES}
         />
-        <Button 
+        <button 
           type="button" 
-          className="h-32 w-full layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl flex flex-col items-center justify-center gap-2 hover:translate-y-[-5px] transition-all" 
+          className="h-32 w-full bg-white text-black relative rounded-xl flex flex-col items-center justify-center gap-2 transition-all disabled:opacity-50"
           onClick={handleImageUpload}
           disabled={isSubmitting || isProcessingImages || images.length >= MAX_IMAGES}
         >
@@ -134,7 +134,21 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               )}
             </>
           )}
-        </Button>
+          <span 
+            className="absolute inset-0 rounded-xl pointer-events-none"
+            style={{
+              background: "transparent",
+              border: "2px solid transparent",
+              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "border-box",
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+            }}
+          ></span>
+        </button>
       </div>
       
       {/* Display selected images */}
