@@ -96,10 +96,8 @@ const Search: React.FC = () => {
   return <div className="min-h-screen bg-gray-50 pt-24">
       <Navbar />
       
-      <div className="container px-4 lg:px-8 mx-auto mb-8 shadow-md rounded-b-xl">
-        <div className="max-w-3xl mx-auto">
-          <SearchBar />
-        </div>
+      <div className="max-w-3xl mx-auto px-4 mb-8">
+        <SearchBar />
       </div>
       
       <div className="container px-4 lg:px-8 mx-auto py-8">
