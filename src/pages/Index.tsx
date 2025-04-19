@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
@@ -11,10 +10,10 @@ const Index: React.FC = () => {
     <div className="min-h-screen bg-white overflow-hidden relative perspective-container">
       {/* Top gradient background */}
       <div 
-        className="absolute top-0 left-0 right-0 h-[100px] sm:h-[150px] bg-gradient-to-r from-[#3C79F5] via-[#8B5CF6] via-[#F97316] to-[#FF3CAC] opacity-20 pointer-events-none"
+        className="absolute top-0 left-0 right-0 h-[80px] sm:h-[100px] bg-gradient-to-r from-[#3C79F5] via-[#8B5CF6] via-[#F97316] to-[#FF3CAC] opacity-25 pointer-events-none"
         style={{
-          maskImage: 'linear-gradient(to bottom, black 50%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent)'
+          maskImage: 'linear-gradient(to bottom, black 30%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent)'
         }}
       />
 
@@ -39,4 +38,3 @@ const Index: React.FC = () => {
 };
 
 export default Index;
-

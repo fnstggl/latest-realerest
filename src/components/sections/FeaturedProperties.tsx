@@ -2,13 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import PropertyCard from '@/components/PropertyCard';
-import { motion } from 'framer-motion';
 import { useListings } from '@/hooks/useListings';
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
 
 const FeaturedProperties: React.FC = () => {
   const navigate = useNavigate();
@@ -25,16 +19,7 @@ const FeaturedProperties: React.FC = () => {
   }
 
   return (
-    <motion.section 
-      className="py-16 relative overflow-hidden perspective-container"
-      initial="hidden" 
-      whileInView="visible" 
-      viewport={{
-        once: true,
-        amount: 0.2
-      }} 
-      variants={fadeInUp}
-    >
+    <section className="py-16 relative overflow-hidden perspective-container">
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
           <h2 className="text-4xl font-editorial font-bold italic text-foreground tracking-wide">
@@ -57,14 +42,8 @@ const FeaturedProperties: React.FC = () => {
           <>
             {listings.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {listings.map((property, index) => (
-                  <motion.div 
-                    key={property.id} 
-                    initial={{ opacity: 0, y: 20 }} 
-                    whileInView={{ opacity: 1, y: 0 }} 
-                    viewport={{ once: true }} 
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                  >
+                {listings.map((property) => (
+                  <div key={property.id}>
                     <PropertyCard 
                       id={property.id} 
                       price={property.price} 
@@ -77,7 +56,7 @@ const FeaturedProperties: React.FC = () => {
                       sqft={property.sqft} 
                       belowMarket={property.belowMarket} 
                     />
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -115,7 +94,7 @@ const FeaturedProperties: React.FC = () => {
           </>
         )}
       </div>
-    </motion.section>
+    </section>
   );
 };
 

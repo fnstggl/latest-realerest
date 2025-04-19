@@ -1,26 +1,12 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { motion } from 'framer-motion';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-const fadeInUp = {
-  hidden: {
-    opacity: 0,
-    y: 20
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6
-    }
-  }
-};
+
 const CTASection: React.FC = () => {
-  return <motion.section className="py-16 relative overflow-hidden" initial="hidden" whileInView="visible" viewport={{
-    once: true,
-    amount: 0.2
-  }} variants={fadeInUp}>
+  return (
+    <section className="py-16 relative overflow-hidden">
       <div className="container px-4 lg:px-8 mx-auto flex justify-center">
         <div className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 max-w-5xl w-full">
           <div>
@@ -47,6 +33,8 @@ const CTASection: React.FC = () => {
           </div>
         </div>
       </div>
-    </motion.section>;
+    </section>
+  );
 };
+
 export default CTASection;
