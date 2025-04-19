@@ -9,6 +9,15 @@ import SiteFooter from '@/components/sections/SiteFooter';
 const Index: React.FC = () => {
   return (
     <div className="min-h-screen bg-white overflow-hidden relative perspective-container">
+      {/* Top gradient background */}
+      <div 
+        className="absolute top-0 left-0 right-0 h-[300px] bg-gradient-to-r from-[#3C79F5] via-[#6C42F5] via-[#D946EF] to-[#FF3CAC] opacity-5 pointer-events-none"
+        style={{
+          maskImage: 'linear-gradient(to bottom, black, transparent)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black, transparent)'
+        }}
+      />
+
       {/* Subtle gradient blobs for background - static, not pulsing */}
       <div className="fixed top-[10%] left-[15%] w-[150px] sm:w-[200px] md:w-[250px] lg:w-[300px] h-[150px] sm:h-[200px] md:h-[250px] lg:h-[300px] rounded-full bg-blue-100/20 filter blur-[40px] sm:blur-[60px] md:blur-[80px] -z-10"></div>
       <div className="fixed top-[20%] right-[15%] w-[125px] sm:w-[175px] md:w-[200px] lg:w-[250px] h-[125px] sm:h-[175px] md:h-[200px] lg:h-[250px] rounded-full bg-purple-100/20 filter blur-[35px] sm:blur-[50px] md:blur-[70px] -z-10"></div>
