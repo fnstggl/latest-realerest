@@ -3,6 +3,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
 import FeaturedProperties from '@/components/sections/FeaturedProperties';
+import ImageSliderSection from '@/components/sections/ImageSliderSection';
 import CTASection from '@/components/sections/CTASection';
 import SiteFooter from '@/components/sections/SiteFooter';
 
@@ -21,6 +22,7 @@ const Index: React.FC = () => {
         <div className="w-full">
           <HeroSection />
           <FeaturedProperties />
+          <ImageSliderSection />
           <CTASection />
           <SiteFooter />
         </div>
