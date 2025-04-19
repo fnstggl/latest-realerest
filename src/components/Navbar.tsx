@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <Button 
-                  className="w-full justify-center font-bold text-black border border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-xs sm:text-sm" 
+                  className="w-full justify-center font-bold text-black border border-[#0892D0] text-xs sm:text-sm" 
                   variant="translucent"
                   onClick={handleSignIn}
                 >
@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
                 </Button>
                 
                 <Button 
-                  className="w-full justify-center font-bold text-black border border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-xs sm:text-sm" 
+                  className="w-full justify-center font-bold text-black border border-[#0892D0] text-xs sm:text-sm" 
                   variant="translucent"
                   onClick={handleSignUp}
                 >
@@ -155,7 +155,7 @@ const Navbar: React.FC = () => {
             <>
               <Button 
                 variant="translucent"
-                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-black h-7 sm:h-9" 
+                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none text-black h-7 sm:h-9" 
                 onClick={handleSignIn}
               >
                 Log In
@@ -163,7 +163,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="translucent"
-                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none hover:shadow-[0_0_10px_rgba(8,146,208,0.7)] text-black h-7 sm:h-9" 
+                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none text-black h-7 sm:h-9" 
                 onClick={handleSignUp}
               >
                 Sign up
