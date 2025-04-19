@@ -42,7 +42,7 @@ const HeroSection: React.FC = () => {
             <p className="text-foreground mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center">
               Helping families buy homes they were told they couldn't afford.
             </p>
-            <div className="glass-card p-1 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
+            <div className="glass-card p-0.5 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
               <SearchBar className="" />
               <GlowEffect
                 colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
