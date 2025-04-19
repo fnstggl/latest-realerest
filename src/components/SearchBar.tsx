@@ -34,7 +34,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
           mode="flowHorizontal"
           blur="soft"
           scale={1}
-          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-0 rounded-xl pointer-events-none"
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 -inset-[3px] absolute rounded-xl pointer-events-none"
         />
       </div>
     </form>
