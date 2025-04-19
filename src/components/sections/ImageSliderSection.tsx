@@ -5,27 +5,27 @@ import { InfiniteSlider } from "@/components/ui/infinite-slider";
 const ImageSliderSection = () => {
   const testimonials = [
     {
-      image: "public/lovable-uploads/13556d32-ddd9-4eac-86d2-f459a5c5bd80.png",
+      image: "public/lovable-uploads/103b6b75-8842-42a0-acfd-636b627a8d0a.png",
       alt: "Alex Khan testimonial"
     },
     {
-      image: "public/lovable-uploads/9f1e56f6-7883-4248-98a3-766802dbd545.png",
+      image: "public/lovable-uploads/36b6b469-d77f-4812-8c1e-bfecdfc4c835.png",
       alt: "Anthony Wilson testimonial"
     },
     {
-      image: "public/lovable-uploads/d9a0bc6f-78a4-444f-9fa5-2758a42dbb53.png",
+      image: "public/lovable-uploads/b6acc046-fb18-40ed-8c34-120a5e977183.png",
       alt: "Catherine Valdez testimonial"
     },
     {
-      image: "public/lovable-uploads/406dd083-b0ee-420c-96a8-4bc55a04ec7b.png",
+      image: "public/lovable-uploads/981d213d-6c59-4d90-a036-055d07380f24.png",
       alt: "Mason Blackwell testimonial"
     },
     {
-      image: "public/lovable-uploads/5e356598-8803-4705-bc7f-7d69dc957ef9.png",
+      image: "public/lovable-uploads/e3001b53-45da-4b74-ab1c-6a1e7b11d3c3.png",
       alt: "Jessie McLean testimonial"
     },
     {
-      image: "public/lovable-uploads/4b4f54a0-bc3a-4fb4-b642-ae71da1b53d5.png",
+      image: "public/lovable-uploads/7a5fffe4-b4bf-415c-b1d4-cd47204ce999.png",
       alt: "Mona Rodriguez testimonial"
     }
   ];
