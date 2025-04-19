@@ -112,7 +112,7 @@ const Search: React.FC = () => {
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" className="w-full flex justify-between items-center neo-button">
-                  <div className="flex items-center">
+                  <div className="flex items-center font-semibold"> {/* Added font-semibold to make text more bold */}
                     <Sliders size={18} className="mr-2" />
                     Filters
                   </div>
