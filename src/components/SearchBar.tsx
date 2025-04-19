@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GlowEffect } from '@/components/ui/glow-effect';
 
 interface SearchBarProps {
   className?: string;
@@ -20,13 +21,20 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
 
   return (
     <form onSubmit={handleSearch} className={`relative w-full max-w-3xl ${className} group`}>
-      <div className="relative flex w-full before:absolute before:-inset-1 before:rounded-xl before:opacity-0 group-hover:before:opacity-100 before:transition-opacity before:duration-300 before:bg-gradient-to-r before:from-[#3C79F5] before:via-[#D946EF] before:to-[#FF3CAC] before:blur-lg before:-z-10">
+      <div className="relative flex w-full">
         <input
           type="text"
           placeholder="Search by city, address, or zip code..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-6 py-4 text-lg glass-input text-foreground rounded-xl bg-white/75 backdrop-blur-sm border border-white/20 transition-all duration-300 group-hover:border-transparent relative z-10 focus:outline-none focus:ring-0 focus:border-transparent focus:drop-shadow-[0_0_15px_rgba(217,70,239,0.3)]"
+          className="w-full px-6 py-4 text-lg glass-input text-foreground rounded-xl bg-white backdrop-blur-sm border-transparent transition-all duration-300 relative z-10 focus:outline-none focus:ring-0 focus:border-transparent"
+        />
+        <GlowEffect
+          colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
+          mode="flowHorizontal"
+          blur="soft"
+          scale={1.02}
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         />
       </div>
     </form>
