@@ -20,7 +20,7 @@ const ImageSliderSection = () => {
     image: "public/lovable-uploads/7a5fffe4-b4bf-415c-b1d4-cd47204ce999.png",
     alt: "Mona Rodriguez testimonial"
   }];
-  return <section className="overflow-hidden my-[10px] py-0">
+  return <section className="overflow-hidden py-0 my-[50px]">
       <InfiniteSlider durationOnHover={75} gap={24} className="mb-16">
         {testimonials.map((testimonial, index) => <img key={index} src={testimonial.image} alt={testimonial.alt} className="aspect-square w-[300px] rounded-lg object-cover" />)}
       </InfiniteSlider>
