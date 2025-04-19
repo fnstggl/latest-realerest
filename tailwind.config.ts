@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -133,6 +134,40 @@ export default {
 						transform: 'scale(1)',
 						opacity: '1'
 					}
+				},
+				'first': {
+					'0%': { transform: 'translateX(-50%) rotate(0deg)' },
+					'25%': { transform: 'translateX(50%) rotate(90deg) scale(1.2)' },
+					'50%': { transform: 'translateX(-50%) rotate(180deg)' },
+					'75%': { transform: 'translateX(50%) rotate(270deg) scale(0.8)' },
+					'100%': { transform: 'translateX(-50%) rotate(360deg)' },
+				},
+				'second': {
+					'0%': { transform: 'translateX(50%) translateY(0%)' },
+					'25%': { transform: 'translateX(-30%) translateY(-50%)' },
+					'50%': { transform: 'translateX(-50%) translateY(50%)' },
+					'75%': { transform: 'translateX(30%) translateY(-50%)' },
+					'100%': { transform: 'translateX(50%) translateY(0%)' },
+				},
+				'third': {
+					'0%': { transform: 'translateX(-50%) translateY(50%) scale(1)' },
+					'33%': { transform: 'translateX(50%) translateY(-50%) scale(1.2)' },
+					'66%': { transform: 'translateX(-50%) translateY(50%) scale(0.8)' },
+					'100%': { transform: 'translateX(-50%) translateY(50%) scale(1)' },
+				},
+				'fourth': {
+					'0%': { transform: 'translateX(50%) translateY(50%) scale(1) rotate(0deg)' },
+					'20%': { transform: 'translateX(0%) translateY(0%) scale(1.2) rotate(90deg)' },
+					'40%': { transform: 'translateX(-50%) translateY(-50%) scale(1) rotate(180deg)' },
+					'60%': { transform: 'translateX(0%) translateY(-100%) scale(0.8) rotate(270deg)' },
+					'80%': { transform: 'translateX(50%) translateY(-50%) scale(1) rotate(360deg)' },
+					'100%': { transform: 'translateX(50%) translateY(50%) scale(1) rotate(0deg)' },
+				},
+				'fifth': {
+					'0%': { transform: 'translateX(0) scale(1.2)' },
+					'33%': { transform: 'translateX(50%) scale(0.8)' },
+					'66%': { transform: 'translateX(-50%) scale(1)' },
+					'100%': { transform: 'translateX(0) scale(1.2)' },
 				}
 			},
 			animation: {
@@ -140,7 +175,12 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
 				'scale-in': 'scale-in 0.3s ease-out',
-				'enter': 'fade-in 0.5s ease-out, scale-in 0.3s ease-out'
+				'enter': 'fade-in 0.5s ease-out, scale-in 0.3s ease-out',
+				'first': 'first 20s infinite',
+				'second': 'second 30s infinite',
+				'third': 'third 25s infinite',
+				'fourth': 'fourth 40s infinite',
+				'fifth': 'fifth 35s infinite'
 			},
 			backgroundImage: {
 				'gradient-purple': 'linear-gradient(135deg, #8B5CF6 0%, #7E69AB 100%)',
