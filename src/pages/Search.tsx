@@ -93,16 +93,14 @@ const Search: React.FC = () => {
     }
   }, [error]);
 
-  return <div className="min-h-screen bg-gray-50 pt-24">  {/* Added pt-24 to push content down */}
+  return <div className="min-h-screen bg-gray-50 pt-24">
       <Navbar />
       
-      <section className="py-8 bg-white border-b">
-        <div className="container px-4 lg:px-8 mx-auto">
-          <div className="max-w-3xl mx-auto">
-            <SearchBar />
-          </div>
+      <div className="container px-4 lg:px-8 mx-auto mb-8 shadow-md rounded-b-xl">
+        <div className="max-w-3xl mx-auto">
+          <SearchBar />
         </div>
-      </section>
+      </div>
       
       <div className="container px-4 lg:px-8 mx-auto py-8">
         <div className="flex flex-col lg:flex-row gap-8">
