@@ -93,7 +93,7 @@ const Search: React.FC = () => {
     }
   }, [error]);
 
-  return <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50 pt-24">  {/* Added pt-24 to push content down */}
       <Navbar />
       
       <section className="py-8 bg-white border-b">
