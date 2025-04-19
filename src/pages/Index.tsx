@@ -11,10 +11,10 @@ const Index: React.FC = () => {
     <div className="min-h-screen bg-white overflow-hidden relative perspective-container">
       {/* Top gradient background */}
       <div 
-        className="absolute top-0 left-0 right-0 h-[300px] bg-gradient-to-r from-[#3C79F5] via-[#6C42F5] via-[#D946EF] to-[#FF3CAC] opacity-5 pointer-events-none"
+        className="absolute top-0 left-0 right-0 h-[100px] sm:h-[150px] bg-gradient-to-r from-[#3C79F5] via-[#8B5CF6] via-[#F97316] to-[#FF3CAC] opacity-20 pointer-events-none"
         style={{
-          maskImage: 'linear-gradient(to bottom, black, transparent)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black, transparent)'
+          maskImage: 'linear-gradient(to bottom, black 50%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent)'
         }}
       />
 
@@ -39,3 +39,4 @@ const Index: React.FC = () => {
 };
 
 export default Index;
+
