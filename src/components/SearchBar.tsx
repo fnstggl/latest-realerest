@@ -33,8 +33,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
           colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
           mode="flowHorizontal"
           blur="soft"
-          scale={1.01}  // Slightly reduced scale to fit more precisely
-          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-[-2px]"  // Adjusted positioning
+          scale={1.01}
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-[-2px]"
         />
       </div>
     </form>
