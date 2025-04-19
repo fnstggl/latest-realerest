@@ -271,4 +271,18 @@
     transform: translateY(-3px) translateZ(6px);
     box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1);
   }
+  
+  /* Removing search-glow classes that had the blue hover effect */
+  .search-glow {
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .search-glow:hover {
+    /* Removed blue shadow */
+  }
+  
+  /* Removing electric-blue-glow class */
+  .electric-blue-glow {
+    /* Removed blue glow properties */
+  }
 }

@@ -1,3 +1,4 @@
+
 @layer components {
   /* Gradient borders */
   .border-gradient-br-pink-purple-gold {
@@ -59,20 +60,18 @@
     color: transparent;
   }
   
-  /* Electric blue glow - updated */
+  /* Removed search-glow blue effects */
   .search-glow {
-    box-shadow: 0 0 10px 0 rgba(8, 146, 208, 0.5);
-    transition: box-shadow 0.3s ease;
+    /* No shadow effects */
   }
   
   .search-glow:hover {
-    box-shadow: 0 0 15px 0 rgba(8, 146, 208, 0.7), 0 0 30px 0 rgba(8, 146, 208, 0.4);
+    /* No shadow effects */
   }
   
-  /* Electric blue glow */
+  /* Removed electric blue glow */
   .electric-blue-glow {
-    color: #0892D0;
-    text-shadow: 0 0 10px rgba(8, 146, 208, 0.7), 0 0 20px rgba(8, 146, 208, 0.5);
+    /* No glow effects */
   }
   
   /* Animated gradient background - made static */
