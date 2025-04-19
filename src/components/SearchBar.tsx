@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GlowEffect } from '@/components/ui/glow-effect';
@@ -33,8 +32,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
           colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
           mode="flowHorizontal"
           blur="soft"
-          scale={1}
-          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-0 rounded-xl pointer-events-none"
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute -inset-x-[2.5%] -inset-y-[2.5%] rounded-xl pointer-events-none"
         />
       </div>
     </form>
