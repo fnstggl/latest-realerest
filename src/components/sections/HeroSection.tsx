@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import SearchBar from '@/components/SearchBar';
+import { GlowEffect } from '@/components/ui/glow-effect';
 
 // Animation variants
 const fadeInUp = {
@@ -42,8 +42,15 @@ const HeroSection: React.FC = () => {
             <p className="text-foreground mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center">
               Helping families buy homes they were told they couldn't afford.
             </p>
-            <div className="glass-card p-1 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl">
+            <div className="glass-card p-1 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
               <SearchBar className="" />
+              <GlowEffect
+                colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
+                mode="flowHorizontal"
+                blur="soft"
+                scale={1}
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 -inset-[3px] absolute rounded-xl pointer-events-none bottom-[-10px]"
+              />
             </div>
             <div className="flex flex-row gap-3 sm:gap-4 justify-center mx-auto">
               <Button 
