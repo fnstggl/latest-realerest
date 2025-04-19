@@ -1,4 +1,3 @@
-
 "use client";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
@@ -90,7 +89,7 @@ export const BackgroundGradientAnimation = ({
   return (
     <div
       className={cn(
-        "w-full h-full relative overflow-hidden bg-white",
+        "relative overflow-hidden bg-white",
         containerClassName
       )}
     >
@@ -115,7 +114,7 @@ export const BackgroundGradientAnimation = ({
       <div className={cn("relative z-10", className)}>{children}</div>
       <div
         className={cn(
-          "gradients-container absolute inset-0 blur-lg opacity-30",
+          "gradients-container absolute inset-0 blur-lg opacity-20",
           isSafari ? "blur-2xl" : "[filter:url(#blurMe)_blur(40px)]"
         )}
       >
