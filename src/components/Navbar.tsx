@@ -78,13 +78,13 @@ const Navbar: React.FC = () => {
           
           <div className="flex flex-col gap-3 mt-2 sm:mt-4">
             {isAuthenticated ? (
-              <Button className="w-full justify-center font-bold text-sm sm:text-base" variant="glass" onClick={() => navigate('/dashboard')}>
+              <Button className="w-full justify-center font-bold text-sm sm:text-base" variant="translucent" onClick={() => navigate('/dashboard')}>
                 Dashboard
               </Button>
             ) : (
               <>
                 <Button 
-                  className="w-full justify-center font-bold text-black border border-[#0892D0] text-xs sm:text-sm" 
+                  className="w-full justify-center font-bold text-black text-xs sm:text-sm" 
                   variant="translucent"
                   onClick={handleSignIn}
                 >
@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
                 </Button>
                 
                 <Button 
-                  className="w-full justify-center font-bold text-black border border-[#0892D0] text-xs sm:text-sm" 
+                  className="w-full justify-center font-bold text-black text-xs sm:text-sm" 
                   variant="translucent"
                   onClick={handleSignUp}
                 >
@@ -155,7 +155,7 @@ const Navbar: React.FC = () => {
             <>
               <Button 
                 variant="translucent"
-                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none text-black h-7 sm:h-9" 
+                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 text-black h-7 sm:h-9" 
                 onClick={handleSignIn}
               >
                 Log In
@@ -163,7 +163,7 @@ const Navbar: React.FC = () => {
               
               <Button 
                 variant="translucent"
-                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 hover:bg-white/40 border-none text-black h-7 sm:h-9" 
+                className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 text-black h-7 sm:h-9" 
                 onClick={handleSignUp}
               >
                 Sign up

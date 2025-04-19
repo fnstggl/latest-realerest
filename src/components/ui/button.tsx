@@ -57,7 +57,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         >
           {/* We need to ensure any children are properly wrapped */}
           <React.Fragment>
-            {children}
+            <span className="relative z-10">{children}</span>
             <span 
               className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
               style={{
@@ -69,8 +69,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                 WebkitMaskComposite: "xor",
                 maskComposite: "exclude",
-                filter: "none", // Explicitly remove any glow or blur effects
-                boxShadow: "none" // Ensure no box shadow remains
+                filter: "blur(2px)",
+                boxShadow: "none"
               }}
             />
           </React.Fragment>

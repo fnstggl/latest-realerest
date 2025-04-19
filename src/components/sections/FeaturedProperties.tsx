@@ -107,7 +107,6 @@ const FeaturedProperties: React.FC = () => {
                     WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                     WebkitMaskComposite: "xor",
                     maskComposite: "exclude",
-                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
                     filter: "blur(2px)"
                   }}
                 ></span>
