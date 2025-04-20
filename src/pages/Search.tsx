@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { useListings, Listing } from '@/hooks/useListings';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -90,23 +91,20 @@ const Search: React.FC = () => {
   };
 
   const { isAuthenticated } = useAuth();
-  const ITEMS_PER_ROW = isGridView ? 3 : 1;
-  const VISIBLE_ROWS = 2;
-  const visibleItems = ITEMS_PER_ROW * VISIBLE_ROWS;
+  const isMobile = useIsMobile();
+  const ITEMS_PER_ROW = isGridView ? (isMobile ? 1 : 3) : 1;
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
-  // Calculate the last row start and end indices
+  // Calculate indices for the last full row
   const totalItems = filteredProperties.length;
-  const itemsPerRow = isGridView ? 3 : 1;
-  const totalRows = Math.ceil(totalItems / itemsPerRow);
-  const lastRowStartIndex = (totalRows - 1) * itemsPerRow;
-  const lastRowEndIndex = Math.min(lastRowStartIndex + itemsPerRow, totalItems);
-    
+  const totalFullRows = Math.floor(totalItems / ITEMS_PER_ROW);
+  const lastFullRowStartIndex = (totalFullRows - 1) * ITEMS_PER_ROW;
+  const lastFullRowEndIndex = lastFullRowStartIndex + ITEMS_PER_ROW;
+
+  // For non-authenticated users, only show up to the last full row
+  const visibleProperties = !isAuthenticated 
+    ? filteredProperties.slice(0, lastFullRowEndIndex) 
+    : filteredProperties;
+
   const renderPropertyGrid = () => {
     if (loading) {
       return (
@@ -157,15 +155,15 @@ const Search: React.FC = () => {
 
     return (
       <div className={isGridView ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 relative" : "space-y-6 relative"}>
-        {filteredProperties.map((property, index) => (
+        {visibleProperties.map((property, index) => (
           <div 
             key={property.id} 
-            className={`relative ${index >= lastRowStartIndex && index < lastRowEndIndex ? 'pointer-events-none' : ''}`}
+            className={`relative ${index >= lastFullRowStartIndex ? 'pointer-events-none' : ''}`}
           >
             <PropertyCard {...property} />
             
-            {/* Only apply blur overlay to the last row when user is not authenticated */}
-            {!isAuthenticated && index >= lastRowStartIndex && index < lastRowEndIndex && (
+            {/* Apply blur overlay to the last full row when user is not authenticated */}
+            {!isAuthenticated && index >= lastFullRowStartIndex && index < lastFullRowEndIndex && (
               <div className="absolute inset-0 z-10">
                 <div 
                   className="absolute inset-0"
@@ -179,8 +177,8 @@ const Search: React.FC = () => {
           </div>
         ))}
         
-        {/* Sign-in CTA Button - positioned at the bottom of last row */}
-        {!isAuthenticated && filteredProperties.length > itemsPerRow && (
+        {/* Sign-in CTA Button - positioned at the bottom of last full row */}
+        {!isAuthenticated && visibleProperties.length > ITEMS_PER_ROW && (
           <div className="absolute z-20 bottom-8 left-1/2 transform -translate-x-1/2">
             <Dialog>
               <DialogTrigger asChild>
