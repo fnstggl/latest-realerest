@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ const LocationAlertForm = () => {
           placeholder="City, State"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20"
           required
         />
         <Input
@@ -52,15 +54,29 @@ const LocationAlertForm = () => {
           placeholder="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20"
           required
         />
         <Button 
           type="submit" 
           disabled={isSubmitting}
           variant="translucent"
-          className="w-full"
+          className="w-full font-bold relative overflow-hidden"
         >
-          {isSubmitting ? "Processing..." : "Early Access"}
+          <span className="relative z-10">{isSubmitting ? "Processing..." : "Early Access"}</span>
+          <span 
+            className="absolute inset-0 opacity-100 pointer-events-none"
+            style={{
+              background: "transparent",
+              border: "2px solid transparent",
+              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "border-box",
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+            }}
+          />
         </Button>
       </form>
     </div>
