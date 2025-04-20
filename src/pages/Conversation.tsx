@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -97,7 +96,7 @@ const Conversation: React.FC = () => {
             timestamp: data.created_at,
             isRead: data.is_read,
             relatedOfferId: data.related_offer_id,
-            propertyId: data.property_id,
+            propertyId: (data as any).property_id ?? undefined,
           };
           setMessages(prev => [...prev, newMsg]);
           if (data.sender_id !== user.id) {
@@ -163,7 +162,7 @@ const Conversation: React.FC = () => {
         >
           <div 
             className="flex items-center justify-between mb-4" 
-            style={{ marginTop: '120px' }} // Added margin top 120px to push header down 100px more than before (previous was ~20px)
+            style={{ marginTop: '75px' }} // Changed from 120px to 75px as requested
           >
             <Button
               variant="outline"
