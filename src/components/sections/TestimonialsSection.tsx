@@ -44,7 +44,7 @@ const fadeInUp = {
 const TestimonialsSection: React.FC = () => {
   return (
     <motion.section
-      className="py-16 relative overflow-hidden"
+      className="py-8 relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
@@ -53,7 +53,8 @@ const TestimonialsSection: React.FC = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-4">
           <h2 className="text-3xl font-bold mb-4">
-            Stories from buyers who found a better way
+            Stories from buyers who found a{' '}
+            <span className="font-playfair font-bold italic">better way</span>
           </h2>
           <p className="text-xl text-foreground/80 max-w-2xl mx-auto mb-4">
             Trusted by homebuyers across the nation
