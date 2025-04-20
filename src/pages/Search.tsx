@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -119,7 +120,8 @@ const Search: React.FC = () => {
   const lastFullRowEndIndex = lastFullRowStartIndex + ITEMS_PER_ROW;
 
   // For non-authenticated users, only show up to the last full row
-  const visibleProperties = !isAuthenticated 
+  // Important: Only apply this limit when NOT searching
+  const visibleProperties = !isAuthenticated && !searchQuery
     ? filteredProperties.slice(0, lastFullRowEndIndex) 
     : filteredProperties;
 
@@ -228,12 +230,12 @@ const Search: React.FC = () => {
         {visibleProperties.map((property, index) => (
           <div 
             key={property.id} 
-            className={`relative ${index >= lastFullRowStartIndex && !isAuthenticated ? 'pointer-events-none' : ''}`}
+            className={`relative ${index >= lastFullRowStartIndex && !isAuthenticated && !searchQuery ? 'pointer-events-none' : ''}`}
           >
             <PropertyCard {...property} />
             
-            {/* Apply blur overlay to the last full row when user is not authenticated */}
-            {!isAuthenticated && index >= lastFullRowStartIndex && index < lastFullRowEndIndex && (
+            {/* Apply blur overlay to the last full row when user is not authenticated AND not searching */}
+            {!isAuthenticated && !searchQuery && index >= lastFullRowStartIndex && index < lastFullRowEndIndex && (
               <div className="absolute inset-0 z-10">
                 <div 
                   className="absolute inset-0 rounded-b-xl"
@@ -247,8 +249,8 @@ const Search: React.FC = () => {
           </div>
         ))}
         
-        {/* Sign-in CTA Button */}
-        {!isAuthenticated && visibleProperties.length > 0 && lastFullRowStartIndex >= 0 && !searchQuery && (
+        {/* Sign-in CTA Button - ONLY show when not searching AND not authenticated */}
+        {!isAuthenticated && !searchQuery && visibleProperties.length > 0 && lastFullRowStartIndex >= 0 && (
           <div 
             className="absolute z-20" 
             style={{
