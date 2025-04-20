@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -157,20 +156,20 @@ const Search: React.FC = () => {
             {!isAuthenticated && index === visibleItems - 1 && (
               <div className="absolute inset-0 z-10">
                 <div className="h-full relative">
-                  {/* Tighter gradient blur overlay that starts lower */}
+                  {/* Blur overlay only on last row */}
                   <div 
-                    className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/95"
+                    className="absolute inset-0"
                     style={{ 
                       backdropFilter: 'blur(3px)',
-                      background: 'linear-gradient(to bottom, transparent 60%, rgba(255, 255, 255, 0.95) 100%)'
+                      background: 'linear-gradient(to bottom, transparent 85%, rgba(255, 255, 255, 0.95) 100%)'
                     }}
                   />
                   
-                  {/* CTA Button with bold text */}
+                  {/* CTA Button positioned at bottom */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button 
-                        className="absolute left-1/2 top-[85%] transform -translate-x-1/2 -translate-y-1/2 bg-black hover:bg-black/90 text-white px-8 py-6 rounded-lg shadow-xl font-bold"
+                        className="absolute left-1/2 bottom-8 transform -translate-x-1/2 bg-black hover:bg-black/90 text-white px-8 py-6 rounded-lg shadow-xl font-bold"
                       >
                         Sign in to view more properties
                       </Button>
