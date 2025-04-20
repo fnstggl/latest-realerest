@@ -47,11 +47,29 @@ const TestimonialsSection: React.FC = () => {
             Real stories from real people who found their perfect home through our platform
           </p>
         </div>
-        <TestimonialCarousel testimonials={testimonials} />
+        
+        {/* Simple testimonial display without carousel component */}
+        <div className="grid gap-8 md:grid-cols-3">
+          {testimonials.map((testimonial, index) => (
+            <div key={index} className="bg-card p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+              <p className="text-lg mb-4">{testimonial.review}</p>
+              <div className="mt-4 flex flex-col items-center">
+                <div className="h-12 w-12 rounded-full overflow-hidden bg-muted">
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h5 className="mt-3 font-medium">{testimonial.name}</h5>
+                <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </motion.section>
   );
 };
 
 export default TestimonialsSection;
-
