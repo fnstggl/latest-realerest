@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -176,26 +177,26 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
-              {/* Increased the input length by making inputs span 4/5 columns instead of 3/4 */}
-              <div className="grid grid-cols-5 items-center gap-4">
+              {/* Updated input length by making inputs approximately 2.5x longer than before */}
+              <div className="grid grid-cols-10 items-center gap-4">
                 <Label htmlFor="name" className="text-right font-bold">
                   Name
                 </Label>
-                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Enter your full name" className="col-span-4" />
+                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Enter your full name" className="col-span-9" />
               </div>
 
-              <div className="grid grid-cols-5 items-center gap-4">
+              <div className="grid grid-cols-10 items-center gap-4">
                 <Label htmlFor="email" className="text-right font-bold">
                   Email
                 </Label>
-                <Input id="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" type="email" className="col-span-4" />
+                <Input id="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" type="email" className="col-span-9" />
               </div>
 
-              <div className="grid grid-cols-5 items-center gap-4">
+              <div className="grid grid-cols-10 items-center gap-4">
                 <Label htmlFor="phone" className="text-right font-bold">
                   Phone
                 </Label>
-                <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Optional" className="col-span-10" />
+                <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Optional" className="col-span-9" />
               </div>
             </div>
 
