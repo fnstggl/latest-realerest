@@ -76,6 +76,7 @@ const LocationAlertForm = () => {
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
               opacity: 1, // Always visible
+              borderRadius: "9999px", // Ensure rounded corners match button
             }}
           />
         </Button>
@@ -85,4 +86,3 @@ const LocationAlertForm = () => {
 };
 
 export default LocationAlertForm;
-
