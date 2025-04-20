@@ -173,7 +173,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
-              {/* Increased the input length by making inputs span 4/5 columns instead of 3/4 */}
               <div className="grid grid-cols-5 items-center gap-4">
                 <Label htmlFor="name" className="text-right font-bold">
                   Name
@@ -200,7 +199,11 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleJoinWaitlist} disabled={loading} className="bg-black hover:bg-black text-white">
+              <Button 
+                onClick={handleJoinWaitlist} 
+                disabled={loading} 
+                className="bg-black hover:bg-black text-white font-bold"
+              >
                 {loading ? "Submitting..." : "Submit Request"}
                 {!loading && <ArrowRight size={16} className="ml-2" />}
               </Button>
