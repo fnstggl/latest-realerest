@@ -100,16 +100,13 @@ const Search: React.FC = () => {
     }
   }, [error]);
 
-  // Calculate last row start index
-  const calcLastRowStartIndex = () => {
-    if (!isAuthenticated && filteredProperties.length > visibleItems) {
-      const totalRows = Math.ceil(filteredProperties.length / ITEMS_PER_ROW);
-      const lastRowStartIndex = (totalRows - 1) * ITEMS_PER_ROW;
-      return lastRowStartIndex;
-    }
-    return -1; // No last row to blur for authenticated users
-  };
-
+  // Calculate the last row start and end indices
+  const totalItems = filteredProperties.length;
+  const itemsPerRow = isGridView ? 3 : 1;
+  const totalRows = Math.ceil(totalItems / itemsPerRow);
+  const lastRowStartIndex = (totalRows - 1) * itemsPerRow;
+  const lastRowEndIndex = Math.min(lastRowStartIndex + itemsPerRow, totalItems);
+    
   const renderPropertyGrid = () => {
     if (loading) {
       return (
@@ -158,23 +155,20 @@ const Search: React.FC = () => {
       );
     }
 
-    // Calculate the start index of the last row
-    const lastRowStartIndex = calcLastRowStartIndex();
-    
     return (
       <div className={isGridView ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 relative" : "space-y-6 relative"}>
         {filteredProperties.map((property, index) => (
           <div 
             key={property.id} 
-            className={`relative ${index >= lastRowStartIndex ? 'last-row-item' : ''}`}
+            className={`relative ${index >= lastRowStartIndex && index < lastRowEndIndex ? 'pointer-events-none' : ''}`}
           >
             <PropertyCard {...property} />
             
-            {/* Only apply blur overlay to items in the last row when user is not authenticated */}
-            {!isAuthenticated && index >= lastRowStartIndex && index < lastRowStartIndex + ITEMS_PER_ROW && (
+            {/* Only apply blur overlay to the last row when user is not authenticated */}
+            {!isAuthenticated && index >= lastRowStartIndex && index < lastRowEndIndex && (
               <div className="absolute inset-0 z-10">
                 <div 
-                  className="absolute inset-0 pointer-events-none"
+                  className="absolute inset-0"
                   style={{ 
                     backdropFilter: 'blur(3px)',
                     background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
@@ -185,8 +179,8 @@ const Search: React.FC = () => {
           </div>
         ))}
         
-        {/* Sign-in CTA Button - render OUTSIDE of property loop to prevent pointer-events issues */}
-        {!isAuthenticated && filteredProperties.length > visibleItems && (
+        {/* Sign-in CTA Button - positioned at the bottom of last row */}
+        {!isAuthenticated && filteredProperties.length > itemsPerRow && (
           <div className="absolute z-20 bottom-8 left-1/2 transform -translate-x-1/2">
             <Dialog>
               <DialogTrigger asChild>
