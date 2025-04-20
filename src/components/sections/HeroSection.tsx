@@ -24,13 +24,8 @@ const HeroSection: React.FC = () => {
   return (
     <section className="pt-20 sm:pt-24 md:pt-36 pb-8 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
       <div className="container px-4 lg:px-8 mx-auto relative flex justify-center">
-        <motion.div 
-          className="w-full max-w-5xl text-center mx-auto" 
-          initial="hidden" 
-          animate="visible" 
-          variants={stagger}
-        >
-          <motion.div variants={fadeInUp} className="flex flex-col items-center">
+        <div className="w-full max-w-5xl text-center mx-auto">
+          <div className="flex flex-col items-center">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-1 sm:mb-3 md:mb-4 mx-auto text-center leading-tight">
               Find a home you love...
             </h1>
@@ -98,8 +93,8 @@ const HeroSection: React.FC = () => {
                 </Link>
               </Button>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TestimonialCarousel } from "@/components/ui/testimonial-carousel";
@@ -36,20 +35,9 @@ const testimonials = [
   }
 ];
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
 const TestimonialsSection: React.FC = () => {
   return (
-    <motion.section
-      className="py-8 relative overflow-hidden"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-      variants={fadeInUp}
-    >
+    <section className="py-8 relative overflow-hidden">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-4">
           <h2 className="text-3xl font-bold mb-4">
@@ -63,7 +51,7 @@ const TestimonialsSection: React.FC = () => {
         </div>
         <TestimonialCarousel testimonials={testimonials} />
       </div>
-    </motion.section>
+    </section>
   );
 };
 

@@ -20,10 +20,8 @@ const fadeInUp = {
 };
 
 const CTASection: React.FC = () => {
-  return <motion.section className="py-8 relative overflow-hidden" initial="hidden" whileInView="visible" viewport={{
-    once: true,
-    amount: 0.2
-  }} variants={fadeInUp}>
+  return (
+    <section className="py-8 relative overflow-hidden">
       <div className="container px-4 lg:px-8 mx-auto flex justify-center">
         <div className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 max-w-5xl w-full">
           <div>
@@ -50,6 +48,8 @@ const CTASection: React.FC = () => {
           </div>
         </div>
       </div>
-    </motion.section>;
+    </section>
+  );
 };
+
 export default CTASection;

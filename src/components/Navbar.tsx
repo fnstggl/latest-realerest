@@ -85,11 +85,8 @@ const Navbar: React.FC = () => {
     </Sheet>;
 
   return (
-    <motion.nav
+    <nav
       className="glass fixed top-0 left-0 right-0 py-2 sm:py-3 px-3 sm:px-4 md:px-6 z-50 shadow-lg backdrop-blur-lg bg-white/20 border-b border-white/30"
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -150,7 +147,7 @@ const Navbar: React.FC = () => {
           )}
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 };
 
