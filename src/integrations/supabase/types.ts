@@ -115,6 +115,30 @@ export type Database = {
           },
         ]
       }
+      location_alerts: {
+        Row: {
+          active: boolean
+          created_at: string
+          email: string
+          id: string
+          location: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          location: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          location?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
