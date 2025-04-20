@@ -12,7 +12,6 @@ interface Testimonial {
   name: string;
   role: string;
   review: string;
-  avatar: string;
 }
 
 interface TestimonialCarouselProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -63,13 +62,6 @@ export const TestimonialCarousel = React.forwardRef<HTMLDivElement, TestimonialC
                 <h5 className="mt-1.5 font-medium text-foreground/40" dangerouslySetInnerHTML={{
                   __html: testimonial.role.replace(/\*(.*?)\*/g, '<em>$1</em>')
                 }} />
-                <div className="mt-5 relative h-12 w-12 rounded-full overflow-hidden bg-muted">
-                  <img
-                    src={testimonial.avatar}
-                    alt={testimonial.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
               </CarouselItem>
             ))}
           </CarouselContent>
