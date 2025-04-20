@@ -20,15 +20,17 @@ const LocationAlertForm = () => {
     setIsSubmitting(true);
     try {
       // Check if this email is already subscribed to this location
-      const { data: existingAlert } = await supabase
+      const { data: existingAlert, error: checkError } = await supabase
         .from('location_alerts')
         .select('id')
         .eq('email', email)
-        .eq('location', location)
-        .single();
-
-      if (existingAlert) {
+        .eq('location', location);
+      
+      if (checkError) throw checkError;
+      
+      if (existingAlert && existingAlert.length > 0) {
         toast.info(`You've already joined the early access list for ${location}`);
+        setIsSubmitting(false);
         return;
       }
 
