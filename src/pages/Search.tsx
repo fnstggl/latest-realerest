@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -179,15 +180,20 @@ const Search: React.FC = () => {
         
         {/* Sign-in CTA Button - positioned in the middle of the last full row */}
         {!isAuthenticated && visibleProperties.length > 0 && lastFullRowStartIndex >= 0 && (
-          <div className="absolute z-20" style={{
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}>
+          <div 
+            className="absolute z-20" 
+            style={{
+              top: '50%', 
+              left: '50%', 
+              transform: 'translate(-50%, -50%)',
+              // Adjust positioning to be within the blurred row
+              marginTop: isGridView ? (isMobile ? 0 : '-1rem') : 0
+            }}
+          >
             <Dialog>
               <DialogTrigger asChild>
                 <Button 
-                  className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button"
+                  className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
                 >
                   Sign in to view more properties
                 </Button>
@@ -296,3 +302,4 @@ const Search: React.FC = () => {
 };
 
 export default Search;
+
