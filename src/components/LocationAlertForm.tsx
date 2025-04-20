@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,32 +36,31 @@ const LocationAlertForm = () => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto mt-8 px-4">
-      <h3 className="text-black font-medium mb-2">Can't find a home in your area?</h3>
-      <p className="text-gray-600 mb-4">Be the first to know as soon as one's listed</p>
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-        <Input
-          type="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="flex-1"
-          required
-        />
+    <div className="w-full max-w-3xl mx-auto text-center px-4">
+      <h3 className="font-sans text-black font-bold mb-2">Can't find a home in your area?</h3>
+      <p className="text-gray-600 mb-6">Be the first to know as soon as one's listed</p>
+      <form onSubmit={handleSubmit} className="flex flex-col max-w-xl mx-auto gap-4">
         <Input
           type="text"
           placeholder="City, State"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="flex-1"
+          required
+        />
+        <Input
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
         <Button 
           type="submit" 
           disabled={isSubmitting}
-          className="whitespace-nowrap"
+          variant="translucent"
+          className="w-full"
         >
-          {isSubmitting ? "Subscribing..." : "Get Notified"}
+          {isSubmitting ? "Processing..." : "Early Access"}
         </Button>
       </form>
     </div>

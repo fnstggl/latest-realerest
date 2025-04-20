@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LocationAlertForm from '@/components/LocationAlertForm';
+
 import { Separator } from "@/components/ui/separator";
 
 const SiteFooter: React.FC = () => {
@@ -44,10 +45,9 @@ const SiteFooter: React.FC = () => {
           </div>
         </div>
         
-        <Separator className="my-8" />
         <LocationAlertForm />
         
-        <div className="text-center text-gray-500 pt-6 border-t border-gray-100">
+        <div className="text-center text-gray-500 pt-6 border-t border-gray-100 mt-8">
           <p className="font-medium">© {new Date().getFullYear()} Realer Estate. All rights reserved.</p>
         </div>
       </div>
