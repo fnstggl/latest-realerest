@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LocationAlertForm from '@/components/LocationAlertForm';
-
 import { Separator } from "@/components/ui/separator";
 
 const SiteFooter: React.FC = () => {
