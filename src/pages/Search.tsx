@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -182,14 +181,14 @@ const Search: React.FC = () => {
         ))}
         
         {/* Sign-in CTA Button */}
-        {!isAuthenticated && visibleProperties.length > 0 && lastFullRowStartIndex >= 0 && (
+        {!isAuthenticated && visibleProperties.length > 0 && lastFullRowStartIndex >= 0 && !searchQuery && (
           <div 
             className="absolute z-20" 
             style={{
               top: '50%', 
               left: '50%', 
               transform: 'translate(-50%, -50%)',
-              marginTop: isGridView ? (isMobile ? 3300 : 1100) : 1100
+              marginTop: isGridView ? (isMobile ? 3600 : 1100) : 1100
             }}
           >
             <Button 
