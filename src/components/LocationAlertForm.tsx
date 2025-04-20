@@ -18,24 +18,35 @@ const LocationAlertForm = () => {
     }
     setIsSubmitting(true);
     try {
+      // Standardize inputs to improve matching (trim whitespace and convert to lowercase)
+      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedLocation = location.trim().toLowerCase();
+      
       // Check if this email is already subscribed to this location
-      const {
-        data: existingAlert,
-        error: checkError
-      } = await supabase.from('location_alerts').select('id').eq('email', email).eq('location', location);
+      const { data: existingAlerts, error: checkError } = await supabase
+        .from('location_alerts')
+        .select('id')
+        .ilike('email', normalizedEmail)
+        .ilike('location', normalizedLocation);
+        
       if (checkError) throw checkError;
-      if (existingAlert && existingAlert.length > 0) {
+      
+      if (existingAlerts && existingAlerts.length > 0) {
         toast.info(`You've already joined the early access list for ${location}`);
         setIsSubmitting(false);
         return;
       }
-      const {
-        error
-      } = await supabase.from('location_alerts').insert([{
-        email,
-        location
-      }]);
+      
+      // No duplicate found, create new alert
+      const { error } = await supabase
+        .from('location_alerts')
+        .insert([{
+          email: normalizedEmail,
+          location: normalizedLocation
+        }]);
+        
       if (error) throw error;
+      
       toast.success("Thanks for subscribing! We'll notify you when new properties are listed in your area.");
       setEmail('');
       setLocation('');
