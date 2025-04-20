@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
@@ -44,14 +43,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Link 
       to={`/property/${id}`} 
-      className="block perspective-container h-full property-card-glow"
+      className="block perspective-container h-full property-card-glow rounded-xl"
     >
-      <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col">
-        <div className="relative">
+      <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col rounded-xl">
+        <div className="relative rounded-t-xl">
           <img 
             src={validImage} 
             alt={location || 'Property'} 
-            className="h-[240px] w-full object-cover" 
+            className="h-[240px] w-full object-cover rounded-t-xl"
             onError={handleImageError} 
             loading="lazy" 
           />
@@ -77,7 +76,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           )}
         </div>
         
-        <div className="p-6 flex-1 flex flex-col">
+        <div className="p-6 flex-1 flex flex-col rounded-b-xl">
           <h3 className="font-bold text-lg text-foreground mb-3 truncate">
             {address || (location ? location.split(',')[0] : 'Property Listing')}
           </h3>
@@ -138,4 +137,3 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 };
 
 export default PropertyCard;
-
