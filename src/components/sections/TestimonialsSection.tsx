@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TestimonialCarousel } from "@/components/ui/testimonial-carousel";
@@ -41,10 +40,10 @@ const TestimonialsSection: React.FC = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
-            What Our Clients Say
+            What Our Buyers Say
           </h2>
           <p className="text-xl text-foreground/80 max-w-2xl mx-auto">
-            Real stories from real people who found their perfect home through our platform
+            Trusted by homebuyers across the nation
           </p>
         </div>
         <TestimonialCarousel testimonials={testimonials} />
@@ -54,4 +53,3 @@ const TestimonialsSection: React.FC = () => {
 };
 
 export default TestimonialsSection;
-
