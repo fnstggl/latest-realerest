@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TestimonialCarousel } from "@/components/ui/testimonial-carousel";
@@ -57,7 +58,7 @@ const TestimonialsSection: React.FC = () => {
             <span className="font-futura font-bold">way</span>
           </h2>
           <p className="text-xl text-foreground/80 max-w-2xl mx-auto mb-4">
-            Trusted by homebuyers across the nation
+            See why we're trusted by homebuyers across the nation
           </p>
         </div>
         <TestimonialCarousel testimonials={testimonials} />
