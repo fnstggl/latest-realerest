@@ -24,16 +24,17 @@ const Messages: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Navbar is positioned fixed at the top */}
       <Navbar />
 
-      {/* Increased top margin from mt-4 sm:mt-6 to mt-16 sm:mt-20 to clear navbar */}
-      <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12 mt-16 sm:mt-20">
+      {/* Main content with proper padding from top to avoid navbar overlap */}
+      <div className="pt-20 pb-8 px-4 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center justify-between mb-4 sm:mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Messages</h1>
               <p className="text-sm sm:text-base md:text-lg">Connect with buyers and sellers</p>

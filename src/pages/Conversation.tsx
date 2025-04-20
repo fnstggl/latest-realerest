@@ -11,34 +11,19 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import MessageGroup from '@/components/conversation/MessageGroup';
 import MessageInput from '@/components/conversation/MessageInput';
+
 const Conversation: React.FC = () => {
-  const {
-    id
-  } = useParams<{
-    id: string;
-  }>();
+  const { id } = useParams<{ id: string; }>();
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [otherUser, setOtherUser] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-  const [propertyInfo, setPropertyInfo] = useState<{
-    id: string;
-    title: string;
-    image?: string;
-  } | null>(null);
+  const [otherUser, setOtherUser] = useState<{ id: string; name: string; } | null>(null);
+  const [propertyInfo, setPropertyInfo] = useState<{ id: string; title: string; image?: string; } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const {
-    fetchMessages,
-    sendMessage,
-    markConversationAsRead
-  } = useMessages();
+  const { fetchMessages, sendMessage, markConversationAsRead } = useMessages();
+
   useEffect(() => {
     const loadConversation = async () => {
       if (!id || !user?.id) return;
@@ -145,11 +130,11 @@ const Conversation: React.FC = () => {
       supabase.removeChannel(subscription);
     };
   }, [id, user?.id, fetchMessages, navigate, markConversationAsRead]);
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: 'smooth'
-    });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
   const handleSendMessage = async (message: string) => {
     if (!id || !message.trim() || !user?.id) return;
     setSending(true);
@@ -161,14 +146,14 @@ const Conversation: React.FC = () => {
       setSending(false);
     }
   };
+
   const handlePropertyClick = () => {
     if (propertyInfo) {
       navigate(`/property/${propertyInfo.id}`);
     }
   };
-  const groupedMessages = messages.reduce<{
-    [date: string]: Message[];
-  }>((groups, message) => {
+
+  const groupedMessages = messages.reduce<{ [date: string]: Message[]; }>((groups, message) => {
     const date = new Date(message.timestamp).toDateString();
     if (!groups[date]) {
       groups[date] = [];
@@ -176,35 +161,50 @@ const Conversation: React.FC = () => {
     groups[date].push(message);
     return groups;
   }, {});
+
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
+    return (
+      <div className="min-h-screen flex items-center justify-center">
         <p className="text-lg font-medium">Loading conversation...</p>
-      </div>;
+      </div>
+    );
   }
-  return <div className="min-h-screen bg-white flex flex-col">
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Navbar is positioned fixed at the top */}
       <Navbar />
       
-      <div className="container mx-auto px-4 py-6 flex-1 flex flex-col">
-        <motion.div initial={{
-        opacity: 0,
-        y: 20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} transition={{
-        duration: 0.3
-      }} className="flex-1 flex flex-col">
+      {/* Main content with proper padding from top to avoid navbar overlap */}
+      <div className="pt-20 pb-6 px-4 max-w-7xl mx-auto flex-1 flex flex-col">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.3 }}
+          className="flex-1 flex flex-col"
+        >
           <div className="flex items-center justify-between mb-4">
-            <Button variant="outline" size="sm" onClick={() => navigate('/messages')} className="flex items-center gap-1 hover:border-[#0892D0] text-black">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/messages')} 
+              className="flex items-center gap-1 hover:border-[#0892D0] text-black"
+            >
               <ArrowLeft size={16} />
               Back
             </Button>
             
             <div>
-              <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "Unknown User"}</h1>
+              <h1 className="text-2xl font-bold">
+                {loading ? 'Loading...' : otherUser?.name || "Unknown User"}
+              </h1>
             </div>
             
-            {propertyInfo && <div onClick={handlePropertyClick} className="flex items-center cursor-pointer hover:opacity-90 transition-opacity">
+            {propertyInfo && (
+              <div 
+                onClick={handlePropertyClick} 
+                className="flex items-center cursor-pointer hover:opacity-90 transition-opacity"
+              >
                 <div className="flex flex-col items-end mr-3">
                   <span className="text-sm font-semibold">About Property:</span>
                   <span className="text-[#0892D0] flex items-center text-sm hover:underline">
@@ -213,35 +213,57 @@ const Conversation: React.FC = () => {
                   </span>
                 </div>
                 <div className="h-16 w-16 rounded-md border border-gray-200 shadow-sm overflow-hidden">
-                  <img src={propertyInfo.image || '/placeholder.svg'} alt={propertyInfo.title} className="h-full w-full object-cover" />
+                  <img 
+                    src={propertyInfo.image || '/placeholder.svg'} 
+                    alt={propertyInfo.title} 
+                    className="h-full w-full object-cover" 
+                  />
                 </div>
-              </div>}
+              </div>
+            )}
           </div>
           
           <Card className="flex-1 border border-gray-200 shadow-sm flex flex-col bg-white/90 rounded-lg">
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {loading ? <div className="space-y-4">
-                  {[1, 2, 3].map(i => <div key={i} className={`flex ${i % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
+              {loading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className={`flex ${i % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[70%] ${i % 2 === 0 ? 'bg-gray-100' : 'bg-blue-100'} rounded-lg p-3`}>
                         <Skeleton className="h-4 w-32 mb-2" />
                         <Skeleton className="h-3 w-48" />
                         <Skeleton className="h-2 w-16 mt-2" />
                       </div>
-                    </div>)}
-                </div> : messages.length > 0 ? <div className="space-y-6">
-                  {Object.entries(groupedMessages).map(([date, dateMessages]) => <MessageGroup key={date} date={date} messages={dateMessages} currentUserId={user?.id} />)}
+                    </div>
+                  ))}
+                </div>
+              ) : messages.length > 0 ? (
+                <div className="space-y-6">
+                  {Object.entries(groupedMessages).map(([date, dateMessages]) => (
+                    <MessageGroup 
+                      key={date} 
+                      date={date} 
+                      messages={dateMessages} 
+                      currentUserId={user?.id} 
+                    />
+                  ))}
                   <div ref={messagesEndRef} />
-                </div> : <div className="h-full flex items-center justify-center">
+                </div>
+              ) : (
+                <div className="h-full flex items-center justify-center">
                   <div className="text-center">
                     <p className="text-gray-500 mb-4">No messages yet. Start the conversation!</p>
                   </div>
-                </div>}
+                </div>
+              )}
             </div>
             
             <MessageInput onSendMessage={handleSendMessage} sending={sending} />
           </Card>
         </motion.div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Conversation;
