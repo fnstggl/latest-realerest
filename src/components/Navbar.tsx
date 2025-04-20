@@ -66,9 +66,7 @@ const Navbar: React.FC = () => {
               </Button> : <>
                 
                 
-                <Button className="w-full justify-center font-bold text-black text-xs sm:text-sm" variant="translucent" onClick={handleSignUp}>
-                  Sign up
-                </Button>
+                
               </>}
           </div>
         </div>
