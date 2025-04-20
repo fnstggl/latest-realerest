@@ -169,7 +169,8 @@ const PropertyDetail: React.FC = () => {
                 propertyId={property?.id || ''} 
                 propertyTitle={property?.title || ''} 
                 open={showWaitlistDialog} 
-                onOpenChange={setShowWaitlistDialog} 
+                onOpenChange={setShowWaitlistDialog}
+                refreshProperty={refreshProperty}
               />
             )}
 

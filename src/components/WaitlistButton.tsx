@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,13 +22,15 @@ interface WaitlistButtonProps {
   propertyTitle: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  refreshProperty?: () => void; // <-- added
 }
 
 const WaitlistButton: React.FC<WaitlistButtonProps> = ({ 
   propertyId, 
   propertyTitle,
   open,
-  onOpenChange
+  onOpenChange,
+  refreshProperty
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -90,8 +93,10 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       if (error) {
         if (error.code === "23505") {
           // This is the code for unique_violation
-          // Don't show toast, just close silently
           onOpenChange(false);
+          if (refreshProperty) {
+            refreshProperty();
+          }
           return;
         } else {
           throw error;
@@ -127,22 +132,25 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
           });
       }
 
-      // No toast notification, just close silently
       onOpenChange(false);
+
+      // <-- ADD REFRESH HERE
+      if (refreshProperty) {
+        refreshProperty();
+      }
+
     } catch (error) {
       console.error("Error joining waitlist:", error);
       toast.error("Failed to join waitlist. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange]);
+  }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange, refreshProperty]);
 
   const handleButtonClick = () => {
     if (!user) {
-      // If not logged in, navigate to sign in page directly
       navigate("/signin", { state: { from: `/property/${propertyId}` } });
     } else {
-      // If logged in, open the dialog
       onOpenChange(true);
     }
   };
