@@ -37,8 +37,8 @@ const FeaturedProperties: React.FC = () => {
     >
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <h2 className="text-4xl font-editorial font-bold italic text-foreground tracking-wide">
-            Featured Homes
+          <h2 className="text-4xl font-sans font-bold text-foreground tracking-wide">
+            <span className="font-editorial italic font-bold">Featured</span> Homes
           </h2>
         </div>
         

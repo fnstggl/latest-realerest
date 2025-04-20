@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -58,7 +59,7 @@ const LocationAlertForm = () => {
           type="submit" 
           disabled={isSubmitting}
           variant="translucent"
-          className="w-full"
+          className="w-full font-bold"
         >
           {isSubmitting ? "Processing..." : "Early Access"}
         </Button>
