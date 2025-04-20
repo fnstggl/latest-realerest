@@ -92,7 +92,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
 
       if (error) {
         if (error.code === "23505") {
-          // This is the code for unique_violation
           onOpenChange(false);
           if (refreshProperty) {
             refreshProperty();
@@ -134,11 +133,9 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
 
       onOpenChange(false);
 
-      // <-- ADD REFRESH HERE
       if (refreshProperty) {
         refreshProperty();
       }
-
     } catch (error) {
       console.error("Error joining waitlist:", error);
       toast.error("Failed to join waitlist. Please try again.");
@@ -210,7 +207,8 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
+              {/* Increased the input length by making inputs span 4/5 columns instead of 3/4 */}
+              <div className="grid grid-cols-5 items-center gap-4">
                 <Label htmlFor="name" className="text-right font-bold">
                   Name
                 </Label>
@@ -219,11 +217,11 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your full name"
-                  className="col-span-3"
+                  className="col-span-4"
                 />
               </div>
 
-              <div className="grid grid-cols-4 items-center gap-4">
+              <div className="grid grid-cols-5 items-center gap-4">
                 <Label htmlFor="email" className="text-right font-bold">
                   Email
                 </Label>
@@ -233,11 +231,11 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   type="email"
-                  className="col-span-3"
+                  className="col-span-4"
                 />
               </div>
 
-              <div className="grid grid-cols-4 items-center gap-4">
+              <div className="grid grid-cols-5 items-center gap-4">
                 <Label htmlFor="phone" className="text-right font-bold">
                   Phone
                 </Label>
@@ -246,7 +244,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Optional"
-                  className="col-span-3"
+                  className="col-span-4"
                 />
               </div>
             </div>
