@@ -151,47 +151,50 @@ const Search: React.FC = () => {
       !searchQuery;
 
     if (showTypeSkeleton) {
+      // Show 1 skeleton for mobile, 3 skeletons for >=lg screens (matches 3-col grid used for listings on desktop)
       const skeletonCount = isMobile ? 1 : 3;
       return (
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 relative">
-          {Array.from({ length: skeletonCount }).map((_, index) => (
-            <div key={index} className="relative">
-              <div className="w-full h-[400px] bg-white rounded-xl overflow-hidden">
-                <Skeleton className="w-full h-[200px]" />
-                <div className="p-4 space-y-4">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-4 w-2/3" />
-                  <div className="flex gap-2 mt-2">
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-4 w-16" />
+        <div className="relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+            {Array.from({ length: skeletonCount }).map((_, index) => (
+              <div key={index} className="relative">
+                <div className="w-full h-[400px] bg-white rounded-xl overflow-hidden">
+                  <Skeleton className="w-full h-[200px]" />
+                  <div className="p-4 space-y-4">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-2/3" />
+                    <div className="flex gap-2 mt-2">
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
                   </div>
                 </div>
+                <div className="absolute inset-0 z-10">
+                  <div
+                    className="absolute inset-0 rounded-xl"
+                    style={{
+                      backdropFilter: "blur(3px)",
+                      background:
+                        "linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)",
+                    }}
+                  />
+                </div>
               </div>
-              <div className="absolute inset-0 z-10">
-                <div
-                  className="absolute inset-0 rounded-xl"
-                  style={{
-                    backdropFilter: "blur(3px)",
-                    background:
-                      "linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)",
-                  }}
-                />
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          
+          {/* Centered CTA overlays full grid row */}
           <div
-            className="absolute z-20"
+            className="absolute z-20 flex items-center justify-center w-full h-full pointer-events-none"
             style={{
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              marginTop: 0,
+              top: 0,
+              left: 0,
             }}
           >
             <Button
-              className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
+              className="pointer-events-auto relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
               onClick={() => window.location.href = "/signin"}
             >
               Sign in to view more properties
