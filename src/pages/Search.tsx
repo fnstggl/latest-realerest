@@ -185,8 +185,8 @@ const Search: React.FC = () => {
               top: '50%', 
               left: '50%', 
               transform: 'translate(-50%, -50%)',
-              // Lower the top margin by 150
-              marginTop: isGridView ? (isMobile ? 150 : 150) : 150
+              // Lower the top margin by another 200 pixels
+              marginTop: isGridView ? (isMobile ? 350 : 350) : 350
             }}
           >
             <Dialog>
