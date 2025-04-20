@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -188,7 +189,7 @@ const Search: React.FC = () => {
               top: '50%', 
               left: '50%', 
               transform: 'translate(-50%, -50%)',
-              marginTop: isGridView ? (isMobile ? 3600 : 1100) : 1100
+              marginTop: isGridView ? (isMobile ? 3900 : 1100) : 1100
             }}
           >
             <Button 
@@ -279,3 +280,4 @@ const Search: React.FC = () => {
 };
 
 export default Search;
+
