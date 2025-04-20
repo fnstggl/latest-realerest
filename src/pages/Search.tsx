@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -25,6 +24,7 @@ const Search: React.FC = () => {
     loading,
     error
   } = useListings();
+  const [activePropertyType, setActivePropertyType] = useState<string>("any");
 
   // Update filtered properties whenever properties or searchQuery changes
   useEffect(() => {
@@ -69,6 +69,8 @@ const Search: React.FC = () => {
   };
 
   const handleFilterChange = (filters: any) => {
+    setActivePropertyType(filters.propertyType);
+
     const filtered = properties.filter(property => {
       if (property.price < filters.minPrice || property.price > filters.maxPrice) {
         return false;
@@ -136,6 +138,64 @@ const Search: React.FC = () => {
         <div className="flex justify-center items-center py-16">
           <div className="loading-container">
             <div className="pulsing-circle" />
+          </div>
+        </div>
+      );
+    }
+
+    const showTypeSkeleton =
+      (activePropertyType === "condo" ||
+        activePropertyType === "apartment" ||
+        activePropertyType === "duplex") &&
+      filteredProperties.length === 0 &&
+      !searchQuery;
+
+    if (showTypeSkeleton) {
+      const skeletonCount = isMobile ? 1 : 3;
+      return (
+        <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 relative">
+          {Array.from({ length: skeletonCount }).map((_, index) => (
+            <div key={index} className="relative">
+              <div className="w-full h-[400px] bg-white rounded-xl overflow-hidden">
+                <Skeleton className="w-full h-[200px]" />
+                <div className="p-4 space-y-4">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <div className="flex gap-2 mt-2">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              </div>
+              <div className="absolute inset-0 z-10">
+                <div
+                  className="absolute inset-0 rounded-xl"
+                  style={{
+                    backdropFilter: "blur(3px)",
+                    background:
+                      "linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)",
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+          <div
+            className="absolute z-20"
+            style={{
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              marginTop: 0,
+            }}
+          >
+            <Button
+              className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
+              onClick={() => window.location.href = "/signin"}
+            >
+              Sign in to view more properties
+            </Button>
           </div>
         </div>
       );
