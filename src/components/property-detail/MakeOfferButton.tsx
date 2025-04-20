@@ -144,34 +144,38 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   };
   const renderOfferForm = () => <>
       <DialogHeader>
-        <DialogTitle className="text-xl font-bold">Make an Offer</DialogTitle>
-        <DialogDescription>
+        <DialogTitle className="text-xl font-bold text-black">Make an Offer</DialogTitle>
+        <DialogDescription className="text-glass-blue/70">
           Submit your offer for {propertyTitle}. The seller will be notified and can accept or decline.
         </DialogDescription>
       </DialogHeader>
       
-      <div className="space-y-4 py-4">
+      <div className="space-y-6 py-6">
         <div>
           <Label htmlFor="offerAmount" className="text-black font-bold">Offer Amount ($)</Label>
-          <Input id="offerAmount" type="number" value={offerAmount} onChange={handleOfferAmountChange} className={`mt-2 border-2 ${offerError ? 'border-red-500' : 'border-black'} focus:ring-0`} />
-          {offerError && <div className="text-[#d0161a] text-sm mt-1">
-              {offerError}
-            </div>}
+          <Input
+            id="offerAmount"
+            type="number"
+            value={offerAmount}
+            onChange={handleOfferAmountChange}
+            className={`mt-2 glass-input ${offerError ? 'border-red-500' : ''}`}
+          />
+          {offerError && <div className="text-[#ea384c] text-sm mt-1 font-semibold">{offerError}</div>}
         </div>
         
         <div className="flex items-center space-x-2">
           <Checkbox id="isInterested" checked={isInterested} onCheckedChange={checked => setIsInterested(checked === true)} />
-          <Label htmlFor="isInterested" className="text-sm font-bold">
+          <Label htmlFor="isInterested" className="text-sm font-bold text-black">
             I'm interested in this property and would like to proceed with the transaction
           </Label>
         </div>
         
         <div>
           <Label htmlFor="proofOfFunds" className="text-black font-bold">Proof of Funds (Optional)</Label>
-          <div className="mt-2 border-2 border-dashed border-black p-4 rounded-none cursor-pointer hover:bg-gray-50 transition-colors">
+          <div className="mt-2 border-2 border-dashed border-gray-300 bg-white/50 p-4 rounded-xl transition-colors glass">
             <label htmlFor="proofOfFunds" className="flex flex-col items-center cursor-pointer">
-              <Upload className="mb-2" />
-              <span className="text-sm font-bold mb-1">
+              <Upload className="mb-2 text-glass-blue" />
+              <span className="text-sm font-semibold mb-1 text-black">
                 {proofOfFunds ? proofOfFunds.name : 'Upload Proof of Funds Document'}
               </span>
               <span className="text-xs text-gray-500">
@@ -182,66 +186,104 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           </div>
         </div>
         
-        <div className="text-xs text-gray-500 mt-4">
+        <div className="text-xs text-gray-500 mt-2 bg-gradient-to-r from-glass-purple/10 via-glass-blue/10 to-glass-pink/10 p-3 rounded-lg">
           <p className="font-bold">Disclaimer:</p>
-          <p>Offers are non-binding and can be withdrawn at any time before a formal contract is signed. 
-          This is simply an expression of interest and does not constitute a legally binding agreement.</p>
+          <p>
+            Offers are non-binding and can be withdrawn at any time before a formal contract is signed. 
+            This is simply an expression of interest and does not constitute a legally binding agreement.
+          </p>
         </div>
       </div>
       
-      <DialogFooter className="flex gap-2">
-        <Button type="button" variant="outline" onClick={handleDialogClose} className="font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+      <DialogFooter className="flex gap-3">
+        {/* Cancel Button with black border */}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleDialogClose}
+          className="font-bold border-2 border-black shadow-none rounded-xl hover:bg-gray-50 transition-all"
+        >
           Cancel
         </Button>
-        <Button type="button" variant="navy" className="text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={handleSubmit} disabled={submitting || !!offerError}>
-          <CreditCard size={18} className="mr-2" />
-          {submitting ? "Submitting..." : "Submit Offer"}
-        </Button>
+        {/* Gradient Submit button with gradient border via span */}
+        <button
+          type="button"
+          className="relative inline-flex items-center justify-center w-auto px-6 py-2 font-bold text-white bg-[#0892D0] rounded-xl group focus:outline-none disabled:opacity-60 transition-all overflow-visible"
+          onClick={handleSubmit}
+          disabled={submitting || !!offerError}
+          style={{ border: 'none', boxShadow: 'none' }}
+        >
+          {/* Gradient border */}
+          <span
+            aria-hidden="true"
+            className="absolute -inset-[2px] rounded-xl bg-gradient-to-r from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] pointer-events-none"
+            style={{ zIndex: 0 }}
+          />
+          {/* Button content */}
+          <span className="relative flex items-center gap-2 z-10">
+            <CreditCard size={18} className="mr-2" />
+            {submitting ? "Submitting..." : "Submit Offer"}
+          </span>
+        </button>
       </DialogFooter>
     </>;
+
+  // Success screen: consistent glass style
   const renderSuccessScreen = () => <>
       <DialogHeader>
-        <DialogTitle className="text-xl font-bold text-center">Offer Submitted Successfully!</DialogTitle>
+        <DialogTitle className="text-xl font-bold text-center text-glass-blue">Offer Submitted Successfully!</DialogTitle>
       </DialogHeader>
-      
-      <div className="py-8 text-center">
-        <div className="mx-auto w-12 h-12 bg-[#0d2f72] rounded-none flex items-center justify-center mb-4 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <SquareCheck size={24} className="text-white" />
+      <div className="py-6 text-center glass-card rounded-xl mb-6">
+        <div className="mx-auto w-12 h-12 bg-gradient-to-br from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] rounded-full flex items-center justify-center mb-4 border-2 border-[#0892D0] shadow-md">
+          <SquareCheck size={28} className="text-white" />
         </div>
         
-        <p className="mb-6">
+        <p className="mb-6 text-black">
           Your offer has been sent to the seller. You can either wait for them to respond or contact them directly.
         </p>
         
-        <div className="border-2 border-black p-4 text-left mb-6">
-          <h3 className="font-bold text-lg mb-2">Seller Contact Information</h3>
-          <p className="mb-1"><span className="font-bold">Name:</span> {sellerName}</p>
-          {sellerEmail && <p className="mb-1"><span className="font-bold">Email:</span> {sellerEmail}</p>}
-          {sellerPhone && <p><span className="font-bold">Phone:</span> {sellerPhone}</p>}
+        <div className="glass p-4 text-left mb-6 border border-black/10">
+          <h3 className="font-bold text-lg mb-2 text-glass-blue">Seller Contact Information</h3>
+          <p className="mb-1 text-black"><span className="font-bold">Name:</span> {sellerName}</p>
+          {sellerEmail && <p className="mb-1 text-black"><span className="font-bold">Email:</span> {sellerEmail}</p>}
+          {sellerPhone && <p className="text-black"><span className="font-bold">Phone:</span> {sellerPhone}</p>}
         </div>
         
         <p className="text-sm text-gray-600">
           You can track the status of your offer in your dashboard.
         </p>
       </div>
-      
       <DialogFooter>
-        <Button type="button" variant="navy" className="w-full text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all" onClick={handleDialogClose}>
+        <Button
+          type="button"
+          variant="navy"
+          className="w-full text-white font-bold bg-[#0892D0] border-2 border-[#0892D0] shadow-none rounded-xl hover:bg-[#077fb4] transition-all"
+          onClick={handleDialogClose}
+        >
           Close
         </Button>
       </DialogFooter>
     </>;
-  return <>
-      <Button variant="navy" onClick={handleMakeOffer} className="w-full font-bold py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center text-white bg-[d0161a] bg-donedeal-red">
+
+  return (
+    <>
+      {/* Updated Make an Offer button: no blue hover, more glass style */}
+      <Button
+        variant="navy"
+        onClick={handleMakeOffer}
+        className="w-full font-bold py-2 rounded-xl text-white bg-[#0892D0] border-2 border-[#0892D0] shadow-none transition-all glass hover:bg-[#0892D0]"
+        style={{ boxShadow: "none" }}
+      >
         <CreditCard size={18} className="mr-2" />
         Make an Offer
       </Button>
-      
       <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none">
+        <DialogContent className="glass-card border-2 border-[#0892D0] shadow-lg rounded-xl">
           {offerSubmitted ? renderSuccessScreen() : renderOfferForm()}
         </DialogContent>
       </Dialog>
-    </>;
+    </>
+  );
 };
+
 export default MakeOfferButton;
