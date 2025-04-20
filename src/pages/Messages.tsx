@@ -26,8 +26,8 @@ const Messages: React.FC = () => {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Reduced top margin from mt-12 sm:mt-16 to mt-4 sm:mt-6 to avoid overlap with navbar */}
-      <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12 mt-4 sm:mt-6">
+      {/* Increased top margin from mt-4 sm:mt-6 to mt-16 sm:mt-20 to clear navbar */}
+      <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12 mt-16 sm:mt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
