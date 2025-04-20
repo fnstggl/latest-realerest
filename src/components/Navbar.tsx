@@ -60,19 +60,19 @@ const Navbar: React.FC = () => {
           </Link>
           
           <nav className="flex flex-col space-y-1 sm:space-y-2">
-            <Link to="/" className="text-black hover:nav-home-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
+            <Link to="/" className="text-black hover:nav-home-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Home
             </Link>
-            <Link to="/search" className="text-black hover:nav-browse-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
+            <Link to="/search" className="text-black hover:nav-browse-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Browse
             </Link>
-            <Link to="/sell/create" className="text-black hover:nav-sell-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
+            <Link to="/sell/create" className="text-black hover:nav-sell-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Sell
             </Link>
-            <Link to="/about" className="text-black hover:nav-about-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
+            <Link to="/about" className="text-black hover:nav-about-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               About
             </Link>
-            <Link to="/contact" className="text-black hover:nav-contact-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
+            <Link to="/contact" className="text-black hover:nav-contact-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Contact
             </Link>
           </nav>
