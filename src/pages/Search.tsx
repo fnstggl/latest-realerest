@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -12,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useListings, Listing } from '@/hooks/useListings';
+import LocationAlertForm from '@/components/LocationAlertForm';
 
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -137,6 +137,14 @@ const Search: React.FC = () => {
     }
 
     if (filteredProperties.length === 0 && searchQuery) {
+      if (isAuthenticated) {
+        return (
+          <div className="w-full">
+            <LocationAlertForm />
+          </div>
+        );
+      }
+
       const skeletonCount = isMobile ? 1 : 3;
       
       return (
