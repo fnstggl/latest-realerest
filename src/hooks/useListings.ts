@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from "sonner";
@@ -109,8 +110,8 @@ export const useListings = (limit?: number) => {
             beds: item.beds || 0,
             baths: item.baths || 0,
             sqft: item.sqft || 0,
-            // Extract property type from title if available (since it's not in the database)
-            propertyType: extractPropertyTypeFromTitle(item.title),
+            // Set all properties as House type by default since that's what we're currently displaying
+            propertyType: "House",
             // Use the first image from the array if available
             image: item.images && item.images.length > 0 ? item.images[0] : 'https://source.unsplash.com/random/800x600?house',
             // Calculate below market percentage and round it
@@ -149,27 +150,8 @@ export const useListings = (limit?: number) => {
       }
     };
     
-    // Helper function to extract property type from title
-    const extractPropertyTypeFromTitle = (title: string): string => {
-      // Default property type
-      const defaultType = "House";
-      
-      // If there's no title, return default
-      if (!title) return defaultType;
-      
-      // Common property types to check for
-      const propertyTypes = ["House", "Apartment", "Condo", "Townhouse", "Studio", "Land"];
-      
-      // Check if any property type is in the title
-      for (const type of propertyTypes) {
-        if (title.includes(type)) {
-          return type;
-        }
-      }
-      
-      return defaultType;
-    };
-    
+    // Removed the extractPropertyTypeFromTitle function since we're now setting all properties as House type
+
     const fallbackToLocalStorage = () => {
       try {
         const storedProperties = localStorage.getItem('propertyListings');

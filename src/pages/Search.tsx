@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -77,13 +78,17 @@ const Search: React.FC = () => {
         return false;
       }
       if (filters.propertyType !== "any") {
-        if (filters.propertyType === "house" && !property.title?.toLowerCase().includes("home")) {
+        // Fix property type filtering logic
+        if (filters.propertyType === "house" && property.propertyType !== "House") {
           return false;
         }
-        if (filters.propertyType === "apartment" && !property.title?.toLowerCase().includes("apartment")) {
+        if (filters.propertyType === "apartment" && property.propertyType !== "Apartment") {
           return false;
         }
-        if (filters.propertyType === "condo" && !property.title?.toLowerCase().includes("condo")) {
+        if (filters.propertyType === "condo" && property.propertyType !== "Condo") {
+          return false;
+        }
+        if (filters.propertyType === "duplex" && property.propertyType !== "Duplex") {
           return false;
         }
       }
