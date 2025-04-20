@@ -84,52 +84,12 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
       
       setWaitlistUsers(updatedUsers);
       
-      // Send notification to the user about their waitlist status
-      try {
-        // First get the user's actual user_id from the waitlist request
-        const { data: userData, error: userError } = await supabase
-          .from('waitlist_requests')
-          .select('user_id')
-          .eq('id', userId)
-          .single();
-          
-        if (userError) {
-          console.error("Error fetching user data:", userError);
-          throw userError;
-        }
-        
-        // Create notification with appropriate message based on status
-        const notificationTitle = newStatus === "accepted" ? 
-          "Waitlist Request Approved!" : 
-          "Waitlist Request Declined";
-          
-        const notificationMessage = newStatus === "accepted" ? 
-          `Great news! Your waitlist request for ${propertyTitle} has been approved. You can now view the full property details.` : 
-          `Unfortunately, your waitlist request for ${propertyTitle} has been declined.`;
-          
-        await supabase
-          .from('notifications')
-          .insert({
-            user_id: userData.user_id,
-            title: notificationTitle,
-            message: notificationMessage,
-            type: newStatus === "accepted" ? "success" : "error",
-            properties: {
-              propertyId,
-              propertyTitle,
-              status: newStatus
-            },
-            read: false
-          });
-          
-      } catch (error) {
-        console.error("Error sending notification to user:", error);
-      }
+      // Removed notification creation code here
       
       if (newStatus === "accepted") {
-        toast.success(`${requesterName} accepted to waitlist! A notification has been sent to ${userEmail}.`);
+        toast.success(`${requesterName} accepted to waitlist!`);
       } else {
-        toast.success(`${requesterName} declined from waitlist. A notification has been sent to ${userEmail}.`);
+        toast.success(`${requesterName} declined from waitlist.`);
       }
     } catch (error) {
       console.error("Error updating waitlist status:", error);

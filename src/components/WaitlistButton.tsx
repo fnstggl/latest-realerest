@@ -99,21 +99,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       if (propertyError) {
         console.error("Error getting property owner:", propertyError);
       } else if (propertyData) {
-        // 3. Add notification for property owner
-        await supabase.from("notifications").insert({
-          user_id: propertyData.user_id,
-          title: "New Waitlist Request",
-          message: `${name} has joined the waitlist for ${propertyTitle}`,
-          type: "new_listing",
-          properties: {
-            waitlistRequestId: data?.id,
-            propertyId,
-            propertyTitle,
-            requesterName: name,
-            requesterEmail: email || user.email,
-            requesterPhone: phone || ""
-          }
-        });
+        // Removed the notification creation code here
       }
       onOpenChange(false);
       if (refreshProperty) {
@@ -214,4 +200,3 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     </>;
 };
 export default WaitlistButton;
-
