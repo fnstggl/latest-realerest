@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, UserCheck } from "lucide-react";
+import { ArrowRight, UserCheck, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
@@ -138,17 +138,38 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     }
   }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange]);
 
+  const handleButtonClick = () => {
+    if (!user) {
+      // If not logged in, navigate to sign in page directly
+      navigate("/sign-in", { state: { from: `/property/${propertyId}` } });
+    } else {
+      // If logged in, open the dialog
+      onOpenChange(true);
+    }
+  };
+
   return (
     <>
       <Button
         variant="glass"
-        onClick={() => onOpenChange(true)}
+        onClick={handleButtonClick}
         className="w-full bg-white hover:bg-white group relative overflow-hidden"
       >
-        <UserCheck size={18} className="mr-2 text-black" />
-        <span className="text-black font-bold relative z-10">
-          Join Waitlist for Full Details
-        </span>
+        {user ? (
+          <>
+            <UserCheck size={18} className="mr-2 text-black" />
+            <span className="text-black font-bold relative z-10">
+              Join Waitlist for Full Details
+            </span>
+          </>
+        ) : (
+          <>
+            <LogIn size={18} className="mr-2 text-black" />
+            <span className="text-black font-bold relative z-10">
+              Sign in to Join Waitlist
+            </span>
+          </>
+        )}
 
         <span
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
@@ -168,75 +189,77 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         ></span>
       </Button>
 
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="bg-white rounded-lg border border-gray-200 shadow-xl sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
-              Join Property Waitlist
-            </DialogTitle>
-            <DialogDescription>
-              Submit your details to join the waitlist for this property. The
-              seller will share more information once approved.
-            </DialogDescription>
-          </DialogHeader>
+      {user && (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent className="bg-white rounded-lg border border-gray-200 shadow-xl sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold">
+                Join Property Waitlist
+              </DialogTitle>
+              <DialogDescription>
+                Submit your details to join the waitlist for this property. The
+                seller will share more information once approved.
+              </DialogDescription>
+            </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right font-bold">
-                Name
-              </Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
-                className="col-span-3"
-              />
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right font-bold">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your full name"
+                  className="col-span-3"
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right font-bold">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  type="email"
+                  className="col-span-3"
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="phone" className="text-right font-bold">
+                  Phone
+                </Label>
+                <Input
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Optional"
+                  className="col-span-3"
+                />
+              </div>
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right font-bold">
-                Email
-              </Label>
-              <Input
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                type="email"
-                className="col-span-3"
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right font-bold">
-                Phone
-              </Label>
-              <Input
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Optional"
-                className="col-span-3"
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleJoinWaitlist}
-              disabled={loading}
-              className="bg-black hover:bg-black text-white"
-            >
-              {loading ? "Submitting..." : "Submit Request"}
-              {!loading && <ArrowRight size={16} className="ml-2" />}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleJoinWaitlist}
+                disabled={loading}
+                className="bg-black hover:bg-black text-white"
+              >
+                {loading ? "Submitting..." : "Submit Request"}
+                {!loading && <ArrowRight size={16} className="ml-2" />}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };
