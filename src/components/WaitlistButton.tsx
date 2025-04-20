@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,7 +61,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
 
   const handleJoinWaitlist = useCallback(async () => {
     if (!user) {
-      navigate("/sign-in", { state: { from: `/property/${propertyId}` } });
+      navigate("/signin", { state: { from: `/property/${propertyId}` } });
       return;
     }
 
@@ -141,7 +140,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   const handleButtonClick = () => {
     if (!user) {
       // If not logged in, navigate to sign in page directly
-      navigate("/sign-in", { state: { from: `/property/${propertyId}` } });
+      navigate("/signin", { state: { from: `/property/${propertyId}` } });
     } else {
       // If logged in, open the dialog
       onOpenChange(true);
