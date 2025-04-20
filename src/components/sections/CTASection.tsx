@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+
 const fadeInUp = {
   hidden: {
     opacity: 0,
@@ -16,8 +18,9 @@ const fadeInUp = {
     }
   }
 };
+
 const CTASection: React.FC = () => {
-  return <motion.section className="py-16 relative overflow-hidden" initial="hidden" whileInView="visible" viewport={{
+  return <motion.section className="py-8 relative overflow-hidden" initial="hidden" whileInView="visible" viewport={{
     once: true,
     amount: 0.2
   }} variants={fadeInUp}>
