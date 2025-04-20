@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -26,8 +27,11 @@ const Search: React.FC = () => {
   } = useListings();
 
   useEffect(() => {
-    if (searchQuery && properties.length > 0) {
-      const results = properties.filter(property => property.location.toLowerCase().includes(searchQuery.toLowerCase()) || property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (searchQuery) {
+      const results = properties.filter(property => 
+        property.location.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
       setFilteredProperties(results);
     } else {
       setFilteredProperties(properties);
@@ -177,7 +181,7 @@ const Search: React.FC = () => {
           </div>
         ))}
         
-        {/* Sign-in CTA Button - positioned in the middle of the last full row */}
+        {/* Sign-in CTA Button */}
         {!isAuthenticated && visibleProperties.length > 0 && lastFullRowStartIndex >= 0 && (
           <div 
             className="absolute z-20" 
@@ -185,8 +189,7 @@ const Search: React.FC = () => {
               top: '50%', 
               left: '50%', 
               transform: 'translate(-50%, -50%)',
-              // Different margin for mobile and desktop
-              marginTop: isGridView ? (isMobile ? 2700 : 1100) : 1100
+              marginTop: isGridView ? (isMobile ? 3300 : 1100) : 1100
             }}
           >
             <Button 
