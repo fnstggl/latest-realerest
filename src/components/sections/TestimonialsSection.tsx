@@ -54,7 +54,8 @@ const TestimonialsSection: React.FC = () => {
         <div className="text-center mb-4">
           <h2 className="text-3xl font-bold mb-4">
             Stories from buyers who found a{' '}
-            <span className="font-playfair font-bold italic">better way</span>
+            <span className="font-playfair font-bold italic">better</span>{' '}
+            <span className="font-futura font-bold">way</span>
           </h2>
           <p className="text-xl text-foreground/80 max-w-2xl mx-auto mb-4">
             Trusted by homebuyers across the nation
