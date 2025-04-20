@@ -186,7 +186,7 @@ const Search: React.FC = () => {
               left: '50%', 
               transform: 'translate(-50%, -50%)',
               // Different margin for mobile and desktop
-              marginTop: isGridView ? (isMobile ? 2300 : 1050) : 1050
+              marginTop: isGridView ? (isMobile ? 2700 : 1100) : 1100
             }}
           >
             <Button 
