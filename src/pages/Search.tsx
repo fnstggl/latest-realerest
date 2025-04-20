@@ -186,7 +186,7 @@ const Search: React.FC = () => {
               left: '50%', 
               transform: 'translate(-50%, -50%)',
               // Position button right over the bottom row of properties
-              marginTop: isGridView ? (isMobile ? 750 : 750) : 750
+              marginTop: isGridView ? (isMobile ? 1150 : 1150) : 1150
             }}
           >
             <Dialog>
