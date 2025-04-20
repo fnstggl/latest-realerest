@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { Phone, Mail, User, MessageSquare, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { useMessages } from "@/hooks/useMessages";
 
 interface SellerContactInfoProps {
   name?: string;
@@ -31,6 +32,9 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
     waitlistStatus
   });
 
+  const navigate = useNavigate();
+  const { getOrCreateConversation } = useMessages();
+
   // Return null early if we shouldn't display contact info
   if (!showContact) {
     console.log("SellerContactInfo not showing because showContact is false");
@@ -39,6 +43,23 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   
   const isPending = waitlistStatus === 'pending';
   const displayName = name || 'Unknown Seller'; // Changed from 'Property Owner' to 'Unknown Seller'
+
+  // Handler for direct messaging seller
+  const handleMessageSeller = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    if (!sellerId) return;
+    try {
+      const conversationId = await getOrCreateConversation(sellerId);
+      if (conversationId) {
+        navigate(`/messages/${conversationId}`);
+      } else {
+        navigate('/messages');
+      }
+    } catch (err) {
+      console.error("Failed to navigate to seller conversation:", err);
+      navigate('/messages');
+    }
+  };
   
   return (
     <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mb-4">
@@ -133,34 +154,41 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
         )}
         
         {sellerId && !isPending && (
-          <Link 
-            to={`/messages?seller=${sellerId}`}
-            className="w-full mt-2 block"
+          // Note: Use a button instead of Link so we can dynamically navigate after conversation creation
+          <button
+            type="button"
+            onClick={handleMessageSeller}
+            className={
+              "w-full mt-2 block relative overflow-hidden font-bold py-2 rounded-xl backdrop-blur-lg bg-white text-black " +
+              "border-none group shadow transition-transform"
+            }
+            style={{
+              position: "relative",
+              // Ensure the button's stacking context does not block the span
+              zIndex: 1,
+            }}
           >
-            <Button 
-              variant="glass"
-              className="w-full text-black font-bold py-2 rounded-xl backdrop-blur-lg bg-white hover:bg-white group relative overflow-hidden"
-            >
-              <MessageSquare size={18} className="mr-2" />
-              <span className="text-gradient-static relative z-10">Message Seller</span>
-              
-              {/* Gradient border on hover */}
-              <span 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
-                style={{
-                  background: "transparent",
-                  border: "2px solid transparent",
-                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                  backgroundOrigin: "border-box",
-                  backgroundClip: "border-box",
-                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude",
-                  boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-                }}
-              />
-            </Button>
-          </Link>
+            <span className="flex items-center justify-center relative z-10">
+              <MessageSquare size={18} className="mr-2 text-black" />
+              <span className="relative z-10">Message Seller</span>
+            </span>
+            {/* Gradient border - always visible now */}
+            <span
+              className="absolute inset-0 opacity-100 rounded-xl pointer-events-none"
+              style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
+                zIndex: 2,
+              }}
+            />
+          </button>
         )}
         
         {sellerId && isPending && (
@@ -179,3 +207,4 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
 };
 
 export default SellerContactInfo;
+
