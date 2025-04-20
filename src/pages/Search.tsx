@@ -185,40 +185,16 @@ const Search: React.FC = () => {
               top: '50%', 
               left: '50%', 
               transform: 'translate(-50%, -50%)',
-              // Position button right over the bottom row of properties
-              marginTop: isGridView ? (isMobile ? 1150 : 1150) : 1150
+              // Different margin for mobile and desktop
+              marginTop: isGridView ? (isMobile ? 2300 : 1050) : 1050
             }}
           >
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button 
-                  className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
-                >
-                  Sign in to view more properties
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">Ready to see more?</h2>
-                  <p className="mb-6 text-gray-600">Create an account or sign in to view our full collection of below-market properties.</p>
-                  <div className="flex flex-col gap-4">
-                    <Button 
-                      onClick={() => window.location.href = '/signin'}
-                      className="w-full bg-black hover:bg-black/90 text-white"
-                    >
-                      Sign In
-                    </Button>
-                    <Button 
-                      onClick={() => window.location.href = '/signup'}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      Create Account
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button 
+              className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
+              onClick={() => window.location.href = '/signin'}
+            >
+              Sign in to view more properties
+            </Button>
           </div>
         )}
       </div>
