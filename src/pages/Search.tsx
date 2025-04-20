@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -177,13 +178,13 @@ const Search: React.FC = () => {
           </div>
         ))}
         
-        {/* Sign-in CTA Button - positioned at the bottom of last full row */}
+        {/* Sign-in CTA Button - positioned in the middle of the last full row */}
         {!isAuthenticated && visibleProperties.length > ITEMS_PER_ROW && (
-          <div className="absolute z-20 bottom-8 left-1/2 transform -translate-x-1/2">
+          <div className="absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <Dialog>
               <DialogTrigger asChild>
                 <Button 
-                  className="bg-black hover:bg-black/90 text-white px-8 py-6 rounded-lg shadow-xl font-bold"
+                  className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button"
                 >
                   Sign in to view more properties
                 </Button>
