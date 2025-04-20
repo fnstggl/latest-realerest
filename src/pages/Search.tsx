@@ -100,6 +100,16 @@ const Search: React.FC = () => {
     }
   }, [error]);
 
+  // Calculate last row start index
+  const calcLastRowStartIndex = () => {
+    if (!isAuthenticated && filteredProperties.length > visibleItems) {
+      const totalRows = Math.ceil(filteredProperties.length / ITEMS_PER_ROW);
+      const lastRowStartIndex = (totalRows - 1) * ITEMS_PER_ROW;
+      return lastRowStartIndex;
+    }
+    return -1; // No last row to blur for authenticated users
+  };
+
   const renderPropertyGrid = () => {
     if (loading) {
       return (
@@ -148,59 +158,68 @@ const Search: React.FC = () => {
       );
     }
 
+    // Calculate the start index of the last row
+    const lastRowStartIndex = calcLastRowStartIndex();
+    
     return (
       <div className={isGridView ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 relative" : "space-y-6 relative"}>
         {filteredProperties.map((property, index) => (
-          <React.Fragment key={property.id}>
+          <div 
+            key={property.id} 
+            className={`relative ${index >= lastRowStartIndex ? 'last-row-item' : ''}`}
+          >
             <PropertyCard {...property} />
-            {!isAuthenticated && index === visibleItems - 1 && (
+            
+            {/* Only apply blur overlay to items in the last row when user is not authenticated */}
+            {!isAuthenticated && index >= lastRowStartIndex && index < lastRowStartIndex + ITEMS_PER_ROW && (
               <div className="absolute inset-0 z-10">
-                <div className="h-full relative">
-                  {/* Blur overlay only on last row */}
-                  <div 
-                    className="absolute inset-0"
-                    style={{ 
-                      backdropFilter: 'blur(3px)',
-                      background: 'linear-gradient(to bottom, transparent 85%, rgba(255, 255, 255, 0.95) 100%)'
-                    }}
-                  />
-                  
-                  {/* CTA Button positioned at bottom */}
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button 
-                        className="absolute left-1/2 bottom-8 transform -translate-x-1/2 bg-black hover:bg-black/90 text-white px-8 py-6 rounded-lg shadow-xl font-bold"
-                      >
-                        Sign in to view more properties
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <div className="p-6">
-                        <h2 className="text-2xl font-bold mb-4">Ready to see more?</h2>
-                        <p className="mb-6 text-gray-600">Create an account or sign in to view our full collection of below-market properties.</p>
-                        <div className="flex flex-col gap-4">
-                          <Button 
-                            onClick={() => window.location.href = '/signin'}
-                            className="w-full bg-black hover:bg-black/90 text-white"
-                          >
-                            Sign In
-                          </Button>
-                          <Button 
-                            onClick={() => window.location.href = '/signup'}
-                            variant="outline"
-                            className="w-full"
-                          >
-                            Create Account
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ 
+                    backdropFilter: 'blur(3px)',
+                    background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
+                  }}
+                />
               </div>
             )}
-          </React.Fragment>
+          </div>
         ))}
+        
+        {/* Sign-in CTA Button - render OUTSIDE of property loop to prevent pointer-events issues */}
+        {!isAuthenticated && filteredProperties.length > visibleItems && (
+          <div className="absolute z-20 bottom-8 left-1/2 transform -translate-x-1/2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  className="bg-black hover:bg-black/90 text-white px-8 py-6 rounded-lg shadow-xl font-bold"
+                >
+                  Sign in to view more properties
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <div className="p-6">
+                  <h2 className="text-2xl font-bold mb-4">Ready to see more?</h2>
+                  <p className="mb-6 text-gray-600">Create an account or sign in to view our full collection of below-market properties.</p>
+                  <div className="flex flex-col gap-4">
+                    <Button 
+                      onClick={() => window.location.href = '/signin'}
+                      className="w-full bg-black hover:bg-black/90 text-white"
+                    >
+                      Sign In
+                    </Button>
+                    <Button 
+                      onClick={() => window.location.href = '/signup'}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Create Account
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
       </div>
     );
   };
@@ -215,17 +234,11 @@ const Search: React.FC = () => {
       
       <div className="container px-4 lg:px-8 mx-auto py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          <div className="hidden lg:block w-72 shrink-0">
-            <div className="sticky top-8">
-              <PropertyFilters onFilterChange={handleFilterChange} />
-            </div>
-          </div>
-          
           <div className="lg:hidden mb-4">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" className="w-full flex justify-between items-center neo-button">
-                  <div className="flex items-center font-semibold"> {/* Added font-semibold to make text more bold */}
+                  <div className="flex items-center font-semibold">
                     <Sliders size={18} className="mr-2" />
                     Filters
                   </div>
@@ -236,6 +249,12 @@ const Search: React.FC = () => {
                 <PropertyFilters onFilterChange={handleFilterChange} />
               </SheetContent>
             </Sheet>
+          </div>
+          
+          <div className="hidden lg:block w-72 shrink-0">
+            <div className="sticky top-8">
+              <PropertyFilters onFilterChange={handleFilterChange} />
+            </div>
           </div>
           
           <div className="flex-1">
