@@ -169,10 +169,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
               <DialogTitle className="text-xl font-bold">
                 Join Property Waitlist
               </DialogTitle>
-              <DialogDescription>
-                Submit your details to join the waitlist for this property. The
-                seller will share more information once approved.
-              </DialogDescription>
+              
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
