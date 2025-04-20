@@ -75,6 +75,7 @@ const LocationAlertForm = () => {
               WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
+              opacity: 1, // Always visible
             }}
           />
         </Button>
@@ -84,3 +85,4 @@ const LocationAlertForm = () => {
 };
 
 export default LocationAlertForm;
+
