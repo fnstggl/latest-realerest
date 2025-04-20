@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -28,6 +29,17 @@ export const TestimonialCarousel = React.forwardRef<HTMLDivElement, TestimonialC
       api.on("select", () => {
         setCurrent(api.selectedScrollSnap());
       });
+    }, [api]);
+
+    // Add auto-cycle functionality
+    React.useEffect(() => {
+      if (!api) return;
+      
+      const interval = setInterval(() => {
+        api.scrollNext();
+      }, 10000); // 10 seconds
+
+      return () => clearInterval(interval);
     }, [api]);
 
     return (

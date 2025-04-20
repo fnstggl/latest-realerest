@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TestimonialCarousel } from "@/components/ui/testimonial-carousel";
@@ -56,7 +57,7 @@ const TestimonialsSection: React.FC = () => {
       variants={fadeInUp}
     >
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="text-center mb-6"> {/* Changed from mb-12 to mb-6 */}
           <h2 className="text-4xl font-bold mb-4">
             What Our Buyers Say
           </h2>
