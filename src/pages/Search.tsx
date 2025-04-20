@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -10,6 +11,7 @@ import { Sliders, Grid, List, ChevronDown } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useListings, Listing } from '@/hooks/useListings';
 
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
