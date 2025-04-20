@@ -57,15 +57,17 @@ const LocationAlertForm = () => {
           className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20"
           required
         />
-        <Button 
-          type="submit" 
-          disabled={isSubmitting}
-          variant="translucent"
-          className="w-full font-bold relative overflow-hidden"
-        >
-          <span className="relative z-10">{isSubmitting ? "Processing..." : "Early Access"}</span>
+        <div className="relative w-full rounded-full overflow-hidden">
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            variant="translucent"
+            className="w-full font-bold border-none"
+          >
+            <span className="relative z-10">{isSubmitting ? "Processing..." : "Early Access"}</span>
+          </Button>
           <span 
-            className="absolute inset-0 opacity-100 pointer-events-none"
+            className="absolute inset-0 opacity-100 pointer-events-none rounded-full"
             style={{
               background: "transparent",
               border: "2px solid transparent",
@@ -75,11 +77,9 @@ const LocationAlertForm = () => {
               WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
-              opacity: 1, // Always visible
-              borderRadius: "9999px", // Ensure rounded corners match button
             }}
           />
-        </Button>
+        </div>
       </form>
     </div>
   );
