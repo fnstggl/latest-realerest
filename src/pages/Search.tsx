@@ -185,8 +185,8 @@ const Search: React.FC = () => {
               top: '50%', 
               left: '50%', 
               transform: 'translate(-50%, -50%)',
-              // Adjust marginTop to position button at bottom of blurred row
-              marginTop: isGridView ? (isMobile ? 550 : 550) : 550
+              // Position button right over the bottom row of properties
+              marginTop: isGridView ? (isMobile ? 750 : 750) : 750
             }}
           >
             <Dialog>
