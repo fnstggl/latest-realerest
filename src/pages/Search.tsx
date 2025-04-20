@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -170,7 +169,7 @@ const Search: React.FC = () => {
             {!isAuthenticated && index >= lastFullRowStartIndex && index < lastFullRowEndIndex && (
               <div className="absolute inset-0 z-10">
                 <div 
-                  className="absolute inset-0"
+                  className="absolute inset-0 rounded-b-xl"
                   style={{ 
                     backdropFilter: 'blur(3px)',
                     background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
@@ -280,4 +279,3 @@ const Search: React.FC = () => {
 };
 
 export default Search;
-
