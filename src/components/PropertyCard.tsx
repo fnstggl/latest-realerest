@@ -76,7 +76,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           )}
         </div>
         
-        <div className="p-6 flex-1 flex flex-col rounded-b-xl">
+        <div className="p-6 flex-1 flex flex-col rounded-b-xl bg-white/90">
           <h3 className="font-bold text-lg text-foreground mb-3 truncate">
             {address || (location ? location.split(',')[0] : 'Property Listing')}
           </h3>
