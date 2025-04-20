@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -49,9 +48,9 @@ export const TestimonialCarousel = React.forwardRef<HTMLDivElement, TestimonialC
                 <h5 className="mt-5 font-medium text-muted-foreground">
                   {testimonial.name}
                 </h5>
-                <h5 className="mt-1.5 font-medium text-foreground/40">
-                  {testimonial.role}
-                </h5>
+                <h5 className="mt-1.5 font-medium text-foreground/40" dangerouslySetInnerHTML={{
+                  __html: testimonial.role.replace(/\*(.*?)\*/g, '<em>$1</em>')
+                }} />
                 <div className="mt-5 relative h-12 w-12 rounded-full overflow-hidden bg-muted">
                   <img
                     src={testimonial.avatar}
@@ -71,7 +70,7 @@ export const TestimonialCarousel = React.forwardRef<HTMLDivElement, TestimonialC
                 key={index}
                 className={cn(
                   "h-1.5 w-1.5 rounded-full transition-all",
-                  index === current ? "bg-primary" : "bg-primary/35"
+                  index === current ? "bg-black" : "bg-black/35"
                 )}
                 onClick={() => api?.scrollTo(index)}
                 aria-label={`Go to slide ${index + 1}`}
@@ -85,4 +84,3 @@ export const TestimonialCarousel = React.forwardRef<HTMLDivElement, TestimonialC
 );
 
 TestimonialCarousel.displayName = "TestimonialCarousel";
-
