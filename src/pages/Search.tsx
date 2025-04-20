@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
 import SearchBar from '@/components/SearchBar';
 import PropertyCard from '@/components/PropertyCard';
@@ -9,6 +10,7 @@ import { Sliders, Grid, List, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { useListings, Listing } from '@/hooks/useListings';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -87,13 +89,121 @@ const Search: React.FC = () => {
     setFilteredProperties(sorted);
   };
 
+  const { isAuthenticated } = useAuth();
+  const ITEMS_PER_ROW = isGridView ? 3 : 1;
+  const VISIBLE_ROWS = 2;
+  const visibleItems = ITEMS_PER_ROW * VISIBLE_ROWS;
+
   useEffect(() => {
     if (error) {
       toast.error(error);
     }
   }, [error]);
 
-  return <div className="min-h-screen bg-gray-50 pt-24">
+  const renderPropertyGrid = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center py-16">
+          <div className="loading-container">
+            <div className="pulsing-circle" />
+          </div>
+        </div>
+      );
+    }
+
+    if (filteredProperties.length === 0) {
+      return (
+        <div className="text-center py-16 bg-white rounded-xl neo-container">
+          <h2 className="text-xl font-semibold mb-2">No properties found</h2>
+          <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
+          <Button 
+            onClick={() => handleFilterChange({
+              propertyType: "any",
+              minPrice: 0,
+              maxPrice: 2000000,
+              bedrooms: "any",
+              bathrooms: "any",
+              belowMarket: 0
+            })} 
+            className="font-bold text-xs sm:text-sm md:text-base shadow-sm backdrop-blur-xl bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
+          >
+            <span className="relative z-10">Reset Filters</span>
+            <span 
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+              style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                boxShadow: "0 0 25px rgba(217, 70, 239, 0.9), 0 0 45px rgba(108, 66, 245, 0.7), 0 0 65px rgba(255, 92, 0, 0.5), 0 0 85px rgba(255, 60, 172, 0.4)",
+                filter: "blur(6px)"
+              }}
+            />
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div className={isGridView ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 relative" : "space-y-6 relative"}>
+        {filteredProperties.map((property, index) => (
+          <React.Fragment key={property.id}>
+            <PropertyCard {...property} />
+            {!isAuthenticated && index === visibleItems - 1 && (
+              <div className="absolute inset-0 z-10">
+                <div className="h-full relative">
+                  {/* Gradient blur overlay */}
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-b from-transparent to-white/95"
+                    style={{ backdropFilter: 'blur(5px)' }}
+                  />
+                  
+                  {/* CTA Button */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button 
+                        className="absolute left-1/2 top-3/4 transform -translate-x-1/2 -translate-y-1/2 bg-black hover:bg-black/90 text-white px-8 py-6 rounded-lg shadow-xl"
+                      >
+                        Sign in to view more properties
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <div className="p-6">
+                        <h2 className="text-2xl font-bold mb-4">Ready to see more?</h2>
+                        <p className="mb-6 text-gray-600">Create an account or sign in to view our full collection of below-market properties.</p>
+                        <div className="flex flex-col gap-4">
+                          <Button 
+                            onClick={() => window.location.href = '/signin'}
+                            className="w-full bg-black hover:bg-black/90 text-white"
+                          >
+                            Sign In
+                          </Button>
+                          <Button 
+                            onClick={() => window.location.href = '/signup'}
+                            variant="outline"
+                            className="w-full"
+                          >
+                            Create Account
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 pt-24">
       <Navbar />
       
       <div className="max-w-3xl mx-auto px-4 mb-8">
@@ -153,46 +263,7 @@ const Search: React.FC = () => {
               </div>
             </div>
             
-            {loading ? (
-    <div className="flex justify-center items-center py-16">
-      <div className="loading-container">
-        <div className="pulsing-circle" />
-      </div>
-    </div>
-  ) : filteredProperties.length === 0 ? <div className="text-center py-16 bg-white rounded-xl neo-container">
-                <h2 className="text-xl font-semibold mb-2">No properties found</h2>
-                <p className="text-gray-600 mb-6">Try adjusting your filters to see more results</p>
-                <Button 
-                  onClick={() => handleFilterChange({
-                    propertyType: "any",
-                    minPrice: 0,
-                    maxPrice: 2000000,
-                    bedrooms: "any",
-                    bathrooms: "any",
-                    belowMarket: 0
-                  })} 
-                  className="font-bold text-xs sm:text-sm md:text-base shadow-sm backdrop-blur-xl bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
-                >
-                  <span className="relative z-10">Reset Filters</span>
-                  <span 
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                    style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                      boxShadow: "0 0 25px rgba(217, 70, 239, 0.9), 0 0 45px rgba(108, 66, 245, 0.7), 0 0 65px rgba(255, 92, 0, 0.5), 0 0 85px rgba(255, 60, 172, 0.4)",
-                      filter: "blur(6px)"
-                    }}
-                  />
-                </Button>
-              </div> : <div className={isGridView ? "grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-6"}>
-                {filteredProperties.map(property => <PropertyCard key={property.id} {...property} />)}
-              </div>}
+            {renderPropertyGrid()}
           </div>
         </div>
       </div>
@@ -202,7 +273,8 @@ const Search: React.FC = () => {
           © {new Date().getFullYear()} DoneDeal. All rights reserved.
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
 
 export default Search;
