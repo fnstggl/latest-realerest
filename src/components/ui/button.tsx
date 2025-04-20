@@ -59,11 +59,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <React.Fragment>
             <span className="relative z-10">{children}</span>
             <span 
-              className="absolute inset-0 opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
               style={{
                 background: "transparent",
                 border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
                 backgroundOrigin: "border-box",
                 backgroundClip: "border-box",
                 WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
