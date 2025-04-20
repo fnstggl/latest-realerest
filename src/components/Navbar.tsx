@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -55,23 +56,23 @@ const Navbar: React.FC = () => {
               alt="Realer Estate Logo" 
               className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
             />
-            <span className="font-bold text-white text-lg sm:text-xl md:text-2xl">Realer Estate</span>
+            <span className="font-bold text-black text-lg sm:text-xl md:text-2xl">Realer Estate</span>
           </Link>
           
           <nav className="flex flex-col space-y-1 sm:space-y-2">
-            <Link to="/" className="text-primary hover:text-white transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-white/10 gradient-hover-text">
+            <Link to="/" className="text-black hover:nav-home-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
               Home
             </Link>
-            <Link to="/search" className="text-white hover:text-[#0892D0] transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-white/10">
+            <Link to="/search" className="text-black hover:nav-browse-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
               Browse
             </Link>
-            <Link to="/sell/create" className="text-white hover:text-[#0892D0] transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-white/10">
+            <Link to="/sell/create" className="text-black hover:nav-sell-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
               Sell
             </Link>
-            <Link to="/about" className="text-white hover:text-[#0892D0] transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-white/10">
+            <Link to="/about" className="text-black hover:nav-about-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
               About
             </Link>
-            <Link to="/contact" className="text-white hover:text-[#0892D0] transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-white/10">
+            <Link to="/contact" className="text-black hover:nav-contact-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3 border-b border-black/10">
               Contact
             </Link>
           </nav>

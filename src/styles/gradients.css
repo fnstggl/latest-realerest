@@ -1,4 +1,3 @@
-
 @layer components {
   /* Gradient borders */
   .border-gradient-br-pink-purple-gold {
@@ -149,6 +148,42 @@
   }
 
   .nav-contact:hover {
+    background: linear-gradient(90deg, #D946EF, #FF3CAC);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  /* Mobile nav hover effects - using the same gradients as desktop */
+  .hover\:nav-home-hover:hover {
+    background: linear-gradient(90deg, #3C79F5, #6C42F5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hover\:nav-browse-hover:hover {
+    background: linear-gradient(90deg, #6C42F5, #9B4FEF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hover\:nav-sell-hover:hover {
+    background: linear-gradient(90deg, #9B4FEF, #FF5C00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hover\:nav-about-hover:hover {
+    background: linear-gradient(90deg, #FF5C00, #D946EF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hover\:nav-contact-hover:hover {
     background: linear-gradient(90deg, #D946EF, #FF3CAC);
     -webkit-background-clip: text;
     background-clip: text;
