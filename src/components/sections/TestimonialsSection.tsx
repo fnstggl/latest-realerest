@@ -57,11 +57,11 @@ const TestimonialsSection: React.FC = () => {
       variants={fadeInUp}
     >
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="text-center mb-6"> {/* Changed from mb-12 to mb-6 */}
+        <div className="text-center mb-4"> {/* Changed from mb-6 to mb-4 */}
           <h2 className="text-4xl font-bold mb-4">
             What Our Buyers Say
           </h2>
-          <p className="text-xl text-foreground/80 max-w-2xl mx-auto">
+          <p className="text-xl text-foreground/80 max-w-2xl mx-auto mb-4"> {/* Added mb-4 to create small separation */}
             Trusted by homebuyers across the nation
           </p>
         </div>
