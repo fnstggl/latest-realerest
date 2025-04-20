@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -150,7 +151,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
             </span>
           </>}
 
-        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
+        <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
         background: "transparent",
         border: "2px solid transparent",
         backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
@@ -213,3 +214,4 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     </>;
 };
 export default WaitlistButton;
+
