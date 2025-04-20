@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -25,17 +24,47 @@ const Search: React.FC = () => {
     error
   } = useListings();
 
+  // Update filtered properties whenever properties or searchQuery changes
   useEffect(() => {
-    if (searchQuery) {
-      const results = properties.filter(property => 
-        property.location.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-      setFilteredProperties(results);
-    } else {
-      setFilteredProperties(properties);
+    if (properties.length > 0) {
+      let results = [...properties];
+      
+      if (searchQuery) {
+        results = properties.filter(property => 
+          property.location.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+      }
+      
+      // Apply current sort option to the filtered results
+      sortProperties(results, sortOption);
     }
   }, [properties, searchQuery]);
+
+  // Function to sort properties based on the selected option
+  const sortProperties = (propList: Listing[], option: string) => {
+    let sorted = [...propList];
+    
+    switch (option) {
+      case "price-low":
+        sorted.sort((a, b) => a.price - b.price);
+        break;
+      case "price-high":
+        sorted.sort((a, b) => b.price - a.price);
+        break;
+      case "below-market":
+        sorted.sort((a, b) => b.belowMarket - a.belowMarket);
+        break;
+      case "newest":
+        // Keep default order as they're already sorted by created_at desc
+        break;
+      default:
+        // Default recommended sorting
+        break;
+    }
+    
+    setFilteredProperties(sorted);
+  };
 
   const handleFilterChange = (filters: any) => {
     const filtered = properties.filter(property => {
@@ -69,28 +98,14 @@ const Search: React.FC = () => {
       }
       return true;
     });
-    setFilteredProperties(filtered);
+    
+    // Apply current sort to newly filtered properties
+    sortProperties(filtered, sortOption);
   };
 
   const handleSortChange = (option: string) => {
     setSortOption(option);
-    let sorted = [...filteredProperties];
-    switch (option) {
-      case "price-low":
-        sorted.sort((a, b) => a.price - b.price);
-        break;
-      case "price-high":
-        sorted.sort((a, b) => b.price - a.price);
-        break;
-      case "below-market":
-        sorted.sort((a, b) => b.belowMarket - a.belowMarket);
-        break;
-      case "newest":
-        break;
-      default:
-        break;
-    }
-    setFilteredProperties(sorted);
+    sortProperties(filteredProperties, option);
   };
 
   const { isAuthenticated } = useAuth();
