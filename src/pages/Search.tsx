@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -159,7 +158,7 @@ const Search: React.FC = () => {
         {visibleProperties.map((property, index) => (
           <div 
             key={property.id} 
-            className={`relative ${index >= lastFullRowStartIndex ? 'pointer-events-none' : ''}`}
+            className={`relative ${index >= lastFullRowStartIndex && !isAuthenticated ? 'pointer-events-none' : ''}`}
           >
             <PropertyCard {...property} />
             
@@ -179,8 +178,12 @@ const Search: React.FC = () => {
         ))}
         
         {/* Sign-in CTA Button - positioned in the middle of the last full row */}
-        {!isAuthenticated && visibleProperties.length > ITEMS_PER_ROW && (
-          <div className="absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        {!isAuthenticated && visibleProperties.length > 0 && lastFullRowStartIndex >= 0 && (
+          <div className="absolute z-20" style={{
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}>
             <Dialog>
               <DialogTrigger asChild>
                 <Button 
