@@ -77,7 +77,6 @@ const OffersTab: React.FC = () => {
         }
         // Only include offers not withdrawn
         const displayedOffers = propertyOffers.filter(offer => offer.status !== "withdrawn");
-        // ... keep code for fetching property details and buyers, assign displayedOffers instead of propertyOffers
         const offersWithDetails = await Promise.all(displayedOffers.map(async offer => {
           const {
             data: property
@@ -484,9 +483,22 @@ const OffersTab: React.FC = () => {
                   )}
                   
                   <Button onClick={() => handleMessageBuyer(offer)} variant="outline" 
-                    className="font-bold border border-gray-200 hover:border-[#0892D0] transition-all">
+                    className="relative font-bold bg-white text-black border border-gray-200 hover:bg-white transition-all group">
                     <MessageSquare size={16} className="mr-2" />
                     Message Buyer
+                    <span 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 rounded-lg pointer-events-none"
+                      style={{
+                        background: "transparent",
+                        border: "2px solid transparent",
+                        backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                        backgroundOrigin: "border-box",
+                        backgroundClip: "border-box",
+                        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        WebkitMaskComposite: "xor",
+                        maskComposite: "exclude"
+                      }}
+                    />
                   </Button>
                 </div>
                 
