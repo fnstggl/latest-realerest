@@ -114,7 +114,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     </Button>
                     <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
                       <Link to={`/property/${property.id}/edit`}>
-                        Edit Listing
+                        <span className="text-black">Edit Listing</span>
                         <span 
                           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" 
                           style={{
@@ -183,4 +183,5 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
         </div>}
     </>;
 };
+
 export default PropertiesTab;
