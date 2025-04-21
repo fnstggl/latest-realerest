@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
     navigate('/signup');
   };
   const LogoText = () => <>
-      <img src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" alt="Realer Estate Logo" className="w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 object-contain" />
+      <img src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" alt="Realer Estate Logo" className="w-7 h-7 sm:w-7 sm:h-7 md:w-7 md:h-7 object-contain" />
       <span className="font-bold text-foreground text-lg sm:text-xl md:text-2xl hidden md:block">Realer Estate</span>
     </>;
   const MobileNavigation = () => <Sheet>
