@@ -57,17 +57,17 @@ const Contact: React.FC = () => {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="font-medium">Your Name</Label>
-                      <Input id="name" type="text" placeholder="Enter your name" value={name} onChange={e => setName(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
+                      <Input id="name" type="text" placeholder="Enter your name" value={name} onChange={e => setName(e.target.value)} required className="border-gray-200 focus:border-[#000000] focus:ring-1 focus:ring-[#000000]" />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="email" className="font-medium">Email Address</Label>
-                      <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
+                      <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} required className="border-gray-200 focus:border-[#000000] focus:ring-1 focus:ring-[#000000]" />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="subject" className="font-medium">Subject</Label>
-                      <Input id="subject" type="text" placeholder="What's this about?" value={subject} onChange={e => setSubject(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
+                      <Input id="subject" type="text" placeholder="What's this about?" value={subject} onChange={e => setSubject(e.target.value)} required className="border-gray-200 focus:border-[#000000] focus:ring-1 focus:ring-[#000000]" />
                     </div>
                     
                     <div className="space-y-2">
