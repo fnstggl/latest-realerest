@@ -62,6 +62,32 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                 </FormControl>
                 <FormMessage />
               </FormItem>} />
+
+          <FormField control={form.control} name="state" render={({
+          field
+        }) => <FormItem>
+                <FormLabel className="text-black font-bold">State</FormLabel>
+                <FormControl>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger 
+                      className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0"
+                    >
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {usStates.map((state) => (
+                        <SelectItem key={state} value={state}>
+                          {state}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>} />
         </div>
         
         <FormField control={form.control} name="description" render={({
@@ -71,7 +97,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
               <FormControl>
                 <Textarea 
                   placeholder="Describe your property..." 
-                  className="min-h-[120px] rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                  className="min-h-[120px] rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 focus:border-2" 
                   {...field} 
                 />
               </FormControl>
@@ -81,3 +107,4 @@ const AddressSection: React.FC<AddressSectionProps> = ({
     </div>;
 };
 export default AddressSection;
+

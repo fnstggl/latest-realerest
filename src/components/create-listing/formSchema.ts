@@ -46,5 +46,6 @@ export const formSchema = z.object({
   return marketPriceNum >= priceNum;
 }, {
   message: "Market price must be equal to or greater than the listing price",
-  path: ["marketPrice"] // This specifies which field the error should be attached to
+  path: ["marketPrice"]
 });
+
