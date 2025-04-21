@@ -566,7 +566,7 @@ const OffersTab: React.FC = () => {
             </Button>
             <Button 
               type="button" 
-              className="bg-[#0892D0] text-white font-bold border border-[#0892D0] hover:bg-[#0892D0]/90 transition-all" 
+              className="bg-black text-white font-bold border border-black hover:bg-gray-900 transition-all" 
               onClick={submitCounterOffer} 
               disabled={submitting}
             >
