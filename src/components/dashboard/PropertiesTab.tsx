@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -165,8 +164,9 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <span className="font-bold mr-2">Waitlist:</span>
                     {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                   </div>
+                  
                   <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
-                    <Link to={`/dashboard?tab=waitlist&propertyId=${property.id}`}>
+                    <Link to="/dashboard?tab=waitlist">
                       Manage Waitlist
                       <span 
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
