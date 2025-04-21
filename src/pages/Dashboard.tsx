@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -121,8 +122,12 @@ const Dashboard: React.FC = () => {
               <p className="text-lg text-black">Manage your properties and waitlists</p>
             </div>
             
-            <Button className="relative bg-white text-black border border-gray-200 hover:bg-white transition-all rounded-xl" onClick={() => navigate('/sell/create')}>
-              <Plus size={18} className="mr-2" />
+            <Button 
+              className="relative bg-white text-black border border-gray-200 hover:bg-white transition-all rounded-xl 
+                         text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2" 
+              onClick={() => navigate('/sell/create')}
+            >
+              <Plus size={16} className="mr-1 sm:mr-2" />
               <span>Add Property</span>
               <span 
                 className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
