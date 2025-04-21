@@ -72,7 +72,7 @@ const Contact: React.FC = () => {
                     
                     <div className="space-y-2">
                       <Label htmlFor="message" className="font-medium">Your Message</Label>
-                      <Textarea id="message" placeholder="Type your message here..." value={message} onChange={e => setMessage(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0] min-h-[150px]" />
+                      <Textarea id="message" placeholder="Type your message here..." value={message} onChange={e => setMessage(e.target.value)} required className="border-gray-200 focus:border-[#000000] focus:ring-1 focus:ring-[#000000] min-h-[150px] rounded-xl" />
                     </div>
                     
                     <div>
