@@ -145,7 +145,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   const renderOfferForm = () => <>
       <DialogHeader>
         <DialogTitle className="text-xl font-bold text-black">Make an Offer</DialogTitle>
-        <DialogDescription className="text-glass-blue/70">
+        <DialogDescription className="text-gray-500">
           Submit your offer for {propertyTitle}. The seller will be notified and can accept or decline.
         </DialogDescription>
       </DialogHeader>
@@ -164,7 +164,12 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         </div>
         
         <div className="flex items-center space-x-2">
-          <Checkbox id="isInterested" checked={isInterested} onCheckedChange={checked => setIsInterested(checked === true)} />
+          <Checkbox
+            id="isInterested"
+            checked={isInterested}
+            onCheckedChange={checked => setIsInterested(checked === true)}
+            className="data-[state=checked]:bg-black data-[state=checked]:text-white border-black focus-visible:ring-black"
+          />
           <Label htmlFor="isInterested" className="text-sm font-bold text-black">
             I'm interested in this property and would like to proceed with the transaction
           </Label>
@@ -186,7 +191,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           </div>
         </div>
         
-        <div className="text-xs text-gray-500 mt-2 bg-gradient-to-r from-glass-purple/10 via-glass-blue/10 to-glass-pink/10 p-3 rounded-lg">
+        <div className="text-xs text-gray-500 mt-2 p-3 rounded-lg border border-gray-200 bg-white/70">
           <p className="font-bold">Disclaimer:</p>
           <p>
             Offers are non-binding and can be withdrawn at any time before a formal contract is signed. 
@@ -205,19 +210,17 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         >
           Cancel
         </Button>
-        {/* Gradient Submit button with gradient border via span */}
+        {/* Submit offer button: white bg, black text, gradient span border */}
         <button
           type="button"
-          className="relative inline-flex items-center justify-center w-auto px-6 py-2 font-bold text-white bg-[#0892D0] rounded-xl group focus:outline-none disabled:opacity-60 transition-all overflow-visible"
+          className="relative inline-flex items-center justify-center w-auto px-6 py-2 font-bold text-black bg-white rounded-xl group focus:outline-none disabled:opacity-60 transition-all overflow-visible"
           onClick={handleSubmit}
           disabled={submitting || !!offerError}
           style={{ border: 'none', boxShadow: 'none' }}
         >
-          {/* Gradient border */}
           <span
             aria-hidden="true"
-            className="absolute -inset-[2px] rounded-xl bg-gradient-to-r from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] pointer-events-none"
-            style={{ zIndex: 0 }}
+            className="absolute -inset-[2px] rounded-xl bg-gradient-to-r from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] pointer-events-none z-0"
           />
           {/* Button content */}
           <span className="relative flex items-center gap-2 z-10">
@@ -228,7 +231,6 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       </DialogFooter>
     </>;
 
-  // Success screen: consistent glass style
   const renderSuccessScreen = () => <>
       <DialogHeader>
         <DialogTitle className="text-xl font-bold text-center text-glass-blue">Offer Submitted Successfully!</DialogTitle>
@@ -271,7 +273,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       <Button
         variant="navy"
         onClick={handleMakeOffer}
-        className="w-full font-bold py-2 rounded-xl text-white bg-[#0892D0] border-2 border-[#0892D0] shadow-none transition-all glass hover:bg-[#0892D0]"
+        className="w-full font-bold py-2 rounded-xl text-white bg-black border-2 border-black shadow-none transition-all glass hover:bg-black"
         style={{ boxShadow: "none" }}
       >
         <CreditCard size={18} className="mr-2" />
