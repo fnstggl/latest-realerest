@@ -4,9 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { CheckCircle, XCircle, Clock, ArrowRight, ArrowRightLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
 
 interface OfferStatusBannerProps {
   propertyId: string;
@@ -15,7 +15,7 @@ interface OfferStatusBannerProps {
   sellerPhone: string | null;
 }
 
-type OfferStatus = 'pending' | 'accepted' | 'declined' | 'countered' | null | 'withdrawn';
+type OfferStatus = 'pending' | 'accepted' | 'declined' | 'countered' | null | 'withdrawn'; // ADDED withdrawn
 
 interface CounterOffer {
   id: string;
@@ -41,7 +41,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
   const [counterOfferDialogOpen, setCounterOfferDialogOpen] = useState(false);
   const [counterOfferAmount, setCounterOfferAmount] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
-  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);  // ADDED
 
   useEffect(() => {
     const checkOfferStatus = async () => {
@@ -243,22 +243,23 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
         .eq('id', offerId)
         .eq('user_id', user.id);
       if (error) {
-        console.error("Failed to withdraw offer:", error);
+        toast.error("Failed to withdraw offer");
         setWithdrawing(false);
         return;
       }
+      toast.success("Offer withdrawn successfully");
       setOfferStatus('withdrawn');
-      // No need to reload the page, the subscription will handle status updates
+      // Refresh the page to update UI and offer lists, or could call a prop/callback if available
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
-      console.error("Error withdrawing offer:", error);
+      toast.error("Error withdrawing offer");
       setWithdrawing(false);
     }
   };
 
   if (loading || !offerStatus) return null;
-
-  // Don't show the withdrawn offer banner
-  if (offerStatus === 'withdrawn') return null;
 
   if (offerStatus === 'pending') {
     return (
