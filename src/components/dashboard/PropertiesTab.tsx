@@ -56,7 +56,6 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
       toast.error("Failed to unlist property");
     }
   };
-
   return <>
       {isLoading ? <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
           <p className="mb-6">Loading your properties...</p>
@@ -71,19 +70,16 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <h3 className="text-2xl font-bold text-black">{property.title}</h3>
                     <div className="relative bg-white text-black px-3 py-1 font-bold inline-flex items-center text-sm rounded-lg group transition-colors">
                       <span>{Math.round(property.belowMarket)}% BELOW MARKET</span>
-                      <span 
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                        style={{
-                          background: "transparent",
-                          border: "2px solid transparent",
-                          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                          backgroundOrigin: "border-box",
-                          backgroundClip: "border-box",
-                          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                          WebkitMaskComposite: "xor",
-                          maskComposite: "exclude"
-                        }}
-                      />
+                      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude"
+                }} />
                     </div>
                   </div>
                   
@@ -104,55 +100,46 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
                       <Link to={`/property/${property.id}`}>
                         View Listing
-                        <span 
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                          style={{
-                            background: "transparent",
-                            border: "2px solid transparent",
-                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                            backgroundOrigin: "border-box",
-                            backgroundClip: "border-box",
-                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude"
-                          }}
-                        />
+                        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }} />
                       </Link>
                     </Button>
                     <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
                       <Link to={`/property/${property.id}/edit`}>
                         Edit Listing
-                        <span 
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                          style={{
-                            background: "transparent",
-                            border: "2px solid transparent",
-                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                            backgroundOrigin: "border-box",
-                            backgroundClip: "border-box",
-                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude"
-                          }}
-                        />
+                        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude"
+                  }} />
                       </Link>
                     </Button>
                     <Button className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all" onClick={() => handleUnlistProperty(property.id)}>
                       <Trash2 size={18} className="mr-2" />
                       Unlist
-                      <span 
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                        style={{
-                          background: "transparent",
-                          border: "2px solid transparent",
-                          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                          backgroundOrigin: "border-box",
-                          backgroundClip: "border-box",
-                          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                          WebkitMaskComposite: "xor",
-                          maskComposite: "exclude"
-                        }}
-                      />
+                      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude"
+                }} />
                     </Button>
                   </div>
                 </div>
@@ -164,24 +151,8 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <span className="font-bold mr-2">Waitlist:</span>
                     {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                   </div>
-                  
                   <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
-                    <Link to="/dashboard?tab=waitlist">
-                      Manage Waitlist
-                      <span 
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                        style={{
-                          background: "transparent",
-                          border: "2px solid transparent",
-                          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                          backgroundOrigin: "border-box",
-                          backgroundClip: "border-box",
-                          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                          WebkitMaskComposite: "xor",
-                          maskComposite: "exclude"
-                        }}
-                      />
-                    </Link>
+                    
                   </Button>
                 </div>
               </div>
@@ -194,23 +165,19 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
             <Link to="/sell/create">
               <Plus size={18} className="mr-2" />
               Add Your First Property
-              <span 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                style={{
-                  background: "transparent",
-                  border: "2px solid transparent",
-                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                  backgroundOrigin: "border-box",
-                  backgroundClip: "border-box",
-                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude"
-                }}
-              />
+              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
+            background: "transparent",
+            border: "2px solid transparent",
+            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+            backgroundOrigin: "border-box",
+            backgroundClip: "border-box",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude"
+          }} />
             </Link>
           </Button>
         </div>}
     </>;
 };
-
 export default PropertiesTab;
