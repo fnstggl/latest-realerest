@@ -9,6 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import NotificationCenter from './NotificationCenter';
 import ChatIcon from './ChatIcon';
 import { useNotifications } from '@/context/NotificationContext';
+
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -26,7 +27,11 @@ const Navbar: React.FC = () => {
     navigate('/signup');
   };
   const LogoText = () => <>
-      <img src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" alt="Realer Estate Logo" className="w-7 h-7 sm:w-7 sm:h-7 md:w-7 md:h-7 object-contain" />
+      <img 
+        src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" 
+        alt="Realer Estate Logo" 
+        className="w-7 h-7 sm:w-7 sm:h-7 md:w-7 md:h-7 object-contain -translate-y-[2px]" 
+      />
       <span className="font-bold text-foreground text-sm sm:text-base md:text-base hidden md:block">Realer Estate</span>
     </>;
   const MobileNavigation = () => <Sheet>
@@ -118,4 +123,5 @@ const Navbar: React.FC = () => {
       </div>
     </nav>;
 };
+
 export default Navbar;
