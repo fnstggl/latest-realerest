@@ -26,10 +26,12 @@ const CTASection: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 max-w-5xl w-full">
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">
-              Ready to find your 
+              But how are these homes 
               <span className="font-playfair font-bold italic py-1 rounded-lg inline-block px-0 mx-[4px]">
-                dream home?
+                actually
               </span>
+              <br />
+              below market?
             </h2>
             <p className="text-xl mb-8 text-foreground/80">Find affordable homes that don't make you compromise on size, location or safety. </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -53,3 +55,4 @@ const CTASection: React.FC = () => {
 };
 
 export default CTASection;
+
