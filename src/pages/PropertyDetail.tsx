@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Cog, Home } from 'lucide-react';
@@ -24,6 +24,7 @@ const PropertyDetail: React.FC = () => {
     id: string;
     amount: number;
     buyerName: string;
+    status?: string;
   }>>([]);
   
   const {
@@ -62,11 +63,10 @@ const PropertyDetail: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('property_offers')
-          .select('id, offer_amount, user_id')
+          .select('id, offer_amount, user_id, status')
           .eq('property_id', id)
           .eq('is_interested', true)
-          .order('offer_amount', { ascending: false })
-          .limit(3);
+          .order('offer_amount', { ascending: false });
         
         if (error) {
           console.error("Error fetching real offers:", error);
@@ -74,11 +74,17 @@ const PropertyDetail: React.FC = () => {
         }
         
         if (data && data.length > 0) {
-          const formattedOffers = data.map(offer => ({
+          // Filter out withdrawn offers
+          const activeOffers = data.filter(offer => offer.status !== 'withdrawn');
+          
+          // Format the remaining active offers
+          const formattedOffers = activeOffers.map(offer => ({
             id: offer.id,
             amount: Number(offer.offer_amount),
-            buyerName: "Anonymous buyer"
+            buyerName: "Anonymous buyer",
+            status: offer.status
           }));
+          
           setRealOffers(formattedOffers);
         } else {
           console.log("No real offers found for this property");
@@ -90,6 +96,27 @@ const PropertyDetail: React.FC = () => {
     };
     
     fetchRealOffers();
+    
+    // Set up a subscription to listen for changes in property offers
+    const offerChannel = supabase
+      .channel('property_offers_changes')
+      .on('postgres_changes', 
+        {
+          event: '*', // Listen for all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'property_offers',
+          filter: `property_id=eq.${id}`
+        },
+        () => {
+          // Refresh offers when there's any change
+          fetchRealOffers();
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(offerChannel);
+    };
   }, [id]);
 
   // This callback is triggered after successful offer submission

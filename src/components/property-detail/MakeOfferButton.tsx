@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,6 @@ import { CreditCard, Upload, SquareCheck } from 'lucide-react';
 import { Label } from "@/components/ui/label";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
 
 interface MakeOfferButtonProps {
   propertyId: string;
@@ -80,11 +80,12 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
 
   const handleSubmit = async () => {
     if (!user) {
-      toast.error("You must be logged in to make an offer");
+      // Don't show toast, just return
       return;
     }
     if (offerAmount <= 0) {
-      toast.error("Please enter a valid offer amount");
+      // Don't show toast, just set error
+      setOfferError("Please enter a valid offer amount");
       return;
     }
     setSubmitting(true);
@@ -143,12 +144,12 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       });
 
       setOfferSubmitted(true);
-      toast.success("Your offer has been submitted successfully!");
+      // Removed toast notification here
 
       if (onOfferSubmitted) onOfferSubmitted();
     } catch (error) {
       console.error("Error in offer submission:", error);
-      toast.error("Failed to submit offer. Please try again.");
+      // Removed toast notification here
     } finally {
       setSubmitting(false);
     }
