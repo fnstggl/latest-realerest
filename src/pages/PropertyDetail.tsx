@@ -38,6 +38,8 @@ const PropertyDetail: React.FC = () => {
     refreshProperty
   } = usePropertyDetail(id);
 
+  const [wasOfferSuccessful, setWasOfferSuccessful] = useState(false);
+
   // Log values for debugging
   useEffect(() => {
     console.log("PropertyDetail - isOwner:", isOwner);
@@ -122,12 +124,27 @@ const PropertyDetail: React.FC = () => {
 
   const showPropertyDetails = property?.afterRepairValue !== undefined || property?.estimatedRehab !== undefined;
 
+  const refreshAfterDelay = () => {
+    setTimeout(() => {
+      refreshProperty();
+    }, 800);
+  };
+
+  // This callback is triggered after successful offer submission
+  const handleOfferSubmitted = () => {
+    setWasOfferSuccessful(true);
+    refreshAfterDelay();
+  };
+
+  // Handler for withdrawal
+  const handleOfferWithdrawn = () => {
+    // Also set as not successful so no accidental duplicate success messages
+    setWasOfferSuccessful(false);
+    refreshAfterDelay();
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 relative overflow-hidden">
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100/40 rounded-full filter blur-3xl"></div>
-      <div className="absolute top-60 -right-20 w-80 h-80 bg-purple-100/40 rounded-full filter blur-3xl"></div>
-      <div className="absolute bottom-20 left-60 w-72 h-72 bg-pink-100/30 rounded-full filter blur-3xl"></div>
-      
+    <div className="min-h-screen bg-white relative overflow-hidden">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 relative z-10">
@@ -146,6 +163,7 @@ const PropertyDetail: React.FC = () => {
             sellerName={property.sellerName || 'Property Owner'} 
             sellerEmail={property.sellerEmail} 
             sellerPhone={property.sellerPhone} 
+            onOfferWithdrawn={handleOfferWithdrawn}
           />
         )}
         
