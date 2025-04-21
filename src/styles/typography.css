@@ -83,6 +83,6 @@
     font-family: 'Playfair Display', serif;
     font-weight: 700;
     font-style: italic;
-    transition: all 0.3s ease;
+    /* Removed transition property to make the change immediate */
   }
 }
