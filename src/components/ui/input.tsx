@@ -17,7 +17,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         />
         <span className="absolute inset-0 rounded-md opacity-0 peer-focus:opacity-100 transition-opacity duration-300 pointer-events-none" style={{
           background: "transparent",
-          border: "2px solid #000", // Black border when focused
+          border: "2px solid #000", // Bold black border when focused
           backgroundOrigin: "border-box",
           backgroundClip: "border-box",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
