@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -14,6 +13,7 @@ import OffersTab from "@/components/dashboard/OffersTab";
 import AccountTab from "@/components/dashboard/AccountTab";
 import NotificationsTab from "@/components/dashboard/NotificationsTab";
 import { useProperties } from "@/hooks/useProperties";
+import { TabNav } from "@/components/dashboard/TabNav";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -46,7 +46,69 @@ const Dashboard: React.FC = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-  
+
+  const tabItems = [
+    {
+      name: "Properties",
+      value: "properties",
+      icon: Home,
+      content: (
+        <TabsContent value="properties" className="space-y-6">
+          <PropertiesTab 
+            myProperties={myProperties} 
+            setMyProperties={setMyProperties} 
+            waitlistUsers={waitlistUsers} 
+            showAddForm={showAddForm} 
+            setShowAddForm={setShowAddForm} 
+            isLoading={isLoading} 
+            setIsLoading={setIsLoading} 
+            user={user} 
+          />
+        </TabsContent>
+      )
+    },
+    {
+      name: "Waitlist",
+      value: "waitlist",
+      icon: ClipboardCheck,
+      content: (
+        <TabsContent value="waitlist" className="space-y-6">
+          <WaitlistTab waitlistUsers={waitlistUsers} setWaitlistUsers={setWaitlistUsers} />
+        </TabsContent>
+      )
+    },
+    {
+      name: "Offers",
+      value: "offers",
+      icon: CreditCard,
+      content: (
+        <TabsContent value="offers" className="space-y-6">
+          <OffersTab />
+        </TabsContent>
+      )
+    },
+    {
+      name: "Account",
+      value: "account",
+      icon: User,
+      content: (
+        <TabsContent value="account" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
+          <AccountTab user={user} logout={logout} />
+        </TabsContent>
+      )
+    },
+    {
+      name: "Notifications",
+      value: "notifications",
+      icon: Bell,
+      content: (
+        <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
+          <NotificationsTab notifications={notifications} markAsRead={markAsRead} clearAll={clearAll} />
+        </TabsContent>
+      )
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -79,114 +141,11 @@ const Dashboard: React.FC = () => {
           </div>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="bg-white border border-gray-200 shadow-sm">
-              <TabsTrigger value="properties" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
-                <Home size={18} className="mr-2" />
-                Properties
-                <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }}
-                />
-              </TabsTrigger>
-              <TabsTrigger value="waitlist" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
-                <ClipboardCheck size={18} className="mr-2" />
-                Waitlist
-                <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }}
-                />
-              </TabsTrigger>
-              
-              <TabsTrigger value="offers" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
-                <CreditCard size={18} className="mr-2" />
-                Offers
-                <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }}
-                />
-              </TabsTrigger>
-              <TabsTrigger value="account" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
-                <User size={18} className="mr-2" />
-                Account
-                <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }}
-                />
-              </TabsTrigger>
-              <TabsTrigger value="notifications" className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group">
-                <Bell size={18} className="mr-2" />
-                Notifications
-                <span 
-                  className="absolute inset-0 opacity-0 data-[state=active]:opacity-100 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }}
-                />
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="properties" className="space-y-6">
-              <PropertiesTab myProperties={myProperties} setMyProperties={setMyProperties} waitlistUsers={waitlistUsers} showAddForm={showAddForm} setShowAddForm={setShowAddForm} isLoading={isLoading} setIsLoading={setIsLoading} user={user} />
-            </TabsContent>
-            
-            <TabsContent value="waitlist" className="space-y-6">
-              <WaitlistTab waitlistUsers={waitlistUsers} setWaitlistUsers={setWaitlistUsers} />
-            </TabsContent>
-            
-            <TabsContent value="offers" className="space-y-6">
-              <OffersTab />
-            </TabsContent>
-            
-            <TabsContent value="account" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
-              <AccountTab user={user} logout={logout} />
-            </TabsContent>
-            
-            <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
-              <NotificationsTab notifications={notifications} markAsRead={markAsRead} clearAll={clearAll} />
-            </TabsContent>
+            <TabNav 
+              items={tabItems} 
+              activeTab={activeTab} 
+              onValueChange={setActiveTab} 
+            />
           </Tabs>
         </motion.div>
       </div>
