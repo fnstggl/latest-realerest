@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,9 +28,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   sellerId,
   currentPrice
 }) => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [offerAmount, setOfferAmount] = useState(currentPrice);
   const [isInterested, setIsInterested] = useState(true);
@@ -39,6 +36,9 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [offerSubmitted, setOfferSubmitted] = useState(false);
   const [offerError, setOfferError] = useState<string | null>(null);
+
+  // For showing buyer's name/email in success screen:
+  const [buyerProfile, setBuyerProfile] = useState<{ name?: string; email?: string } | null>(null);
 
   const handleMakeOffer = () => {
     setDialogOpen(true);
@@ -151,7 +151,31 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
     }
   };
 
-  const renderOfferForm = () => <>
+  useEffect(() => {
+    // Only fetch buyer profile for the success screen
+    if (offerSubmitted && user) {
+      const fetchProfile = async () => {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('name, email')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (data) setBuyerProfile({
+          name: data.name || '',
+          email: data.email || ''
+        });
+        else if (error) {
+          setBuyerProfile({ name: '', email: user.email });
+        }
+      };
+      fetchProfile();
+    } else if (!offerSubmitted) {
+      setBuyerProfile(null);
+    }
+  }, [offerSubmitted, user]);
+
+  const renderOfferForm = () => (
+    <>
       <DialogHeader>
         <DialogTitle className="text-xl font-bold text-black">Make an Offer</DialogTitle>
         <DialogDescription className="text-gray-500">
@@ -210,7 +234,6 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       </div>
 
       <DialogFooter className="flex gap-3">
-        {/* Cancel Button with black border */}
         <Button
           type="button"
           variant="outline"
@@ -219,44 +242,63 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         >
           Cancel
         </Button>
-        {/* Submit offer button with black background and white text, no gradient */}
+        {/* Submit offer button: plain black background, white text, no gradient, no gradient border */}
         <button
           type="button"
-          className="relative inline-flex items-center justify-center w-auto px-6 py-2 font-bold text-white bg-black rounded-xl group focus:outline-none disabled:opacity-60 transition-all overflow-visible"
+          className="relative inline-flex items-center justify-center w-auto px-6 py-2 font-bold text-white bg-black rounded-xl focus:outline-none transition-all overflow-visible"
           onClick={handleSubmit}
           disabled={submitting || !!offerError}
           style={{ border: 'none', boxShadow: 'none' }}
         >
-          {/* Button content */}
           <span className="relative flex items-center gap-2 z-10">
             <CreditCard size={18} className="mr-2" />
             {submitting ? "Submitting..." : "Submit Offer"}
           </span>
         </button>
       </DialogFooter>
-    </>;
+    </>
+  );
 
-  const renderSuccessScreen = () => <>
+  const renderSuccessScreen = () => (
+    <>
       <DialogHeader>
-        <DialogTitle className="text-xl font-bold text-center text-glass-blue">Offer Submitted Successfully!</DialogTitle>
+        <DialogTitle className="text-xl font-bold text-black text-center">Offer Submitted Successfully!</DialogTitle>
       </DialogHeader>
-      <div className="py-6 text-center glass-card rounded-xl mb-6">
-        <div className="mx-auto w-12 h-12 bg-gradient-to-br from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] rounded-full flex items-center justify-center mb-4 border-2 border-[#0892D0] shadow-md">
-          <SquareCheck size={28} className="text-white" />
+      <div className="py-6 text-center rounded-xl mb-6" style={{ background: "#fff" }}>
+        <div className="mx-auto w-12 h-12 bg-white border-2 border-black rounded-full flex items-center justify-center mb-4 shadow">
+          <SquareCheck size={28} className="text-black" />
         </div>
-
-        <p className="mb-6 text-black">
+        <p className="mb-6 text-black font-semibold">
           Your offer has been sent to the seller. You can either wait for them to respond or contact them directly.
         </p>
-
-        <div className="glass p-4 text-left mb-6 border border-black/10">
-          <h3 className="font-bold text-lg mb-2 text-glass-blue">Seller Contact Information</h3>
-          <p className="mb-1 text-black"><span className="font-bold">Name:</span> {sellerName}</p>
-          {sellerEmail && <p className="mb-1 text-black"><span className="font-bold">Email:</span> {sellerEmail}</p>}
-          {sellerPhone && <p className="text-black"><span className="font-bold">Phone:</span> {sellerPhone}</p>}
+        <div className="p-4 text-left mb-6 border rounded-lg" style={{ borderColor: "#222" , background: "#fff" }}>
+          <h3 className="font-bold text-lg mb-2 text-black">Seller Contact Information</h3>
+          <p className="mb-1 text-black">
+            <span className="font-bold">Name:</span> {sellerName}
+          </p>
+          {sellerEmail && (
+            <p className="mb-1 text-black">
+              <span className="font-bold">Email:</span> {sellerEmail}
+            </p>
+          )}
+          {sellerPhone && (
+            <p className="text-black">
+              <span className="font-bold">Phone:</span> {sellerPhone}
+            </p>
+          )}
         </div>
-
-        <p className="text-sm text-gray-600">
+        <div className="p-4 border rounded-lg text-left mb-3" style={{ borderColor: "#222", background: "#fafafa" }}>
+          <h3 className="font-bold text-base mb-1 text-black">Your Information Sent:</h3>
+          <p className="text-black">
+            <span className="font-bold">Name:</span>{" "}
+            {(buyerProfile?.name && buyerProfile.name.trim() !== '' ? buyerProfile.name : buyerProfile?.email) || user?.name || user?.email}
+          </p>
+          <p className="text-black">
+            <span className="font-bold">Email:</span>{" "}
+            {buyerProfile?.email || user?.email}
+          </p>
+        </div>
+        <p className="text-sm text-black opacity-80 mt-4">
           You can track the status of your offer in your dashboard.
         </p>
       </div>
@@ -264,17 +306,17 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         <Button
           type="button"
           variant="navy"
-          className="w-full text-white font-bold bg-[#0892D0] border-2 border-[#0892D0] shadow-none rounded-xl hover:bg-[#077fb4] transition-all"
+          className="w-full text-white font-bold bg-black border-2 border-black shadow-none rounded-xl hover:bg-neutral-900 transition-all"
           onClick={handleDialogClose}
         >
           Close
         </Button>
       </DialogFooter>
-    </>;
+    </>
+  );
 
   return (
     <>
-      {/* Make an Offer button with black background, no gradient hover */}
       <Button
         variant="navy"
         onClick={handleMakeOffer}
@@ -285,7 +327,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         Make an Offer
       </Button>
       <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="glass-card border-2 border-[#0892D0] shadow-lg rounded-xl">
+        <DialogContent className="glass-card border-2 border-black shadow-lg rounded-xl bg-white">
           {offerSubmitted ? renderSuccessScreen() : renderOfferForm()}
         </DialogContent>
       </Dialog>
@@ -294,4 +336,3 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
 };
 
 export default MakeOfferButton;
-
