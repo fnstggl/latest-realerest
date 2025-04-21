@@ -43,8 +43,8 @@ const Contact: React.FC = () => {
         duration: 0.5
       }} className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="font-bold mb-4 my-[20px] text-4xl">Contact Us</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-base">Please feel free to reach out with any questions or feedback for us. We're listening.</p>
+            <h1 className="text-5xl font-bold mb-4">Contact Us</h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Please feel free to reach out with any questions or feedback for us.</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8">
@@ -57,17 +57,17 @@ const Contact: React.FC = () => {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="font-medium">Your Name</Label>
-                      <Input id="name" type="text" placeholder="Enter your name" value={name} onChange={e => setName(e.target.value)} required className="border-gray-200 focus:border-[#000000] focus:ring-1 focus:ring-[#000000]" />
+                      <Input id="name" type="text" placeholder="Enter your name" value={name} onChange={e => setName(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="email" className="font-medium">Email Address</Label>
-                      <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} required className="border-gray-200 focus:border-[#000000] focus:ring-1 focus:ring-[#000000]" />
+                      <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="subject" className="font-medium">Subject</Label>
-                      <Input id="subject" type="text" placeholder="What's this about?" value={subject} onChange={e => setSubject(e.target.value)} required className="border-gray-200 focus:border-[#000000] focus:ring-1 focus:ring-[#000000]" />
+                      <Input id="subject" type="text" placeholder="What's this about?" value={subject} onChange={e => setSubject(e.target.value)} required className="border-gray-200 focus:border-[#0892D0] focus:ring-1 focus:ring-[#0892D0]" />
                     </div>
                     
                     <div className="space-y-2">
@@ -100,12 +100,12 @@ const Contact: React.FC = () => {
             <div className="space-y-6">
               <Card className="border-none shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-black">Contact Information</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-[#0892D0]">Contact Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-start">
                     <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-4">
-                      <Mail size={20} className="text-[#000000]" />
+                      <Mail size={20} className="text-[#0892D0]" />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-700">Email Us</h3>
@@ -115,7 +115,7 @@ const Contact: React.FC = () => {
                   
                   <div className="flex items-start">
                     <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-4">
-                      <Phone size={20} className="text-[#000000]" />
+                      <Phone size={20} className="text-[#0892D0]" />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-700">Call Us</h3>
@@ -132,12 +132,12 @@ const Contact: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="border-b border-gray-100 pb-4">
-                    <h3 className="font-bold mb-1 text-black">How does Realer Estate work?</h3>
+                    <h3 className="font-bold text-[#0892D0] mb-1">How does Realer Estate work?</h3>
                     <p className="text-gray-600">We connect buyers directly with sellers offering properties below market value. No middlemen, just direct connections.</p>
                   </div>
                   
                   <div>
-                    <h3 className="font-bold mb-1 text-black">How do I list my property?</h3>
+                    <h3 className="font-bold text-[#0892D0] mb-1">How do I list my property?</h3>
                     <p className="text-gray-600">Simply create an account, click "List Property" and follow the steps.</p>
                   </div>
                 </CardContent>
