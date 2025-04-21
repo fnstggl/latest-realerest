@@ -100,12 +100,12 @@ const Contact: React.FC = () => {
             <div className="space-y-6">
               <Card className="border-none shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-[#0892D0]">Contact Information</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-black">Contact Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-start">
                     <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-4">
-                      <Mail size={20} className="text-[#0892D0]" />
+                      <Mail size={20} className="text-[#000000]" />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-700">Email Us</h3>
@@ -115,7 +115,7 @@ const Contact: React.FC = () => {
                   
                   <div className="flex items-start">
                     <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-4">
-                      <Phone size={20} className="text-[#0892D0]" />
+                      <Phone size={20} className="text-[#000000]" />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-700">Call Us</h3>
@@ -132,12 +132,12 @@ const Contact: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="border-b border-gray-100 pb-4">
-                    <h3 className="font-bold text-[#0892D0] mb-1">How does Realer Estate work?</h3>
+                    <h3 className="font-bold mb-1 text-black">How does Realer Estate work?</h3>
                     <p className="text-gray-600">We connect buyers directly with sellers offering properties below market value. No middlemen, just direct connections.</p>
                   </div>
                   
                   <div>
-                    <h3 className="font-bold text-[#0892D0] mb-1">How do I list my property?</h3>
+                    <h3 className="font-bold mb-1 text-black">How do I list my property?</h3>
                     <p className="text-gray-600">Simply create an account, click "List Property" and follow the steps.</p>
                   </div>
                 </CardContent>
