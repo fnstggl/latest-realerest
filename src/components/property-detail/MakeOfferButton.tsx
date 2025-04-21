@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,11 +81,11 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
 
   const handleSubmit = async () => {
     if (!user) {
-      toast.error("You must be logged in to make an offer");
+      setOfferError("You must be logged in to make an offer");
       return;
     }
     if (offerAmount <= 0) {
-      toast.error("Please enter a valid offer amount");
+      setOfferError("Please enter a valid offer amount");
       return;
     }
     setSubmitting(true);
@@ -143,12 +144,12 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       });
 
       setOfferSubmitted(true);
-      toast.success("Your offer has been submitted successfully!");
+      // Removed toast.success("Your offer has been submitted successfully!");
 
       if (onOfferSubmitted) onOfferSubmitted();
     } catch (error) {
-      console.error("Error in offer submission:", error);
-      toast.error("Failed to submit offer. Please try again.");
+      // Removed toast.error on submission failure
+      setOfferError("Failed to submit offer. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -337,5 +338,4 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
     </>
   );
 };
-
 export default MakeOfferButton;

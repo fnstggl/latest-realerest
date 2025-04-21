@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom'; // fixed from 'router-dom'
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Cog, Home } from 'lucide-react';
@@ -57,38 +57,40 @@ const PropertyDetail: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    
     const fetchRealOffers = async () => {
       try {
         const { data, error } = await supabase
           .from('property_offers')
-          .select('id, offer_amount, user_id')
+          .select('id, offer_amount, user_id, status')
           .eq('property_id', id)
           .eq('is_interested', true)
           .order('offer_amount', { ascending: false })
-          .limit(3);
-        
+          .limit(10); // fetch a few more, in case some are withdrawn
+
         if (error) {
           console.error("Error fetching real offers:", error);
           return;
         }
-        
+
         if (data && data.length > 0) {
-          const formattedOffers = data.map(offer => ({
+          // Filter out withdrawn offers
+          const filteredOffers = data
+            .filter(offer => offer.status !== 'withdrawn')
+            .slice(0, 3); // Only top 3 bids, skip withdrawn even if they’re larger
+          const formattedOffers = filteredOffers.map(offer => ({
             id: offer.id,
             amount: Number(offer.offer_amount),
             buyerName: "Anonymous buyer"
           }));
           setRealOffers(formattedOffers);
         } else {
-          console.log("No real offers found for this property");
           setRealOffers([]);
         }
       } catch (error) {
         console.error("Error in fetchRealOffers:", error);
       }
     };
-    
+
     fetchRealOffers();
   }, [id]);
 

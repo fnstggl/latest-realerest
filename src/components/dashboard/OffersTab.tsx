@@ -75,8 +75,10 @@ const OffersTab: React.FC = () => {
           console.error("Error fetching offers:", error);
           return;
         }
-        console.log("Raw property offers data:", propertyOffers);
-        const offersWithDetails = await Promise.all(propertyOffers.map(async offer => {
+        // Only include offers not withdrawn
+        const displayedOffers = propertyOffers.filter(offer => offer.status !== "withdrawn");
+        // ... keep code for fetching property details and buyers, assign displayedOffers instead of propertyOffers
+        const offersWithDetails = await Promise.all(displayedOffers.map(async offer => {
           const {
             data: property
           } = await supabase.from('property_listings').select('title, price').eq('id', offer.property_id).single();
@@ -139,7 +141,6 @@ const OffersTab: React.FC = () => {
             counterOffers: counterOffers || []
           };
         }));
-        console.log("Processed offers with buyer names:", offersWithDetails);
         setOffers(offersWithDetails);
       } catch (error) {
         console.error("Error processing offers:", error);
