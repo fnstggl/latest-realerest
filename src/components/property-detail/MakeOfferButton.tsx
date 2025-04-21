@@ -17,6 +17,7 @@ interface MakeOfferButtonProps {
   sellerPhone: string;
   sellerId: string;
   currentPrice: number;
+  onOfferSubmitted?: () => void;
 }
 
 const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
@@ -26,7 +27,8 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   sellerEmail,
   sellerPhone,
   sellerId,
-  currentPrice
+  currentPrice,
+  onOfferSubmitted,
 }) => {
   const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -110,9 +112,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       }
 
       // Submit offer to database
-      const {
-        error
-      } = await supabase.from('property_offers').insert({
+      const { error } = await supabase.from('property_offers').insert({
         property_id: propertyId,
         user_id: user.id,
         seller_id: sellerId,
@@ -141,8 +141,11 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         },
         read: false
       });
+
       setOfferSubmitted(true);
       toast.success("Your offer has been submitted successfully!");
+
+      if (onOfferSubmitted) onOfferSubmitted();
     } catch (error) {
       console.error("Error in offer submission:", error);
       toast.error("Failed to submit offer. Please try again.");

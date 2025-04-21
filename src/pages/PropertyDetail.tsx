@@ -92,6 +92,11 @@ const PropertyDetail: React.FC = () => {
     fetchRealOffers();
   }, [id]);
 
+  // This callback is triggered after successful offer submission
+  const handleOfferSubmitted = () => {
+    refreshProperty();
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 flex items-center justify-center">
@@ -257,7 +262,8 @@ const PropertyDetail: React.FC = () => {
                   sellerEmail={property.sellerEmail || ''} 
                   sellerPhone={property.sellerPhone || ''} 
                   sellerId={property.sellerId || ''} 
-                  currentPrice={property.price} 
+                  currentPrice={property.price}
+                  onOfferSubmitted={handleOfferSubmitted}
                 />
               </div>
             )}

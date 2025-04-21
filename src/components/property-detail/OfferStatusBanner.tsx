@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,7 +15,7 @@ interface OfferStatusBannerProps {
   sellerPhone: string | null;
 }
 
-type OfferStatus = 'pending' | 'accepted' | 'declined' | 'countered' | null;
+type OfferStatus = 'pending' | 'accepted' | 'declined' | 'countered' | null | 'withdrawn'; // ADDED withdrawn
 
 interface CounterOffer {
   id: string;
@@ -42,6 +41,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
   const [counterOfferDialogOpen, setCounterOfferDialogOpen] = useState(false);
   const [counterOfferAmount, setCounterOfferAmount] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);  // ADDED
 
   useEffect(() => {
     const checkOfferStatus = async () => {
@@ -232,16 +232,52 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
     return sortedCounterOffers[0].amount;
   };
 
+  // Withdraw Offer handler
+  const handleWithdrawOffer = async () => {
+    if (!offerId || !user?.id || offerStatus !== "pending" ) return;
+    setWithdrawing(true);
+    try {
+      const { error } = await supabase
+        .from('property_offers')
+        .update({ status: 'withdrawn' })
+        .eq('id', offerId)
+        .eq('user_id', user.id);
+      if (error) {
+        toast.error("Failed to withdraw offer");
+        setWithdrawing(false);
+        return;
+      }
+      toast.success("Offer withdrawn successfully");
+      setOfferStatus('withdrawn');
+      // Refresh the page to update UI and offer lists, or could call a prop/callback if available
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (error) {
+      toast.error("Error withdrawing offer");
+      setWithdrawing(false);
+    }
+  };
+
   if (loading || !offerStatus) return null;
 
   if (offerStatus === 'pending') {
     return (
-      <div className="bg-gray-100 border border-gray-200 p-4 mb-4 rounded-lg">
+      <div className="bg-gray-100 border border-gray-200 p-4 mb-4 rounded-lg relative">
+        {/* Withdraw button: small, top right */}
+        <button
+          onClick={handleWithdrawOffer}
+          disabled={withdrawing}
+          className="absolute top-2 right-3 text-xs border border-black rounded px-2 py-1 bg-white text-black font-semibold shadow-sm hover:bg-gray-50 transition-all"
+          style={{ opacity: withdrawing ? 0.5 : 1 }}
+        >
+          {withdrawing ? "Withdrawing..." : "Withdraw Offer"}
+        </button>
         <div className="flex items-center">
-          <Clock size={20} className="text-gray-700 mr-2" />
-          <div className="font-bold">Offer Sent to Seller</div>
+          <Clock size={20} className="text-black mr-2" />
+          <div className="font-bold text-black">Offer Sent to Seller</div>
         </div>
-        <p className="mt-2">
+        <p className="mt-2 text-black">
           Your offer of ${offerAmount?.toLocaleString()} is being reviewed by the seller. We'll notify you when there's an update.
         </p>
       </div>
