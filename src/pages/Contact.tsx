@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 const Contact: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -44,7 +45,7 @@ const Contact: React.FC = () => {
       }} className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="font-bold mb-4 my-[20px] text-4xl">Contact Us</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-base">Please feel free to reach out with any questions or feedback for us. We're listening.</p>
+            <p className="text-gray-600 max-w-2xl mx-auto text-base">Please feel free to reach out with any questions or feedback for us. We'd love to help</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8">
