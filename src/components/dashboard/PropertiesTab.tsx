@@ -115,16 +115,19 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
                       <Link to={`/property/${property.id}/edit`}>
                         Edit Listing
-                        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }} />
+                        <span 
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" 
+                          style={{
+                            background: "transparent",
+                            border: "2px solid transparent",
+                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+                            backgroundOrigin: "border-box",
+                            backgroundClip: "border-box",
+                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude"
+                          }}
+                        />
                       </Link>
                     </Button>
                     <Button className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all" onClick={() => handleUnlistProperty(property.id)}>
