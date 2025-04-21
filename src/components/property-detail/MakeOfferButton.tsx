@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
+
 interface MakeOfferButtonProps {
   propertyId: string;
   propertyTitle: string;
@@ -17,6 +19,7 @@ interface MakeOfferButtonProps {
   sellerId: string;
   currentPrice: number;
 }
+
 const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   propertyId,
   propertyTitle,
@@ -36,9 +39,11 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [offerSubmitted, setOfferSubmitted] = useState(false);
   const [offerError, setOfferError] = useState<string | null>(null);
+
   const handleMakeOffer = () => {
     setDialogOpen(true);
   };
+
   const handleDialogClose = () => {
     if (!submitting) {
       setDialogOpen(false);
@@ -52,6 +57,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       }
     }
   };
+
   const handleOfferAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
     setOfferAmount(value);
@@ -63,11 +69,13 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       setOfferError(null);
     }
   };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setProofOfFunds(e.target.files[0]);
     }
   };
+
   const handleSubmit = async () => {
     if (!user) {
       toast.error("You must be logged in to make an offer");
@@ -142,6 +150,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       setSubmitting(false);
     }
   };
+
   const renderOfferForm = () => <>
       <DialogHeader>
         <DialogTitle className="text-xl font-bold text-black">Make an Offer</DialogTitle>
@@ -149,7 +158,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           Submit your offer for {propertyTitle}. The seller will be notified and can accept or decline.
         </DialogDescription>
       </DialogHeader>
-      
+
       <div className="space-y-6 py-6">
         <div>
           <Label htmlFor="offerAmount" className="text-black font-bold">Offer Amount ($)</Label>
@@ -162,7 +171,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           />
           {offerError && <div className="text-[#ea384c] text-sm mt-1 font-semibold">{offerError}</div>}
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Checkbox
             id="isInterested"
@@ -174,7 +183,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
             I'm interested in this property and would like to proceed with the transaction
           </Label>
         </div>
-        
+
         <div>
           <Label htmlFor="proofOfFunds" className="text-black font-bold">Proof of Funds (Optional)</Label>
           <div className="mt-2 border-2 border-dashed border-gray-300 bg-white/50 p-4 rounded-xl transition-colors glass">
@@ -190,7 +199,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
             </label>
           </div>
         </div>
-        
+
         <div className="text-xs text-gray-500 mt-2 p-3 rounded-lg border border-gray-200 bg-white/70">
           <p className="font-bold">Disclaimer:</p>
           <p>
@@ -199,7 +208,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           </p>
         </div>
       </div>
-      
+
       <DialogFooter className="flex gap-3">
         {/* Cancel Button with black border */}
         <Button
@@ -218,6 +227,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           disabled={submitting || !!offerError}
           style={{ border: 'none', boxShadow: 'none' }}
         >
+          {/* Accurate gradient border as a span */}
           <span
             aria-hidden="true"
             className="absolute -inset-[2px] rounded-xl bg-gradient-to-r from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] pointer-events-none z-0"
@@ -239,18 +249,18 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         <div className="mx-auto w-12 h-12 bg-gradient-to-br from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] rounded-full flex items-center justify-center mb-4 border-2 border-[#0892D0] shadow-md">
           <SquareCheck size={28} className="text-white" />
         </div>
-        
+
         <p className="mb-6 text-black">
           Your offer has been sent to the seller. You can either wait for them to respond or contact them directly.
         </p>
-        
+
         <div className="glass p-4 text-left mb-6 border border-black/10">
           <h3 className="font-bold text-lg mb-2 text-glass-blue">Seller Contact Information</h3>
           <p className="mb-1 text-black"><span className="font-bold">Name:</span> {sellerName}</p>
           {sellerEmail && <p className="mb-1 text-black"><span className="font-bold">Email:</span> {sellerEmail}</p>}
           {sellerPhone && <p className="text-black"><span className="font-bold">Phone:</span> {sellerPhone}</p>}
         </div>
-        
+
         <p className="text-sm text-gray-600">
           You can track the status of your offer in your dashboard.
         </p>
@@ -269,7 +279,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
 
   return (
     <>
-      {/* Updated Make an Offer button: no blue hover, more glass style */}
+      {/* Make an Offer button with black background, no gradient hover */}
       <Button
         variant="navy"
         onClick={handleMakeOffer}
@@ -289,3 +299,4 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
 };
 
 export default MakeOfferButton;
+
