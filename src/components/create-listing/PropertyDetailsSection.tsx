@@ -26,7 +26,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
                 <Input 
                   type="number" 
                   placeholder="e.g. 3" 
-                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
+                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
                   {...field} 
                 />
               </FormControl>
@@ -46,7 +46,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
                 <Input 
                   type="number" 
                   placeholder="e.g. 2" 
-                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
+                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
                   {...field} 
                 />
               </FormControl>
@@ -66,7 +66,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
                 <Input 
                   type="number" 
                   placeholder="e.g. 2000" 
-                  className="h-12 rounded-xl border border-white/40 bg-white/60 backdrop-blur-md" 
+                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
                   {...field} 
                 />
               </FormControl>
