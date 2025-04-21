@@ -219,19 +219,14 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         >
           Cancel
         </Button>
-        {/* Submit offer button: white bg, black text, gradient span border */}
+        {/* Submit offer button with black background and white text, no gradient */}
         <button
           type="button"
-          className="relative inline-flex items-center justify-center w-auto px-6 py-2 font-bold text-black bg-white rounded-xl group focus:outline-none disabled:opacity-60 transition-all overflow-visible"
+          className="relative inline-flex items-center justify-center w-auto px-6 py-2 font-bold text-white bg-black rounded-xl group focus:outline-none disabled:opacity-60 transition-all overflow-visible"
           onClick={handleSubmit}
           disabled={submitting || !!offerError}
           style={{ border: 'none', boxShadow: 'none' }}
         >
-          {/* Accurate gradient border as a span */}
-          <span
-            aria-hidden="true"
-            className="absolute -inset-[2px] rounded-xl bg-gradient-to-r from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] pointer-events-none z-0"
-          />
           {/* Button content */}
           <span className="relative flex items-center gap-2 z-10">
             <CreditCard size={18} className="mr-2" />
