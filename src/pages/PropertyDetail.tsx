@@ -48,10 +48,15 @@ const PropertyDetail: React.FC = () => {
     console.log("PropertyDetail - shouldShowSellerInfo:", shouldShowSellerInfo);
     console.log("PropertyDetail - property:", property);
   }, [property, isOwner, isApproved, waitlistStatus, shouldShowSellerInfo]);
-
+  
+  // Removed the useEffect that was calling window.scrollTo(0, 0) on every route change
+  // as this might be contributing to the refresh issue
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [id]);
+    if (id) {
+      // Just set the scroll position once when the component mounts
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   const handleAddressClick = () => {
     setShowWaitlistDialog(true);

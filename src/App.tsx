@@ -13,6 +13,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       staleTime: 30000,
+      // Prevent automatic refetching on window focus which can cause unexpected refreshes
       refetchOnWindowFocus: false,
       refetchOnMount: true,
     },
