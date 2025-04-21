@@ -303,8 +303,8 @@ const CreateListing: React.FC = () => {
     }}>
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-3 my-[30px]">Create New Property Listing</h1>
-          <p className="mb-8 text-lg">
-            <span className="text-gradient-primary">List your property in 60 seconds.</span>
+          <p className="mb-8 text-lg font-playfair font-bold italic text-black">
+            List your property in 60 seconds.
           </p>
           
           <div className="bg-white border border-black/10 p-8 rounded-xl">
