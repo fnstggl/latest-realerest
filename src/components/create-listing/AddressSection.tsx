@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -20,7 +21,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
         <FormField control={form.control} name="address" render={({
         field
       }) => <FormItem>
-              <FormLabel className="text-black font-bold">Full Property Address</FormLabel>
+              <FormLabel className="text-black font-bold">Street Address</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="e.g. 123 Main St" 
@@ -112,3 +113,4 @@ const AddressSection: React.FC<AddressSectionProps> = ({
 };
 
 export default AddressSection;
+
