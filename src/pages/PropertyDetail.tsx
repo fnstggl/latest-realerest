@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom'; // fixed from 'router-dom'
+import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Cog, Home } from 'lucide-react';
@@ -133,10 +133,11 @@ const PropertyDetail: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="mb-8">
-          <Button asChild variant="glass" className="flex items-center text-black hover:bg-white/40 font-bold transition-colors layer-hover layer-2">
+        <div className="mb-4 md:mb-8">
+          <Button asChild variant="glass" className="flex items-center text-black hover:bg-white/40 font-bold transition-colors layer-hover layer-2 
+            text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 w-auto">
             <Link to="/search" className="bg-white text-glass-blue">
-              <ArrowLeft size={18} className="mr-2" />
+              <ArrowLeft size={14} className="mr-1 sm:mr-2" />
               Back to Search
             </Link>
           </Button>
