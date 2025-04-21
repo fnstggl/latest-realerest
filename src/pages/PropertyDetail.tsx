@@ -16,6 +16,7 @@ import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +26,7 @@ const PropertyDetail: React.FC = () => {
     amount: number;
     buyerName: string;
   }>>([]);
+  const isMobile = useIsMobile();
   
   const {
     property,
@@ -76,7 +78,7 @@ const PropertyDetail: React.FC = () => {
           // Filter out withdrawn offers
           const filteredOffers = data
             .filter(offer => offer.status !== 'withdrawn')
-            .slice(0, 3); // Only top 3 bids, skip withdrawn even if they’re larger
+            .slice(0, 3); // Only top 3 bids, skip withdrawn even if they're larger
           const formattedOffers = filteredOffers.map(offer => ({
             id: offer.id,
             amount: Number(offer.offer_amount),
@@ -133,11 +135,12 @@ const PropertyDetail: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 relative z-10">
-        <div className="mb-4 md:mb-8">
-          <Button asChild variant="glass" className="flex items-center text-black hover:bg-white/40 font-bold transition-colors layer-hover layer-2 
-            text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 w-auto">
-            <Link to="/search" className="bg-white text-glass-blue">
-              <ArrowLeft size={14} className="mr-1 sm:mr-2" />
+        <div className="mt-10 mb-2 md:mt-0 md:mb-8">
+          <Button asChild variant="glass" 
+            className={`flex items-center hover:bg-white/40 font-bold transition-colors layer-hover layer-2
+            ${isMobile ? 'text-[10px] px-1.5 py-0.5 w-auto rounded-md' : 'text-sm px-4 py-2'}`}>
+            <Link to="/search" className={`${isMobile ? 'text-black' : 'bg-white text-glass-blue'}`}>
+              <ArrowLeft size={isMobile ? 12 : 18} className={isMobile ? 'mr-0.5' : 'mr-2'} />
               Back to Search
             </Link>
           </Button>
