@@ -1,22 +1,18 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import PropertyCard from '@/components/PropertyCard';
 import { motion } from 'framer-motion';
 import { useListings } from '@/hooks/useListings';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const FeaturedProperties: React.FC = () => {
   const navigate = useNavigate();
   const { listings, loading, error } = useListings(6);
 
   if (loading) {
-    return (
-      <div className="min-h-[300px] flex justify-center items-center">
-        <div className="loading-container">
-          <div className="pulsing-circle" />
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (

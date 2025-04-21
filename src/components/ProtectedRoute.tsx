@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner";
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -19,15 +20,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
   }, [isAuthenticated, isLoading, location.state]);
 
-  // Show loading animation while checking authentication
+  // Use our standardized loading spinner
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="loading-container">
-          <div className="pulsing-circle" />
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
   
   // Only redirect when we're sure the user is not authenticated

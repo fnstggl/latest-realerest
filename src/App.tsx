@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -6,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 // Create a client with better error handling
 const queryClient = new QueryClient({
@@ -19,11 +19,18 @@ const queryClient = new QueryClient({
   },
 });
 
-// Lazy load components to improve initial load time
+// Improved preloading strategy for common routes
+// Preload essential routes immediately to avoid white screens
 const Index = lazy(() => import("./pages/Index"));
-const Search = lazy(() => import("./pages/Search"));
-const SignIn = lazy(() => import("./pages/SignIn"));
+const SignIn = lazy(() => {
+  // Preload other auth-related pages when SignIn is loaded
+  import("./pages/SignUp");
+  return import("./pages/SignIn");
+});
 const SignUp = lazy(() => import("./pages/SignUp"));
+
+// Other lazy-loaded components remain the same
+const Search = lazy(() => import("./pages/Search"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const CreateListing = lazy(() => import("./pages/CreateListing"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -43,14 +50,8 @@ const Messages = lazy(() => import("./pages/Messages"));
 const Conversation = lazy(() => import("./pages/Conversation"));
 const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 
-// Updated loading fallback to use the pulsing circle animation
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="loading-container">
-      <div className="pulsing-circle" />
-    </div>
-  </div>
-);
+// Updated loading fallback to use our standardized component
+const LoadingFallback = () => <LoadingSpinner fullScreen />;
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
