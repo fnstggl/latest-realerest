@@ -43,8 +43,8 @@ const Contact: React.FC = () => {
         duration: 0.5
       }} className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold mb-4">Contact Us</h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Please feel free to reach out with any questions or feedback for us. We're listening.</p>
+            <h1 className="font-bold mb-4 my-[20px] text-4xl">Contact Us</h1>
+            <p className="text-gray-600 max-w-2xl mx-auto text-base">Please feel free to reach out with any questions or feedback for us. We're listening.</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8">
