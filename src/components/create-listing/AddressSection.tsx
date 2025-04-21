@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -11,6 +10,7 @@ export const usStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "
 interface AddressSectionProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
 }
+
 const AddressSection: React.FC<AddressSectionProps> = ({
   form
 }) => {
@@ -48,20 +48,6 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                 </FormControl>
                 <FormMessage />
               </FormItem>} />
-          
-          <FormField control={form.control} name="zipCode" render={({
-          field
-        }) => <FormItem>
-                <FormLabel className="text-black font-bold">ZIP Code</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="e.g. 97204" 
-                    className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>} />
 
           <FormField control={form.control} name="state" render={({
           field
@@ -79,12 +65,30 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                     </SelectTrigger>
                     <SelectContent>
                       {usStates.map((state) => (
-                        <SelectItem key={state} value={state}>
+                        <SelectItem 
+                          key={state} 
+                          value={state}
+                          className="relative hover:bg-black hover:text-white transition-colors"
+                        >
                           {state}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>} />
+          
+          <FormField control={form.control} name="zipCode" render={({
+          field
+        }) => <FormItem>
+                <FormLabel className="text-black font-bold">ZIP Code</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="e.g. 97204" 
+                    className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>} />
@@ -106,5 +110,5 @@ const AddressSection: React.FC<AddressSectionProps> = ({
       </div>
     </div>;
 };
-export default AddressSection;
 
+export default AddressSection;
