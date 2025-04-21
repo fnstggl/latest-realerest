@@ -30,7 +30,7 @@ const CTASection: React.FC = () => {
               actually
               <br />
               <span className="font-playfair font-bold italic py-1 rounded-lg inline-block px-0 mx-[4px]">
-                below market?
+                below-market?
               </span>
             </h2>
             <p className="text-xl mb-8 text-foreground/80">We connect you with motivated sellers, skip the middlemen, and price homes to sell—fast.</p>
@@ -55,3 +55,4 @@ const CTASection: React.FC = () => {
 };
 
 export default CTASection;
+
