@@ -27,13 +27,13 @@ const CTASection: React.FC = () => {
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">
               But how are these homes 
-              <span className="font-playfair font-bold italic py-1 rounded-lg inline-block px-0 mx-[4px]">
-                actually
-              </span>
+              actually
               <br />
-              below market?
+              <span className="font-playfair font-bold italic py-1 rounded-lg inline-block px-0 mx-[4px]">
+                below market?
+              </span>
             </h2>
-            <p className="text-xl mb-8 text-foreground/80">Find affordable homes that don't make you compromise on size, location or safety. </p>
+            <p className="text-xl mb-8 text-foreground/80">We connect you with motivated sellers, skip the middlemen, and price homes to sell—fast.</p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl border border-white/30 electric-blue-button">
                 <Link to="/search">Find Homes</Link>
@@ -55,4 +55,3 @@ const CTASection: React.FC = () => {
 };
 
 export default CTASection;
-
