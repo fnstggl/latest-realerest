@@ -64,7 +64,7 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
           {notifications.map(notification => (
             <div 
               key={notification.id} 
-              className={`p-4 ${!notification.read ? 'bg-blue-50' : ''} cursor-pointer hover:bg-white/50 hover:border-l-4 hover:border-[#0892D0] transition-all`}
+              className={`p-4 ${!notification.read ? 'bg-blue-50' : ''} cursor-pointer hover:bg-white/50 transition-all`}
               onClick={() => handleNotificationClick(notification)}
             >
               <div className="flex justify-between items-start">
