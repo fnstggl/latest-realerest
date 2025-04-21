@@ -26,10 +26,10 @@ const CTASection: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 max-w-5xl w-full">
           <div>
             <h2 className="text-4xl font-bold mb-4 text-foreground">
-              But how are these homes 
-              <span className="font-playfair font-bold italic py-1 rounded-lg inline-block px-0 mx-[4px]">
+              But how are these homes{' '}
+              <span className="font-playfair font-bold italic py-1 rounded-lg inline-block px-0 mx-[12px]">
                 actually
-              </span>
+              </span>{' '}
               <br />
               below market?
             </h2>
