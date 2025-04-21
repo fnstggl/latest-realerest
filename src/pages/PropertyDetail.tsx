@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -24,6 +25,7 @@ const PropertyDetail: React.FC = () => {
     id: string;
     amount: number;
     buyerName: string;
+    withdrawn?: boolean;
   }>>([]);
   
   const {
@@ -94,9 +96,23 @@ const PropertyDetail: React.FC = () => {
     fetchRealOffers();
   }, [id]);
 
+  const refreshAfterDelay = () => {
+    setTimeout(() => {
+      refreshProperty();
+    }, 800);
+  };
+
   // This callback is triggered after successful offer submission
   const handleOfferSubmitted = () => {
-    refreshProperty();
+    setWasOfferSuccessful(true);
+    refreshAfterDelay();
+  };
+
+  // Handler for withdrawal
+  const handleOfferWithdrawn = () => {
+    // Also set as not successful so no accidental duplicate success messages
+    setWasOfferSuccessful(false);
+    refreshAfterDelay();
   };
 
   if (isLoading) {
@@ -123,25 +139,6 @@ const PropertyDetail: React.FC = () => {
   }
 
   const showPropertyDetails = property?.afterRepairValue !== undefined || property?.estimatedRehab !== undefined;
-
-  const refreshAfterDelay = () => {
-    setTimeout(() => {
-      refreshProperty();
-    }, 800);
-  };
-
-  // This callback is triggered after successful offer submission
-  const handleOfferSubmitted = () => {
-    setWasOfferSuccessful(true);
-    refreshAfterDelay();
-  };
-
-  // Handler for withdrawal
-  const handleOfferWithdrawn = () => {
-    // Also set as not successful so no accidental duplicate success messages
-    setWasOfferSuccessful(false);
-    refreshAfterDelay();
-  };
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
