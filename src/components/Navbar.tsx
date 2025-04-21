@@ -87,11 +87,11 @@ const Navbar: React.FC = () => {
         </div>
 
         <div className="hidden md:flex space-x-6 lg:space-x-8 mx-auto">
-          <Link to="/" className="nav-gradient-hover nav-home font-semibold text-sm lg:text-base">Home</Link>
-          <Link to="/search" className="nav-gradient-hover nav-browse font-semibold text-sm lg:text-base">Browse</Link>
-          <Link to="/sell/create" className="nav-gradient-hover nav-sell font-semibold text-sm lg:text-base">Sell</Link>
-          <Link to="/about" className="nav-gradient-hover nav-about font-semibold text-sm lg:text-base">About</Link>
-          <Link to="/contact" className="nav-gradient-hover nav-contact font-semibold text-sm lg:text-base">Contact</Link>
+          <Link to="/" className="playfair-hover font-semibold text-sm lg:text-base">Home</Link>
+          <Link to="/search" className="playfair-hover font-semibold text-sm lg:text-base">Browse</Link>
+          <Link to="/sell/create" className="playfair-hover font-semibold text-sm lg:text-base">Sell</Link>
+          <Link to="/about" className="playfair-hover font-semibold text-sm lg:text-base">About</Link>
+          <Link to="/contact" className="playfair-hover font-semibold text-sm lg:text-base">Contact</Link>
         </div>
 
         <div className="flex items-center gap-1 xs:gap-2 sm:gap-4">
