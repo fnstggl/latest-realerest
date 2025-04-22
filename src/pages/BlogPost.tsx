@@ -9,6 +9,7 @@ import SiteFooter from '@/components/sections/SiteFooter';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from 'react-helmet-async';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BlogPostData {
   id: string;
@@ -19,6 +20,8 @@ interface BlogPostData {
   read_time: number;
   created_at: string;
   property_id: string | null;
+  excerpt: string;
+  location?: string;
 }
 
 const BlogPost: React.FC = () => {
@@ -27,6 +30,7 @@ const BlogPost: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [property, setProperty] = useState<any>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchBlogPost = async () => {
@@ -90,31 +94,65 @@ const BlogPost: React.FC = () => {
       {blogPost && (
         <Helmet>
           <title>{blogPost.title} | Realer Estate Blog</title>
-          <meta name="description" content={blogPost.content.substring(0, 160)} />
+          <meta name="description" content={blogPost.content.substring(0, 155)} />
           <meta property="og:title" content={blogPost.title} />
-          <meta property="og:description" content={blogPost.content.substring(0, 160)} />
+          <meta property="og:description" content={blogPost.content.substring(0, 155)} />
           <meta property="og:image" content={blogPost.image} />
           <meta property="og:type" content="article" />
           <link rel="canonical" href={window.location.href} />
           <meta name="author" content={blogPost.author} />
           <meta name="twitter:title" content={blogPost.title} />
-          <meta name="twitter:description" content={blogPost.content.substring(0, 160)} />
+          <meta name="twitter:description" content={blogPost.content.substring(0, 155)} />
           <meta name="twitter:image" content={blogPost.image} />
+          
+          {/* Location-specific metadata */}
+          {blogPost.location && (
+            <>
+              <meta name="keywords" content={`real estate, property, ${blogPost.location}, homes for sale, affordable homes, investment properties`} />
+              <meta property="og:locality" content={blogPost.location} />
+            </>
+          )}
+          
+          {/* Article-specific structured data */}
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              "headline": blogPost.title,
+              "image": blogPost.image,
+              "datePublished": blogPost.created_at,
+              "author": {
+                "@type": "Person",
+                "name": blogPost.author
+              },
+              "publisher": {
+                "@type": "Organization",
+                "name": "Realer Estate",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png"
+                }
+              },
+              "description": blogPost.excerpt || blogPost.content.substring(0, 155)
+            })}
+          </script>
         </Helmet>
       )}
       
       <div className="container mx-auto px-4 py-16 max-w-4xl">
         <div className="mb-8">
-          <Button 
-            variant="outline" 
-            asChild 
-            className="mb-6 border-gray-200 hover:bg-gray-50"
-          >
-            <Link to="/blog" className="flex items-center gap-2">
-              <ArrowLeft size={16} />
-              Back to Blog
-            </Link>
-          </Button>
+          {isMobile && (
+            <Button 
+              variant="outline" 
+              asChild 
+              className="mb-6 border-gray-200 hover:bg-gray-50"
+            >
+              <Link to="/blog" className="flex items-center gap-2">
+                <ArrowLeft size={16} />
+                Back to Blog
+              </Link>
+            </Button>
+          )}
           
           {isLoading ? (
             <div className="space-y-4">
@@ -152,6 +190,7 @@ const BlogPost: React.FC = () => {
                     src={blogPost.image} 
                     alt={blogPost.title} 
                     className="w-full h-auto object-cover" 
+                    loading="lazy"
                   />
                 </div>
               )}
@@ -171,6 +210,7 @@ const BlogPost: React.FC = () => {
                         src={property.images && property.images.length > 0 ? property.images[0] : '/placeholder.svg'} 
                         alt={property.title}
                         className="w-full h-40 object-cover rounded-xl bg-gray-50" 
+                        loading="lazy"
                       />
                     </div>
                     <div className="md:w-2/3 space-y-2">

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -23,6 +24,7 @@ interface BlogPost {
   read_time: number;
   created_at: string;
   date?: string; // formatted date
+  location?: string;
 }
 
 const Blog: React.FC = () => {
@@ -112,12 +114,42 @@ const Blog: React.FC = () => {
       <Navbar />
       
       <Helmet>
-        <title>DoneDeal Blog | Property Investment Articles</title>
-        <meta name="description" content="Read our latest articles on property investment, real estate opportunities, and below market deals." />
-        <meta property="og:title" content="DoneDeal Blog | Property Investment Articles" />
-        <meta property="og:description" content="Read our latest articles on property investment, real estate opportunities, and below market deals." />
+        <title>Realer Estate Blog | Property Investment Articles</title>
+        <meta name="description" content="Read our latest articles on property investment, real estate opportunities, and below market deals in your area." />
+        <meta property="og:title" content="Realer Estate Blog | Property Investment Articles" />
+        <meta property="og:description" content="Read our latest articles on property investment, real estate opportunities, and below market deals in your area." />
         <meta property="og:type" content="website" />
         <link rel="canonical" href={window.location.href} />
+        <meta name="keywords" content="real estate blog, property investment, affordable homes, below market deals, property listings" />
+        
+        {/* Structured Data for Blog */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Blog",
+            "name": "Realer Estate Blog",
+            "description": "Articles about property investment, real estate opportunities, and below market deals.",
+            "url": window.location.href,
+            "publisher": {
+              "@type": "Organization",
+              "name": "Realer Estate",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png"
+              }
+            },
+            "blogPosts": filteredPosts.slice(0, 10).map(post => ({
+              "@type": "BlogPosting",
+              "headline": post.title,
+              "description": post.excerpt,
+              "author": {
+                "@type": "Person",
+                "name": post.author
+              },
+              "datePublished": post.created_at
+            }))
+          })}
+        </script>
       </Helmet>
       
       <div className="container mx-auto px-4 py-16">
@@ -135,6 +167,7 @@ const Blog: React.FC = () => {
                 className="pl-10 border border-gray-200 focus:ring-black focus:border-black" 
                 value={searchQuery} 
                 onChange={handleSearchChange} 
+                aria-label="Search blog posts"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             </div>
@@ -170,6 +203,7 @@ const Blog: React.FC = () => {
                         src={post.image} 
                         alt={post.title} 
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                        loading="lazy"
                       />
                     </div>
                   </Link>
@@ -209,6 +243,7 @@ const Blog: React.FC = () => {
                             size="icon" 
                             className="mr-2 text-gray-600 hover:text-black hover:bg-transparent"
                             onClick={() => openDeleteDialog(post.id)}
+                            aria-label="Delete post"
                           >
                             <Trash2 size={16} />
                           </Button>

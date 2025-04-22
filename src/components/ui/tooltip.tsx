@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
@@ -21,6 +22,7 @@ const TooltipContent = React.forwardRef<
       className
     )}
     {...props}
+    aria-live="polite"
   />
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
