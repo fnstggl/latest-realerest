@@ -33,7 +33,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           {fullAddress}{location ? `, ${location}` : ''}
         </span>;
     }
-    return <span className="font-medium text-sm sm:text-base">
+    return <span className="font-medium text-sm sm:text-base my-[35px]">
         <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
           Join Waitlist For Address
         </span>
