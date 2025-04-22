@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -202,9 +201,9 @@ const CreateBlog: React.FC = () => {
               Write quality content that will boost your property listings in search engines.
             </p>
             
-            <div className="layer-2 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 mb-10 rounded-xl hover:translate-y-[-5px] transition-all">
+            <div className="bg-white border border-gray-200 shadow-sm p-8 mb-10 rounded-xl">
               <h2 className="text-2xl font-bold mb-4">Choose Your Property</h2>
-              <p className="mb-4 layer-1 glass-content p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">Select one of your properties to feature in this blog post:</p>
+              <p className="mb-4 bg-gray-50 p-3 rounded-lg">Select one of your properties to feature in this blog post:</p>
               
               {propertiesLoading ? (
                 <div className="flex justify-center py-8">
@@ -214,12 +213,12 @@ const CreateBlog: React.FC = () => {
                   </div>
                 </div>
               ) : properties.length === 0 ? (
-                <div className="text-center py-6 layer-1 glass-content p-3 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
+                <div className="text-center py-6 bg-gray-50 p-3 rounded-lg">
                   <p className="text-gray-500 mb-2">You don't have any properties listed yet</p>
                   <Button 
                     onClick={() => navigate('/sell/create')} 
                     variant="outline"
-                    className="layer-2 glass border border-white/30 hover:translate-y-[-5px] transition-all"
+                    className="border-gray-200 hover:bg-gray-50"
                   >
                     Create Your First Listing
                   </Button>
@@ -227,10 +226,10 @@ const CreateBlog: React.FC = () => {
               ) : (
                 <>
                   <Select onValueChange={handlePropertySelect}>
-                    <SelectTrigger className="w-full layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm mb-6">
+                    <SelectTrigger className="w-full bg-white border-gray-200 mb-6">
                       <SelectValue placeholder="Select a property" />
                     </SelectTrigger>
-                    <SelectContent className="layer-2 glass-card backdrop-blur-lg border border-white/40">
+                    <SelectContent className="bg-white border border-gray-200">
                       {properties.map((property) => (
                         <SelectItem key={property.id} value={property.id}>
                           {property.title} - {formatCurrency(property.price)}
@@ -240,7 +239,7 @@ const CreateBlog: React.FC = () => {
                   </Select>
                   
                   {selectedProperty && (
-                    <Card className="p-4 layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm mb-6">
+                    <Card className="p-4 bg-gray-50 border-gray-200 mb-6">
                       <div className="flex items-center gap-4">
                         <div className="w-24 h-24 bg-gray-100 overflow-hidden rounded-lg">
                           <img 
@@ -256,7 +255,7 @@ const CreateBlog: React.FC = () => {
                           </div>
                           <div className="mt-1 font-medium">
                             {formatCurrency(selectedProperty.price)} 
-                            <span className="text-[#d60013] ml-2">
+                            <span className="text-red-600 ml-2">
                               ({selectedProperty.belowMarket}% below market)
                             </span>
                           </div>
@@ -266,7 +265,7 @@ const CreateBlog: React.FC = () => {
                         <Button 
                           onClick={handleGenerateContent} 
                           variant="outline"
-                          className="layer-2 glass border border-white/30 w-full flex gap-2 hover:translate-y-[-5px] transition-all"
+                          className="w-full border-gray-200 hover:bg-gray-50 flex gap-2"
                           disabled={isGenerating}
                         >
                           {isGenerating ? (
@@ -288,7 +287,7 @@ const CreateBlog: React.FC = () => {
               )}
             </div>
             
-            <div className="layer-3 glass-card backdrop-blur-lg border border-white/40 shadow-lg p-8 rounded-xl hover:translate-y-[-5px] transition-all">
+            <div className="bg-white border border-gray-200 shadow-sm p-8 rounded-xl">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="title" className="block text-lg font-medium mb-2">
@@ -300,7 +299,7 @@ const CreateBlog: React.FC = () => {
                     placeholder="Enter a catchy title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm"
+                    className="border border-gray-200 focus:ring-black focus:border-black"
                     required
                   />
                 </div>
@@ -315,7 +314,7 @@ const CreateBlog: React.FC = () => {
                     placeholder="A brief summary of your blog post (1-2 sentences)"
                     value={formData.excerpt}
                     onChange={handleChange}
-                    className="layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm"
+                    className="border border-gray-200 focus:ring-black focus:border-black"
                     required
                   />
                 </div>
@@ -327,7 +326,7 @@ const CreateBlog: React.FC = () => {
                   
                   {formData.content ? (
                     <div className="mb-4">
-                      <div className="layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm rounded-md p-4">
+                      <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
                         <div className="prose max-w-none">
                           {formattedContent}
                         </div>
@@ -336,7 +335,7 @@ const CreateBlog: React.FC = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          className="text-sm layer-1 glass hover:translate-y-[-5px] transition-all"
+                          className="border-gray-200 hover:bg-gray-50 text-sm"
                           onClick={() => {
                             const textarea = document.getElementById('content') as HTMLTextAreaElement;
                             textarea.focus();
@@ -354,7 +353,7 @@ const CreateBlog: React.FC = () => {
                     placeholder="Write your blog post content here..."
                     value={formData.content}
                     onChange={handleChange}
-                    className={`layer-1 glass-content backdrop-blur-sm border border-white/20 shadow-sm min-h-[300px] ${
+                    className={`border border-gray-200 focus:ring-black focus:border-black min-h-[300px] ${
                       formData.content ? "sr-only" : ""
                     }`}
                     required
@@ -364,7 +363,7 @@ const CreateBlog: React.FC = () => {
                 <div className="pt-4">
                   <Button 
                     type="submit" 
-                    className="layer-3 glass-content backdrop-blur-md border border-white/40 hover:translate-y-[-5px] transition-all w-full"
+                    className="bg-black hover:bg-gray-800 text-white w-full"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -380,7 +379,7 @@ const CreateBlog: React.FC = () => {
               </form>
             </div>
             
-            <div className="mt-8 layer-1 glass-content p-5 rounded-lg backdrop-blur-sm border border-white/20 shadow-sm">
+            <div className="mt-8 bg-gray-50 p-5 rounded-lg">
               <h2 className="text-xl font-bold mb-4">SEO Tips:</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Include relevant keywords related to real estate and your property.</li>
