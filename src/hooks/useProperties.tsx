@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -33,19 +34,28 @@ export const useProperties = (userId: string | undefined) => {
   const [myProperties, setMyProperties] = useState<Property[]>([]);
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchUserProperties = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      setIsLoading(false);
+      return;
+    }
     
     setIsLoading(true);
+    setError(null);
+    
     try {
+      // Add a small delay to ensure auth context is fully loaded
       const { data, error } = await supabase
         .from('property_listings')
         .select('*')
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .abortSignal(AbortSignal.timeout(10000)); // Add timeout to prevent hanging requests
         
       if (error) {
         console.error("Error fetching properties:", error);
+        setError("Failed to load your properties");
         toast.error("Failed to load your properties");
         return;
       }
@@ -75,46 +85,63 @@ export const useProperties = (userId: string | undefined) => {
       }
     } catch (error) {
       console.error("Exception fetching properties:", error);
+      setError("Failed to load your properties. Please refresh and try again.");
     } finally {
       setIsLoading(false);
     }
   }, [userId]);
 
   const fetchWaitlistCounts = async (properties: Property[]) => {
+    if (!properties.length) return;
+    
     try {
-      // For each property, get the count of waitlist requests
-      const propertiesWithCounts = await Promise.all(properties.map(async (property) => {
-        const { count, error } = await supabase
-          .from('waitlist_requests')
-          .select('*', { count: 'exact', head: true })
-          .eq('property_id', property.id);
+      // Use Promise.allSettled to prevent a single error from breaking the whole operation
+      const propertiesWithCounts = await Promise.allSettled(properties.map(async (property) => {
+        try {
+          const { count, error } = await supabase
+            .from('waitlist_requests')
+            .select('*', { count: 'exact', head: true })
+            .eq('property_id', property.id);
+            
+          if (error) {
+            console.error(`Error counting waitlist for property ${property.id}:`, error);
+            return property;
+          }
           
-        if (error) {
-          console.error(`Error counting waitlist for property ${property.id}:`, error);
+          return {
+            ...property,
+            waitlistCount: count || 0
+          };
+        } catch (e) {
+          console.error(`Error processing property ${property.id}:`, e);
           return property;
         }
-        
-        return {
-          ...property,
-          waitlistCount: count || 0
-        };
       }));
       
-      setMyProperties(propertiesWithCounts);
+      const validResults = propertiesWithCounts
+        .filter((result): result is PromiseFulfilledResult<Property> => result.status === 'fulfilled')
+        .map(result => (result as PromiseFulfilledResult<Property>).value);
+      
+      if (validResults.length) {
+        setMyProperties(validResults);
+      }
     } catch (error) {
       console.error("Error fetching waitlist counts:", error);
     }
   };
 
   const fetchWaitlistRequests = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
     
     try {
       // Fetch properties owned by user
       const { data: properties, error: propError } = await supabase
         .from('property_listings')
         .select('id,title')
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .abortSignal(AbortSignal.timeout(8000)); // Add timeout
         
       if (propError) {
         console.error("Error fetching user properties:", propError);
@@ -133,7 +160,8 @@ export const useProperties = (userId: string | undefined) => {
       const { data: requests, error: reqError } = await supabase
         .from('waitlist_requests')
         .select('*')
-        .in('property_id', propertyIds);
+        .in('property_id', propertyIds)
+        .abortSignal(AbortSignal.timeout(8000)); // Add timeout
         
       if (reqError) {
         console.error("Error fetching waitlist requests:", reqError);
@@ -162,10 +190,17 @@ export const useProperties = (userId: string | undefined) => {
   }, [userId]);
 
   useEffect(() => {
+    let isMounted = true;
+    
     if (!userId) return;
     
-    fetchUserProperties();
-    fetchWaitlistRequests();
+    // Small timeout to ensure auth context is fully loaded
+    const timeoutId = setTimeout(() => {
+      if (isMounted) {
+        fetchUserProperties();
+        fetchWaitlistRequests();
+      }
+    }, 100);
     
     // Set up a subscription for realtime waitlist updates
     const waitlistSubscription = supabase
@@ -177,14 +212,18 @@ export const useProperties = (userId: string | undefined) => {
           table: 'waitlist_requests' 
         },
         (payload) => {
-          console.log('New waitlist request:', payload);
-          fetchWaitlistRequests();
-          fetchUserProperties(); // Refresh property list to update counts
+          if (isMounted) {
+            console.log('New waitlist request:', payload);
+            fetchWaitlistRequests();
+            fetchUserProperties(); // Refresh property list to update counts
+          }
         }
       )
       .subscribe();
       
     return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
       supabase.removeChannel(waitlistSubscription);
     };
   }, [userId, fetchUserProperties, fetchWaitlistRequests]);
@@ -196,6 +235,7 @@ export const useProperties = (userId: string | undefined) => {
     setWaitlistUsers,
     isLoading,
     setIsLoading,
+    error,
     refreshProperties: fetchUserProperties,
     refreshWaitlist: fetchWaitlistRequests
   };

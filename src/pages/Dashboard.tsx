@@ -15,6 +15,7 @@ import AccountTab from "@/components/dashboard/AccountTab";
 import NotificationsTab from "@/components/dashboard/NotificationsTab";
 import { useProperties } from "@/hooks/useProperties";
 import { TabNav } from "@/components/dashboard/TabNav";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -36,8 +37,16 @@ const Dashboard: React.FC = () => {
     waitlistUsers,
     setWaitlistUsers,
     isLoading,
-    setIsLoading
+    setIsLoading,
+    error
   } = useProperties(user?.id);
+
+  // Mounted state to ensure proper hydration before rendering content
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Set active tab based on navigation state if provided
   useEffect(() => {
@@ -110,12 +119,20 @@ const Dashboard: React.FC = () => {
     }
   ];
 
+  if (!isMounted) {
+    return <LoadingSpinner fullScreen />;
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-6 py-12 max-w-6xl">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.5 }}
+        >
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-4xl font-bold mx-0 my-[35px] text-black">Dashboard</h1>
@@ -151,6 +168,14 @@ const Dashboard: React.FC = () => {
               activeTab={activeTab} 
               onValueChange={setActiveTab} 
             />
+            
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 mb-4">
+                <p>There was an error loading your data. Please refresh and try again.</p>
+              </div>
+            )}
+            
+            {tabItems.find(item => item.value === activeTab)?.content}
           </Tabs>
         </motion.div>
       </div>

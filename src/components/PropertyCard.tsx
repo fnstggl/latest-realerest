@@ -55,7 +55,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             onError={handleImageError} 
             loading="lazy" 
             decoding="async"
-            fetchpriority="auto"
+            fetchPriority="auto"
             width="400"
             height="240"
           />
