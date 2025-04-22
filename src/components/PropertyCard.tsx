@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
@@ -53,6 +54,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             className="h-[240px] w-full object-cover rounded-t-xl"
             onError={handleImageError} 
             loading="lazy" 
+            decoding="async"
+            fetchpriority="auto"
+            width="400"
+            height="240"
           />
           
           {belowMarket > 0 && (
