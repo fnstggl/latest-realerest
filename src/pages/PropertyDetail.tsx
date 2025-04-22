@@ -140,16 +140,18 @@ const PropertyDetail: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 relative z-10">
+        {isMobile && (
         <div className="mt-10 mb-2 md:mt-0 md:mb-8">
           <Button asChild variant="glass" 
-            className={`flex items-center hover:bg-white/40 font-bold transition-colors layer-hover layer-2
-            ${isMobile ? 'text-[10px] px-1.5 py-0.5 w-auto rounded-md' : 'text-sm px-4 py-2'}`}>
-            <Link to="/search" className={`${isMobile ? 'text-black' : 'bg-white text-glass-blue'}`}>
-              <ArrowLeft size={isMobile ? 12 : 18} className={isMobile ? 'mr-0.5' : 'mr-2'} />
+            className="flex items-center hover:bg-white/40 font-bold transition-colors layer-hover layer-2
+            text-[10px] px-1.5 py-0.5 w-auto rounded-md">
+            <Link to="/search" className="text-black">
+              <ArrowLeft size={12} className="mr-0.5" />
               Back to Search
             </Link>
           </Button>
         </div>
+      )}
         
         {!isOwner && isApproved && property && (
           <OfferStatusBanner 
