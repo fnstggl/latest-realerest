@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-
 interface PropertyHeaderProps {
   title: string;
   belowMarket: number;
@@ -16,15 +14,14 @@ interface PropertyHeaderProps {
   showFullAddress: boolean;
   onShowAddressClick: () => void;
 }
-
-const PropertyHeader: React.FC<PropertyHeaderProps> = ({ 
-  title, 
-  belowMarket, 
-  price, 
-  marketPrice, 
-  beds, 
-  baths, 
-  sqft, 
+const PropertyHeader: React.FC<PropertyHeaderProps> = ({
+  title,
+  belowMarket,
+  price,
+  marketPrice,
+  beds,
+  baths,
+  sqft,
   location,
   fullAddress,
   showFullAddress,
@@ -32,45 +29,32 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
 }) => {
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
-      return (
-        <span className="font-medium text-sm sm:text-base break-words">
+      return <span className="font-medium text-sm sm:text-base break-words">
           {fullAddress}{location ? `, ${location}` : ''}
-        </span>
-      );
+        </span>;
     }
-    
-    return (
-      <span className="font-medium text-sm sm:text-base">
-        <span 
-          className="cursor-pointer text-black font-bold hover:underline"
-          onClick={onShowAddressClick}
-        >
+    return <span className="font-medium text-sm sm:text-base">
+        <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
           Join Waitlist For Address
         </span>
         {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
-      </span>
-    );
+      </span>;
   };
-
-  return (
-    <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 sm:p-6 rounded-xl">
+  return <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center gap-2 mb-2">
         <div className="relative bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg hover:bg-white transition-all">
           <span className="text-black font-playfair font-bold italic mr-1">{belowMarket}%</span> 
           <span className="text-black font-playfair font-bold italic">Below Market</span>
-          <span 
-            className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-            style={{
-              background: "transparent",
-              border: "2px solid transparent",
-              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "border-box",
-              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude"
-            }}
-          />
+          <span className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
+          background: "transparent",
+          border: "2px solid transparent",
+          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+          backgroundOrigin: "border-box",
+          backgroundClip: "border-box",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude"
+        }} />
         </div>
       </div>
       
@@ -106,8 +90,6 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           <span className="ml-1 text-black">sqft</span>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PropertyHeader;
