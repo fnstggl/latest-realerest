@@ -1,20 +1,25 @@
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
+const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY");
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 interface EmailPayload {
   to: string | string[];
   subject: string;
   html?: string;
   text?: string;
-  from?: string;
+  from?: string; // optional, falls back to default sender
 }
+
+const DEFAULT_FROM = {
+  name: "Realer Estate",
+  email: "no-reply@realerestate.app"
+};
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight
@@ -36,37 +41,61 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Compose the email fields
-    const email = {
-      from: payload.from || "Realer Estate <no-reply@realerestate.app>",
-      to: Array.isArray(payload.to) ? payload.to : [payload.to],
+    // Normalize recipient(s)
+    const recipients = Array.isArray(payload.to)
+      ? payload.to.map(email => ({ email }))
+      : [{ email: payload.to }];
+
+    // Parse sender details
+    let from = DEFAULT_FROM;
+    if (payload.from) {
+      // Try to parse "Name <email@domain.com>" format
+      const match = /^(.+)\s+<(.+@.+\..+)>$/.exec(payload.from);
+      if (match) {
+        from = {
+          name: match[1].trim(),
+          email: match[2].trim()
+        };
+      } else if (/^[^@]+@[^@]+\.[^@]+$/.test(payload.from)) {
+        from = {
+          name: "Realer Estate",
+          email: payload.from.trim()
+        };
+      }
+    }
+
+    // Compose Brevo payload
+    const brevoPayload = {
+      sender: from,
+      to: recipients,
       subject: payload.subject,
-      html: payload.html,
-      text: payload.text
+      htmlContent: payload.html,
+      textContent: payload.text
     };
 
-    // Send email via Resend API
-    const resendResponse = await fetch("https://api.resend.com/emails", {
+    // Send via Brevo API
+    const brevoResponse = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json"
+        "api-key": BREVO_API_KEY,
+        "Content-Type": "application/json",
+        ...corsHeaders,
       },
-      body: JSON.stringify(email)
+      body: JSON.stringify(brevoPayload)
     });
 
-    const data = await resendResponse.json();
+    const brevoData = await brevoResponse.json();
 
-    if (!resendResponse.ok) {
-      console.error("Resend error:", data);
+    if (!brevoResponse.ok) {
+      console.error("Brevo error:", brevoData);
       return new Response(
-        JSON.stringify({ error: data.error || "Failed to send email" }),
+        JSON.stringify({ error: brevoData.message || "Failed to send email" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     return new Response(
-      JSON.stringify({ success: true, data }),
+      JSON.stringify({ success: true, data: brevoData }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {
