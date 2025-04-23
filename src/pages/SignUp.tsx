@@ -62,7 +62,7 @@ const SignUp: React.FC = () => {
         <div className="mx-auto w-full max-w-md bg-white/75 backdrop-blur-lg border border-white/30 p-8 rounded-xl shadow-lg">
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-2 text-black">Create Account</h1>
-            <p className="text-gray-600">Join Realer Estate and say goodbye to homebuying anxiety.</p>
+            <p className="text-gray-600">Access all properties. Sign up in 15 seconds.</p>
           </div>
         
           {signupError && <Alert variant="destructive" className="mb-6 bg-white/75 backdrop-blur-md">
