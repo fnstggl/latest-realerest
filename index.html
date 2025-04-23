@@ -5,53 +5,58 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Realer Estate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    
-    <!-- Meta description for better SEO (≤160 characters) -->
-    <meta name="description" content="Find below market real estate deals & investment opportunities at Realer Estate. Get access to motivated sellers and off-market properties." />
-    
+    <title>Realer Estate | Discounted Homes & Off-Market Property Deals</title>
+    <meta name="description" content="Discover below market real estate deals. Find affordable homes, off-market properties, and motivated sellers at Realer Estate. Start your property search!" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="">
-    <meta property="og:title" content="Realer Estate - Below Market Real Estate Deals">
-    <meta property="og:description" content="Find below market real estate deals & investment opportunities at Realer Estate. Get motivated sellers and off-market properties." />
+    <meta property="og:url" content="https://donedealfinal.lovable.app/">
+    <meta property="og:title" content="Realer Estate | Discounted Homes & Off-Market Property Deals">
+    <meta property="og:description" content="Discover below market real estate deals. Find affordable homes, off-market properties, and motivated sellers at Realer Estate." />
     <meta property="og:image" content="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png">
-    
+    <meta property="og:updated_time" content="2025-04-23T00:00:00+00:00">
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Realer Estate - Below Market Real Estate Deals">
-    <meta name="twitter:description" content="Find below market real estate deals & investment opportunities at Realer Estate. Get motivated sellers and off-market properties." />
+    <meta name="twitter:title" content="Realer Estate | Discounted Homes & Off-Market Property Deals">
+    <meta name="twitter:description" content="Discover below market real estate deals. Find affordable homes, off-market properties, and motivated sellers at Realer Estate." />
     <meta name="twitter:image" content="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png">
     
     <!-- Preload critical assets -->
     <link rel="preload" href="/src/styles/index.css" as="style">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" as="style">
-    
+
     <!-- DNS prefetch for external resources -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://source.unsplash.com">
     <link rel="dns-prefetch" href="https://source.unsplash.com">
-    <link rel="canonical" href="">
+    <link rel="canonical" href="https://donedealfinal.lovable.app/">
 
-    <!-- Structured Data for Real Estate website (JSON-LD) -->
+    <!-- Schema.org structured data for Real Estate website (JSON-LD) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "RealEstateAgent",
       "name": "Realer Estate",
+      "image": "https://donedealfinal.lovable.app/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png",
       "url": "https://donedealfinal.lovable.app",
       "logo": "https://donedealfinal.lovable.app/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png",
-      "description": "Find below market real estate deals & investment opportunities at Realer Estate. Get motivated sellers and off-market properties.",
+      "description": "Discover below market real estate deals. Find affordable homes, off-market properties, and motivated sellers at Realer Estate.",
       "address": {
         "@type": "PostalAddress",
         "addressCountry": "US"
       }
     }
     </script>
+    <!-- Responsive design: TailwindCSS produces scoped media queries on build; no further static CSS needed here. -->
   </head>
   <body>
+    <!-- Visually-present H1/H2 for SEO - React page handles these, but fallback here if JS disabled -->
+    <noscript>
+      <h1>Realer Estate – Discounted Homes & Off-Market Real Estate Deals</h1>
+      <h2>Find below-market opportunities and motivated sellers</h2>
+    </noscript>
     <div id="root"></div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
