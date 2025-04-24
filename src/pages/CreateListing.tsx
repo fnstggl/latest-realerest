@@ -34,30 +34,6 @@ const LoadingFallback = () => <div className="flex justify-center items-center p
     <Loader2 className="h-8 w-8 animate-spin text-[#d60013]" />
   </div>;
 
-// Update the formSchema with bounty
-const formSchema = z.object({
-  address: "",
-  description: "",
-  price: "",
-  marketPrice: "",
-  city: "",
-  state: "",
-  zipCode: "",
-  beds: "",
-  baths: "",
-  sqft: "",
-  propertyType: "",
-  afterRepairValue: "",
-  estimatedRehab: "",
-  comparableAddress1: "",
-  comparableAddress2: "",
-  comparableAddress3: "",
-  bounty: z.string().refine(
-    (val) => !val || Number(val) >= 3000,
-    { message: "Minimum incentive amount is $3,000" }
-  ),
-});
-
 const CreateListing: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
@@ -306,7 +282,7 @@ const CreateListing: React.FC = () => {
 
   // If page is not fully loaded, show a more pleasant loading state
   if (!isPageLoaded) {
-    return <div className="min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
+    return <div className="min-h-screen bg-[#FCFBF8]">
         <Navbar />
         <div className="container mx-auto px-4 py-12 flex justify-center items-center">
           <div className="text-center">
@@ -316,7 +292,7 @@ const CreateListing: React.FC = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
       <motion.div className="container mx-auto px-4 py-12" initial={{

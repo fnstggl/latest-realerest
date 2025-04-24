@@ -1,4 +1,3 @@
-
 import { z } from "zod";
 
 export const formSchema = z.object({
@@ -39,7 +38,11 @@ export const formSchema = z.object({
   estimatedRehab: z.string().optional(),
   comparableAddress1: z.string().optional(),
   comparableAddress2: z.string().optional(),
-  comparableAddress3: z.string().optional()
+  comparableAddress3: z.string().optional(),
+  bounty: z.string().refine(
+    (val) => !val || Number(val) >= 3000,
+    { message: "Minimum incentive amount is $3,000" }
+  ),
 }).refine((data) => {
   const marketPriceNum = Number(data.marketPrice);
   const priceNum = Number(data.price);
@@ -48,4 +51,3 @@ export const formSchema = z.object({
   message: "Market price must be equal to or greater than the listing price",
   path: ["marketPrice"]
 });
-

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -26,6 +25,7 @@ interface PropertyDetail {
   sellerName?: string;
   sellerEmail?: string;
   sellerPhone?: string;
+  bounty?: number;
 }
 
 interface SellerInfo {
@@ -99,7 +99,8 @@ export function usePropertyDetail(propertyId: string | undefined) {
         estimatedRehab: data.estimated_rehab ? Number(data.estimated_rehab) : undefined,
         belowMarket: Math.round(((Number(data.market_price) - Number(data.price)) / Number(data.market_price)) * 100),
         createdAt: data.created_at,
-        sellerId: data.user_id
+        sellerId: data.user_id,
+        bounty: data.bounty ? Number(data.bounty) : undefined
       };
       
       setProperty(formattedProperty);
