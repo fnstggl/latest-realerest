@@ -318,8 +318,8 @@ const Search: React.FC = () => {
             className="absolute z-20 pointer-events-auto"
             style={{
               left: '50%',
-              transform: 'translateX(-50%)',
-              bottom: '25%',
+              transform: 'translate(-50%, 50%)',
+              bottom: lastFullRowStartIndex >= 3 ? '5%' : '15%',
               width: 'auto'
             }}
           >

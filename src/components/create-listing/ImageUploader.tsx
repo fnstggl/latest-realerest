@@ -170,7 +170,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       {isSubmitting && uploadProgress > 0 && (
         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
           <div 
-            className="bg-[#d60013] h-2.5 rounded-full transition-all duration-300" 
+            className="bg-black h-2.5 rounded-full transition-all duration-300" 
             style={{ width: `${uploadProgress}%` }}
           ></div>
         </div>

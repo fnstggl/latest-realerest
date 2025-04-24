@@ -12,7 +12,7 @@ interface PropertyDetailsSectionProps {
 
 const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form }) => {
   return (
-    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
+    <div className="rounded-xl border border-black/10 bg-white p-6">
       <h2 className="text-xl font-bold mb-4">Property Details</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Bedrooms */}

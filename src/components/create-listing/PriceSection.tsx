@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -23,7 +22,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
   };
 
   return (
-    <div className="layer-1 glass-content p-6 rounded-xl backdrop-blur-sm border border-white/20 shadow-sm">
+    <div className="rounded-xl border border-black/10 bg-white p-6">
       <h2 className="text-xl font-bold mb-4">Price Information</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Listing Price */}
@@ -67,9 +66,8 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
         />
       </div>
       
-      {/* Display discount percentage */}
       {form.watch('price') && form.watch('marketPrice') && (
-        <div className="mt-4 p-4 layer-1 glass backdrop-blur-sm border border-white/20 rounded-xl">
+        <div className="mt-4 p-4 rounded-xl border border-black/10 bg-white">
           <p className="font-bold">
             Discount: <span className="text-[#ea384c]">{calculateDiscountPercent()}% below market</span>
           </p>
