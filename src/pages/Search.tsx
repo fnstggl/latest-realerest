@@ -19,6 +19,7 @@ const Search: React.FC = () => {
   const [isGridView, setIsGridView] = useState(true);
   const [filteredProperties, setFilteredProperties] = useState<Listing[]>([]);
   const [sortOption, setSortOption] = useState("recommended");
+  const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
   const {
     listings: properties,
     loading,
@@ -311,16 +312,16 @@ const Search: React.FC = () => {
 
             {!isAuthenticated && !searchQuery && index === lastFullRowStartIndex && (
               <div 
-                className="absolute z-20 flex justify-center items-center"
+                className="absolute z-20 w-full flex justify-center"
                 style={{
                   bottom: '50%',
+                  transform: 'translateY(50%)',
                   left: '50%',
-                  transform: 'translate(-50%, 50%)',
-                  width: isGridView ? `${100 * ITEMS_PER_ROW}%` : '100%'
+                  marginLeft: '-50%'
                 }}
               >
                 <Button 
-                  className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
+                  className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
                   onClick={() => window.location.href = '/signin'}
                 >
                   Sign in to view more properties
@@ -360,9 +361,19 @@ const Search: React.FC = () => {
             </Sheet>
           </div>
           
-          <div className="hidden lg:block w-72 shrink-0">
+          <div className={`hidden lg:block transition-all duration-300 ${isFiltersCollapsed ? 'w-12' : 'w-72'} shrink-0`}>
             <div className="sticky top-8">
-              <PropertyFilters onFilterChange={handleFilterChange} />
+              <Button 
+                variant="ghost" 
+                onClick={() => setIsFiltersCollapsed(!isFiltersCollapsed)}
+                className="mb-4 w-full flex justify-between items-center"
+              >
+                <span className={isFiltersCollapsed ? 'hidden' : 'block'}>Filters</span>
+                <ChevronDown className={`transform transition-transform ${isFiltersCollapsed ? 'rotate-90' : ''}`} />
+              </Button>
+              <div className={`overflow-hidden transition-all duration-300 ${isFiltersCollapsed ? 'w-0 opacity-0' : 'w-full opacity-100'}`}>
+                <PropertyFilters onFilterChange={handleFilterChange} />
+              </div>
             </div>
           </div>
           
@@ -394,7 +405,47 @@ const Search: React.FC = () => {
               </div>
             </div>
             
-            {renderPropertyGrid()}
+            <div className={`grid gap-6 relative ${isFiltersCollapsed ? 'md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3'}`}>
+              {visibleProperties.map((property, index) => (
+                <div 
+                  key={property.id} 
+                  className={`relative ${index >= lastFullRowStartIndex && !isAuthenticated && !searchQuery ? 'pointer-events-none' : ''}`}
+                >
+                  <PropertyCard {...property} />
+                  
+                  {!isAuthenticated && !searchQuery && index >= lastFullRowStartIndex && index < lastFullRowEndIndex && (
+                    <div className="absolute inset-0 z-10">
+                      <div 
+                        className="absolute inset-0 rounded-xl"
+                        style={{ 
+                          backdropFilter: 'blur(3px)',
+                          background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {!isAuthenticated && !searchQuery && index === lastFullRowStartIndex && (
+                    <div 
+                      className="absolute z-20 w-full flex justify-center"
+                      style={{
+                        bottom: '50%',
+                        transform: 'translateY(50%)',
+                        left: '50%',
+                        marginLeft: '-50%'
+                      }}
+                    >
+                      <Button 
+                        className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
+                        onClick={() => window.location.href = '/signin'}
+                      >
+                        Sign in to view more properties
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
