@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 const Careers: React.FC = () => {
-  return <div className="min-h-screen bg-[#FCFBF8]">
+  return <div className="min-h-screen bg-white">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16">
@@ -62,9 +62,9 @@ const Careers: React.FC = () => {
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h3 className="text-2xl font-semibold">Marketing Intern</h3>
-                    <p className="text-black mt-1">Marketing</p>
+                    <p className="text-[#0892D0] mt-1">Marketing</p>
                   </div>
-                  <div className="px-3 py-1 bg-gray-50 text-black rounded-full text-sm font-medium">
+                  <div className="px-3 py-1 bg-blue-50 text-[#0892D0] rounded-full text-sm font-medium">
                     Remote
                   </div>
                 </div>
@@ -74,8 +74,8 @@ const Careers: React.FC = () => {
                 </p>
                 
                 <div className="flex items-center mt-6">
-                  <Mail size={18} className="mr-2 text-black" />
-                  <a href="mailto:apply@donedealhome.com" className="font-medium text-black hover:underline">apply@realerestate.com</a>
+                  <Mail size={18} className="mr-2 text-[#0892D0]" />
+                  <a href="mailto:apply@donedealhome.com" className="font-medium text-[#0892D0] hover:underline">apply@realerestate.com</a>
                 </div>
               </div>
               
@@ -83,9 +83,9 @@ const Careers: React.FC = () => {
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h3 className="text-2xl font-semibold">Investment Opportunity</h3>
-                    <p className="text-black mt-1">Investor Relations</p>
+                    <p className="text-[#0892D0] mt-1">Investor Relations</p>
                   </div>
-                  <div className="px-3 py-1 bg-gray-50 text-black rounded-full text-sm font-medium">
+                  <div className="px-3 py-1 bg-blue-50 text-[#0892D0] rounded-full text-sm font-medium">
                     Flexible
                   </div>
                 </div>
@@ -95,8 +95,8 @@ const Careers: React.FC = () => {
                 </p>
                 
                 <div className="flex items-center mt-6">
-                  <Mail size={18} className="mr-2 text-black" />
-                  <a href="mailto:invest@donedealhome.com" className="font-medium text-black hover:underline">invest@realerestate.com</a>
+                  <Mail size={18} className="mr-2 text-[#0892D0]" />
+                  <a href="mailto:invest@donedealhome.com" className="font-medium text-[#0892D0] hover:underline">invest@realerestate.com</a>
                 </div>
               </div>
             </div>

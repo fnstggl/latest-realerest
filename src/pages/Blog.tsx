@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -109,8 +110,7 @@ const Blog: React.FC = () => {
   const filteredPosts = blogPosts.filter(post => post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) || post.author.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-[#FCFBF8]">
-      
+    <div className="min-h-screen bg-white">
       <Navbar />
       
       <Helmet>

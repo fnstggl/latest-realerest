@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -84,7 +85,7 @@ export default {
 					orange: '#F97316',
 					pink: '#FF3CAC',
 					peach: '#FDE1D3',
-					blue: '#000000',
+					blue: '#0EA5E9',
 					green: '#10B981',
 					yellow: '#FBBF24',
 					background: 'rgba(255, 255, 255, 0.05)',
