@@ -311,19 +311,18 @@ const Search: React.FC = () => {
             )}
           </div>
         ))}
-
+        
         {!isAuthenticated && !searchQuery && lastFullRowStartIndex >= 0 && (
           <div 
-            className="absolute z-20 pointer-events-auto"
+            className={`absolute z-20 pointer-events-auto transition-all duration-300 ${
+              isMobile ? 'w-[90%] left-[5%] bottom-[15%]' : 'left-1/2 -translate-x-1/2'
+            }`}
             style={{
-              left: '50%',
-              transform: 'translate(-50%, 50%)',
-              bottom: lastFullRowStartIndex >= 3 ? '5%' : '15%',
-              width: 'auto'
+              bottom: isMobile ? '15%' : lastFullRowStartIndex >= 3 ? '25%' : '35%'
             }}
           >
             <Button 
-              className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
+              className="relative w-full sm:w-auto bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
               onClick={() => window.location.href = '/signin'}
             >
               Sign in to view more properties
@@ -431,7 +430,6 @@ const Search: React.FC = () => {
                 <div 
                   className="absolute z-20"
                   style={{
-                    // Center the button on the middle property of the last row
                     left: '50%',
                     transform: 'translateX(-50%)',
                     bottom: '25%',
