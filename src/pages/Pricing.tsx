@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
@@ -52,7 +51,7 @@ const PricingTier = ({
 
 const Pricing: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16">

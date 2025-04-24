@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { useMessages } from '@/hooks/useMessages';
@@ -23,7 +22,7 @@ const Messages: React.FC = () => {
   }, [conversations]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
 
       {/* Increased top margin from mt-4 sm:mt-6 to mt-16 sm:mt-20 to clear navbar */}

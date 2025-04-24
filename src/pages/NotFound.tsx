@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-donedeal-blue/30 to-donedeal-pink/30 flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-[#FCFBF8] flex flex-col items-center justify-center px-4">
       <div className="text-center max-w-md">
         <div className="w-20 h-20 mx-auto mb-6 bg-donedeal-navy rounded-full flex items-center justify-center">
           <span className="text-4xl font-bold text-white">404</span>

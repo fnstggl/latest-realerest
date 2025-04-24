@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
@@ -56,7 +55,7 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16 lg:py-24">
