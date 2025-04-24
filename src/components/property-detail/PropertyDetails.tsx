@@ -12,8 +12,8 @@ interface PropertyDetailsProps {
 }
 
 const PropertyDetails: React.FC<PropertyDetailsProps> = ({ 
-  afterRepairValue, 
-  estimatedRehab,
+  afterRepairValue = 0,
+  estimatedRehab = 0,
   propertyType = "Single Family",
   yearBuilt = "2005",
   lotSize = "0.25 acres",
@@ -21,7 +21,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
 }) => {
   return (
     <div className="h-full border border-white/40 shadow-lg p-4 sm:p-6 rounded-xl">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black">The Numbers</h2>
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black">Property Details</h2>
       
       <div className="space-y-4 text-sm sm:text-base">
         <div className="flex justify-between p-2 rounded-lg backdrop-blur-sm border border-white/40 shadow-sm">
@@ -41,19 +41,16 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
           <span className="text-black">{parking}</span>
         </div>
         
-        {afterRepairValue !== undefined && (
-          <div className="flex justify-between p-3 rounded-lg backdrop-blur-md border border-white/40 shadow-md">
-            <span className="font-bold text-black">ARV:</span>
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="flex flex-col p-2 rounded-lg backdrop-blur-sm border border-white/40 shadow-sm">
+            <span className="text-xs text-gray-600">After Repair Value</span>
             <span className="font-bold text-black">{formatCurrency(afterRepairValue)}</span>
           </div>
-        )}
-        
-        {estimatedRehab !== undefined && (
-          <div className="flex justify-between p-3 rounded-lg backdrop-blur-md border border-white/40 shadow-md">
-            <span className="font-bold text-black">Est. Rehab Cost:</span>
+          <div className="flex flex-col p-2 rounded-lg backdrop-blur-sm border border-white/40 shadow-sm">
+            <span className="text-xs text-gray-600">Est. Rehab Cost</span>
             <span className="font-bold text-black">{formatCurrency(estimatedRehab)}</span>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
