@@ -61,23 +61,9 @@ const App = () => (
       <Sonner />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/search"
-            element={
-              <ProtectedRoute>
-                <Search />
-              </ProtectedRoute>
-            }
-          />
           <Route path="/signup" element={<SignUp />} />
           <Route 
             path="/dashboard" 
@@ -119,86 +105,16 @@ const App = () => (
               </ProtectedRoute>
             } 
           />
-          <Route
-            path="/about"
-            element={
-              <ProtectedRoute>
-                <About />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contact"
-            element={
-              <ProtectedRoute>
-                <Contact />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/blog"
-            element={
-              <ProtectedRoute>
-                <Blog />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/blog/:id"
-            element={
-              <ProtectedRoute>
-                <BlogPost />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/faq"
-            element={
-              <ProtectedRoute>
-                <FAQ />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/terms"
-            element={
-              <ProtectedRoute>
-                <Terms />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/privacy"
-            element={
-              <ProtectedRoute>
-                <Privacy />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/cookies"
-            element={
-              <ProtectedRoute>
-                <Cookies />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/careers"
-            element={
-              <ProtectedRoute>
-                <Careers />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/property/:id"
-            element={
-              <ProtectedRoute>
-                <PropertyDetail />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/property/:id" element={<PropertyDetail />} />
           <Route 
             path="/property/:id/edit" 
             element={
@@ -209,14 +125,7 @@ const App = () => (
           />
           {/* Redirect the /pricing route to the home page */}
           <Route path="/pricing" element={<Navigate to="/" replace />} />
-          <Route
-            path="/seller/:sellerId"
-            element={
-              <ProtectedRoute>
-                <SellerProfile />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/seller/:sellerId" element={<SellerProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
