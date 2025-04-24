@@ -27,15 +27,15 @@ const HeroSection: React.FC = () => {
         <div className="w-full max-w-5xl text-center mx-auto">
           <div className="flex flex-col items-center">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-1 sm:mb-3 md:mb-4 mx-auto text-center leading-tight">
-              Find a home you love...
+              Find a home you <span className="font-playfair font-bold italic">love</span>...
             </h1>
             <div className="mb-2 sm:mb-4 md:mb-6">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center text-gradient-static tracking-normal py-1">
-                at a price you'll love more
+                at a price you'll <span className="font-playfair font-bold italic">love more</span>
               </h1>
             </div>
             <p className="text-foreground mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center">
-              Helping families buy homes they were told they couldn't afford.
+              Helping families buy homes they were told they <span className="font-playfair font-bold italic">couldn't afford</span>.
             </p>
             <div className="glass-card p-0.25 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
               <SearchBar className="" />

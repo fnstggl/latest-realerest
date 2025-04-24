@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
@@ -9,7 +8,7 @@ import SiteFooter from '@/components/sections/SiteFooter';
 
 const Index: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden relative perspective-container">
+    <div className="min-h-screen bg-[#FCFBF8] overflow-x-hidden relative perspective-container">
       {/* Visually hidden, but SEO-visible h1 (for accessibility and SEO) */}
       <h1 className="sr-only" tabIndex={-1}>
         Realer Estate – Below Market Real Estate Deals & Investment Opportunities

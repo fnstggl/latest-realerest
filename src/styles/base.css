@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -41,10 +40,13 @@
     --purple-tertiary: #6E59A5;
     --purple-light: #D6BCFA;
     --purple-vivid: #8B5CF6;
+
+    /* Adding cream background color */
+    --cream-background: 60 33% 98%;
   }
 
   body {
-    @apply bg-white text-foreground antialiased;
+    @apply bg-[#FCFBF8] text-foreground antialiased;
     background-attachment: fixed;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-text-size-adjust: 100%;

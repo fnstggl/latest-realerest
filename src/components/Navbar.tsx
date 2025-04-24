@@ -26,14 +26,16 @@ const Navbar: React.FC = () => {
   const handleSignUp = () => {
     navigate('/signup');
   };
-  const LogoText = () => <>
+  const LogoText = () => (
+    <>
       <img 
         src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" 
         alt="Realer Estate Logo" 
         className="w-7 h-7 sm:w-7 sm:h-7 md:w-7 md:h-7 object-contain -translate-y-[2px]" 
       />
-      <span className="font-bold text-foreground text-sm sm:text-base md:text-base hidden md:block">Realer Estate</span>
-    </>;
+      <span className="font-playfair font-bold italic text-foreground text-sm sm:text-base md:text-base hidden md:block">Realer Estate</span>
+    </>
+  );
   const MobileNavigation = () => <Sheet>
       <SheetTrigger asChild>
         <Button variant="glass" size="icon" className="md:hidden h-8 w-8 sm:h-9 sm:w-9">
@@ -81,7 +83,7 @@ const Navbar: React.FC = () => {
         </div>
       </SheetContent>
     </Sheet>;
-  return <nav className="glass fixed top-0 left-0 right-0 py-2 sm:py-3 px-3 sm:px-4 md:px-6 z-50 shadow-lg backdrop-blur-lg bg-white/20 border-b border-white/30">
+  return <nav className="glass fixed top-0 left-0 right-0 py-2 sm:py-3 px-3 sm:px-4 md:px-6 z-50 shadow-lg backdrop-blur-lg bg-[#FCFBF8]/20 border-b border-white/30">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
           {isMobile && <MobileNavigation />}
