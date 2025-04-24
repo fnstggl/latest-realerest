@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -27,7 +26,6 @@ const Search: React.FC = () => {
   } = useListings();
   const [activePropertyType, setActivePropertyType] = useState<string>("any");
 
-  // Update filtered properties whenever properties or searchQuery changes
   useEffect(() => {
     if (properties.length > 0) {
       let results = [...properties];
@@ -39,12 +37,10 @@ const Search: React.FC = () => {
         );
       }
       
-      // Apply current sort option to the filtered results
       sortProperties(results, sortOption);
     }
   }, [properties, searchQuery]);
 
-  // Function to sort properties based on the selected option
   const sortProperties = (propList: Listing[], option: string) => {
     let sorted = [...propList];
     
@@ -59,10 +55,8 @@ const Search: React.FC = () => {
         sorted.sort((a, b) => b.belowMarket - a.belowMarket);
         break;
       case "newest":
-        // Keep default order as they're already sorted by created_at desc
         break;
       default:
-        // Default recommended sorting
         break;
     }
     
@@ -76,12 +70,10 @@ const Search: React.FC = () => {
       if (property.price < filters.minPrice || property.price > filters.maxPrice) {
         return false;
       }
-      // Changed to minimum below market value check
       if (property.belowMarket < filters.belowMarket) {
         return false;
       }
       if (filters.propertyType !== "any") {
-        // Fix property type filtering logic
         if (filters.propertyType === "house" && property.propertyType !== "House") {
           return false;
         }
@@ -108,7 +100,6 @@ const Search: React.FC = () => {
       return true;
     });
     
-    // Apply current sort to newly filtered properties
     sortProperties(filtered, sortOption);
   };
 
@@ -121,14 +112,11 @@ const Search: React.FC = () => {
   const isMobile = useIsMobile();
   const ITEMS_PER_ROW = isGridView ? (isMobile ? 1 : 3) : 1;
 
-  // Calculate indices for the last full row
   const totalItems = filteredProperties.length;
   const totalFullRows = Math.floor(totalItems / ITEMS_PER_ROW);
   const lastFullRowStartIndex = (totalFullRows - 1) * ITEMS_PER_ROW;
   const lastFullRowEndIndex = lastFullRowStartIndex + ITEMS_PER_ROW;
 
-  // For non-authenticated users, only show up to the last full row
-  // Important: Only apply this limit when NOT searching
   const visibleProperties = !isAuthenticated && !searchQuery
     ? filteredProperties.slice(0, lastFullRowEndIndex) 
     : filteredProperties;
@@ -152,7 +140,6 @@ const Search: React.FC = () => {
       !searchQuery;
 
     if (showTypeSkeleton) {
-      // Show 1 skeleton for mobile, 3 skeletons for >=lg screens (matches 3-col grid used for listings on desktop)
       const skeletonCount = isMobile ? 1 : 3;
       return (
         <div className="relative">
@@ -186,7 +173,6 @@ const Search: React.FC = () => {
             ))}
           </div>
           
-          {/* Centered CTA overlays full grid row */}
           <div
             className="absolute z-20 flex items-center justify-center w-full h-full pointer-events-none"
             style={{
@@ -311,11 +297,10 @@ const Search: React.FC = () => {
           >
             <PropertyCard {...property} />
             
-            {/* Apply blur overlay to the last full row when user is not authenticated AND not searching */}
             {!isAuthenticated && !searchQuery && index >= lastFullRowStartIndex && index < lastFullRowEndIndex && (
               <div className="absolute inset-0 z-10">
                 <div 
-                  className="absolute inset-0 rounded-b-xl"
+                  className="absolute inset-0 rounded-xl"
                   style={{ 
                     backdropFilter: 'blur(3px)',
                     background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
@@ -323,28 +308,27 @@ const Search: React.FC = () => {
                 />
               </div>
             )}
+
+            {!isAuthenticated && !searchQuery && index === lastFullRowStartIndex && (
+              <div 
+                className="absolute z-20 flex justify-center items-center"
+                style={{
+                  bottom: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, 50%)',
+                  width: isGridView ? `${100 * ITEMS_PER_ROW}%` : '100%'
+                }}
+              >
+                <Button 
+                  className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
+                  onClick={() => window.location.href = '/signin'}
+                >
+                  Sign in to view more properties
+                </Button>
+              </div>
+            )}
           </div>
         ))}
-        
-        {/* Sign-in CTA Button - ONLY show when not searching AND not authenticated */}
-        {!isAuthenticated && !searchQuery && visibleProperties.length > 0 && lastFullRowStartIndex >= 0 && (
-          <div 
-            className="absolute z-20 flex justify-center"
-            style={{
-              bottom: '15%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '100%'
-            }}
-          >
-            <Button 
-              className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
-              onClick={() => window.location.href = '/signin'}
-            >
-              Sign in to view more properties
-            </Button>
-          </div>
-        )}
       </div>
     );
   };
