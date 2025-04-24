@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -336,7 +335,7 @@ const Search: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-[#FCFBF8] pt-24">
       <Navbar />
       
       <div className="max-w-3xl mx-auto px-4 mb-8">

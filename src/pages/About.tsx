@@ -6,7 +6,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 const About: React.FC = () => {
-  return <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16">

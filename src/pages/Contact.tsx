@@ -30,7 +30,7 @@ const Contact: React.FC = () => {
       setSubmitting(false);
     }, 1500);
   };
-  return <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16 lg:py-24">
