@@ -13,6 +13,7 @@ const SignIn: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [pageLoaded, setPageLoaded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -24,13 +25,19 @@ const SignIn: React.FC = () => {
   const returnPath = (location.state as {
     returnPath?: string;
   })?.returnPath || '/dashboard';
+  
+  // Mark page as loaded once component mounts
+  useEffect(() => {
+    setPageLoaded(true);
+  }, []);
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && pageLoaded) {
       navigate(returnPath);
     }
-  }, [isAuthenticated, navigate, returnPath]);
+  }, [isAuthenticated, navigate, returnPath, pageLoaded]);
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
@@ -53,7 +60,8 @@ const SignIn: React.FC = () => {
     }
   };
 
-  return <div className="flex min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
+  return (
+    <div className="flex min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <div className="w-full p-4 sm:p-6 md:p-8 flex flex-col">
         <Button 
           variant="glass" 
@@ -117,7 +125,8 @@ const SignIn: React.FC = () => {
           </form>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default SignIn;

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
 const SignUp: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -14,18 +16,25 @@ const SignUp: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [signupError, setSignupError] = useState<string | null>(null);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
   const navigate = useNavigate();
   const {
     signup,
     isAuthenticated
   } = useAuth();
 
+  // Mark page as loaded once component mounts
+  useEffect(() => {
+    setPageLoaded(true);
+  }, []);
+
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && pageLoaded) {
       navigate('/dashboard');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, pageLoaded]);
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setSignupError(null);
@@ -52,6 +61,7 @@ const SignUp: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   return <div className="flex min-h-screen bg-gradient-to-br from-white/10 to-purple-100/20">
       <div className="w-full p-8 flex flex-col">
         <Button variant="glass" className="w-fit mb-8" onClick={() => navigate('/')}>
@@ -107,4 +117,5 @@ const SignUp: React.FC = () => {
       </div>
     </div>;
 };
+
 export default SignUp;
