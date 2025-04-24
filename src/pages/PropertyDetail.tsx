@@ -1,309 +1,493 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import Navbar from '@/components/Navbar';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { formatDistanceToNow } from 'date-fns';
+import { MapPin, Bed, Bath, SquareFoot, CheckCircle, Heart, Home, Edit, Share2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Cog, Home } from 'lucide-react';
-import WaitlistButton from '@/components/WaitlistButton';
-import { usePropertyDetail } from '@/hooks/usePropertyDetail';
-import PropertyImages from '@/components/property-detail/PropertyImages';
-import PropertyHeader from '@/components/property-detail/PropertyHeader';
-import SellerContactInfo from '@/components/property-detail/SellerContactInfo';
-import PropertyDescription from '@/components/property-detail/PropertyDescription';
-import PropertyDetails from '@/components/property-detail/PropertyDetails';
-import PropertyOffers from '@/components/property-detail/PropertyOffers';
-import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
-import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import Navbar from '@/components/Navbar';
 import SiteFooter from '@/components/sections/SiteFooter';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Helmet } from 'react-helmet-async';
+
+interface Property {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  price: number;
+  beds: number;
+  baths: number;
+  sqft: number;
+  images: string[];
+  created_at: string;
+  user_id: string;
+  belowMarket: number;
+  amenities: string[];
+  yearBuilt: number;
+  propertyType: string;
+  parking: string;
+  heating: string;
+  cooling: string;
+  mlsNumber: string;
+  lotSize: number;
+  taxes: number;
+  hoa: number;
+  status: string;
+  views: number;
+}
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
-  const [realOffers, setRealOffers] = useState<Array<{
-    id: string;
-    amount: number;
-    buyerName: string;
-  }>>([]);
-  const isMobile = useIsMobile();
-  
-  const {
-    property,
-    isLoading,
-    error,
-    sellerInfo,
-    waitlistStatus,
-    isOwner,
-    isApproved,
-    shouldShowSellerInfo,
-    refreshProperty
-  } = usePropertyDetail(id);
-
-  // Log values for debugging
-  useEffect(() => {
-    console.log("PropertyDetail - isOwner:", isOwner);
-    console.log("PropertyDetail - isApproved:", isApproved);
-    console.log("PropertyDetail - waitlistStatus:", waitlistStatus);
-    console.log("PropertyDetail - shouldShowSellerInfo:", shouldShowSellerInfo);
-    console.log("PropertyDetail - property:", property);
-  }, [property, isOwner, isApproved, waitlistStatus, shouldShowSellerInfo]);
-  
-  // Removed the useEffect that was calling window.scrollTo(0, 0) on every route change
-  // as this might be contributing to the refresh issue
-  useEffect(() => {
-    if (id) {
-      // Just set the scroll position once when the component mounts
-      window.scrollTo(0, 0);
-    }
-  }, []);
-
-  const handleAddressClick = () => {
-    setShowWaitlistDialog(true);
-  };
+  const [property, setProperty] = useState<Property | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLiked, setIsLiked] = useState(false);
+  const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!id) return;
-    const fetchRealOffers = async () => {
+    const fetchProperty = async () => {
+      setIsLoading(true);
       try {
         const { data, error } = await supabase
-          .from('property_offers')
-          .select('id, offer_amount, user_id, status')
-          .eq('property_id', id)
-          .eq('is_interested', true)
-          .order('offer_amount', { ascending: false })
-          .limit(10); // fetch a few more, in case some are withdrawn
+          .from('property_listings')
+          .select('*')
+          .eq('id', id)
+          .single();
 
-        if (error) {
-          console.error("Error fetching real offers:", error);
-          return;
-        }
+        if (error) throw error;
 
-        if (data && data.length > 0) {
-          // Filter out withdrawn offers
-          const filteredOffers = data
-            .filter(offer => offer.status !== 'withdrawn')
-            .slice(0, 3); // Only top 3 bids, skip withdrawn even if they're larger
-          const formattedOffers = filteredOffers.map(offer => ({
-            id: offer.id,
-            amount: Number(offer.offer_amount),
-            buyerName: "Anonymous buyer"
-          }));
-          setRealOffers(formattedOffers);
-        } else {
-          setRealOffers([]);
-        }
-      } catch (error) {
-        console.error("Error in fetchRealOffers:", error);
+        setProperty(data);
+        
+        // Increment views
+        await supabase
+          .from('property_listings')
+          .update({ views: (data?.views || 0) + 1 })
+          .eq('id', id);
+
+      } catch (error: any) {
+        console.error('Error fetching property:', error);
+        toast({
+          title: "Error",
+          description: error.message || "Failed to load property",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchRealOffers();
-  }, [id]);
+    if (id) {
+      fetchProperty();
+    }
+  }, [id, toast]);
 
-  // This callback is triggered after successful offer submission
-  const handleOfferSubmitted = () => {
-    refreshProperty();
+  useEffect(() => {
+    const checkLikeStatus = async () => {
+      if (!user || !id) return;
+      try {
+        const { data, error } = await supabase
+          .from('likes')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('property_id', id)
+          .single();
+
+        if (error && error.code !== '404') throw error;
+
+        setIsLiked(!!data);
+      } catch (error: any) {
+        console.error('Error checking like status:', error);
+        toast({
+          title: "Error",
+          description: error.message || "Failed to check like status",
+          variant: "destructive"
+        });
+      }
+    };
+
+    checkLikeStatus();
+  }, [user, id, toast]);
+
+  useEffect(() => {
+    const fetchSimilarProperties = async () => {
+      if (!property) return;
+      try {
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('*')
+          .eq('location', property.location)
+          .neq('id', property.id)
+          .limit(3);
+
+        if (error) throw error;
+
+        setSimilarProperties(data || []);
+      } catch (error: any) {
+        console.error('Error fetching similar properties:', error);
+        toast({
+          title: "Error",
+          description: error.message || "Failed to load similar properties",
+          variant: "destructive"
+        });
+      }
+    };
+
+    fetchSimilarProperties();
+  }, [property, toast]);
+
+  const toggleLike = async () => {
+    if (!user || !id) {
+      navigate('/signin');
+      return;
+    }
+
+    try {
+      if (isLiked) {
+        const { error } = await supabase
+          .from('likes')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('property_id', id);
+
+        if (error) throw error;
+
+        setIsLiked(false);
+        toast({
+          title: "Unliked",
+          description: "Property removed from your favorites."
+        });
+      } else {
+        const { error } = await supabase
+          .from('likes')
+          .insert([{ user_id: user.id, property_id: id }]);
+
+        if (error) throw error;
+
+        setIsLiked(true);
+        toast({
+          title: "Liked",
+          description: "Property added to your favorites."
+        });
+      }
+    } catch (error: any) {
+      console.error('Error toggling like:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update like status",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
+  const shareProperty = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: property?.title || 'Check out this property!',
+        text: property?.description || 'A great property you might be interested in.',
+        url: window.location.href,
+      })
+      .then(() => console.log('Successful share'))
+      .catch((error) => console.error('Error sharing', error));
+    } else {
+      toast({
+        title: "Sharing not supported",
+        description: "Please copy the link and share it manually.",
+        variant: "warning"
+      });
+    }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 flex items-center justify-center">
-        <div className="text-lg font-semibold">Loading property details...</div>
+      <div className="min-h-screen bg-[#FCFBF8] flex flex-col">
+        <Navbar />
+        <div className="container mx-auto px-4 py-16">
+          <div className="space-y-4">
+            <div className="h-12 bg-gray-100 animate-pulse rounded-xl w-3/4"></div>
+            <div className="h-96 bg-gray-100 animate-pulse rounded-xl"></div>
+            <div className="h-8 bg-gray-100 animate-pulse rounded-xl w-1/2"></div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="h-32 bg-gray-100 animate-pulse rounded-xl"></div>
+              <div className="h-32 bg-gray-100 animate-pulse rounded-xl"></div>
+              <div className="h-32 bg-gray-100 animate-pulse rounded-xl"></div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
+      <div className="min-h-screen bg-[#FCFBF8] flex flex-col">
         <Navbar />
-        <div className="container mx-auto px-4 py-12 text-center">
-          <h1 className="text-3xl font-bold mb-4 text-black">Property Not Found</h1>
-          <p className="mb-8 glass p-4 rounded-lg backdrop-blur-md inline-block">The property you're looking for doesn't exist or has been removed.</p>
-          <Button asChild variant="translucent" className="layer-hover layer-2">
-            <Link to="/search">Browse Other Properties</Link>
-          </Button>
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center py-20">
+            <AlertCircle className="mx-auto h-10 w-10 text-red-500 mb-4" />
+            <h2 className="text-2xl font-bold mb-4">Property not found</h2>
+            <p className="mb-6">Sorry, the property you're looking for doesn't exist or has been removed.</p>
+            <Button asChild>
+              <Link to="/">Return to Home</Link>
+            </Button>
+          </div>
         </div>
+        <SiteFooter />
       </div>
     );
   }
 
-  const showPropertyDetails = property?.afterRepairValue !== undefined || property?.estimatedRehab !== undefined;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 relative overflow-hidden">
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100/40 rounded-full filter blur-3xl"></div>
-      <div className="absolute top-60 -right-20 w-80 h-80 bg-purple-100/40 rounded-full filter blur-3xl"></div>
-      <div className="absolute bottom-20 left-60 w-72 h-72 bg-pink-100/30 rounded-full filter blur-3xl"></div>
-      
+    <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8 relative z-10">
-        {isMobile && (
-        <div className="mt-10 mb-2 md:mt-0 md:mb-8">
-          <Button asChild variant="glass" 
-            className="flex items-center hover:bg-white/40 font-bold transition-colors layer-hover layer-2
-            text-[10px] px-1.5 py-0.5 w-auto rounded-md">
-            <Link to="/search" className="text-black">
-              <ArrowLeft size={12} className="mr-0.5" />
+      <Helmet>
+        <title>{property.title} | Realer Estate</title>
+        <meta name="description" content={property.description} />
+        <meta property="og:title" content={property.title} />
+        <meta property="og:description" content={`Check out this property in ${property.location} for ${Number(property.price).toLocaleString()}!`} />
+        <meta property="og:image" content={property.images[0]} />
+        <meta property="og:type" content="article" />
+        <link rel="canonical" href={window.location.href} />
+        
+        {/* Property-specific structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "RealEstateListing",
+            "name": property.title,
+            "description": property.description,
+            "image": property.images,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": property.location
+            },
+            "price": property.price,
+            "numberOfBedrooms": property.beds,
+            "numberOfBathroomsTotal": property.baths,
+            "propertyArea": {
+              "@type": "QuantitativeValue",
+              "value": property.sqft,
+              "unitCode": "FTK"
+            },
+            "url": window.location.href
+          })}
+        </script>
+      </Helmet>
+      
+      <div className="container mx-auto px-4 py-16">
+        <div className="mb-8">
+          <Button 
+            variant="outline" 
+            asChild 
+            className="mb-6 border-gray-200 hover:bg-gray-50"
+          >
+            <Link to="/search" className="flex items-center gap-2">
+              <ChevronLeft size={16} />
               Back to Search
             </Link>
           </Button>
-        </div>
-      )}
-        
-        {!isOwner && isApproved && property && (
-          <OfferStatusBanner 
-            propertyId={property.id} 
-            sellerName={property.sellerName || 'Property Owner'} 
-            sellerEmail={property.sellerEmail} 
-            sellerPhone={property.sellerPhone} 
-          />
-        )}
-        
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="space-y-6">
-            <PropertyImages mainImage={property?.images[0]} images={property?.images} />
-          </div>
           
-          <div className="flex flex-col space-y-4">
-            <PropertyHeader 
-              title={property?.title} 
-              belowMarket={property?.belowMarket} 
-              price={property?.price} 
-              marketPrice={property?.marketPrice} 
-              beds={property?.beds} 
-              baths={property?.baths} 
-              sqft={property?.sqft} 
-              location={property?.location} 
-              fullAddress={property?.fullAddress} 
-              showFullAddress={isOwner || isApproved} 
-              onShowAddressClick={handleAddressClick} 
-            />
-
-            {!isOwner && !isApproved && waitlistStatus !== 'pending' && (
-              <WaitlistButton 
-                propertyId={property?.id || ''} 
-                propertyTitle={property?.title || ''} 
-                open={showWaitlistDialog} 
-                onOpenChange={setShowWaitlistDialog}
-                refreshProperty={refreshProperty}
-              />
-            )}
-
-            {property && shouldShowSellerInfo && (
-              <SellerContactInfo 
-                name={property.sellerName} 
-                phone={property.sellerPhone} 
-                email={property.sellerEmail}
-                showContact={true}
-                sellerId={property.sellerId}
-                waitlistStatus={waitlistStatus}
-              />
-            )}
-
-            {isOwner && (
-              <Link to={`/property/${property?.id}/edit`} className="w-full">
-                <Button className="w-full bg-white hover:bg-white text-black font-bold py-2 relative group overflow-hidden rounded-xl">
-                  <Cog size={18} className="mr-2" />
-                  <span className="text-gradient-static relative z-10">Edit Listing</span>
-                  
-                  <span 
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"
-                    style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-                    }}
-                  ></span>
+          <div className="relative">
+            <Carousel className="w-full">
+              <CarouselContent className="-ml-1 pl-1">
+                {property.images.map((image, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-1">
+                      <AspectRatio ratio={16 / 9}>
+                        <img
+                          src={image}
+                          alt={`${property.title} - Image ${index + 1}`}
+                          className="object-cover rounded-md"
+                        />
+                      </AspectRatio>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
+            
+            <div className="absolute top-4 right-4 flex gap-2">
+              {user?.id === property.user_id && (
+                <Button 
+                  variant="secondary" 
+                  size="icon" 
+                  onClick={() => navigate(`/property/${id}/edit`)}
+                  aria-label="Edit property"
+                >
+                  <Edit size={16} />
                 </Button>
-              </Link>
-            )}
-            
-            {isApproved ? (
-              <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
-                <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
-                <p>You now have access to view the full property details and contact the seller directly.</p>
-              </div> 
-            ) : waitlistStatus === 'pending' ? (
-              <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
-                <div className="font-bold text-black mb-2">Waitlist Request Pending</div>
-                <p>You've joined the waitlist for this property. The seller will review your request soon.</p>
-              </div>
-            ) : null}
-            
-            {realOffers.length > 0 && property && (
-              <PropertyOffers propertyId={property.id} realOffers={realOffers} />
-            )}
-            
-            {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
-                  <div className="text-lg font-bold text-black">
-                    {property?.afterRepairValue.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD'
-                    })}
-                  </div>
-                  <div className="text-xs">After Repair Value</div>
-                </div>
-                <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
-                  <div className="text-lg font-bold text-black">
-                    {property?.estimatedRehab.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD'
-                    })}
-                  </div>
-                  <div className="text-xs">Est. Rehab Cost</div>
-                </div>
-              </div>
-            )}
-            
-            {isApproved && property && (
-              <div className="mt-3">
-                <MakeOfferButton 
-                  propertyId={property.id} 
-                  propertyTitle={property.title} 
-                  sellerName={property.sellerName || 'Property Owner'} 
-                  sellerEmail={property.sellerEmail || ''} 
-                  sellerPhone={property.sellerPhone || ''} 
-                  sellerId={property.sellerId || ''} 
-                  currentPrice={property.price}
-                  onOfferSubmitted={handleOfferSubmitted}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <PropertyDescription 
-            description={property?.description} 
-            beds={property?.beds} 
-            baths={property?.baths} 
-            sqft={property?.sqft} 
-            belowMarket={property?.belowMarket} 
-            comparables={shouldShowSellerInfo ? property?.comparableAddresses : undefined} 
-          />
-        </div>
-        
-        {showPropertyDetails && (
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div>
-              <PropertyDetails 
-                afterRepairValue={property?.afterRepairValue} 
-                estimatedRehab={property?.estimatedRehab} 
-              />
+              )}
+              
+              <Button 
+                variant="secondary" 
+                size="icon" 
+                onClick={shareProperty}
+                aria-label="Share property"
+              >
+                <Share2 size={16} />
+              </Button>
+              
+              <Button 
+                variant={isLiked ? "default" : "outline"} 
+                size="icon" 
+                onClick={toggleLike}
+                aria-label="Like property"
+              >
+                <Heart size={16} className={isLiked ? "text-white" : "text-black"} />
+              </Button>
             </div>
           </div>
-        )}
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-2">
+            <Card className="shadow-sm border-gray-200">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-2xl font-bold">{property.title}</CardTitle>
+                  <Badge className="bg-green-500 text-white rounded-full px-3 py-1 text-sm font-medium">
+                    {property.status}
+                  </Badge>
+                </div>
+                <p className="text-gray-500">
+                  <MapPin className="inline-block mr-1 h-4 w-4" />
+                  {property.location} - Listed {formatDate(property.created_at)}
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center">
+                    <Bed className="mr-1 h-5 w-5" />
+                    <span>{property.beds} Beds</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Bath className="mr-1 h-5 w-5" />
+                    <span>{property.baths} Baths</span>
+                  </div>
+                  <div className="flex items-center">
+                    <SquareFoot className="mr-1 h-5 w-5" />
+                    <span>{property.sqft} SqFt</span>
+                  </div>
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Property Description</h3>
+                  <p className="text-gray-700">{property.description}</p>
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Key Features</h3>
+                  <ul className="list-disc pl-5 text-gray-700">
+                    <li>Year Built: {property.yearBuilt}</li>
+                    <li>Property Type: {property.propertyType}</li>
+                    <li>Parking: {property.parking}</li>
+                    <li>Heating: {property.heating}</li>
+                    <li>Cooling: {property.cooling}</li>
+                    <li>MLS Number: {property.mlsNumber}</li>
+                    <li>Lot Size: {property.lotSize} sqft</li>
+                    <li>Taxes: ${Number(property.taxes).toLocaleString()}</li>
+                    <li>HOA: ${Number(property.hoa).toLocaleString()}</li>
+                  </ul>
+                </div>
+                <Separator />
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Amenities</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {property.amenities.map((amenity, index) => (
+                      <Badge key={index} className="bg-gray-100 text-gray-700 border-none">
+                        <CheckCircle className="mr-1 h-4 w-4" />
+                        {amenity}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div>
+            <Card className="shadow-sm border-gray-200">
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Price Insights</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Listing Price</h3>
+                  <div className="text-3xl font-bold">${Number(property.price).toLocaleString()}</div>
+                  <Badge className="bg-red-100 text-red-700 rounded-full px-3 py-1 text-sm font-medium">
+                    {property.belowMarket}% Below Market Value
+                  </Badge>
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Estimated Mortgage</h3>
+                  <p className="text-gray-700">Calculate your estimated monthly mortgage payment with our mortgage calculator.</p>
+                  <Button asChild variant="secondary">
+                    <Link to="/#mortgage-calculator">
+                      Mortgage Calculator
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="mt-8 shadow-sm border-gray-200">
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Similar Properties</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {similarProperties.length > 0 ? (
+                  similarProperties.map(similarProperty => (
+                    <div key={similarProperty.id} className="flex items-center gap-4">
+                      <div className="w-24 h-20 overflow-hidden rounded-md">
+                        <img
+                          src={similarProperty.images[0]}
+                          alt={similarProperty.title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Link to={`/property/${similarProperty.id}`} className="font-medium hover:underline">
+                          {similarProperty.title}
+                        </Link>
+                        <p className="text-sm text-gray-500">{similarProperty.location}</p>
+                        <p className="text-sm font-bold">${Number(similarProperty.price).toLocaleString()}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No similar properties found in this location.</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        
+        <div className="mt-12 text-center">
+          <Button className="bg-black hover:bg-gray-800 text-white">
+            <a href={`mailto:info@realerestate.org?subject=Inquiry about ${property.title}`} className="flex items-center gap-2">
+              <Home size={16} />
+              Contact Us About This Property
+            </a>
+          </Button>
+        </div>
       </div>
       
       <SiteFooter />

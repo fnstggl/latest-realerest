@@ -30,7 +30,8 @@ const Contact: React.FC = () => {
       setSubmitting(false);
     }, 1500);
   };
-  return <div className="min-h-screen bg-white">
+  return (
+    <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
       <div className="container mx-auto px-4 py-16 lg:py-24">
@@ -105,8 +106,8 @@ const Contact: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-4">
-                      <Mail size={20} className="text-[#000000]" />
+                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center mr-4">
+                      <Mail size={20} className="text-black" />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-700">Email Us</h3>
@@ -115,8 +116,8 @@ const Contact: React.FC = () => {
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-4">
-                      <Phone size={20} className="text-[#000000]" />
+                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center mr-4">
+                      <Phone size={20} className="text-black" />
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-700">Call Us</h3>
@@ -149,6 +150,8 @@ const Contact: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>;
+    </div>
+  );
 };
+
 export default Contact;
