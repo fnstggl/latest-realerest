@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -31,7 +32,7 @@ const HeroSection: React.FC = () => {
             </h1>
             <div className="mb-2 sm:mb-4 md:mb-6">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center text-gradient-static tracking-normal py-1">
-                at a price you'll love more
+                at a price you'll <span className="font-playfair font-bold italic">love</span> more
               </h1>
             </div>
             <p className="text-foreground mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center">
