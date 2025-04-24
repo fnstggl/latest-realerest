@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -183,7 +184,7 @@ const Search: React.FC = () => {
           >
             <Button
               className="pointer-events-auto relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95"
-              onClick={() => window.location.href = "/signin"}
+              onClick={() => window.location.href = '/signin'}
             >
               Sign in to view more properties
             </Button>
@@ -309,27 +310,27 @@ const Search: React.FC = () => {
                 />
               </div>
             )}
-
-            {!isAuthenticated && !searchQuery && index === lastFullRowStartIndex && (
-              <div 
-                className="absolute z-20 w-full flex justify-center"
-                style={{
-                  bottom: '50%',
-                  transform: 'translateY(50%)',
-                  left: '50%',
-                  marginLeft: '-50%'
-                }}
-              >
-                <Button 
-                  className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
-                  onClick={() => window.location.href = '/signin'}
-                >
-                  Sign in to view more properties
-                </Button>
-              </div>
-            )}
           </div>
         ))}
+
+        {!isAuthenticated && !searchQuery && lastFullRowStartIndex >= 0 && (
+          <div 
+            className="absolute z-20 pointer-events-auto"
+            style={{
+              left: '50%',
+              transform: 'translateX(-50%)',
+              bottom: '25%',
+              width: 'auto'
+            }}
+          >
+            <Button 
+              className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
+              onClick={() => window.location.href = '/signin'}
+            >
+              Sign in to view more properties
+            </Button>
+          </div>
+        )}
       </div>
     );
   };
@@ -405,7 +406,7 @@ const Search: React.FC = () => {
               </div>
             </div>
             
-            <div className={`grid gap-6 relative ${isFiltersCollapsed ? 'md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3'}`}>
+            <div className={`grid gap-6 relative ${isFiltersCollapsed ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3'}`}>
               {visibleProperties.map((property, index) => (
                 <div 
                   key={property.id} 
@@ -424,27 +425,29 @@ const Search: React.FC = () => {
                       />
                     </div>
                   )}
-
-                  {!isAuthenticated && !searchQuery && index === lastFullRowStartIndex && (
-                    <div 
-                      className="absolute z-20 w-full flex justify-center"
-                      style={{
-                        bottom: '50%',
-                        transform: 'translateY(50%)',
-                        left: '50%',
-                        marginLeft: '-50%'
-                      }}
-                    >
-                      <Button 
-                        className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
-                        onClick={() => window.location.href = '/signin'}
-                      >
-                        Sign in to view more properties
-                      </Button>
-                    </div>
-                  )}
                 </div>
               ))}
+              
+              {!isAuthenticated && !searchQuery && lastFullRowStartIndex >= 0 && (
+                <div 
+                  className="absolute z-20"
+                  style={{
+                    // Center the button on the middle property of the last row
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    bottom: '25%',
+                    width: 'auto',
+                    pointerEvents: 'auto'
+                  }}
+                >
+                  <Button 
+                    className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
+                    onClick={() => window.location.href = '/signin'}
+                  >
+                    Sign in to view more properties
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
