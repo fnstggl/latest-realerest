@@ -59,6 +59,44 @@ export type Database = {
           },
         ]
       }
+      bounty_claims: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          id: string
+          property_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          id?: string
+          property_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          id?: string
+          property_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bounty_claims_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "property_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -111,6 +149,35 @@ export type Database = {
             columns: ["offer_id"]
             isOneToOne: false
             referencedRelation: "property_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      liked_properties: {
+        Row: {
+          created_at: string
+          id: string
+          property_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          property_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          property_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "liked_properties_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "property_listings"
             referencedColumns: ["id"]
           },
         ]
@@ -219,18 +286,21 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string
           email: string | null
           id: string
           name: string | null
           phone: string | null
         }
         Insert: {
+          account_type?: string
           email?: string | null
           id: string
           name?: string | null
           phone?: string | null
         }
         Update: {
+          account_type?: string
           email?: string | null
           id?: string
           name?: string | null
@@ -243,6 +313,7 @@ export type Database = {
           after_repair_value: number | null
           baths: number | null
           beds: number | null
+          bounty: number | null
           comparable_addresses: string[] | null
           created_at: string
           description: string | null
@@ -253,6 +324,7 @@ export type Database = {
           location: string
           market_price: number
           price: number
+          property_type: string | null
           sqft: number | null
           title: string
           updated_at: string
@@ -262,6 +334,7 @@ export type Database = {
           after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
+          bounty?: number | null
           comparable_addresses?: string[] | null
           created_at?: string
           description?: string | null
@@ -272,6 +345,7 @@ export type Database = {
           location: string
           market_price: number
           price: number
+          property_type?: string | null
           sqft?: number | null
           title: string
           updated_at?: string
@@ -281,6 +355,7 @@ export type Database = {
           after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
+          bounty?: number | null
           comparable_addresses?: string[] | null
           created_at?: string
           description?: string | null
@@ -291,6 +366,7 @@ export type Database = {
           location?: string
           market_price?: number
           price?: number
+          property_type?: string | null
           sqft?: number | null
           title?: string
           updated_at?: string

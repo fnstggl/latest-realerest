@@ -6,6 +6,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  accountType?: string;
 }
 
 interface AuthContextType {
@@ -31,7 +32,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isAuthenticated = !!user;
   const accountType = 'buyer'; // Default value to prevent errors
 
-  // Set up auth state listener on mount and check for existing session
   useEffect(() => {
     let timeoutId: number | undefined;
     let unsubscribe: (() => void) | undefined;
@@ -40,7 +40,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         console.log("Setting up auth state listener");
         
-        // First set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           (event, session) => {
             console.log('Auth state changed:', event, session?.user?.id);
@@ -52,8 +51,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
             
             if (session && session.user) {
-              // Instead of awaiting here, which can cause issues,
-              // we trigger the profile fetch asynchronously
               fetchUserProfile(session.user);
             }
           }
@@ -61,22 +58,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         unsubscribe = () => subscription.unsubscribe();
 
-        // Add a timeout to prevent infinite loading (reduced from 5s to 3s)
         timeoutId = window.setTimeout(() => {
           if (isLoading) {
             console.log('Auth loading timeout reached, forcing completion');
             setIsLoading(false);
           }
-        }, 1500); // Reduced from 3000 to 1500ms for faster loading
+        }, 1500);
 
-        // Then check for existing session
         const { data: { session } } = await supabase.auth.getSession();
           
         if (session?.user) {
           console.log('Found existing session:', session.user.id);
           fetchUserProfile(session.user);
         } else {
-          // No session found, we can stop loading
           setIsLoading(false);
         }
       } catch (error) {
@@ -93,29 +87,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []);
 
-  // Fetch user profile from the profiles table
   const fetchUserProfile = async (supabaseUser: any) => {
     try {
       console.log('Fetching profile for user ID:', supabaseUser.id);
       
-      // First try to get the profile from the profiles table
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', supabaseUser.id)
         .maybeSingle();
 
-      // Create user object from available data
       const newUser: User = {
         id: supabaseUser.id,
         name: profile?.name || supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || '',
-        email: profile?.email || supabaseUser.email || ''
+        email: profile?.email || supabaseUser.email || '',
+        accountType: profile?.account_type || 'buyer'
       };
       
       setUser(newUser);
       setIsLoading(false);
       
-      // If there was an error fetching the profile, log it but don't block auth
       if (error) {
         console.error('Error fetching profile:', error);
       }
@@ -129,7 +120,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('Attempting to log in with:', email);
     
     try {
-      // Sign in with Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -141,7 +131,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw error;
       }
       
-      // User will be set by the auth state listener
       console.log('Login successful for user ID:', data.user?.id);
       toast.success("Login successful!");
       return;
@@ -155,7 +144,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('Signing up with:', name, email);
     
     try {
-      // Register with Supabase
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -175,7 +163,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Signup successful for user ID:', data.user?.id);
       toast.success("Account created successfully! Please check your email to confirm your account.");
       
-      // User will be set by the auth state listener
       return;
     } catch (error: any) {
       console.error('Signup error:', error);
@@ -186,14 +173,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     console.log('Logging out user');
     
-    // Sign out from Supabase
     supabase.auth.signOut().catch(error => {
       console.error('Supabase logout error:', error);
     });
-    // State will be cleared by the auth state listener
   };
 
-  // Don't render loading indicator, just render a blank div
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">

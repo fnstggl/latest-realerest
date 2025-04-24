@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Home, User, Bell, ClipboardCheck, Plus, CreditCard } from "lucide-react";
+import { Home, User, Bell, ClipboardCheck, Plus, CreditCard, Heart, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNotifications } from "@/context/NotificationContext";
 import PropertiesTab from "@/components/dashboard/PropertiesTab";
@@ -40,83 +40,119 @@ const Dashboard: React.FC = () => {
     error
   } = useProperties(user?.id);
 
-  // Mounted state to ensure proper hydration before rendering content
+  const getTabItems = () => {
+    const baseItems = [
+      {
+        name: "Account",
+        value: "account",
+        icon: User,
+        content: (
+          <TabsContent value="account" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
+            <AccountTab user={user} logout={logout} />
+          </TabsContent>
+        )
+      },
+      {
+        name: "Notifications",
+        value: "notifications",
+        icon: Bell,
+        content: (
+          <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
+            <NotificationsTab notifications={notifications} markAsRead={markAsRead} clearAll={clearAll} />
+          </TabsContent>
+        )
+      }
+    ];
+
+    if (user?.accountType === 'seller') {
+      return [
+        {
+          name: "Properties",
+          value: "properties",
+          icon: Home,
+          content: (
+            <TabsContent value="properties" className="space-y-6">
+              <PropertiesTab 
+                myProperties={myProperties} 
+                setMyProperties={setMyProperties} 
+                waitlistUsers={waitlistUsers} 
+                showAddForm={showAddForm} 
+                setShowAddForm={setShowAddForm} 
+                isLoading={isLoading} 
+                setIsLoading={setIsLoading} 
+                user={user} 
+              />
+            </TabsContent>
+          )
+        },
+        ...baseItems
+      ];
+    }
+
+    if (user?.accountType === 'buyer') {
+      return [
+        {
+          name: "Liked",
+          value: "liked",
+          icon: Heart,
+          content: (
+            <TabsContent value="liked" className="space-y-6">
+              <LikedPropertiesTab />
+            </TabsContent>
+          )
+        },
+        {
+          name: "Offers",
+          value: "offers",
+          icon: CreditCard,
+          content: (
+            <TabsContent value="offers" className="space-y-6">
+              <OffersTab />
+            </TabsContent>
+          )
+        },
+        ...baseItems
+      ];
+    }
+
+    // Wholesaler tabs
+    return [
+      {
+        name: "Bounties",
+        value: "bounties",
+        icon: Award,
+        content: (
+          <TabsContent value="bounties" className="space-y-6">
+            <BountiesTab />
+          </TabsContent>
+        )
+      },
+      {
+        name: "Liked",
+        value: "liked",
+        icon: Heart,
+        content: (
+          <TabsContent value="liked" className="space-y-6">
+            <LikedPropertiesTab />
+          </TabsContent>
+        )
+      },
+      ...baseItems
+    ];
+  };
+
   const [isMounted, setIsMounted] = useState(false);
   
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Set active tab based on navigation state if provided
   useEffect(() => {
     if (location.state?.activeTab) {
       setActiveTab(location.state.activeTab);
-      // Clear the state to avoid persisting it
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-
-  const tabItems = [
-    {
-      name: "Properties",
-      value: "properties",
-      icon: Home,
-      content: (
-        <TabsContent value="properties" className="space-y-6">
-          <PropertiesTab 
-            myProperties={myProperties} 
-            setMyProperties={setMyProperties} 
-            waitlistUsers={waitlistUsers} 
-            showAddForm={showAddForm} 
-            setShowAddForm={setShowAddForm} 
-            isLoading={isLoading} 
-            setIsLoading={setIsLoading} 
-            user={user} 
-          />
-        </TabsContent>
-      )
-    },
-    {
-      name: "Waitlist",
-      value: "waitlist",
-      icon: ClipboardCheck,
-      content: (
-        <TabsContent value="waitlist" className="space-y-6">
-          <WaitlistTab waitlistUsers={waitlistUsers} setWaitlistUsers={setWaitlistUsers} />
-        </TabsContent>
-      )
-    },
-    {
-      name: "Offers",
-      value: "offers",
-      icon: CreditCard,
-      content: (
-        <TabsContent value="offers" className="space-y-6">
-          <OffersTab />
-        </TabsContent>
-      )
-    },
-    {
-      name: "Account",
-      value: "account",
-      icon: User,
-      content: (
-        <TabsContent value="account" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
-          <AccountTab user={user} logout={logout} />
-        </TabsContent>
-      )
-    },
-    {
-      name: "Notifications",
-      value: "notifications",
-      icon: Bell,
-      content: (
-        <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
-          <NotificationsTab notifications={notifications} markAsRead={markAsRead} clearAll={clearAll} />
-        </TabsContent>
-      )
-    }
-  ];
 
   if (!isMounted) {
     return <LoadingSpinner fullScreen />;
@@ -163,7 +199,7 @@ const Dashboard: React.FC = () => {
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             <TabNav 
-              items={tabItems} 
+              items={getTabItems()} 
               activeTab={activeTab} 
               onValueChange={setActiveTab} 
             />
@@ -174,7 +210,7 @@ const Dashboard: React.FC = () => {
               </div>
             )}
             
-            {tabItems.find(item => item.value === activeTab)?.content}
+            {getTabItems().find(item => item.value === activeTab)?.content}
           </Tabs>
         </motion.div>
       </div>

@@ -26,6 +26,7 @@ interface PropertyDetail {
   sellerEmail?: string;
   sellerPhone?: string;
   bounty?: number;
+  propertyType?: string;
 }
 
 interface SellerInfo {
@@ -100,7 +101,8 @@ export function usePropertyDetail(propertyId: string | undefined) {
         belowMarket: Math.round(((Number(data.market_price) - Number(data.price)) / Number(data.market_price)) * 100),
         createdAt: data.created_at,
         sellerId: data.user_id,
-        bounty: data.bounty ? Number(data.bounty) : undefined
+        bounty: data.bounty ? Number(data.bounty) : undefined,
+        propertyType: data.property_type
       };
       
       setProperty(formattedProperty);

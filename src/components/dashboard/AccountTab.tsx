@@ -12,6 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import AccountTypeSelector from "./AccountTypeSelector";
 interface AccountTabProps {
   user: any;
   logout: () => void;
@@ -30,6 +31,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
   user,
   logout
 }) => {
+  const [accountType, setAccountType] = useState('buyer');
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
@@ -87,6 +89,30 @@ const AccountTab: React.FC<AccountTabProps> = ({
     };
     fetchUserProfile();
   }, [user]);
+
+  useEffect(() => {
+    const fetchAccountType = async () => {
+      if (!user?.id) return;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('account_type')
+        .eq('id', user.id)
+        .single();
+        
+      if (error) {
+        console.error('Error fetching account type:', error);
+        return;
+      }
+      
+      if (data?.account_type) {
+        setAccountType(data.account_type);
+      }
+    };
+    
+    fetchAccountType();
+  }, [user?.id]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       id,
@@ -176,6 +202,14 @@ const AccountTab: React.FC<AccountTabProps> = ({
     }
   };
   return <div className="space-y-6">
+    <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg">
+      <AccountTypeSelector 
+        currentType={accountType}
+        userId={user?.id}
+        onUpdate={setAccountType}
+      />
+    </div>
+
       <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Account Information</h2>
@@ -205,7 +239,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
               <span className="absolute inset-[-2px] -z-10 rounded-lg opacity-100 transition-all" style={{
               background: "transparent",
               border: "2px solid transparent",
-              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
               backgroundOrigin: "border-box",
               backgroundClip: "border-box",
               WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
