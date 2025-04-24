@@ -11,6 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import BountyInput from '@/components/create-listing/BountyInput';
 
 // Import formSchema (small import)
 import { formSchema } from '@/components/create-listing/formSchema';
@@ -32,6 +33,31 @@ const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
 const LoadingFallback = () => <div className="flex justify-center items-center p-8">
     <Loader2 className="h-8 w-8 animate-spin text-[#d60013]" />
   </div>;
+
+// Update the formSchema with bounty
+const formSchema = z.object({
+  address: "",
+  description: "",
+  price: "",
+  marketPrice: "",
+  city: "",
+  state: "",
+  zipCode: "",
+  beds: "",
+  baths: "",
+  sqft: "",
+  propertyType: "",
+  afterRepairValue: "",
+  estimatedRehab: "",
+  comparableAddress1: "",
+  comparableAddress2: "",
+  comparableAddress3: "",
+  bounty: z.string().refine(
+    (val) => !val || Number(val) >= 3000,
+    { message: "Minimum incentive amount is $3,000" }
+  ),
+});
+
 const CreateListing: React.FC = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
@@ -64,7 +90,8 @@ const CreateListing: React.FC = () => {
       estimatedRehab: "",
       comparableAddress1: "",
       comparableAddress2: "",
-      comparableAddress3: ""
+      comparableAddress3: "",
+      bounty: "",
     }
   });
 
@@ -148,6 +175,8 @@ const CreateListing: React.FC = () => {
     setIsSubmitting(false);
     setUploadProgress(0);
   };
+
+  // Update onSubmit to include bounty
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error("You must be logged in to create a listing");
@@ -208,10 +237,7 @@ const CreateListing: React.FC = () => {
       console.log("Inserting listing with user_id:", user.id, "Type:", typeof user.id);
 
       // Insert listing into Supabase with explicit type handling
-      const {
-        data,
-        error
-      } = await supabase.from('property_listings').insert({
+      const { data, error } = await supabase.from('property_listings').insert({
         title: title,
         price: price,
         market_price: marketPrice,
@@ -222,7 +248,8 @@ const CreateListing: React.FC = () => {
         baths: parseInt(values.baths),
         sqft: parseInt(values.sqft),
         images: finalImages,
-        user_id: user.id
+        user_id: user.id,
+        bounty: values.bounty ? Number(values.bounty) : null
       }).select();
       if (error) {
         console.error("Supabase error:", error);
@@ -331,6 +358,13 @@ const CreateListing: React.FC = () => {
                 </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>
+                  <BountyInput 
+                    value={form.watch("bounty")} 
+                    onChange={(value) => form.setValue("bounty", value)} 
+                  />
+                </Suspense>
+                
+                <Suspense fallback={<LoadingFallback />}>
                   <ImageUploader images={images} setImages={setImages} imageFiles={imageFiles} setImageFiles={setImageFiles} isSubmitting={isSubmitting} uploadProgress={uploadProgress} isProcessingImages={isProcessingImages} />
                 </Suspense>
                 
@@ -344,4 +378,5 @@ const CreateListing: React.FC = () => {
       </motion.div>
     </div>;
 };
+
 export default CreateListing;

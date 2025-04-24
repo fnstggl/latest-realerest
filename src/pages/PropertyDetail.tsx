@@ -17,6 +17,7 @@ import SiteFooter from '@/components/sections/SiteFooter';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
+import BountyBadge from '@/components/property-detail/BountyBadge';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -164,6 +165,11 @@ const PropertyDetail: React.FC = () => {
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="space-y-6">
+            {property?.bounty && (
+              <div className="mb-4">
+                <BountyBadge amount={property.bounty} />
+              </div>
+            )}
             <PropertyImages mainImage={property?.images[0]} images={property?.images} />
           </div>
           
