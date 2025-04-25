@@ -57,6 +57,7 @@ const LikedPropertiesTab = () => {
         <PropertyCard
           key={item.property_listings.id}
           id={item.property_listings.id}
+          title={item.property_listings.title}
           price={item.property_listings.price}
           marketPrice={item.property_listings.market_price}
           image={item.property_listings.images[0]}
