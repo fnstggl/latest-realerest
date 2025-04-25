@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -12,6 +13,8 @@ import WaitlistTab from "@/components/dashboard/WaitlistTab";
 import OffersTab from "@/components/dashboard/OffersTab";
 import AccountTab from "@/components/dashboard/AccountTab";
 import NotificationsTab from "@/components/dashboard/NotificationsTab";
+import LikedPropertiesTab from "@/components/dashboard/LikedPropertiesTab";
+import BountiesTab from "@/components/dashboard/BountiesTab";
 import { useProperties } from "@/hooks/useProperties";
 import { TabNav } from "@/components/dashboard/TabNav";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
