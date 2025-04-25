@@ -11,7 +11,7 @@ const WaitlistedTab = () => {
   const { user } = useAuth();
   
   const { data: waitlistedProperties, isLoading } = useQuery({
-    queryKey: ['waitlistedProperties'],
+    queryKey: ['waitlistedProperties', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
       
@@ -38,7 +38,8 @@ const WaitlistedTab = () => {
 
       if (error) throw error;
       return data || [];
-    }
+    },
+    enabled: !!user?.id
   });
 
   if (isLoading) {

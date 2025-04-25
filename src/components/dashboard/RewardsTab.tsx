@@ -11,7 +11,7 @@ const RewardsTab = () => {
   const { user } = useAuth();
   
   const { data: rewards, isLoading } = useQuery({
-    queryKey: ['wholesalerRewards'],
+    queryKey: ['wholesalerRewards', user?.id],
     queryFn: async () => {
       if (!user?.id) return { total: 0, claimed: [] };
       
@@ -43,7 +43,8 @@ const RewardsTab = () => {
         total: totalReward,
         claimed: data || []
       };
-    }
+    },
+    enabled: !!user?.id
   });
 
   if (isLoading) {

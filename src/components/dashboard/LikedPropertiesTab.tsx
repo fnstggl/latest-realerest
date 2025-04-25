@@ -6,11 +6,16 @@ import PropertyCard from '@/components/PropertyCard';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 const LikedPropertiesTab = () => {
+  const { user } = useAuth();
+  
   const { data: likedProperties, isLoading } = useQuery({
-    queryKey: ['likedProperties'],
+    queryKey: ['likedProperties', user?.id],
     queryFn: async () => {
+      if (!user?.id) return [];
+      
       const { data, error } = await supabase
         .from('liked_properties')
         .select(`
@@ -27,6 +32,7 @@ const LikedPropertiesTab = () => {
             sqft
           )
         `)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -37,7 +43,8 @@ const LikedPropertiesTab = () => {
       );
       
       return uniqueProperties;
-    }
+    },
+    enabled: !!user?.id
   });
 
   if (isLoading) {
