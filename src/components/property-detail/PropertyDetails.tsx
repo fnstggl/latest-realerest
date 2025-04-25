@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { formatCurrency } from '@/lib/utils';
-
 interface PropertyDetailsProps {
   afterRepairValue?: number;
   estimatedRehab?: number;
@@ -10,8 +8,7 @@ interface PropertyDetailsProps {
   lotSize?: string;
   parking?: string;
 }
-
-const PropertyDetails: React.FC<PropertyDetailsProps> = ({ 
+const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   afterRepairValue = 0,
   estimatedRehab = 0,
   propertyType = "Single Family",
@@ -19,8 +16,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   lotSize = "0.25 acres",
   parking = "2-Car Garage"
 }) => {
-  return (
-    <div className="h-full p-4 sm:p-6 rounded-xl bg-white">
+  return <div className="h-full p-4 sm:p-6 rounded-xl bg-white my-[20px]">
       <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black">Property Details</h2>
       
       <div className="space-y-4 text-sm sm:text-base">
@@ -52,9 +48,6 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PropertyDetails;
-
