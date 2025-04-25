@@ -30,23 +30,9 @@ const AccountTypeSelector: React.FC<AccountTypeSelectorProps> = ({ currentType, 
     if (type === currentType) return;
     
     try {
-      // Update in Supabase
-      const { error } = await supabase
-        .from('profiles')
-        .update({ account_type: type })
-        .eq('id', userId);
-        
-      if (error) {
-        console.error('Error in account type change:', error);
-        toast.error('Failed to update account type');
-        return;
-      }
-      
-      toast.success(`Account type updated to ${type}`);
       onUpdate(type);
     } catch (error) {
       console.error('Error in account type change:', error);
-      toast.error('Failed to update account type');
     }
   };
 

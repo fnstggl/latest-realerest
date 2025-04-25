@@ -1,234 +1,217 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
-export interface PropertyDetailType {
+interface PropertyDetailType {
   id: string;
   title: string;
   description: string;
   price: number;
-  market_price: number;
+  marketPrice: number;
   location: string;
-  full_address: string;
-  images: string[];
+  address?: string;
   beds: number;
   baths: number;
   sqft: number;
-  property_type: string;
-  after_repair_value?: number;
-  estimated_rehab?: number;
+  images: string[];
+  comparableAddresses: string[];
+  seller?: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+  };
   bounty?: number;
-  user_id: string;
-  // Seller info
-  seller: string;
-  seller_name: string;
-  seller_email: string;
-  seller_phone: string;
-  // Calculation
-  belowMarket: number;
+  estimatedRehab?: number;
+  afterRepairValue?: number;
+  yearBuilt?: string; // Added optional
+  lotSize?: string;   // Added optional
+  parking?: string;   // Added optional
 }
 
-export const usePropertyDetail = (propertyId: string, userId?: string) => {
+export const usePropertyDetail = (propertyId?: string) => {
+  const [property, setProperty] = useState<PropertyDetailType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isLiked, setIsLiked] = useState(false);
-  const [waitlistStatus, setWaitlistStatus] = useState<string | null>(null);
-  const [isOwner, setIsOwner] = useState(false);
-  const [isApproved, setIsApproved] = useState(false);
-  const [sellerInfo, setSellerInfo] = useState<any>(null);
-  const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
-  
-  const { data: property, isLoading, error, refetch } = useQuery({
-    queryKey: ['propertyDetail', propertyId],
-    queryFn: async () => {
-      if (!propertyId) throw new Error("Property ID is required");
-      
-      // Fetch the property
-      const { data, error } = await supabase
-        .from('property_listings')
-        .select(`
-          *,
-          profiles:user_id (
-            id,
-            name,
-            email,
-            phone
-          )
-        `)
-        .eq('id', propertyId)
-        .single();
-      
-      if (error) throw error;
-      if (!data) throw new Error("Property not found");
+  const { user } = useAuth();
 
-      // Get user profile info safely
-      let sellerName = 'Property Owner';
-      let sellerEmail = '';
-      let sellerPhone = '';
-
-      // Check if profiles exists and has the needed properties
-      if (data.profiles && typeof data.profiles === 'object') {
-        sellerName = data.profiles.name || 'Property Owner';
-        sellerEmail = data.profiles.email || '';
-        sellerPhone = data.profiles.phone || '';
-      }
-
-      // Transform data to include seller information
-      const transformedData: PropertyDetailType = {
-        ...data,
-        seller: data.user_id,
-        seller_name: sellerName,
-        seller_email: sellerEmail,
-        seller_phone: sellerPhone,
-        belowMarket: Math.round(((Number(data.market_price) - Number(data.price)) / Number(data.market_price)) * 100)
-      };
-            
-      return transformedData;
-    },
-    retry: 1
-  });
-
-  // Check if user has liked this property
-  useEffect(() => {
-    if (!userId || !propertyId) return;
-    
-    const checkLikeStatus = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('liked_properties')
-          .select('*')
-          .eq('user_id', userId)
-          .eq('property_id', propertyId)
-          .single();
-        
-        if (!error && data) {
-          setIsLiked(true);
-        }
-      } catch (error) {
-        console.error("Error checking like status:", error);
-      }
-    };
-    
-    checkLikeStatus();
-  }, [userId, propertyId]);
-
-  // Check waitlist status
-  useEffect(() => {
-    if (!userId || !propertyId) return;
-    
-    const checkWaitlistStatus = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('waitlist_requests')
-          .select('status')
-          .eq('user_id', userId)
-          .eq('property_id', propertyId)
-          .single();
-        
-        if (!error && data) {
-          setWaitlistStatus(data.status);
-          if (data.status === 'accepted') {
-            setIsApproved(true);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking waitlist status:", error);
-      }
-    };
-    
-    checkWaitlistStatus();
-  }, [userId, propertyId]);
-  
-  // Check if the user is the owner of the property
-  useEffect(() => {
-    if (property && userId && property.user_id === userId) {
-      setIsOwner(true);
-    } else {
-      setIsOwner(false);
+  const checkIfPropertyLiked = async () => {
+    if (!propertyId || !user) {
+      setIsLiked(false);
+      return;
     }
-  }, [property, userId]);
 
-  // Determine if seller info should be shown (if user is on waitlist and approved)
-  useEffect(() => {
-    if (isApproved || isOwner) {
-      setShouldShowSellerInfo(true);
-      
-      if (property) {
-        setSellerInfo({
-          name: property.seller_name,
-          email: property.seller_email,
-          phone: property.seller_phone
-        });
-      }
-    }
-  }, [isApproved, isOwner, property]);
-
-  // Toggle like status
-  const toggleLike = useCallback(async () => {
-    if (!userId || !propertyId) return;
-    
     try {
-      if (isLiked) {
-        // Unlike
-        await supabase
-          .from('liked_properties')
-          .delete()
-          .eq('user_id', userId)
-          .eq('property_id', propertyId);
-          
-        setIsLiked(false);
-      } else {
-        // Like
-        await supabase
-          .from('liked_properties')
-          .insert({
-            user_id: userId,
-            property_id: propertyId
-          });
-          
-        setIsLiked(true);
+      const { data, error } = await supabase
+        .from('liked_properties')
+        .select('id')
+        .eq('property_id', propertyId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error checking property like status:", error);
+        return;
       }
+
+      setIsLiked(!!data);
     } catch (error) {
-      console.error("Error toggling like status:", error);
-    }
-  }, [isLiked, userId, propertyId]);
-  
-  // Refresh property data
-  const refreshProperty = async () => {
-    await refetch();
-    
-    // Re-check waitlist status
-    if (userId && propertyId) {
-      try {
-        const { data, error } = await supabase
-          .from('waitlist_requests')
-          .select('status')
-          .eq('user_id', userId)
-          .eq('property_id', propertyId)
-          .single();
-        
-        if (!error && data) {
-          setWaitlistStatus(data.status);
-          if (data.status === 'accepted') {
-            setIsApproved(true);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking waitlist status:", error);
-      }
+      console.error("Error checking property like status:", error);
     }
   };
+
+  const toggleLike = async () => {
+    if (!propertyId || !user) {
+      toast.error("You must be logged in to like properties");
+      return;
+    }
+
+    try {
+      if (isLiked) {
+        // Unlike the property
+        const { error } = await supabase
+          .from('liked_properties')
+          .delete()
+          .eq('property_id', propertyId)
+          .eq('user_id', user.id);
+
+        if (error) {
+          console.error("Error unliking property:", error);
+          toast.error("Failed to unlike property");
+          return;
+        }
+
+        setIsLiked(false);
+        toast.success("Property removed from your favorites");
+      } else {
+        // Like the property
+        const { error } = await supabase
+          .from('liked_properties')
+          .insert({ 
+            property_id: propertyId,
+            user_id: user.id
+          });
+
+        if (error) {
+          console.error("Error liking property:", error);
+          toast.error("Failed to like property");
+          return;
+        }
+
+        setIsLiked(true);
+        toast.success("Property added to your favorites");
+
+        // Create notification for the seller
+        if (property?.seller?.id) {
+          try {
+            await supabase
+              .from('notifications')
+              .insert({
+                user_id: property.seller.id,
+                title: 'New Property Like',
+                message: `${user.name || 'Someone'} liked your property "${property.title}"`,
+                type: 'like',
+                properties: { 
+                  propertyId: propertyId,
+                  userId: user.id,
+                  userName: user.name
+                }
+              });
+          } catch (error) {
+            console.error("Error creating notification:", error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling property like:", error);
+      toast.error("An error occurred. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    checkIfPropertyLiked();
+  }, [propertyId, user]);
+
+  useEffect(() => {
+    const fetchPropertyDetail = async () => {
+      if (!propertyId) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('*, user_id')
+          .eq('id', propertyId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching property:', error);
+          setError('Failed to load property details');
+          setIsLoading(false);
+          return;
+        }
+
+        // Get seller details
+        let sellerData = null;
+        
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, name, email, phone')
+          .eq('id', data.user_id)
+          .single();
+
+        if (profileError) {
+          console.error('Error fetching seller profile:', profileError);
+        } else {
+          sellerData = profileData;
+        }
+
+        setProperty({
+          id: data.id,
+          title: data.title,
+          description: data.description || '',
+          price: data.price,
+          marketPrice: data.market_price,
+          location: data.location,
+          address: data.full_address,
+          beds: data.beds || 0,
+          baths: data.baths || 0,
+          sqft: data.sqft || 0,
+          images: data.images || [],
+          comparableAddresses: data.comparable_addresses || [],
+          seller: sellerData,
+          bounty: data.bounty,
+          estimatedRehab: data.estimated_rehab,
+          afterRepairValue: data.after_repair_value,
+          // Add with fallback default values
+          yearBuilt: 'N/A', // Default value
+          lotSize: 'N/A',   // Default value
+          parking: 'N/A',   // Default value
+        });
+      } catch (error) {
+        console.error('Exception fetching property:', error);
+        setError('An error occurred while loading the property details');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPropertyDetail();
+  }, [propertyId]);
 
   return {
     property,
     isLoading,
     error,
     isLiked,
-    toggleLike,
-    waitlistStatus,
-    isOwner,
-    isApproved,
-    sellerInfo,
-    shouldShowSellerInfo,
-    refreshProperty
+    toggleLike
   };
 };

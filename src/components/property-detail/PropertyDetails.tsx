@@ -1,116 +1,53 @@
-
 import React from 'react';
-import { 
-  Home, 
-  Bed, 
-  Bath, 
-  Ruler, 
-  Calendar, 
-  Tag, 
-  TrendingUp, 
-  Wrench 
-} from 'lucide-react';
-
-export interface PropertyDetailsProps {
-  beds?: number; // Make all these fields optional with default values
-  baths?: number;
-  sqft?: number;
-  propertyType?: string;
+import { formatCurrency } from '@/lib/utils';
+interface PropertyDetailsProps {
   afterRepairValue?: number;
   estimatedRehab?: number;
-  yearBuilt?: number;
+  propertyType?: string;
+  yearBuilt?: string;
   lotSize?: string;
+  parking?: string;
 }
-
-export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
-  beds = 0,
-  baths = 0,
-  sqft = 0,
-  propertyType = 'House',
+const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   afterRepairValue = 0,
   estimatedRehab = 0,
-  yearBuilt,
-  lotSize
+  propertyType = "Single Family",
+  yearBuilt = "2005",
+  lotSize = "0.25 acres",
+  parking = "2-Car Garage"
 }) => {
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-      <h2 className="text-xl font-bold mb-4">Property Details</h2>
+  return <div className="h-full p-4 sm:p-6 rounded-xl bg-white my-[20px]">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black">Property Details</h2>
       
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <div className="flex items-center p-3 border border-gray-100 rounded-lg bg-gray-50">
-          <Bed className="w-5 h-5 text-gray-500 mr-3" />
-          <div>
-            <p className="text-sm text-gray-500">Beds</p>
-            <p className="font-medium">{beds}</p>
-          </div>
+      <div className="space-y-4 text-sm sm:text-base">
+        <div className="flex justify-between p-2 bg-[#FCFBF8] rounded-lg">
+          <span className="font-bold text-black">Property Type:</span>
+          <span className="text-black">{propertyType}</span>
+        </div>
+        <div className="flex justify-between p-2 bg-[#FCFBF8] rounded-lg">
+          <span className="font-bold text-black">Year Built:</span>
+          <span className="text-black">{yearBuilt}</span>
+        </div>
+        <div className="flex justify-between p-2 bg-[#FCFBF8] rounded-lg">
+          <span className="font-bold text-black">Lot Size:</span>
+          <span className="text-black">{lotSize}</span>
+        </div>
+        <div className="flex justify-between p-2 bg-[#FCFBF8] rounded-lg">
+          <span className="font-bold text-black">Parking:</span>
+          <span className="text-black">{parking}</span>
         </div>
         
-        <div className="flex items-center p-3 border border-gray-100 rounded-lg bg-gray-50">
-          <Bath className="w-5 h-5 text-gray-500 mr-3" />
-          <div>
-            <p className="text-sm text-gray-500">Baths</p>
-            <p className="font-medium">{baths}</p>
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="flex flex-col p-2 bg-[#FCFBF8] rounded-lg">
+            <span className="text-xs text-gray-600">After Repair Value</span>
+            <span className="font-bold text-black">{formatCurrency(afterRepairValue)}</span>
+          </div>
+          <div className="flex flex-col p-2 bg-[#FCFBF8] rounded-lg">
+            <span className="text-xs text-gray-600">Est. Rehab Cost</span>
+            <span className="font-bold text-black">{formatCurrency(estimatedRehab)}</span>
           </div>
         </div>
-        
-        <div className="flex items-center p-3 border border-gray-100 rounded-lg bg-gray-50">
-          <Ruler className="w-5 h-5 text-gray-500 mr-3" />
-          <div>
-            <p className="text-sm text-gray-500">Sq Ft</p>
-            <p className="font-medium">{sqft.toLocaleString()}</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center p-3 border border-gray-100 rounded-lg bg-gray-50">
-          <Home className="w-5 h-5 text-gray-500 mr-3" />
-          <div>
-            <p className="text-sm text-gray-500">Property Type</p>
-            <p className="font-medium">{propertyType}</p>
-          </div>
-        </div>
-        
-        {yearBuilt && (
-          <div className="flex items-center p-3 border border-gray-100 rounded-lg bg-gray-50">
-            <Calendar className="w-5 h-5 text-gray-500 mr-3" />
-            <div>
-              <p className="text-sm text-gray-500">Year Built</p>
-              <p className="font-medium">{yearBuilt}</p>
-            </div>
-          </div>
-        )}
-        
-        {lotSize && (
-          <div className="flex items-center p-3 border border-gray-100 rounded-lg bg-gray-50">
-            <Tag className="w-5 h-5 text-gray-500 mr-3" />
-            <div>
-              <p className="text-sm text-gray-500">Lot Size</p>
-              <p className="font-medium">{lotSize}</p>
-            </div>
-          </div>
-        )}
-        
-        {afterRepairValue > 0 && (
-          <div className="flex items-center p-3 border border-gray-100 rounded-lg bg-gray-50">
-            <TrendingUp className="w-5 h-5 text-gray-500 mr-3" />
-            <div>
-              <p className="text-sm text-gray-500">After Repair Value</p>
-              <p className="font-medium">${afterRepairValue.toLocaleString()}</p>
-            </div>
-          </div>
-        )}
-        
-        {estimatedRehab > 0 && (
-          <div className="flex items-center p-3 border border-gray-100 rounded-lg bg-gray-50">
-            <Wrench className="w-5 h-5 text-gray-500 mr-3" />
-            <div>
-              <p className="text-sm text-gray-500">Est. Rehab Cost</p>
-              <p className="font-medium">${estimatedRehab.toLocaleString()}</p>
-            </div>
-          </div>
-        )}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PropertyDetails;

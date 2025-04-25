@@ -11,7 +11,7 @@ const WaitlistedTab = () => {
   const { user } = useAuth();
   
   const { data: waitlistedProperties, isLoading } = useQuery({
-    queryKey: ['waitlistedProperties', user?.id],
+    queryKey: ['waitlistedProperties'],
     queryFn: async () => {
       if (!user?.id) return [];
       
@@ -38,8 +38,7 @@ const WaitlistedTab = () => {
 
       if (error) throw error;
       return data || [];
-    },
-    enabled: !!user?.id
+    }
   });
 
   if (isLoading) {
@@ -61,7 +60,7 @@ const WaitlistedTab = () => {
 
   return (
     <div className="space-y-4">
-      {waitlistedProperties.map((item) => {
+      {waitlistedProperties.map((item: any) => {
         if (!item.property_listings) return null;
         
         const property = item.property_listings;

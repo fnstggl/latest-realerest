@@ -1,244 +1,202 @@
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { CheckCheck, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-
-export interface WaitlistButtonProps {
+import React, { useState, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowRight, UserCheck, LogIn } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+interface WaitlistButtonProps {
   propertyId: string;
-  status?: string; // Make status optional
-  onSuccess?: () => Promise<void>;
+  propertyTitle: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  refreshProperty?: () => void; // <-- added
 }
-
-export const WaitlistButton: React.FC<WaitlistButtonProps> = ({ 
-  propertyId, 
-  status = 'unknown', // Default value
-  onSuccess 
+const WaitlistButton: React.FC<WaitlistButtonProps> = ({
+  propertyId,
+  propertyTitle,
+  open,
+  onOpenChange,
+  refreshProperty
 }) => {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasRequested, setHasRequested] = useState(false);
-  const [requestStatus, setRequestStatus] = useState(status);
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  
-  useEffect(() => {
-    if (user?.id) {
-      setName(user.name || '');
-      setEmail(user.email || '');
-      
-      // Check if user has already requested to join the waitlist
-      const checkWaitlistRequest = async () => {
-        try {
-          const { data, error } = await supabase
-            .from('waitlist_requests')
-            .select('status')
-            .eq('user_id', user.id)
-            .eq('property_id', propertyId)
-            .maybeSingle();
-          
-          if (error) throw error;
-          
-          if (data) {
-            setHasRequested(true);
-            setRequestStatus(data.status);
-          }
-        } catch (error) {
-          console.error('Error checking waitlist status:', error);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Pre-fill user info if available
+  React.useEffect(() => {
+    if (user) {
+      const fetchUserProfile = async () => {
+        const {
+          data,
+          error
+        } = await supabase.from("profiles").select("name, email, phone").eq("id", user.id).maybeSingle();
+        if (data && !error) {
+          setName(data.name || "");
+          setEmail(data.email || "");
+          setPhone(data.phone || "");
+        } else if (user.email) {
+          setEmail(user.email);
         }
       };
-      
-      checkWaitlistRequest();
+      fetchUserProfile();
     }
-  }, [user, propertyId]);
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  }, [user]);
+  const handleJoinWaitlist = useCallback(async () => {
     if (!user) {
-      toast.error('You need to be logged in to join the waitlist');
-      navigate('/signin');
+      navigate("/signin", {
+        state: {
+          from: `/property/${propertyId}`
+        }
+      });
       return;
     }
-    
-    if (!name || !email) {
-      toast.error('Please fill in all required fields');
+    if (!name.trim()) {
+      toast.error("Please provide your name");
       return;
     }
-    
-    setIsSubmitting(true);
-    
     try {
-      // Check if user already requested to join the waitlist
-      const { data: existing, error: checkError } = await supabase
-        .from('waitlist_requests')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('property_id', propertyId)
-        .maybeSingle();
-      
-      if (existing) {
-        toast.error('You have already requested to join this waitlist');
-        setOpen(false);
-        setIsSubmitting(false);
-        return;
-      }
-      
-      // Create new waitlist request
-      const { error } = await supabase
-        .from('waitlist_requests')
-        .insert([
-          {
-            user_id: user.id,
-            property_id: propertyId,
-            name: name,
-            email: email,
-            phone: phone,
-            status: 'pending'
-          }
-        ]);
-      
+      setLoading(true);
+
+      // 1. Add to waitlist_requests table
+      const {
+        data,
+        error
+      } = await supabase.from("waitlist_requests").insert({
+        property_id: propertyId,
+        user_id: user.id,
+        name: name.trim(),
+        email: email.trim() || user.email,
+        phone: phone.trim(),
+        status: "pending"
+      }).select().single();
       if (error) {
-        console.error('Error submitting waitlist request:', error);
-        toast.error('Failed to join the waitlist');
-        return;
+        if (error.code === "23505") {
+          onOpenChange(false);
+          if (refreshProperty) {
+            refreshProperty();
+          }
+          return;
+        } else {
+          throw error;
+        }
       }
-      
-      toast.success('Your waitlist request has been submitted!');
-      setHasRequested(true);
-      setRequestStatus('pending');
-      setOpen(false);
-      
-      // Call onSuccess callback if provided
-      if (onSuccess) {
-        await onSuccess();
+
+      // 2. Get the property owner's ID
+      const {
+        data: propertyData,
+        error: propertyError
+      } = await supabase.from("property_listings").select("user_id").eq("id", propertyId).single();
+      if (propertyError) {
+        console.error("Error getting property owner:", propertyError);
+      } else if (propertyData) {
+        // Removed the notification creation code here
+      }
+      onOpenChange(false);
+      if (refreshProperty) {
+        refreshProperty();
       }
     } catch (error) {
-      console.error('Error submitting waitlist request:', error);
-      toast.error('Failed to join the waitlist');
+      console.error("Error joining waitlist:", error);
+      toast.error("Failed to join waitlist. Please try again.");
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
+    }
+  }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange, refreshProperty]);
+  const handleButtonClick = () => {
+    if (!user) {
+      navigate("/signin", {
+        state: {
+          from: `/property/${propertyId}`
+        }
+      });
+    } else {
+      onOpenChange(true);
     }
   };
+  return <>
+      <Button variant="glass" onClick={handleButtonClick} className="w-full bg-white hover:bg-white group relative overflow-hidden">
+        {user ? <>
+            <UserCheck size={18} className="mr-2 text-black" />
+            <span className="text-black font-bold relative z-10">
+              Join Waitlist for Full Details
+            </span>
+          </> : <>
+            <LogIn size={18} className="mr-2 text-black" />
+            <span className="text-black font-bold relative z-10">
+              Sign in to Join Waitlist
+            </span>
+          </>}
 
-  const getButtonText = () => {
-    if (hasRequested) {
-      switch (requestStatus) {
-        case 'accepted':
-          return (
-            <>
-              <CheckCheck className="mr-2 h-4 w-4" />
-              Accepted to Waitlist
-            </>
-          );
-        case 'declined':
-          return 'Waitlist Request Declined';
-        default:
-          return 'Waitlist Request Pending';
-      }
-    }
-    return 'Join Waitlist';
-  };
-  
-  return (
-    <>
-      <Button 
-        variant={hasRequested ? (requestStatus === 'accepted' ? 'default' : 'outline') : 'outline'}
-        size="lg"
-        className={`w-full ${hasRequested && requestStatus === 'accepted' ? 'bg-green-600 hover:bg-green-700' : ''}`}
-        onClick={() => {
-          if (hasRequested) {
-            toast.info(`Your waitlist request is ${requestStatus}`);
-            return;
-          }
-          
-          if (!user) {
-            toast.error('You need to be logged in to join the waitlist');
-            navigate('/signin');
-            return;
-          }
-          
-          setOpen(true);
-        }}
-        disabled={hasRequested}
-      >
-        {getButtonText()}
+        <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
+        background: "transparent",
+        border: "2px solid transparent",
+        backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+        backgroundOrigin: "border-box",
+        backgroundClip: "border-box",
+        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+        WebkitMaskComposite: "xor",
+        maskComposite: "exclude",
+        boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+      }}></span>
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <form onSubmit={handleSubmit}>
+      {user && <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent className="bg-white rounded-lg border border-gray-200 shadow-xl sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Join Waitlist</DialogTitle>
+              <DialogTitle className="text-xl font-bold">
+                Join Property Waitlist
+              </DialogTitle>
+              
             </DialogHeader>
-            
-            <div className="py-4 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your full name"
-                  required
-                />
+
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="name" className="text-right font-bold">
+                  Name
+                </Label>
+                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Enter your full name" className="col-span-3 w-full min-w-[calc(1*theme(spacing.64))]" />
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                />
+
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="email" className="text-right font-bold">
+                  Email
+                </Label>
+                <Input id="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" type="email" className="col-span-3 w-full min-w-[calc(1*theme(spacing.64))]" />
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone (Optional)</Label>
-                <Input
-                  id="phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Enter your phone number"
-                />
+
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="phone" className="text-right font-bold">
+                  Phone
+                </Label>
+                <Input id="phone" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Optional" className="col-span-3 w-full min-w-[calc(1*theme(spacing.64))]" />
               </div>
             </div>
 
             <DialogFooter>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => setOpen(false)}
-                disabled={isSubmitting}
-              >
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  'Submit'
-                )}
+              <Button 
+                onClick={handleJoinWaitlist} 
+                disabled={loading} 
+                className="bg-black hover:bg-black text-white font-bold"
+              >
+                {loading ? "Submitting..." : "Submit Request"}
+                {!loading && <ArrowRight size={16} className="ml-2" />}
               </Button>
             </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+          </DialogContent>
+        </Dialog>}
+    </>;
 };
+export default WaitlistButton;

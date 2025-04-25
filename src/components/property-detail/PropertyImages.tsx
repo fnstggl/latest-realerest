@@ -1,56 +1,23 @@
-
 import React, { useState } from 'react';
-
-export interface PropertyImagesProps {
-  images: string[];
-  mainImage?: string; // Make mainImage optional with a default value
+interface PropertyImagesProps {
+  mainImage: string;
+  images?: string[];
 }
-
-export const PropertyImages: React.FC<PropertyImagesProps> = ({ 
-  images, 
-  mainImage = images && images.length > 0 ? images[0] : undefined // Default to first image
+const PropertyImages: React.FC<PropertyImagesProps> = ({
+  mainImage,
+  images = []
 }) => {
-  const [currentImage, setCurrentImage] = useState(mainImage || (images && images.length > 0 ? images[0] : ''));
-
-  if (!images || images.length === 0) {
-    return (
-      <div className="bg-gray-200 w-full h-64 rounded-xl flex items-center justify-center mb-6">
-        <p className="text-gray-500">No images available</p>
+  const [activeImage, setActiveImage] = useState(mainImage);
+  return <div>
+      <div className="border border-white/40 shadow-lg p-2 rounded-xl mb-4 my-[35px]">
+        <img src={activeImage || mainImage} alt="Property image" className="w-full h-[400px] object-cover rounded-lg" />
       </div>
-    );
-  }
-
-  return (
-    <div className="mb-6">
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm mb-2">
-        <img
-          src={currentImage || images[0]}
-          alt="Property"
-          className="w-full h-[400px] object-cover"
-        />
-      </div>
-
-      {images.length > 1 && (
-        <div className="grid grid-cols-5 gap-2">
-          {images.map((image, index) => (
-            <div
-              key={index}
-              className={`rounded-lg overflow-hidden cursor-pointer ${
-                currentImage === image ? 'ring-2 ring-black' : ''
-              }`}
-              onClick={() => setCurrentImage(image)}
-            >
-              <img
-                src={image}
-                alt={`Property thumbnail ${index + 1}`}
-                className="w-full h-20 object-cover"
-              />
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+      
+      {images && images.length > 1 && <div className="grid grid-cols-4 gap-2">
+          {images.map((img, index) => <div key={index} className={`cursor-pointer ${activeImage === img ? 'border-2 border-gray-400' : 'border border-white/40'} rounded-lg`} onClick={() => setActiveImage(img)}>
+              <img src={img} alt={`Property image ${index + 1}`} className="w-full h-20 object-cover rounded-lg" />
+            </div>)}
+        </div>}
+    </div>;
 };
-
 export default PropertyImages;

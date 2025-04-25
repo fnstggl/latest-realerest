@@ -11,7 +11,7 @@ const RewardsTab = () => {
   const { user } = useAuth();
   
   const { data: rewards, isLoading } = useQuery({
-    queryKey: ['wholesalerRewards', user?.id],
+    queryKey: ['wholesalerRewards'],
     queryFn: async () => {
       if (!user?.id) return { total: 0, claimed: [] };
       
@@ -43,8 +43,7 @@ const RewardsTab = () => {
         total: totalReward,
         claimed: data || []
       };
-    },
-    enabled: !!user?.id
+    }
   });
 
   if (isLoading) {
@@ -79,7 +78,7 @@ const RewardsTab = () => {
       <h3 className="text-lg font-semibold pt-4">Rewards History</h3>
       
       <div className="grid gap-4">
-        {rewards.claimed.map((reward) => (
+        {rewards.claimed.map((reward: any) => (
           <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <img 
