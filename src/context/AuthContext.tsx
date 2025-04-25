@@ -17,6 +17,7 @@ interface AuthContextType {
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   accountType: string;
+  updateUserData: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,7 +31,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   
   const isAuthenticated = !!user;
-  const accountType = 'buyer'; // Default value to prevent errors
+  const accountType = user?.accountType || 'buyer'; // Default value to prevent errors
+
+  const updateUserData = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+      
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .maybeSingle();
+        
+      if (error) {
+        console.error('Error fetching updated profile:', error);
+        return;
+      }
+      
+      if (profile) {
+        setUser(prevUser => ({
+          ...(prevUser || { id: session.user.id, name: '', email: session.user.email || '' }),
+          accountType: profile.account_type,
+          name: profile.name || prevUser?.name || '',
+        }));
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
+  };
 
   useEffect(() => {
     let timeoutId: number | undefined;
@@ -86,6 +115,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    
+    const profileChangesChannel = supabase
+      .channel('profile-changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        },
+        () => {
+          updateUserData();
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(profileChangesChannel);
+    };
+  }, [user?.id]);
 
   const fetchUserProfile = async (supabaseUser: any) => {
     try {
@@ -196,7 +249,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       login, 
       signup, 
       logout,
-      accountType
+      accountType,
+      updateUserData
     }}>
       {children}
     </AuthContext.Provider>

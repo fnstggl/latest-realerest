@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Home, User, Bell, ClipboardCheck, Plus, CreditCard, Heart, Award } from "lucide-react";
+import { Home, User, Bell, ClipboardCheck, Plus, CreditCard, Heart, Award, Gift } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNotifications } from "@/context/NotificationContext";
 import PropertiesTab from "@/components/dashboard/PropertiesTab";
@@ -15,9 +15,13 @@ import AccountTab from "@/components/dashboard/AccountTab";
 import NotificationsTab from "@/components/dashboard/NotificationsTab";
 import LikedPropertiesTab from "@/components/dashboard/LikedPropertiesTab";
 import BountiesTab from "@/components/dashboard/BountiesTab";
+import WaitlistedTab from "@/components/dashboard/WaitlistedTab";
+import RewardsTab from "@/components/dashboard/RewardsTab";
 import { useProperties } from "@/hooks/useProperties";
 import { TabNav } from "@/components/dashboard/TabNav";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -28,6 +32,7 @@ const Dashboard: React.FC = () => {
   } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [accountType, setAccountType] = useState(user?.accountType || 'buyer');
   const {
     notifications,
     markAsRead,
@@ -40,8 +45,74 @@ const Dashboard: React.FC = () => {
     setWaitlistUsers,
     isLoading,
     setIsLoading,
-    error
+    error,
+    refreshProperties,
+    refreshWaitlist
   } = useProperties(user?.id);
+
+  // Set initial active tab based on account type
+  useEffect(() => {
+    if (user?.accountType) {
+      setAccountType(user.accountType);
+      
+      // Set default active tab based on account type
+      switch (user.accountType) {
+        case 'seller':
+          setActiveTab('properties');
+          break;
+        case 'buyer':
+          setActiveTab('liked');
+          break;
+        case 'wholesaler':
+          setActiveTab('bounties');
+          break;
+      }
+    }
+  }, [user?.accountType]);
+
+  // Handle account type change
+  const handleAccountTypeChange = async (type: string) => {
+    try {
+      if (!user?.id) return;
+      
+      // Update in Supabase
+      const { error } = await supabase
+        .from('profiles')
+        .update({ account_type: type })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error("Error updating account type:", error);
+        toast.error("Failed to update account type");
+        return;
+      }
+
+      // Update local state
+      setAccountType(type);
+
+      // Set new default active tab
+      switch (type) {
+        case 'seller':
+          setActiveTab('properties');
+          break;
+        case 'buyer':
+          setActiveTab('liked');
+          break;
+        case 'wholesaler':
+          setActiveTab('bounties');
+          break;
+      }
+      
+      // Refresh data
+      refreshProperties();
+      refreshWaitlist();
+      
+      toast.success(`Account type updated to ${type}`);
+    } catch (error) {
+      console.error("Error updating account type:", error);
+      toast.error("Failed to update account type");
+    }
+  };
 
   const getTabItems = () => {
     const baseItems = [
@@ -51,7 +122,12 @@ const Dashboard: React.FC = () => {
         icon: User,
         content: (
           <TabsContent value="account" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
-            <AccountTab user={user} logout={logout} />
+            <AccountTab 
+              user={user} 
+              logout={logout} 
+              accountType={accountType}
+              onUpdateAccountType={handleAccountTypeChange}
+            />
           </TabsContent>
         )
       },
@@ -67,7 +143,8 @@ const Dashboard: React.FC = () => {
       }
     ];
 
-    if (user?.accountType === 'seller') {
+    // Seller specific tabs
+    if (accountType === 'seller') {
       return [
         {
           name: "Properties",
@@ -88,11 +165,35 @@ const Dashboard: React.FC = () => {
             </TabsContent>
           )
         },
+        {
+          name: "Waitlist",
+          value: "waitlist",
+          icon: ClipboardCheck,
+          content: (
+            <TabsContent value="waitlist" className="space-y-6">
+              <WaitlistTab 
+                waitlistUsers={waitlistUsers}
+                setWaitlistUsers={setWaitlistUsers}
+              />
+            </TabsContent>
+          )
+        },
+        {
+          name: "Offers",
+          value: "offers",
+          icon: CreditCard,
+          content: (
+            <TabsContent value="offers" className="space-y-6">
+              <OffersTab />
+            </TabsContent>
+          )
+        },
         ...baseItems
       ];
     }
 
-    if (user?.accountType === 'buyer') {
+    // Buyer specific tabs
+    if (accountType === 'buyer') {
       return [
         {
           name: "Liked",
@@ -101,6 +202,16 @@ const Dashboard: React.FC = () => {
           content: (
             <TabsContent value="liked" className="space-y-6">
               <LikedPropertiesTab />
+            </TabsContent>
+          )
+        },
+        {
+          name: "Waitlisted",
+          value: "waitlisted",
+          icon: ClipboardCheck,
+          content: (
+            <TabsContent value="waitlisted" className="space-y-6">
+              <WaitlistedTab />
             </TabsContent>
           )
         },
@@ -127,6 +238,16 @@ const Dashboard: React.FC = () => {
         content: (
           <TabsContent value="bounties" className="space-y-6">
             <BountiesTab />
+          </TabsContent>
+        )
+      },
+      {
+        name: "Rewards",
+        value: "rewards",
+        icon: Gift,
+        content: (
+          <TabsContent value="rewards" className="space-y-6">
+            <RewardsTab />
           </TabsContent>
         )
       },

@@ -1,256 +1,217 @@
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useAuth } from '@/context/AuthContext';
 
-interface PropertyDetail {
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
+
+interface PropertyDetailType {
   id: string;
   title: string;
-  description?: string;
+  description: string;
   price: number;
   marketPrice: number;
-  images: string[];
   location: string;
-  fullAddress?: string;
+  address?: string;
   beds: number;
   baths: number;
   sqft: number;
-  userId: string;
-  comparableAddresses?: string[];
-  afterRepairValue?: number;
-  estimatedRehab?: number;
-  belowMarket: number;
-  createdAt: string;
-  sellerId?: string;
-  sellerName?: string;
-  sellerEmail?: string;
-  sellerPhone?: string;
+  images: string[];
+  comparableAddresses: string[];
+  seller?: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+  };
   bounty?: number;
-  propertyType?: string;
-  yearBuilt?: string;
-  lotSize?: string;
-  parking?: string;
+  estimatedRehab?: number;
+  afterRepairValue?: number;
+  yearBuilt?: string; // Added optional
+  lotSize?: string;   // Added optional
+  parking?: string;   // Added optional
 }
 
-interface SellerInfo {
-  name?: string;
-  email?: string;
-  phone?: string;
-}
-
-interface WaitlistStatus {
-  status: 'pending' | 'accepted' | 'declined' | null;
-}
-
-export function usePropertyDetail(propertyId: string | undefined) {
-  const [property, setProperty] = useState<PropertyDetail | null>(null);
+export const usePropertyDetail = (propertyId?: string) => {
+  const [property, setProperty] = useState<PropertyDetailType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sellerInfo, setSellerInfo] = useState<SellerInfo | null>(null);
-  const [showContact, setShowContact] = useState(false);
-  const [waitlistStatus, setWaitlistStatus] = useState<'pending' | 'accepted' | 'declined' | null>(null);
-  const [isOwner, setIsOwner] = useState(false);
-  const [isApproved, setIsApproved] = useState(false);
-  const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const { user } = useAuth();
-  
-  const fetchProperty = useCallback(async () => {
-    if (!propertyId) {
-      setError('Property ID is required');
-      setIsLoading(false);
+
+  const checkIfPropertyLiked = async () => {
+    if (!propertyId || !user) {
+      setIsLiked(false);
       return;
     }
-    
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const { data, error: propertyError } = await supabase
-        .from('property_listings')
-        .select('*')
-        .eq('id', propertyId)
-        .single();
-      
-      if (propertyError) {
-        setError('Property not found');
-        setIsLoading(false);
-        return;
-      }
-      
-      if (!data) {
-        setError('Property not found');
-        setIsLoading(false);
-        return;
-      }
-      
-      const formattedProperty: PropertyDetail = {
-        id: data.id,
-        title: data.title || 'Property Listing',
-        description: data.description,
-        price: Number(data.price),
-        marketPrice: Number(data.market_price),
-        images: data.images || [],
-        location: data.location,
-        fullAddress: data.full_address,
-        beds: data.beds || 0,
-        baths: data.baths || 0,
-        sqft: data.sqft || 0,
-        userId: data.user_id,
-        comparableAddresses: data.comparable_addresses,
-        afterRepairValue: data.after_repair_value ? Number(data.after_repair_value) : undefined,
-        estimatedRehab: data.estimated_rehab ? Number(data.estimated_rehab) : undefined,
-        belowMarket: Math.round(((Number(data.market_price) - Number(data.price)) / Number(data.market_price)) * 100),
-        createdAt: data.created_at,
-        sellerId: data.user_id,
-        bounty: data.bounty ? Number(data.bounty) : undefined,
-        propertyType: data.property_type,
-        yearBuilt: data.year_built,
-        lotSize: data.lot_size,
-        parking: data.parking
-      };
-      
-      setProperty(formattedProperty);
-      
-      if (user && user.id === data.user_id) {
-        setIsOwner(true);
-        setShowContact(true);
-      }
-      
-      await fetchSellerInfo(data.user_id);
-      
-      if (user) {
-        await checkWaitlistStatus(propertyId, user.id);
-      }
-      
-    } catch (err) {
-      console.error("Error fetching property:", err);
-      setError('Failed to load property details');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [propertyId, user]);
-  
-  const fetchSellerInfo = async (userId: string) => {
-    try {
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('name, email, phone')
-        .eq('id', userId)
-        .maybeSingle();
-      
-      if (profileError) {
-        console.error("Error fetching seller profile:", profileError);
-      }
-      
-      let sellerName = null;
-      let sellerEmail = null;
-      let sellerPhone = null;
-      
-      if (profileData) {
-        sellerName = profileData.name;
-        sellerEmail = profileData.email;
-        sellerPhone = profileData.phone;
-        
-        setSellerInfo({
-          name: sellerName,
-          email: sellerEmail,
-          phone: sellerPhone
-        });
-      } 
-      
-      if (!sellerName) {
-        const { data: emailData, error: emailError } = await supabase
-          .rpc('get_user_email', { user_id_param: userId });
-        
-        if (emailError) {
-          console.error("Error getting seller email:", emailError);
-        } else if (emailData) {
-          const emailName = emailData.split('@')[0];
-          sellerName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
-          sellerEmail = emailData;
-          
-          setSellerInfo({
-            name: sellerName,
-            email: sellerEmail
-          });
-        }
-      }
-      
-      if (sellerName || sellerEmail || sellerPhone) {
-        setProperty(prevProperty => {
-          if (!prevProperty) return null;
-          return {
-            ...prevProperty,
-            sellerName: sellerName || "Unknown Seller",
-            sellerEmail,
-            sellerPhone
-          };
-        });
-      }
-      
-    } catch (err) {
-      console.error("Error fetching seller info:", err);
-    }
-  };
-  
-  const checkWaitlistStatus = async (propertyId: string, userId: string) => {
+
     try {
       const { data, error } = await supabase
-        .from('waitlist_requests')
-        .select('status')
+        .from('liked_properties')
+        .select('id')
         .eq('property_id', propertyId)
-        .eq('user_id', userId)
+        .eq('user_id', user.id)
         .maybeSingle();
-      
+
       if (error) {
-        console.error("Error checking waitlist status:", error);
+        console.error("Error checking property like status:", error);
         return;
       }
-      
-      console.log("Current waitlist status:", data?.status);
-      
-      if (data) {
-        setWaitlistStatus(data.status as 'pending' | 'accepted' | 'declined');
-        
-        if (data.status === 'accepted') {
-          setIsApproved(true);
-          setShowContact(true);
-          setShouldShowSellerInfo(true);
-        } else if (data.status === 'pending') {
-          setShouldShowSellerInfo(true);
-        }
-      } else {
-        setWaitlistStatus(null);
-        
-        if (property && property.userId === userId) {
-          setIsOwner(true);
-          setShowContact(true);
-          setShouldShowSellerInfo(true);
-        }
-      }
-    } catch (err) {
-      console.error("Error checking waitlist status:", err);
+
+      setIsLiked(!!data);
+    } catch (error) {
+      console.error("Error checking property like status:", error);
     }
   };
-  
-  useEffect(() => {
-    fetchProperty();
-  }, [fetchProperty]);
-  
-  const refreshProperty = () => {
-    fetchProperty();
+
+  const toggleLike = async () => {
+    if (!propertyId || !user) {
+      toast.error("You must be logged in to like properties");
+      return;
+    }
+
+    try {
+      if (isLiked) {
+        // Unlike the property
+        const { error } = await supabase
+          .from('liked_properties')
+          .delete()
+          .eq('property_id', propertyId)
+          .eq('user_id', user.id);
+
+        if (error) {
+          console.error("Error unliking property:", error);
+          toast.error("Failed to unlike property");
+          return;
+        }
+
+        setIsLiked(false);
+        toast.success("Property removed from your favorites");
+      } else {
+        // Like the property
+        const { error } = await supabase
+          .from('liked_properties')
+          .insert({ 
+            property_id: propertyId,
+            user_id: user.id
+          });
+
+        if (error) {
+          console.error("Error liking property:", error);
+          toast.error("Failed to like property");
+          return;
+        }
+
+        setIsLiked(true);
+        toast.success("Property added to your favorites");
+
+        // Create notification for the seller
+        if (property?.seller?.id) {
+          try {
+            await supabase
+              .from('notifications')
+              .insert({
+                user_id: property.seller.id,
+                title: 'New Property Like',
+                message: `${user.name || 'Someone'} liked your property "${property.title}"`,
+                type: 'like',
+                properties: { 
+                  propertyId: propertyId,
+                  userId: user.id,
+                  userName: user.name
+                }
+              });
+          } catch (error) {
+            console.error("Error creating notification:", error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling property like:", error);
+      toast.error("An error occurred. Please try again.");
+    }
   };
-  
+
+  useEffect(() => {
+    checkIfPropertyLiked();
+  }, [propertyId, user]);
+
+  useEffect(() => {
+    const fetchPropertyDetail = async () => {
+      if (!propertyId) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('*, user_id')
+          .eq('id', propertyId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching property:', error);
+          setError('Failed to load property details');
+          setIsLoading(false);
+          return;
+        }
+
+        // Get seller details
+        let sellerData = null;
+        
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, name, email, phone')
+          .eq('id', data.user_id)
+          .single();
+
+        if (profileError) {
+          console.error('Error fetching seller profile:', profileError);
+        } else {
+          sellerData = profileData;
+        }
+
+        setProperty({
+          id: data.id,
+          title: data.title,
+          description: data.description || '',
+          price: data.price,
+          marketPrice: data.market_price,
+          location: data.location,
+          address: data.full_address,
+          beds: data.beds || 0,
+          baths: data.baths || 0,
+          sqft: data.sqft || 0,
+          images: data.images || [],
+          comparableAddresses: data.comparable_addresses || [],
+          seller: sellerData,
+          bounty: data.bounty,
+          estimatedRehab: data.estimated_rehab,
+          afterRepairValue: data.after_repair_value,
+          // Add with fallback default values
+          yearBuilt: 'N/A', // Default value
+          lotSize: 'N/A',   // Default value
+          parking: 'N/A',   // Default value
+        });
+      } catch (error) {
+        console.error('Exception fetching property:', error);
+        setError('An error occurred while loading the property details');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPropertyDetail();
+  }, [propertyId]);
+
   return {
     property,
     isLoading,
     error,
-    sellerInfo,
-    showContact,
-    waitlistStatus,
-    refreshProperty,
-    isOwner,
-    isApproved,
-    shouldShowSellerInfo
+    isLiked,
+    toggleLike
   };
-}
+};

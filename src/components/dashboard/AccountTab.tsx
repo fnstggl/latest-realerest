@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,8 @@ import AccountTypeSelector from "./AccountTypeSelector";
 interface AccountTabProps {
   user: any;
   logout: () => void;
+  accountType: string;
+  onUpdateAccountType: (type: string) => void;
 }
 
 const passwordSchema = z.object({
@@ -30,9 +33,10 @@ const passwordSchema = z.object({
 
 const AccountTab: React.FC<AccountTabProps> = ({
   user,
-  logout
+  logout,
+  accountType,
+  onUpdateAccountType
 }) => {
-  const [accountType, setAccountType] = useState('buyer');
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
@@ -87,29 +91,6 @@ const AccountTab: React.FC<AccountTabProps> = ({
     };
     fetchUserProfile();
   }, [user]);
-
-  useEffect(() => {
-    const fetchAccountType = async () => {
-      if (!user?.id) return;
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('account_type')
-        .eq('id', user.id)
-        .single();
-        
-      if (error) {
-        console.error('Error fetching account type:', error);
-        return;
-      }
-      
-      if (data?.account_type) {
-        setAccountType(data.account_type);
-      }
-    };
-    
-    fetchAccountType();
-  }, [user?.id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -199,7 +180,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
       <AccountTypeSelector 
         currentType={accountType}
         userId={user?.id}
-        onUpdate={setAccountType}
+        onUpdate={onUpdateAccountType}
       />
     </div>
 
