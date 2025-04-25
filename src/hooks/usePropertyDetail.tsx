@@ -60,13 +60,25 @@ export const usePropertyDetail = (propertyId: string, userId?: string) => {
       if (error) throw error;
       if (!data) throw new Error("Property not found");
 
+      // Get user profile info safely
+      let sellerName = 'Property Owner';
+      let sellerEmail = '';
+      let sellerPhone = '';
+
+      // Check if profiles exists and has the needed properties
+      if (data.profiles && typeof data.profiles === 'object') {
+        sellerName = data.profiles.name || 'Property Owner';
+        sellerEmail = data.profiles.email || '';
+        sellerPhone = data.profiles.phone || '';
+      }
+
       // Transform data to include seller information
       const transformedData: PropertyDetailType = {
         ...data,
         seller: data.user_id,
-        seller_name: data.profiles?.name || 'Property Owner',
-        seller_email: data.profiles?.email || '',
-        seller_phone: data.profiles?.phone || '',
+        seller_name: sellerName,
+        seller_email: sellerEmail,
+        seller_phone: sellerPhone,
         belowMarket: Math.round(((Number(data.market_price) - Number(data.price)) / Number(data.market_price)) * 100)
       };
             

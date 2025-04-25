@@ -8,9 +8,9 @@ import PropertyHeader from '@/components/property-detail/PropertyHeader';
 import PropertyImages from '@/components/property-detail/PropertyImages';
 import PropertyDetails from '@/components/property-detail/PropertyDetails';
 import PropertyDescription from '@/components/property-detail/PropertyDescription';
-import WaitlistButton from '@/components/WaitlistButton';
+import { WaitlistButton } from '@/components/WaitlistButton';
 import { useAuth } from '@/context/AuthContext';
-import BountyBadge from '@/components/property-detail/BountyBadge';
+import { BountyBadge } from '@/components/property-detail/BountyBadge';
 import LikeButton from '@/components/property-detail/LikeButton';
 import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
 import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
@@ -134,6 +134,7 @@ const PropertyDetail = () => {
             </Button>
             
             <LikeButton 
+              propertyId={property.id}
               isLiked={isLiked}
               onClick={handleToggleLike} 
             />
@@ -176,7 +177,13 @@ const PropertyDetail = () => {
             <PropertyImages images={property.images || []} />
             
             <div className="mt-8">
-              <PropertyDescription description={property.description} />
+              <PropertyDescription 
+                description={property.description} 
+                beds={property.beds}
+                baths={property.baths}
+                sqft={property.sqft}
+                belowMarket={belowMarket}
+              />
             </div>
             
             <div className="mt-8">
