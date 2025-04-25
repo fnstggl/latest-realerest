@@ -1,94 +1,56 @@
 
 import React from 'react';
-import { MapPin } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
-import LikeButton from './LikeButton';
+import { BountyBadge } from './BountyBadge';
+import { User } from 'lucide-react';
 
-interface PropertyHeaderProps {
+export interface PropertyHeaderProps {
   title: string;
-  belowMarket: number;
   price: number;
   marketPrice: number;
-  beds: number;
-  baths: number;
-  sqft: number;
+  belowMarket: number;
   location: string;
   fullAddress?: string;
-  showFullAddress: boolean;
-  onShowAddressClick: () => void;
+  bounty?: number; // Make bounty optional
+  userType?: string;
   userId?: string;
-  propertyId?: string;
 }
 
-const PropertyHeader: React.FC<PropertyHeaderProps> = ({
+export const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   title,
-  belowMarket,
   price,
   marketPrice,
-  beds,
-  baths,
-  sqft,
+  belowMarket,
   location,
   fullAddress,
-  showFullAddress,
-  onShowAddressClick,
-  userId,
-  propertyId
+  bounty = 0, // Default value
+  userType,
+  userId
 }) => {
-  const renderLocation = () => {
-    if (showFullAddress && fullAddress) {
-      return <span className="font-medium text-sm sm:text-base break-words">
-          {fullAddress}{location ? `, ${location}` : ''}
-        </span>;
-    }
-    return <span className="font-medium text-sm sm:text-base">
-        <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
-          Join Waitlist For Address
-        </span>
-        {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
-      </span>;
-  };
-
   return (
-    <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-          <span className="text-black font-playfair font-bold italic mr-1">{belowMarket}%</span> 
-          <span className="text-black font-playfair font-bold italic">Below Market</span>
+    <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between">
+        <div className="mb-4 sm:mb-0">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">{title}</h1>
+          <p className="text-gray-600 mb-1">{location}</p>
+          {fullAddress && <p className="text-gray-500 text-sm">{fullAddress}</p>}
         </div>
-        {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
-      </div>
-      
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 break-words text-black">{title}</h1>
-      
-      <div className="flex items-start sm:items-center mb-4 flex-wrap">
-        <MapPin size={16} className="mr-1 sm:mr-2 text-black mt-1 sm:mt-0" />
-        {renderLocation()}
-      </div>
-      
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
-        <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
-          <div className="text-lg sm:text-2xl font-bold text-black">{formatCurrency(price)}</div>
-          <div className="text-xs sm:text-sm text-black">Listing Price</div>
-        </div>
-        <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
-          <div className="text-base sm:text-xl font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
-          <div className="text-xs sm:text-sm text-black">Market Value</div>
-        </div>
-      </div>
-      
-      <div className="flex justify-between pt-2 sm:pt-3 border-t border-gray-200">
-        <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{beds}</span>
-          <span className="ml-1 text-black">Beds</span>
-        </div>
-        <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{baths}</span>
-          <span className="ml-1 text-black">Baths</span>
-        </div>
-        <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{sqft?.toLocaleString()}</span>
-          <span className="ml-1 text-black">sqft</span>
+        <div className="flex flex-col items-start sm:items-end">
+          <div className="flex items-center gap-2 text-3xl sm:text-4xl font-bold">
+            <span>${price.toLocaleString()}</span>
+            
+            {bounty > 0 && userType === 'wholesaler' && (
+              <BountyBadge amount={bounty} />
+            )}
+          </div>
+          
+          <div className="flex flex-col sm:items-end mt-1">
+            <span className="text-gray-500 line-through text-sm">
+              ${marketPrice.toLocaleString()} (Market Value)
+            </span>
+            <span className="text-green-600 font-medium mt-1">
+              {belowMarket}% below market
+            </span>
+          </div>
         </div>
       </div>
     </div>

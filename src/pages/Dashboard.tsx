@@ -21,23 +21,15 @@ import { useProperties } from "@/hooks/useProperties";
 import { TabNav } from "@/components/dashboard/TabNav";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    user,
-    logout
-  } = useAuth();
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [showAddForm, setShowAddForm] = useState(false);
   const [accountType, setAccountType] = useState(user?.accountType || 'buyer');
-  const {
-    notifications,
-    markAsRead,
-    clearAll
-  } = useNotifications();
+  const { notifications, markAsRead, clearAll } = useNotifications();
   const {
     myProperties,
     setMyProperties,
@@ -71,47 +63,26 @@ const Dashboard: React.FC = () => {
   }, [user?.accountType]);
 
   // Handle account type change
-  const handleAccountTypeChange = async (type: string) => {
-    try {
-      if (!user?.id) return;
-      
-      // Update in Supabase
-      const { error } = await supabase
-        .from('profiles')
-        .update({ account_type: type })
-        .eq('id', user.id);
+  const handleAccountTypeChange = (type: string) => {
+    // Update local state
+    setAccountType(type);
 
-      if (error) {
-        console.error("Error updating account type:", error);
-        toast.error("Failed to update account type");
-        return;
-      }
-
-      // Update local state
-      setAccountType(type);
-
-      // Set new default active tab
-      switch (type) {
-        case 'seller':
-          setActiveTab('properties');
-          break;
-        case 'buyer':
-          setActiveTab('liked');
-          break;
-        case 'wholesaler':
-          setActiveTab('bounties');
-          break;
-      }
-      
-      // Refresh data
-      refreshProperties();
-      refreshWaitlist();
-      
-      toast.success(`Account type updated to ${type}`);
-    } catch (error) {
-      console.error("Error updating account type:", error);
-      toast.error("Failed to update account type");
+    // Set new default active tab based on new account type
+    switch (type) {
+      case 'seller':
+        setActiveTab('properties');
+        break;
+      case 'buyer':
+        setActiveTab('liked');
+        break;
+      case 'wholesaler':
+        setActiveTab('bounties');
+        break;
     }
+    
+    // Refresh data
+    refreshProperties();
+    refreshWaitlist();
   };
 
   const getTabItems = () => {
@@ -282,6 +253,9 @@ const Dashboard: React.FC = () => {
     return <LoadingSpinner fullScreen />;
   }
 
+  // Get tab items only once to prevent re-rendering and duplicated content
+  const tabItems = getTabItems();
+
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
@@ -291,6 +265,7 @@ const Dashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.5 }}
+          key={accountType} // Add key to force remount when account type changes
         >
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -323,7 +298,7 @@ const Dashboard: React.FC = () => {
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             <TabNav 
-              items={getTabItems()} 
+              items={tabItems} 
               activeTab={activeTab} 
               onValueChange={setActiveTab} 
             />
@@ -334,7 +309,8 @@ const Dashboard: React.FC = () => {
               </div>
             )}
             
-            {getTabItems().find(item => item.value === activeTab)?.content}
+            {/* Find the active tab's content and render it */}
+            {tabItems.find(item => item.value === activeTab)?.content}
           </Tabs>
         </motion.div>
       </div>

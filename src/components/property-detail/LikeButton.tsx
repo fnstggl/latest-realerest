@@ -1,107 +1,114 @@
 
 import React, { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
-interface LikeButtonProps {
+export interface LikeButtonProps {
   propertyId: string;
-  sellerId: string;
+  isLiked?: boolean; // Make isLiked optional
+  onClick?: () => Promise<void>;
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ propertyId, sellerId }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+export const LikeButton: React.FC<LikeButtonProps> = ({ 
+  propertyId,
+  isLiked: initialIsLiked = false, // Default value
+  onClick 
+}) => {
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const { user } = useAuth();
-
+  
   useEffect(() => {
-    const checkIfLiked = async () => {
-      if (!user) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const { data } = await supabase
-          .from('liked_properties')
-          .select('id')
-          .eq('property_id', propertyId)
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        setIsLiked(!!data);
-      } catch (error) {
-        console.error('Error checking like status:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkIfLiked();
-  }, [propertyId, user]);
-
-  const handleLikeClick = async () => {
+    if (user?.id) {
+      // Check if the property is already liked by the user
+      const checkLikeStatus = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('liked_properties')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('property_id', propertyId)
+            .maybeSingle();
+          
+          if (error) throw error;
+          setIsLiked(!!data);
+        } catch (error) {
+          console.error('Error checking like status:', error);
+        }
+      };
+      
+      checkLikeStatus();
+    }
+  }, [user, propertyId]);
+  
+  const handleToggleLike = async () => {
     if (!user) {
-      toast.error('Please sign in to like properties');
+      toast.error('You must be logged in to like properties');
+      navigate('/signin');
       return;
     }
-
+    
+    setIsLoading(true);
+    
     try {
       if (isLiked) {
         // Unlike the property
-        await supabase
+        const { error } = await supabase
           .from('liked_properties')
           .delete()
-          .eq('property_id', propertyId)
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .eq('property_id', propertyId);
+        
+        if (error) throw error;
+        
+        setIsLiked(false);
+        toast.success('Property removed from liked properties');
       } else {
         // Like the property
-        await supabase.from('liked_properties').insert({
-          property_id: propertyId,
-          user_id: user.id
-        });
-
-        // Create notification for seller
-        await supabase.from('notifications').insert({
-          user_id: sellerId,
-          title: 'New Property Like',
-          message: 'Someone liked your property!',
-          type: 'like',
-          properties: { property_id: propertyId }
-        });
+        const { error } = await supabase
+          .from('liked_properties')
+          .insert([
+            { user_id: user.id, property_id: propertyId }
+          ]);
+        
+        if (error) throw error;
+        
+        setIsLiked(true);
+        toast.success('Property added to liked properties');
       }
-
-      setIsLiked(!isLiked);
       
-      if (!isLiked) {
-        toast.success('Property added to your liked properties');
+      // Call the onClick callback if provided
+      if (onClick) {
+        await onClick();
       }
-    } catch (error: any) {
-      if (error.code === '23505') {
-        // Handle unique constraint violation silently
-        return;
-      }
-      toast.error('Error updating like status');
-      console.error('Error updating like status:', error);
+    } catch (error) {
+      console.error('Error toggling like status:', error);
+      toast.error('Failed to update like status');
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  if (isLoading) return null;
-
+  
   return (
-    <Button 
-      variant="ghost" 
-      size="icon"
-      onClick={handleLikeClick}
-      className="hover:bg-transparent p-2"
+    <Button
+      variant="outline"
+      size="lg"
+      onClick={handleToggleLike}
+      disabled={isLoading}
+      className={`w-full flex items-center justify-center ${
+        isLiked ? 'bg-pink-50 border-pink-200 text-pink-600' : ''
+      }`}
     >
-      <Heart 
-        size={24} 
-        className={`transition-colors ${isLiked ? 'fill-black text-black' : 'text-black'}`}
-        strokeWidth={1.5}
+      <Heart
+        className={`mr-2 ${isLiked ? 'fill-current text-pink-600' : ''}`}
+        size={20}
       />
+      {isLiked ? 'Liked' : 'Like'}
     </Button>
   );
 };

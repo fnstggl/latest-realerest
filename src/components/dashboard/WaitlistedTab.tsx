@@ -61,7 +61,7 @@ const WaitlistedTab = () => {
 
   return (
     <div className="space-y-4">
-      {waitlistedProperties.map((item: any) => {
+      {waitlistedProperties.map((item) => {
         if (!item.property_listings) return null;
         
         const property = item.property_listings;
