@@ -32,10 +32,18 @@ const Search: React.FC = () => {
       let results = [...properties];
       
       if (searchQuery) {
-        results = properties.filter(property => 
-          property.location.toLowerCase().includes(searchQuery.toLowerCase()) || 
-          (property.title && property.title.toLowerCase().includes(searchQuery.toLowerCase()))
-        );
+        const query = searchQuery.toLowerCase().replace(/[.,\s]+/g, ' ').trim();
+        results = properties.filter(property => {
+          const location = property.location.toLowerCase().replace(/[.,\s]+/g, ' ').trim();
+          const title = property.title?.toLowerCase().replace(/[.,\s]+/g, ' ').trim() || '';
+          
+          return location.includes(query) || 
+                 query.includes(location) ||
+                 title.includes(query) ||
+                 query.split(' ').some(word => 
+                   location.includes(word) || title.includes(word)
+                 );
+        });
       }
       
       sortProperties(results, sortOption);

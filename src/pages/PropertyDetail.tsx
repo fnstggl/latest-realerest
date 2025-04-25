@@ -41,7 +41,6 @@ const PropertyDetail: React.FC = () => {
     refreshProperty
   } = usePropertyDetail(id);
 
-  // Log values for debugging
   useEffect(() => {
     console.log("PropertyDetail - isOwner:", isOwner);
     console.log("PropertyDetail - isApproved:", isApproved);
@@ -50,11 +49,8 @@ const PropertyDetail: React.FC = () => {
     console.log("PropertyDetail - property:", property);
   }, [property, isOwner, isApproved, waitlistStatus, shouldShowSellerInfo]);
   
-  // Removed the useEffect that was calling window.scrollTo(0, 0) on every route change
-  // as this might be contributing to the refresh issue
   useEffect(() => {
     if (id) {
-      // Just set the scroll position once when the component mounts
       window.scrollTo(0, 0);
     }
   }, []);
@@ -73,7 +69,7 @@ const PropertyDetail: React.FC = () => {
           .eq('property_id', id)
           .eq('is_interested', true)
           .order('offer_amount', { ascending: false })
-          .limit(10); // fetch a few more, in case some are withdrawn
+          .limit(10);
 
         if (error) {
           console.error("Error fetching real offers:", error);
@@ -81,10 +77,9 @@ const PropertyDetail: React.FC = () => {
         }
 
         if (data && data.length > 0) {
-          // Filter out withdrawn offers
           const filteredOffers = data
             .filter(offer => offer.status !== 'withdrawn')
-            .slice(0, 3); // Only top 3 bids, skip withdrawn even if they're larger
+            .slice(0, 3);
           const formattedOffers = filteredOffers.map(offer => ({
             id: offer.id,
             amount: Number(offer.offer_amount),
@@ -102,7 +97,6 @@ const PropertyDetail: React.FC = () => {
     fetchRealOffers();
   }, [id]);
 
-  // This callback is triggered after successful offer submission
   const handleOfferSubmitted = () => {
     refreshProperty();
   };
@@ -133,26 +127,22 @@ const PropertyDetail: React.FC = () => {
   const showPropertyDetails = property?.afterRepairValue !== undefined || property?.estimatedRehab !== undefined;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30 relative overflow-hidden">
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-100/40 rounded-full filter blur-3xl"></div>
-      <div className="absolute top-60 -right-20 w-80 h-80 bg-purple-100/40 rounded-full filter blur-3xl"></div>
-      <div className="absolute bottom-20 left-60 w-72 h-72 bg-pink-100/30 rounded-full filter blur-3xl"></div>
-      
+    <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8 relative z-10">
+      <div className="container mx-auto px-4 py-8">
         {isMobile && (
-        <div className="mt-10 mb-2 md:mt-0 md:mb-8">
-          <Button asChild variant="glass" 
-            className="flex items-center hover:bg-white/40 font-bold transition-colors layer-hover layer-2
-            text-[10px] px-1.5 py-0.5 w-auto rounded-md">
-            <Link to="/search" className="text-black">
-              <ArrowLeft size={12} className="mr-0.5" />
-              Back to Search
-            </Link>
-          </Button>
-        </div>
-      )}
+          <div className="mt-10 mb-2 md:mt-0 md:mb-8">
+            <Button asChild variant="glass" 
+              className="flex items-center hover:bg-white/40 font-bold transition-colors layer-hover layer-2
+              text-[10px] px-1.5 py-0.5 w-auto rounded-md">
+              <Link to="/search" className="text-black">
+                <ArrowLeft size={12} className="mr-0.5" />
+                Back to Search
+              </Link>
+            </Button>
+          </div>
+        )}
         
         {!isOwner && isApproved && property && (
           <OfferStatusBanner 

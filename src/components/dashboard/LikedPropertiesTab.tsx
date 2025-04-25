@@ -30,7 +30,13 @@ const LikedPropertiesTab = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      
+      // Filter out duplicates based on property_id
+      const uniqueProperties = data.filter((item, index, self) =>
+        index === self.findIndex(t => t.property_id === item.property_id)
+      );
+      
+      return uniqueProperties;
     }
   });
 
