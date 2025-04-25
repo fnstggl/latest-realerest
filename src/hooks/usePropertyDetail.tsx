@@ -27,6 +27,9 @@ interface PropertyDetail {
   sellerPhone?: string;
   bounty?: number;
   propertyType?: string;
+  yearBuilt?: string;
+  lotSize?: string;
+  parking?: string;
 }
 
 interface SellerInfo {
@@ -62,7 +65,6 @@ export function usePropertyDetail(propertyId: string | undefined) {
     setError(null);
     
     try {
-      // Fetch property data
       const { data, error: propertyError } = await supabase
         .from('property_listings')
         .select('*')
@@ -81,7 +83,6 @@ export function usePropertyDetail(propertyId: string | undefined) {
         return;
       }
       
-      // Format property data
       const formattedProperty: PropertyDetail = {
         id: data.id,
         title: data.title || 'Property Listing',
@@ -102,21 +103,21 @@ export function usePropertyDetail(propertyId: string | undefined) {
         createdAt: data.created_at,
         sellerId: data.user_id,
         bounty: data.bounty ? Number(data.bounty) : undefined,
-        propertyType: data.property_type
+        propertyType: data.property_type,
+        yearBuilt: data.year_built,
+        lotSize: data.lot_size,
+        parking: data.parking
       };
       
       setProperty(formattedProperty);
       
-      // Check if user is the owner of this property
       if (user && user.id === data.user_id) {
         setIsOwner(true);
         setShowContact(true);
       }
       
-      // Fetch seller info
       await fetchSellerInfo(data.user_id);
       
-      // Check waitlist status
       if (user) {
         await checkWaitlistStatus(propertyId, user.id);
       }
@@ -131,7 +132,6 @@ export function usePropertyDetail(propertyId: string | undefined) {
   
   const fetchSellerInfo = async (userId: string) => {
     try {
-      // Try to get from profiles first
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('name, email, phone')
@@ -158,7 +158,6 @@ export function usePropertyDetail(propertyId: string | undefined) {
         });
       } 
       
-      // If no profile name, fallback to email username
       if (!sellerName) {
         const { data: emailData, error: emailError } = await supabase
           .rpc('get_user_email', { user_id_param: userId });
@@ -177,13 +176,12 @@ export function usePropertyDetail(propertyId: string | undefined) {
         }
       }
       
-      // Always update property with seller info regardless of source
       if (sellerName || sellerEmail || sellerPhone) {
         setProperty(prevProperty => {
           if (!prevProperty) return null;
           return {
             ...prevProperty,
-            sellerName: sellerName || "Unknown Seller", // Prevent fallback to "Property Owner"
+            sellerName: sellerName || "Unknown Seller",
             sellerEmail,
             sellerPhone
           };
@@ -214,7 +212,6 @@ export function usePropertyDetail(propertyId: string | undefined) {
       if (data) {
         setWaitlistStatus(data.status as 'pending' | 'accepted' | 'declined');
         
-        // Show contact info if waitlist request was accepted
         if (data.status === 'accepted') {
           setIsApproved(true);
           setShowContact(true);
@@ -223,10 +220,8 @@ export function usePropertyDetail(propertyId: string | undefined) {
           setShouldShowSellerInfo(true);
         }
       } else {
-        // No waitlist request found
         setWaitlistStatus(null);
         
-        // If this is the property owner, show contact info
         if (property && property.userId === userId) {
           setIsOwner(true);
           setShowContact(true);
