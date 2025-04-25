@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -49,13 +50,13 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   };
 
   return (
-    <div className="bg-white border border-gray-200 p-4 sm:p-6 rounded-xl my-[30px]">
+    <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center justify-between gap-2 mb-2">
-        <div className="relative bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg hover:bg-white transition-all">
+        <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
           <span className="text-black font-playfair font-bold italic mr-1">{belowMarket}%</span> 
           <span className="text-black font-playfair font-bold italic">Below Market</span>
         </div>
-        {userId && propertyId && <LikeButton propertyId={propertyId} sellerId={userId} />}
+        {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
       </div>
       
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 break-words text-black">{title}</h1>
@@ -66,26 +67,26 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       </div>
       
       <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
-        <div className="backdrop-blur-lg border border-white/40 p-2 sm:p-4 rounded-lg">
+        <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
           <div className="text-lg sm:text-2xl font-bold text-black">{formatCurrency(price)}</div>
           <div className="text-xs sm:text-sm text-black">Listing Price</div>
         </div>
-        <div className="backdrop-blur-lg border border-white/40 p-2 sm:p-4 rounded-lg">
+        <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
           <div className="text-base sm:text-xl font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
           <div className="text-xs sm:text-sm text-black">Market Value</div>
         </div>
       </div>
       
-      <div className="flex justify-between pt-2 sm:pt-3 border-t border-white/40 mb-4 sm:mb-6 text-sm sm:text-base">
-        <div className="px-3 py-1 rounded-lg backdrop-blur-sm border border-white/40">
+      <div className="flex justify-between pt-2 sm:pt-3 border-t border-gray-200">
+        <div className="px-3 py-1 rounded-lg border border-gray-200">
           <span className="font-bold text-black">{beds}</span>
           <span className="ml-1 text-black">Beds</span>
         </div>
-        <div className="px-3 py-1 rounded-lg backdrop-blur-sm border border-white/40">
+        <div className="px-3 py-1 rounded-lg border border-gray-200">
           <span className="font-bold text-black">{baths}</span>
           <span className="ml-1 text-black">Baths</span>
         </div>
-        <div className="px-3 py-1 rounded-lg backdrop-blur-sm border border-white/40">
+        <div className="px-3 py-1 rounded-lg border border-gray-200">
           <span className="font-bold text-black">{sqft?.toLocaleString()}</span>
           <span className="ml-1 text-black">sqft</span>
         </div>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -175,7 +176,9 @@ const PropertyDetail: React.FC = () => {
               location={property?.location} 
               fullAddress={property?.fullAddress} 
               showFullAddress={isOwner || isApproved} 
-              onShowAddressClick={handleAddressClick} 
+              onShowAddressClick={handleAddressClick}
+              userId={property?.userId}
+              propertyId={property?.id}
             />
 
             {!isOwner && !isApproved && waitlistStatus !== 'pending' && (
@@ -296,6 +299,10 @@ const PropertyDetail: React.FC = () => {
               <PropertyDetails 
                 afterRepairValue={property?.afterRepairValue} 
                 estimatedRehab={property?.estimatedRehab} 
+                propertyType={property?.propertyType}
+                yearBuilt={property?.yearBuilt}
+                lotSize={property?.lotSize}
+                parking={property?.parking}
               />
             </div>
           </div>

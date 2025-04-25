@@ -74,6 +74,10 @@ const LikeButton: React.FC<LikeButtonProps> = ({ propertyId, sellerId }) => {
       }
 
       setIsLiked(!isLiked);
+      
+      if (!isLiked) {
+        toast.success('Property added to your liked properties');
+      }
     } catch (error: any) {
       if (error.code === '23505') {
         // Handle unique constraint violation silently
@@ -91,11 +95,12 @@ const LikeButton: React.FC<LikeButtonProps> = ({ propertyId, sellerId }) => {
       variant="ghost" 
       size="icon"
       onClick={handleLikeClick}
-      className="hover:bg-transparent"
+      className="hover:bg-transparent p-2"
     >
       <Heart 
         size={24} 
-        className={`transition-colors ${isLiked ? 'fill-black' : 'text-black'}`} 
+        className={`transition-colors ${isLiked ? 'fill-black text-black' : 'text-black'}`}
+        strokeWidth={1.5}
       />
     </Button>
   );
