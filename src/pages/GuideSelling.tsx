@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import SiteFooter from '@/components/sections/SiteFooter';
@@ -111,7 +112,7 @@ const GuideSelling: React.FC = () => {
                     </Link>
                   </div>
                 </div>
-                <div className="w-full md:w-1/2 relative aspect-[16/9]">
+                <div className="w-full md:w-1/2 aspect-[16/9]">
                   <img 
                     src="/placeholder.svg" 
                     alt={`Step ${step.number}`}
