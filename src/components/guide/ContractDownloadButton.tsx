@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { FilePdf } from 'lucide-react';
+import { FileDown } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
 
 const ContractDownloadButton = () => {
@@ -37,7 +37,7 @@ const ContractDownloadButton = () => {
       variant="outline"
       className="flex items-center gap-2 mt-4"
     >
-      <FilePdf className="h-5 w-5" />
+      <FileDown className="h-5 w-5" />
       Download Contract Template
     </Button>
   );
