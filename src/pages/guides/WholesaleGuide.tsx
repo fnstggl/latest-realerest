@@ -1,23 +1,106 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GuideStep } from '@/components/guide/GuideStep';
+import { ArrowLeft, Banknote, UserPlus, SearchCheck, DollarSign } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+
 const WholesaleGuide = () => {
-  return <div className="max-w-6xl mx-auto px-4 py-12 space-y-16">
-      <h1 className="text-4xl font-playfair font-bold italic text-center mb-12">
-        How to Wholesale Properties
-      </h1>
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate('/guides');
+  };
+
+  return (
+    <div className="min-h-screen bg-[#FCFBF8]">
+      <Navbar />
       
-      <GuideStep number={1} position="left" title="Find Deals" description="Search for properties with significant equity or motivated sellers. Our platform provides access to below-market properties that could be perfect for wholesaling opportunities." />
-      
-      <GuideStep number={2} position="right" title="Secure the Contract" description="Once you've identified a property, negotiate with the seller to get it under contract. Make sure to include assignment clauses that allow you to transfer the contract to another buyer." className="my-[100px]" />
-      
-      <GuideStep number={3} position="left" title="Find Your Buyer" description={`Market the property to your network of buyers or find new buyers through our platform. ${`Connect with investors `} who are actively looking for deals.`} />
-      
-      <div className="text-center mt-12">
-        <Link to="/search" className="text-blue-600 hover:text-black font-medium transition-colors">
-          Start finding deals →
-        </Link>
+      <div className="max-w-6xl mx-auto px-4 pt-24 pb-12 space-y-16">
+        <div className="flex items-center gap-8 mb-12">
+          <button 
+            onClick={handleGoBack} 
+            className="text-gray-700 hover:text-black transition-colors"
+          >
+            <ArrowLeft size={32} />
+          </button>
+          <h1 className="text-4xl font-playfair font-bold italic">
+            How to Wholesale Properties
+          </h1>
+        </div>
+        
+        <GuideStep 
+          number={1} 
+          position="left" 
+          title="Find Bounties to Accept" 
+          icon={<SearchCheck className="w-12 h-12 text-blue-600 mb-4" />}
+          description={
+            <>
+              Search through our curated properties with bounties. These are sellers offering 
+              incentives for bringing buyers.{' '}
+              <Link to="/search?type=bounty" className="text-blue-600 hover:text-blue-800 underline">
+                View available bounties →
+              </Link>
+            </>
+          }
+        />
+        
+        <GuideStep 
+          number={2} 
+          position="right" 
+          title="Bring an Interested Buyer" 
+          icon={<UserPlus className="w-12 h-12 text-blue-600 mb-4" />}
+          description={
+            <>
+              Connect with investors in your network or find new buyers through our platform. 
+              Use our contract templates to secure the deal.{' '}
+              <Link to="/blog/finding-real-estate-investors" className="text-blue-600 hover:text-blue-800 underline">
+                Tips for finding investors →
+              </Link>
+            </>
+          }
+        />
+        
+        <GuideStep 
+          number={3} 
+          position="left" 
+          title="Get Deal to Closing" 
+          icon={<Banknote className="w-12 h-12 text-blue-600 mb-4" />}
+          description={
+            <>
+              Work with the seller and buyer to complete the transaction. Our platform helps 
+              facilitate a smooth closing process.{' '}
+              <Link to="/blog/wholesale-closing-process" className="text-blue-600 hover:text-blue-800 underline">
+                Learn about the closing process →
+              </Link>
+            </>
+          }
+        />
+
+        <GuideStep 
+          number={4} 
+          position="right" 
+          title="Get Paid" 
+          icon={<DollarSign className="w-12 h-12 text-blue-600 mb-4" />}
+          description={
+            <>
+              Receive your bounty payment once the deal closes. Track your earnings and manage 
+              your wholesale deals through our platform.{' '}
+              <Link to="/dashboard/bounties" className="text-blue-600 hover:text-blue-800 underline">
+                View your bounties →
+              </Link>
+            </>
+          }
+        />
+
+        <div className="text-center mt-12">
+          <Link to="/search?type=bounty" className="text-blue-600 hover:text-black font-medium transition-colors">
+            Start finding bounties →
+          </Link>
+        </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default WholesaleGuide;
