@@ -1,9 +1,8 @@
 
 import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
 import { LucideIcon } from "lucide-react"
-import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 
 interface NavItem {
@@ -79,11 +78,7 @@ export function TabNav({ items, activeTab, onValueChange }: TabNavProps) {
         })}
       </TabsList>
 
-      {items.map((item) => (
-        <TabsContent key={item.value} value={item.value}>
-          {item.content}
-        </TabsContent>
-      ))}
+      {/* Remove TabsContent rendering from here as it's already handled in Dashboard.tsx */}
     </div>
   )
 }

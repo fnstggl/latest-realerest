@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsContent as RadixTabsContent } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -50,12 +49,10 @@ const Dashboard: React.FC = () => {
     refreshWaitlist
   } = useProperties(user?.id);
 
-  // Set initial active tab based on account type
   useEffect(() => {
     if (user?.accountType) {
       setAccountType(user.accountType);
       
-      // Set default active tab based on account type
       switch (user.accountType) {
         case 'seller':
           setActiveTab('properties');
@@ -70,12 +67,10 @@ const Dashboard: React.FC = () => {
     }
   }, [user?.accountType]);
 
-  // Handle account type change
   const handleAccountTypeChange = async (type: string) => {
     try {
       if (!user?.id) return;
       
-      // Update in Supabase
       const { error } = await supabase
         .from('profiles')
         .update({ account_type: type })
@@ -87,10 +82,8 @@ const Dashboard: React.FC = () => {
         return;
       }
 
-      // Update local state
       setAccountType(type);
 
-      // Set new default active tab
       switch (type) {
         case 'seller':
           setActiveTab('properties');
@@ -103,7 +96,6 @@ const Dashboard: React.FC = () => {
           break;
       }
       
-      // Refresh data
       refreshProperties();
       refreshWaitlist();
       
@@ -143,7 +135,6 @@ const Dashboard: React.FC = () => {
       }
     ];
 
-    // Seller specific tabs
     if (accountType === 'seller') {
       return [
         {
@@ -192,7 +183,6 @@ const Dashboard: React.FC = () => {
       ];
     }
 
-    // Buyer specific tabs
     if (accountType === 'buyer') {
       return [
         {
@@ -229,7 +219,6 @@ const Dashboard: React.FC = () => {
       ];
     }
 
-    // Wholesaler tabs
     return [
       {
         name: "Bounties",
@@ -282,6 +271,8 @@ const Dashboard: React.FC = () => {
     return <LoadingSpinner fullScreen />;
   }
 
+  const tabItems = getTabItems();
+
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
@@ -323,7 +314,7 @@ const Dashboard: React.FC = () => {
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
             <TabNav 
-              items={getTabItems()} 
+              items={tabItems} 
               activeTab={activeTab} 
               onValueChange={setActiveTab} 
             />
@@ -334,7 +325,7 @@ const Dashboard: React.FC = () => {
               </div>
             )}
             
-            {getTabItems().find(item => item.value === activeTab)?.content}
+            {tabItems.map(item => item.content)}
           </Tabs>
         </motion.div>
       </div>
