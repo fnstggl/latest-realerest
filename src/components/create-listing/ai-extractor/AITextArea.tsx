@@ -12,36 +12,42 @@ interface AITextAreaProps {
 
 const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
   return (
-    <div className="relative rounded-md">
-      <AnimatePresence>
-        {isProcessing && (
-          <motion.div 
-            className="absolute -inset-[2px] rounded-lg overflow-hidden z-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <GlowEffect
-              colors={['#0894FF', '#C959DD', '#FF2E54', '#FF9004']}
-              mode="flowHorizontal"
-              blur="soft"
-              duration={3}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <Textarea 
-        value={value}
-        onChange={onChange}
-        placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-        className="min-h-[120px] bg-white border-2 relative z-10"
-        style={{ 
-          backgroundColor: 'white',
-          borderColor: isProcessing ? 'transparent' : undefined,
-        }}
-      />
-    </div>
+    <form className="relative w-full group">
+      <div className="relative flex w-full">
+        <Textarea 
+          value={value}
+          onChange={onChange}
+          placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
+          className="min-h-[120px] w-full glass-input text-foreground rounded-xl bg-white backdrop-blur-sm border-transparent transition-all duration-300 relative z-10 focus:outline-none focus:ring-0 focus:border-transparent"
+        />
+        <GlowEffect
+          colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
+          mode="flowHorizontal"
+          blur="soft"
+          scale={1}
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute inset-0 rounded-xl pointer-events-none"
+        />
+
+        <AnimatePresence>
+          {isProcessing && (
+            <motion.div 
+              className="absolute inset-0 rounded-xl overflow-hidden z-0 pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <GlowEffect
+                colors={['#0894FF', '#C959DD', '#FF2E54', '#FF9004']}
+                mode="flowHorizontal"
+                blur="soft"
+                duration={3}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </form>
   );
 };
 
