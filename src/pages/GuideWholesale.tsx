@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import SiteFooter from '@/components/sections/SiteFooter';
@@ -114,9 +113,9 @@ const GuideWholesale: React.FC = () => {
                 </div>
                 <div className="w-full md:w-1/2 aspect-[16/9]">
                   <img 
-                    src={index === 0 ? "/lovable-uploads/92cf9438-bcd5-4a66-8247-177329d80d60.png" :
+                    src={index === 0 ? "/lovable-uploads/45bf2e9a-4913-4ee4-80da-57be537411df.png" :
                          index === 1 ? "/lovable-uploads/b5dc763e-cb86-4e73-9dbb-8c5521b79aba.png" :
-                         index === 2 ? "/lovable-uploads/0208dd64-ecb8-49ce-9a60-441dd7429f6d.png" :
+                         index === 2 ? "/lovable-uploads/b050484e-463e-4238-baba-7929c38b9ff1.png" :
                          "/lovable-uploads/64f72233-82f9-4e2d-9252-7e7ae2f53866.png"}
                     alt={`Step ${step.number}`}
                     className="w-full h-full object-cover rounded-xl"
