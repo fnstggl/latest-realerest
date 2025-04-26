@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import SiteFooter from '@/components/sections/SiteFooter';
@@ -114,10 +113,10 @@ const GuideSelling: React.FC = () => {
                 </div>
                 <div className="w-full md:w-1/2 aspect-[16/9]">
                   <img 
-                    src={index === 0 ? "/placeholder-list.svg" : 
-                         index === 1 ? "/placeholder-chat.svg" :
-                         index === 2 ? "/placeholder-offer.svg" :
-                         "/placeholder-home.svg"}
+                    src={index === 0 ? "/lovable-uploads/fd522395-c453-4112-b6c6-37fa8ea6a14d.png" : 
+                         index === 1 ? "/lovable-uploads/d41ec8a7-f6bd-4316-ad77-ad7129e35217.png" :
+                         index === 2 ? "/lovable-uploads/7f5819d8-5929-405c-b21d-dff506b200cc.png" :
+                         "/lovable-uploads/68202d79-bf1b-49ce-b0ac-890de6a978c3.png"}
                     alt={`Step ${step.number}`}
                     className="w-full h-full object-cover rounded-xl"
                   />
