@@ -18,7 +18,7 @@ const GuideBuying: React.FC = () => {
       icon: Search,
       link: '/search',
       linkText: 'Browse Properties',
-      image: '/lovable-uploads/81056460-1bf7-455a-a7cc-82acf5437124.png'
+      image: '/lovable-uploads/db0abb4a-f50c-46bb-bc1c-0ffa549ee770.png'
     },
     {
       number: 2,
@@ -27,7 +27,7 @@ const GuideBuying: React.FC = () => {
       icon: Users,
       link: '/search',
       linkText: 'Discover Properties',
-      image: '/lovable-uploads/eb2621fe-525a-410a-9d88-b71c65cc68b6.png'
+      image: '/lovable-uploads/2987e215-cce6-480f-bd59-9909d61b3268.png'
     },
     {
       number: 3,
@@ -36,7 +36,7 @@ const GuideBuying: React.FC = () => {
       icon: ClipboardCheck,
       link: '/dashboard',
       linkText: 'View Your Dashboard',
-      image: '/lovable-uploads/4b0c9c1d-4067-4573-b666-7eece05c5509.png'
+      image: '/lovable-uploads/97e32e0a-d2c7-4e49-9051-1e05654ea460.png'
     },
     {
       number: 4,
@@ -45,7 +45,7 @@ const GuideBuying: React.FC = () => {
       icon: Key,
       link: '/faq',
       linkText: 'Read FAQs',
-      image: '/lovable-uploads/06ff0e76-d135-430a-8f8e-c8b0e14f1141.png'
+      image: '/lovable-uploads/a5fa5940-8203-4f75-9742-3183974fbe5e.png'
     }
   ];
 
@@ -62,7 +62,7 @@ const GuideBuying: React.FC = () => {
               transition={{ duration: 0.5 }}
               className="text-3xl md:text-4xl font-futura-extra-bold"
             >
-              How to <span className="font-playfair italic">Buy</span> with Realer Estate
+              How to <span className="font-playfair italic font-bold">Buy</span> with Realer Estate
             </motion.h1>
             
             <Button 
@@ -96,7 +96,7 @@ const GuideBuying: React.FC = () => {
                 <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-6' : 'md:pl-6'}`}>
                   <div className="relative">
                     <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-black mb-4">
-                      <step.icon size={32} />
+                      <step.icon size={32} className="text-black" />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-bold mb-3">
                       <span className="font-playfair italic pr-2">Step {step.number}:</span>
