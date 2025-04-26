@@ -9,7 +9,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const FeaturedProperties: React.FC = () => {
   const navigate = useNavigate();
-  const { listings, loading, error } = useListings(6);
+  const { listings, loading, error } = useListings(6); // No search query here, just limit
 
   if (loading) {
     return <LoadingSpinner />;

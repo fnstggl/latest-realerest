@@ -24,28 +24,12 @@ const Search: React.FC = () => {
     listings: properties,
     loading,
     error
-  } = useListings();
+  } = useListings(undefined, searchQuery);
   const [activePropertyType, setActivePropertyType] = useState<string>("any");
 
   useEffect(() => {
     if (properties.length > 0) {
       let results = [...properties];
-      
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase().replace(/[.,\s]+/g, ' ').trim();
-        results = properties.filter(property => {
-          const location = property.location.toLowerCase().replace(/[.,\s]+/g, ' ').trim();
-          const title = property.title?.toLowerCase().replace(/[.,\s]+/g, ' ').trim() || '';
-          
-          return location.includes(query) || 
-                 query.includes(location) ||
-                 title.includes(query) ||
-                 query.split(' ').some(word => 
-                   location.includes(word) || title.includes(word)
-                 );
-        });
-      }
-      
       sortProperties(results, sortOption);
     }
   }, [properties, searchQuery]);
