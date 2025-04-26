@@ -53,39 +53,30 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
     setIsProcessing(true);
 
     try {
-      // First, let's extract information using regex patterns
-      // This is more reliable than API for specific formats
-      
-      // Extract address components
-      const addressMatch = propertyText.match(/([0-9]+\s+[A-Za-z\s]+(?:St|Ave|Rd|Dr|Pl|Ln|Way|Blvd|Ct)[,.\s]+[A-Za-z\s]+[,.\s]+[A-Z]{2}\s+\d{5})/i);
+      // Extract address components with improved regex
+      const addressMatch = propertyText.match(/([0-9]+\s+[A-Za-z\s.,]+(?:,\s*[A-Z]{2}\s*\d{5})?)/i);
       if (addressMatch) {
         const fullAddress = addressMatch[0].trim();
-        console.log("Extracted address:", fullAddress);
         
-        // Split address into components
-        const addressParts = fullAddress.split(',');
-        if (addressParts.length >= 2) {
-          const streetAddress = addressParts[0].trim();
+        // Split address into components using more flexible regex
+        const cityStateZipMatch = fullAddress.match(/,?\s*([^,]+),\s*([A-Z]{2})\s*(\d{5})/i);
+        if (cityStateZipMatch) {
+          const [_, city, state, zip] = cityStateZipMatch;
+          
+          // Set the street address (everything before the city)
+          const streetAddress = fullAddress.split(city)[0].replace(/,\s*$/, '').trim();
           form.setValue('address', streetAddress);
           
-          const locationParts = addressParts[1].trim().split(' ');
-          if (locationParts.length >= 2) {
-            // Extract city from second part of address
-            const city = locationParts.slice(0, -2).join(' ').trim();
-            form.setValue('city', city);
-            
-            // Extract state and zip
-            const stateIndex = locationParts.length - 2;
-            const zipIndex = locationParts.length - 1;
-            form.setValue('state', locationParts[stateIndex].trim());
-            form.setValue('zipCode', locationParts[zipIndex].trim());
-          }
+          // Set city, state, and zip
+          form.setValue('city', city.trim());
+          form.setValue('state', state.trim());
+          form.setValue('zipCode', zip.trim());
         }
       }
       
-      // Extract beds/baths
-      const bedsMatch = propertyText.match(/(\d+)\s*Beds/i);
-      const bathsMatch = propertyText.match(/(\d+)\s*Baths/i);
+      // Extract beds/baths with improved regex
+      const bedsMatch = propertyText.match(/(\d+)\s*(?:Beds|Bed|BR|Bedrooms)/i);
+      const bathsMatch = propertyText.match(/(\d+)\s*(?:Baths|Bath|BA|Bathrooms)/i);
       
       if (bedsMatch) form.setValue('beds', bedsMatch[1]);
       if (bathsMatch) form.setValue('baths', bathsMatch[1]);
@@ -97,21 +88,25 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
         form.setValue('sqft', sqft);
       }
       
-      // Extract property type
-      if (propertyText.match(/Rowhome|Row\s*home/i)) {
-        form.setValue('propertyType', 'Rowhome');
-      } else if (propertyText.match(/Townhouse|Town\s*house/i)) {
-        form.setValue('propertyType', 'Townhouse');
-      } else if (propertyText.match(/Single\s*Family|Detached/i)) {
-        form.setValue('propertyType', 'Single Family');
-      } else if (propertyText.match(/Condo|Condominium/i)) {
-        form.setValue('propertyType', 'Condo');
-      } else if (propertyText.match(/Multi-Family|Multi\s*Family|Duplex|Triplex|Quadplex/i)) {
-        form.setValue('propertyType', 'Multi-Family');
+      // Improved property type detection
+      const propertyTypeMatches = {
+        House: /(?:Row\s*[Hh]ome|Single\s*Family|SFH|Detached|Town\s*[Hh]ome)/i,
+        "Multi-Family": /(?:Multi[-\s]*Family|MFH|Duplex|Triplex|Quadplex)/i,
+        Condo: /(?:Condo|Condominium)/i,
+        Apartment: /Apartment/i,
+        Studio: /Studio/i,
+        Land: /(?:Land|Lot|Vacant\s*Land)/i
+      };
+      
+      for (const [type, regex] of Object.entries(propertyTypeMatches)) {
+        if (propertyText.match(regex)) {
+          form.setValue('propertyType', type);
+          break;
+        }
       }
       
-      // Extract asking price
-      const askingMatch = propertyText.match(/Asking:?\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)/i);
+      // Extract asking price with improved regex
+      const askingMatch = propertyText.match(/(?:Asking|Price|List\s*Price|Listed\s*at):\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?)/i);
       if (askingMatch) {
         const price = askingMatch[1].replace(/,/g, '');
         form.setValue('price', price);
@@ -121,20 +116,47 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
         form.setValue('marketPrice', String(marketPrice));
       }
       
-      // Extract ARV (After Repair Value)
-      const arvMatch = propertyText.match(/ARV:?\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)\s*[–-]\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)/i);
+      // Extract ARV (After Repair Value) with improved regex
+      const arvMatch = propertyText.match(/ARV:?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?)\s*(?:[-–]\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?))?/i);
       if (arvMatch) {
-        const arvLow = parseFloat(arvMatch[1].replace(/,/g, ''));
-        const arvHigh = parseFloat(arvMatch[2].replace(/,/g, ''));
-        const arvAvg = Math.round((arvLow + arvHigh) / 2);
-        form.setValue('afterRepairValue', String(arvAvg));
+        if (arvMatch[2]) {
+          // If range is provided, use average
+          const arvLow = parseFloat(arvMatch[1].replace(/,/g, ''));
+          const arvHigh = parseFloat(arvMatch[2].replace(/,/g, ''));
+          const arvAvg = Math.round((arvLow + arvHigh) / 2);
+          form.setValue('afterRepairValue', String(arvAvg));
+        } else {
+          // Single value
+          const arv = arvMatch[1].replace(/,/g, '');
+          form.setValue('afterRepairValue', arv);
+        }
       }
       
-      // Generate a description from the text
-      form.setValue('description', 
-        `${propertyText}. This property offers ${form.getValues('beds')} bedrooms and ${form.getValues('baths')} bathrooms with ${form.getValues('sqft')} square feet of living space.`
-      );
+      // Extract rehab estimate if explicitly mentioned
+      const rehabMatch = propertyText.match(/(?:Rehab|Renovation|Repair)\s*(?:Cost|Estimate|Budget)?:?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?)/i);
+      if (rehabMatch) {
+        const rehab = rehabMatch[1].replace(/,/g, '');
+        form.setValue('estimatedRehab', rehab);
+      }
       
+      // Generate a description without the address
+      const address = form.getValues('address');
+      const city = form.getValues('city');
+      const state = form.getValues('state');
+      const zipCode = form.getValues('zipCode');
+      const addressPattern = new RegExp(`${address}.*?${zipCode}`, 'i');
+      
+      let description = propertyText
+        .replace(addressPattern, '') // Remove the full address
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim();
+      
+      if (form.getValues('beds') && form.getValues('baths') && form.getValues('sqft')) {
+        description += ` This property offers ${form.getValues('beds')} bedrooms and ${form.getValues('baths')} bathrooms with ${form.getValues('sqft')} square feet of living space.`;
+      }
+      
+      form.setValue('description', description);
+
       // Fallback to Cohere API for anything we couldn't extract with regex
       if (!addressMatch || !bedsMatch || !bathsMatch || !sqftMatch || !askingMatch) {
         console.log("Using Cohere API to supplement extraction");
