@@ -259,7 +259,34 @@ const GuideBuying: React.FC = () => {
             </motion.div>
           </div>
           
-          
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.5,
+          delay: 0.7
+        }} className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8 mt-16 text-center">
+            <h2 className="text-2xl font-bold mb-4">Ready to find your dream home?</h2>
+            <p className="text-gray-600 mb-6">Start browsing our selection of below-market value properties today.</p>
+            <Link to="/search">
+              <Button className="px-8 py-6 h-auto text-lg relative bg-white text-black border border-transparent hover:bg-white group">
+                Browse Properties
+                <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude"
+              }} />
+              </Button>
+            </Link>
+          </motion.div>
         </div>
       </div>
       
