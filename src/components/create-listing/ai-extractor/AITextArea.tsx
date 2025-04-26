@@ -2,6 +2,7 @@
 import React from 'react';
 import { Textarea } from "@/components/ui/textarea";
 import { AnimatePresence, motion } from 'framer-motion';
+import { GlowEffect } from '@/components/ui/glow-effect';
 
 interface AITextAreaProps {
   value: string;
@@ -15,20 +16,30 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
       <AnimatePresence>
         {isProcessing && (
           <motion.div 
-            className="absolute -inset-[1px] rounded-lg border-2 border-gray-300 z-0"
+            className="absolute -inset-[2px] rounded-lg overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-          />
+          >
+            <GlowEffect
+              colors={['#0894FF', '#C959DD', '#FF2E54', '#FF9004']}
+              mode="flowHorizontal"
+              blur="soft"
+              duration={3}
+            />
+          </motion.div>
         )}
       </AnimatePresence>
       <Textarea 
         value={value}
         onChange={onChange}
         placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-        className="min-h-[120px] bg-white relative z-10 transition-all border-gray-200 hover:border-gray-300 !bg-white"
-        style={{ backgroundColor: 'white' }}
+        className="min-h-[120px] relative z-10 transition-all border-gray-200 hover:border-gray-300 bg-white"
+        style={{ 
+          backgroundColor: 'white',
+          borderColor: isProcessing ? 'transparent' : undefined 
+        }}
       />
     </div>
   );
