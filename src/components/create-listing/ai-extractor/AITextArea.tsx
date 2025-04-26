@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Textarea } from "@/components/ui/textarea";
-import { GlowEffect } from '@/components/ui/glow-effect';
 import { motion } from 'framer-motion';
 
 interface AITextAreaProps {
@@ -14,24 +13,6 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
   return (
     <div className="relative">
       <div className="relative rounded-md">
-        <motion.div
-          className="pointer-events-none absolute inset-0"
-          animate={{
-            opacity: isProcessing ? 1 : 0,
-          }}
-          transition={{
-            duration: 0.2,
-            ease: 'easeOut',
-          }}
-        >
-          <GlowEffect
-            colors={['#0894FF', '#C959DD', '#FF2E54', '#FF9004']}
-            mode="colorShift"
-            blur="medium"
-            duration={4}
-            className="opacity-60"
-          />
-        </motion.div>
         <Textarea 
           value={value}
           onChange={onChange}
