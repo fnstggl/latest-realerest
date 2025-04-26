@@ -15,8 +15,8 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
     <div className="relative w-full">
       {/* Main container div with padding for glow space */}
       <div className="relative w-full p-3 group">
-        {/* Textarea container with black border */}
-        <div className="relative w-full border-2 border-black rounded-xl">
+        {/* Textarea container with black border that disappears on hover */}
+        <div className="relative w-full border-2 border-black rounded-xl transition-colors duration-300 group-hover:border-transparent group-focus-within:border-transparent">
           <Textarea 
             value={value}
             onChange={onChange}
@@ -25,7 +25,7 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
           />
           
           {/* Glow effect container */}
-          <div className="absolute inset-[-2px] rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
+          <div className="absolute inset-[-2px] rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
             <GlowEffect
               colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
               mode="flowHorizontal"
@@ -61,3 +61,4 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
 };
 
 export default AITextArea;
+
