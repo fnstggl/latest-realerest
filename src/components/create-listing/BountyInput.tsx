@@ -40,7 +40,7 @@ const BountyInput: React.FC<BountyInputProps> = ({
       
       <Input id="bounty" type="number" min={3000} placeholder="Enter incentive amount ($3,000 minimum)" value={value} onChange={e => onChange(e.target.value)} className="w-full" />
       
-      <p className="text-sm italic text-[#8E9196] mt-1">Recommended to sell faster</p>
+      <p className="text-sm italic text-[#8E9196] mt-1 px-[10px]">Recommended to sell faster</p>
       
       {bountyAmount >= 3000 && <p className={getFeedbackStyle(bountyAmount)}>
           {getFeedbackText(bountyAmount)}
