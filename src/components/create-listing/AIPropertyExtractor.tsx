@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -452,7 +451,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
       <div className="bg-slate-50/50 backdrop-blur-sm rounded-xl p-8 relative overflow-hidden">
         {/* Glow Effect */}
         <GlowEffect
-          colors={['#0892D0', '#2563eb', '#3b82f6', '#60a5fa']}
+          colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
           mode="flowHorizontal"
           blur="soft"
           scale={1.05}
