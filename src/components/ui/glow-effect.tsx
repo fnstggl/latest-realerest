@@ -31,12 +31,12 @@ export type GlowEffectProps = {
 export function GlowEffect({
   className,
   style,
-  colors = ['#FF5733', '#33FF57', '#3357FF', '#F1C40F'],
+  colors = ['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC'],
   mode = 'rotate',
   blur = 'medium',
   transition,
   scale = 1,
-  duration = 5,
+  duration = 8,
 }: GlowEffectProps) {
   const BASE_TRANSITION = {
     repeat: Infinity,
