@@ -20,7 +20,8 @@ const Search = () => {
       try {
         const { data, error } = await supabase
           .from('property_listings')
-          .ilike('full_address', `%${searchQuery}%`)
+          .select('*')
+          .textSearch('full_address', searchQuery)
           .order('created_at', { ascending: false });
 
         if (error) {
@@ -64,10 +65,10 @@ const Search = () => {
           </div>
         ) : properties.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedProperties.map((property) => (
+            {sortedProperties.map((property: any) => (
               <PropertyCard
                 key={property.id}
-                property={property}
+                listing={property}
                 onClick={() => handleCardClick(property.id)}
               />
             ))}
