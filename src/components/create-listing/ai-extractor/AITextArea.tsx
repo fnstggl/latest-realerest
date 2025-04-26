@@ -13,15 +13,15 @@ interface AITextAreaProps {
 const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
   return (
     <div className="relative w-full">
-      {/* Main container with padding to create space for the glow */}
-      <div className="relative w-full group p-[3px] rounded-xl">
-        {/* Glow effect container - positioned behind the textarea */}
+      {/* Main container with increased padding to create more space for the glow */}
+      <div className="relative w-full group p-[5px] rounded-xl">
+        {/* Glow effect container - positioned behind the textarea with increased opacity and scale */}
         <div className="absolute inset-0 rounded-xl overflow-hidden z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <GlowEffect
             colors={['#00FFA3', '#DC1FFF', '#FFB800']}
             mode="breathe"
             blur="medium"
-            scale={1.05}
+            scale={1.1}  // Increased scale to make glow more prominent
             duration={7}
           />
         </div>
@@ -51,6 +51,7 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
                 mode="flowHorizontal"
                 blur="soft"
                 duration={3}
+                scale={1.1}  // Consistent scale with hover glow
               />
             </motion.div>
           )}
