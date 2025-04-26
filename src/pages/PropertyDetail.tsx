@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -124,7 +125,8 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
-  const showPropertyDetails = property?.afterRepairValue !== undefined || property?.estimatedRehab !== undefined;
+  // Check if we have ARV and estimated rehab values to display property details
+  const showPropertyDetails = property?.after_repair_value !== undefined || property?.estimated_rehab !== undefined;
 
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
@@ -147,15 +149,15 @@ const PropertyDetail: React.FC = () => {
         {!isOwner && isApproved && property && (
           <OfferStatusBanner 
             propertyId={property.id} 
-            sellerName={property.sellerName || 'Property Owner'} 
-            sellerEmail={property.sellerEmail} 
-            sellerPhone={property.sellerPhone} 
+            sellerName={property.seller_name || 'Property Owner'} 
+            sellerEmail={property.seller_email} 
+            sellerPhone={property.seller_phone} 
           />
         )}
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="space-y-6">
-            {property?.bounty && (
+            {property?.bounty > 0 && (
               <div className="mb-4">
                 <BountyBadge amount={property.bounty} />
               </div>
@@ -166,17 +168,17 @@ const PropertyDetail: React.FC = () => {
           <div className="flex flex-col space-y-4">
             <PropertyHeader 
               title={property?.title} 
-              belowMarket={property?.belowMarket} 
+              belowMarket={property?.below_market} 
               price={property?.price} 
-              marketPrice={property?.marketPrice} 
+              marketPrice={property?.market_price} 
               beds={property?.beds} 
               baths={property?.baths} 
               sqft={property?.sqft} 
               location={property?.location} 
-              fullAddress={property?.fullAddress} 
+              fullAddress={property?.full_address} 
               showFullAddress={isOwner || isApproved} 
               onShowAddressClick={handleAddressClick}
-              userId={property?.userId}
+              userId={property?.user_id}
               propertyId={property?.id}
             />
 
@@ -192,11 +194,11 @@ const PropertyDetail: React.FC = () => {
 
             {property && shouldShowSellerInfo && (
               <SellerContactInfo 
-                name={property.sellerName} 
-                phone={property.sellerPhone} 
-                email={property.sellerEmail}
+                name={property.seller_name} 
+                phone={property.seller_phone} 
+                email={property.seller_email}
                 showContact={true}
-                sellerId={property.sellerId}
+                sellerId={property.seller_id}
                 waitlistStatus={waitlistStatus}
               />
             )}
@@ -241,11 +243,11 @@ const PropertyDetail: React.FC = () => {
               <PropertyOffers propertyId={property.id} realOffers={realOffers} />
             )}
             
-            {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && (
+            {property?.after_repair_value !== undefined && property?.estimated_rehab !== undefined && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
                   <div className="text-lg font-bold text-black">
-                    {Number(property?.afterRepairValue).toLocaleString('en-US', {
+                    {Number(property?.after_repair_value).toLocaleString('en-US', {
                       style: 'currency',
                       currency: 'USD'
                     })}
@@ -254,7 +256,7 @@ const PropertyDetail: React.FC = () => {
                 </div>
                 <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
                   <div className="text-lg font-bold text-black">
-                    {Number(property?.estimatedRehab).toLocaleString('en-US', {
+                    {Number(property?.estimated_rehab).toLocaleString('en-US', {
                       style: 'currency',
                       currency: 'USD'
                     })}
@@ -269,10 +271,10 @@ const PropertyDetail: React.FC = () => {
                 <MakeOfferButton 
                   propertyId={property.id} 
                   propertyTitle={property.title} 
-                  sellerName={property.sellerName || 'Property Owner'} 
-                  sellerEmail={property.sellerEmail || ''} 
-                  sellerPhone={property.sellerPhone || ''} 
-                  sellerId={property.sellerId || ''} 
+                  sellerName={property.seller_name || 'Property Owner'} 
+                  sellerEmail={property.seller_email || ''} 
+                  sellerPhone={property.seller_phone || ''} 
+                  sellerId={property.seller_id || ''} 
                   currentPrice={property.price}
                   onOfferSubmitted={handleOfferSubmitted}
                 />
@@ -287,8 +289,8 @@ const PropertyDetail: React.FC = () => {
             beds={property?.beds} 
             baths={property?.baths} 
             sqft={property?.sqft} 
-            belowMarket={property?.belowMarket} 
-            comparables={shouldShowSellerInfo ? property?.comparableAddresses : undefined} 
+            belowMarket={property?.below_market} 
+            comparables={shouldShowSellerInfo ? property?.comparable_addresses : undefined} 
           />
         </div>
         
@@ -296,11 +298,11 @@ const PropertyDetail: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             <div>
               <PropertyDetails 
-                afterRepairValue={property?.afterRepairValue} 
-                estimatedRehab={property?.estimatedRehab} 
-                propertyType={property?.propertyType}
-                yearBuilt={property?.yearBuilt}
-                lotSize={property?.lotSize}
+                afterRepairValue={property?.after_repair_value} 
+                estimatedRehab={property?.estimated_rehab} 
+                propertyType={property?.property_type}
+                yearBuilt={property?.year_built}
+                lotSize={property?.lot_size}
                 parking={property?.parking}
               />
             </div>

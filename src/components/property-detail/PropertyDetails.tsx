@@ -1,53 +1,90 @@
+
 import React from 'react';
-import { formatCurrency } from '@/lib/utils';
+
 interface PropertyDetailsProps {
   afterRepairValue?: number;
   estimatedRehab?: number;
   propertyType?: string;
-  yearBuilt?: string;
-  lotSize?: string;
+  yearBuilt?: number;
+  lotSize?: number;
   parking?: string;
 }
+
 const PropertyDetails: React.FC<PropertyDetailsProps> = ({
-  afterRepairValue = 0,
-  estimatedRehab = 0,
-  propertyType = "Single Family",
-  yearBuilt = "2005",
-  lotSize = "0.25 acres",
-  parking = "2-Car Garage"
+  afterRepairValue,
+  estimatedRehab,
+  propertyType,
+  yearBuilt,
+  lotSize,
+  parking
 }) => {
-  return <div className="h-full p-4 sm:p-6 rounded-xl bg-white my-[20px]">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black">Property Details</h2>
+  if (!afterRepairValue && !estimatedRehab && !propertyType && !yearBuilt && !lotSize && !parking) {
+    return null;
+  }
+
+  return (
+    <div className="bg-white border border-gray-100 rounded-lg p-6 shadow-sm">
+      <h3 className="text-xl font-bold mb-4">Property Details</h3>
       
-      <div className="space-y-4 text-sm sm:text-base">
-        <div className="flex justify-between p-2 bg-[#FCFBF8] rounded-lg">
-          <span className="font-bold text-black">Property Type:</span>
-          <span className="text-black">{propertyType}</span>
-        </div>
-        <div className="flex justify-between p-2 bg-[#FCFBF8] rounded-lg">
-          <span className="font-bold text-black">Year Built:</span>
-          <span className="text-black">{yearBuilt}</span>
-        </div>
-        <div className="flex justify-between p-2 bg-[#FCFBF8] rounded-lg">
-          <span className="font-bold text-black">Lot Size:</span>
-          <span className="text-black">{lotSize}</span>
-        </div>
-        <div className="flex justify-between p-2 bg-[#FCFBF8] rounded-lg">
-          <span className="font-bold text-black">Parking:</span>
-          <span className="text-black">{parking}</span>
-        </div>
+      <div className="grid grid-cols-2 gap-y-4">
+        {propertyType && (
+          <div>
+            <div className="text-sm text-gray-500">Property Type</div>
+            <div className="font-medium">{propertyType}</div>
+          </div>
+        )}
         
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          <div className="flex flex-col p-2 bg-[#FCFBF8] rounded-lg">
-            <span className="text-xs text-gray-600">After Repair Value</span>
-            <span className="font-bold text-black">{formatCurrency(afterRepairValue)}</span>
+        {yearBuilt && (
+          <div>
+            <div className="text-sm text-gray-500">Year Built</div>
+            <div className="font-medium">{yearBuilt}</div>
           </div>
-          <div className="flex flex-col p-2 bg-[#FCFBF8] rounded-lg">
-            <span className="text-xs text-gray-600">Est. Rehab Cost</span>
-            <span className="font-bold text-black">{formatCurrency(estimatedRehab)}</span>
+        )}
+        
+        {lotSize && (
+          <div>
+            <div className="text-sm text-gray-500">Lot Size</div>
+            <div className="font-medium">
+              {lotSize.toLocaleString()} sqft
+            </div>
           </div>
-        </div>
+        )}
+        
+        {parking && (
+          <div>
+            <div className="text-sm text-gray-500">Parking</div>
+            <div className="font-medium">{parking}</div>
+          </div>
+        )}
+        
+        {afterRepairValue && (
+          <div>
+            <div className="text-sm text-gray-500">After Repair Value (ARV)</div>
+            <div className="font-medium text-green-600">
+              {afterRepairValue.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+              })}
+            </div>
+          </div>
+        )}
+        
+        {estimatedRehab && (
+          <div>
+            <div className="text-sm text-gray-500">Estimated Rehab</div>
+            <div className="font-medium">
+              {estimatedRehab.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+              })}
+            </div>
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default PropertyDetails;

@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-// Update the type to include optional properties
+// Update the type to include all required properties
 type PropertyDetailType = {
   id: string;
   title: string;
@@ -27,6 +28,7 @@ type PropertyDetailType = {
   year_built?: number;
   lot_size?: number;
   parking?: string;
+  comparable_addresses?: string[];
 };
 
 const usePropertyDetail = (propertyId?: string) => {
@@ -63,48 +65,93 @@ const usePropertyDetail = (propertyId?: string) => {
         }
 
         if (propertyData) {
-          setProperty(propertyData);
+          // Calculate below market percentage
+          const price = Number(propertyData.price);
+          const marketPrice = Number(propertyData.market_price);
+          const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
+
+          // Map database fields to property object structure including camelCase for component use
+          const mappedProperty: PropertyDetailType = {
+            id: propertyData.id,
+            title: propertyData.title,
+            price: Number(propertyData.price),
+            market_price: Number(propertyData.market_price),
+            location: propertyData.location,
+            full_address: propertyData.full_address || '',
+            description: propertyData.description || '',
+            beds: propertyData.beds,
+            baths: propertyData.baths,
+            sqft: propertyData.sqft,
+            images: propertyData.images || [],
+            user_id: propertyData.user_id,
+            below_market: parseFloat(belowMarket),
+            seller_name: '',  // Will be populated from seller info
+            seller_email: '',
+            seller_phone: '',
+            seller_id: propertyData.user_id,
+            bounty: Number(propertyData.bounty || 0),
+            after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
+            estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
+            property_type: propertyData.property_type,
+            comparable_addresses: propertyData.comparable_addresses
+          };
+
+          setProperty(mappedProperty);
 
           // Fetch seller info
           const { data: sellerData, error: sellerError } = await supabase
             .from('profiles')
-            .select('full_name, phone, email, id')
+            .select('name, phone, email, id')
             .eq('id', propertyData.user_id)
             .single();
 
           if (sellerError) {
             console.error("Error fetching seller info:", sellerError);
-          } else {
+          } else if (sellerData) {
             setSellerInfo({
-              name: sellerData?.full_name || null,
-              phone: sellerData?.phone || null,
-              email: sellerData?.email || null
+              name: sellerData.name || null,
+              phone: sellerData.phone || null,
+              email: sellerData.email || null
+            });
+
+            // Update the property with seller info
+            setProperty(prev => {
+              if (!prev) return null;
+              return {
+                ...prev,
+                seller_name: sellerData.name || '',
+                seller_email: sellerData.email || '',
+                seller_phone: sellerData.phone || '',
+              };
             });
           }
 
           // Determine if the current user is the owner
           const { data: authData } = await supabase.auth.getUser();
           const currentUser = authData?.user;
-          setIsOwner(currentUser?.id === propertyData.user_id);
+          const isCurrentUserOwner = currentUser?.id === propertyData.user_id;
+          setIsOwner(isCurrentUserOwner);
 
           // Fetch waitlist status
           if (currentUser?.id && currentUser?.id !== propertyData.user_id) {
             const { data: waitlistData, error: waitlistError } = await supabase
-              .from('property_waitlist')
+              .from('waitlist_requests')
               .select('status')
               .eq('property_id', propertyId)
               .eq('user_id', currentUser.id)
               .single();
 
-            if (waitlistError) {
+            if (waitlistError && !waitlistError.message.includes('No rows found')) {
               console.error("Error fetching waitlist status:", waitlistError);
+            } else if (waitlistData) {
+              setWaitlistStatus(waitlistData.status || null);
+              setIsApproved(waitlistData.status === 'approved');
             } else {
-              setWaitlistStatus(waitlistData?.status || null);
-              setIsApproved(waitlistData?.status === 'approved');
+              setWaitlistStatus(null);
             }
           } else {
             setWaitlistStatus(null);
-            setIsApproved(true); // Owner is automatically approved
+            setIsApproved(isCurrentUserOwner); // Owner is automatically approved
           }
         }
       } catch (err: any) {
@@ -149,48 +196,93 @@ const usePropertyDetail = (propertyId?: string) => {
       }
 
       if (propertyData) {
-        setProperty(propertyData);
+        // Calculate below market percentage
+        const price = Number(propertyData.price);
+        const marketPrice = Number(propertyData.market_price);
+        const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
+
+        // Map database fields to property object structure
+        const mappedProperty: PropertyDetailType = {
+          id: propertyData.id,
+          title: propertyData.title,
+          price: Number(propertyData.price),
+          market_price: Number(propertyData.market_price),
+          location: propertyData.location,
+          full_address: propertyData.full_address || '',
+          description: propertyData.description || '',
+          beds: propertyData.beds,
+          baths: propertyData.baths,
+          sqft: propertyData.sqft,
+          images: propertyData.images || [],
+          user_id: propertyData.user_id,
+          below_market: parseFloat(belowMarket),
+          seller_name: '',  // Will be populated from seller info
+          seller_email: '',
+          seller_phone: '',
+          seller_id: propertyData.user_id,
+          bounty: Number(propertyData.bounty || 0),
+          after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
+          estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
+          property_type: propertyData.property_type,
+          comparable_addresses: propertyData.comparable_addresses
+        };
+
+        setProperty(mappedProperty);
 
         // Fetch seller info
         const { data: sellerData, error: sellerError } = await supabase
           .from('profiles')
-          .select('full_name, phone, email, id')
+          .select('name, phone, email, id')
           .eq('id', propertyData.user_id)
           .single();
 
         if (sellerError) {
           console.error("Error fetching seller info:", sellerError);
-        } else {
+        } else if (sellerData) {
           setSellerInfo({
-            name: sellerData?.full_name || null,
-            phone: sellerData?.phone || null,
-            email: sellerData?.email || null
+            name: sellerData.name || null,
+            phone: sellerData.phone || null,
+            email: sellerData.email || null
+          });
+
+          // Update the property with seller info
+          setProperty(prev => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              seller_name: sellerData.name || '',
+              seller_email: sellerData.email || '',
+              seller_phone: sellerData.phone || '',
+            };
           });
         }
 
         // Determine if the current user is the owner
         const { data: authData } = await supabase.auth.getUser();
         const currentUser = authData?.user;
-        setIsOwner(currentUser?.id === propertyData.user_id);
+        const isCurrentUserOwner = currentUser?.id === propertyData.user_id;
+        setIsOwner(isCurrentUserOwner);
 
         // Fetch waitlist status
         if (currentUser?.id && currentUser?.id !== propertyData.user_id) {
           const { data: waitlistData, error: waitlistError } = await supabase
-            .from('property_waitlist')
+            .from('waitlist_requests')
             .select('status')
             .eq('property_id', propertyId)
             .eq('user_id', currentUser.id)
             .single();
 
-          if (waitlistError) {
+          if (waitlistError && !waitlistError.message.includes('No rows found')) {
             console.error("Error fetching waitlist status:", waitlistError);
+          } else if (waitlistData) {
+            setWaitlistStatus(waitlistData.status || null);
+            setIsApproved(waitlistData.status === 'approved');
           } else {
-            setWaitlistStatus(waitlistData?.status || null);
-            setIsApproved(waitlistData?.status === 'approved');
+            setWaitlistStatus(null);
           }
         } else {
           setWaitlistStatus(null);
-          setIsApproved(true); // Owner is automatically approved
+          setIsApproved(isCurrentUserOwner); // Owner is automatically approved
         }
       }
     } catch (err: any) {

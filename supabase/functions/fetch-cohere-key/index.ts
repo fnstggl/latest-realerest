@@ -16,6 +16,7 @@ serve(async (req) => {
     const cohereApiKey = Deno.env.get('COHERE_API_KEY');
     
     if (!cohereApiKey) {
+      console.error("COHERE_API_KEY environment variable is not set");
       return new Response(JSON.stringify({ error: 'Cohere API key not found' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -26,6 +27,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error("Error in fetch-cohere-key function:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

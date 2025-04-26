@@ -40,8 +40,8 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
   }, []);
 
   const extractPropertyDetails = async () => {
-    if (!propertyText.trim() || propertyText.length < 50) {
-      toast.error("Please enter more details about your property");
+    if (!propertyText.trim()) {
+      toast.error("Please enter details about your property");
       return;
     }
 
@@ -53,61 +53,175 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
     setIsProcessing(true);
 
     try {
-      const response = await fetch('https://api.cohere.ai/v1/classify', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'embed-english-v3.0',
-          inputs: [propertyText],
-          examples: [
-            { text: "3 bed 2 bath house at 123 Main St", label: "property_details" },
-            { text: "1800 sqft, asking $450k", label: "property_metrics" },
-            { text: "Portland Oregon 97204", label: "location" }
-          ]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to analyze property details');
-      }
-
-      const data = await response.json();
+      // First, let's extract information using regex patterns
+      // This is more reliable than API for specific formats
       
-      // Extract numeric values using regex patterns
-      const bedsMatch = propertyText.match(/(\d+)\s*bed(?:room)?s?/i);
-      const bathsMatch = propertyText.match(/(\d+(?:\.\d+)?)\s*bath(?:room)?s?/i);
-      const sqftMatch = propertyText.match(/(\d+,?\d*)\s*sq(?:\.?\s*ft|uare\s*feet)/i);
-      const priceMatch = propertyText.match(/\$\s*(\d+(?:,\d+)*(?:\.\d+)?)\s*(?:k|thousand|million|m|MM)?/i);
-      const addressMatch = propertyText.match(/(\d+\s+[A-Za-z0-9\s,\.]+)(?:,|\s+in\s+)?\s*([A-Za-z\s\.]+)(?:,|\s+)\s*([A-Z]{2})(?:,|\s+)\s*(\d{5})/i);
-
-      // Extract and set values
+      // Extract address components
+      const addressMatch = propertyText.match(/([0-9]+\s+[A-Za-z\s]+(?:St|Ave|Rd|Dr|Pl|Ln|Way|Blvd|Ct)[,.\s]+[A-Za-z\s]+[,.\s]+[A-Z]{2}\s+\d{5})/i);
+      if (addressMatch) {
+        const fullAddress = addressMatch[0].trim();
+        console.log("Extracted address:", fullAddress);
+        
+        // Split address into components
+        const addressParts = fullAddress.split(',');
+        if (addressParts.length >= 2) {
+          const streetAddress = addressParts[0].trim();
+          form.setValue('address', streetAddress);
+          
+          const locationParts = addressParts[1].trim().split(' ');
+          if (locationParts.length >= 2) {
+            // Extract city from second part of address
+            const city = locationParts.slice(0, -2).join(' ').trim();
+            form.setValue('city', city);
+            
+            // Extract state and zip
+            const stateIndex = locationParts.length - 2;
+            const zipIndex = locationParts.length - 1;
+            form.setValue('state', locationParts[stateIndex].trim());
+            form.setValue('zipCode', locationParts[zipIndex].trim());
+          }
+        }
+      }
+      
+      // Extract beds/baths
+      const bedsMatch = propertyText.match(/(\d+)\s*Beds/i);
+      const bathsMatch = propertyText.match(/(\d+)\s*Baths/i);
+      
       if (bedsMatch) form.setValue('beds', bedsMatch[1]);
       if (bathsMatch) form.setValue('baths', bathsMatch[1]);
-      if (sqftMatch) form.setValue('sqft', sqftMatch[1].replace(',', ''));
       
-      if (priceMatch) {
-        let price = priceMatch[1].replace(/,/g, '');
-        const multiplier = priceMatch[0].toLowerCase().includes('k') ? 1000 : 
-                         (priceMatch[0].toLowerCase().includes('million') || 
-                          priceMatch[0].toLowerCase().includes('m')) ? 1000000 : 1;
-        price = String(parseFloat(price) * multiplier);
+      // Extract square footage
+      const sqftMatch = propertyText.match(/(\d+(?:,\d+)?)\s*(?:SqFt|Sq\.?\s*Ft|Square\s*Feet)/i);
+      if (sqftMatch) {
+        const sqft = sqftMatch[1].replace(/,/g, '');
+        form.setValue('sqft', sqft);
+      }
+      
+      // Extract property type
+      if (propertyText.match(/Rowhome|Row\s*home/i)) {
+        form.setValue('propertyType', 'Rowhome');
+      } else if (propertyText.match(/Townhouse|Town\s*house/i)) {
+        form.setValue('propertyType', 'Townhouse');
+      } else if (propertyText.match(/Single\s*Family|Detached/i)) {
+        form.setValue('propertyType', 'Single Family');
+      } else if (propertyText.match(/Condo|Condominium/i)) {
+        form.setValue('propertyType', 'Condo');
+      } else if (propertyText.match(/Multi-Family|Multi\s*Family|Duplex|Triplex|Quadplex/i)) {
+        form.setValue('propertyType', 'Multi-Family');
+      }
+      
+      // Extract asking price
+      const askingMatch = propertyText.match(/Asking:?\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)/i);
+      if (askingMatch) {
+        const price = askingMatch[1].replace(/,/g, '');
         form.setValue('price', price);
-        form.setValue('marketPrice', String(parseFloat(price) * 1.1));
+        
+        // Set market price slightly higher by default if we have a price
+        const marketPrice = Math.round(parseFloat(price) * 1.1);
+        form.setValue('marketPrice', String(marketPrice));
       }
       
-      if (addressMatch) {
-        form.setValue('address', addressMatch[1]);
-        form.setValue('city', addressMatch[2].trim());
-        form.setValue('state', addressMatch[3].trim());
-        form.setValue('zipCode', addressMatch[4]);
+      // Extract ARV (After Repair Value)
+      const arvMatch = propertyText.match(/ARV:?\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)\s*[–-]\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)/i);
+      if (arvMatch) {
+        const arvLow = parseFloat(arvMatch[1].replace(/,/g, ''));
+        const arvHigh = parseFloat(arvMatch[2].replace(/,/g, ''));
+        const arvAvg = Math.round((arvLow + arvHigh) / 2);
+        form.setValue('afterRepairValue', String(arvAvg));
       }
       
-      // Set description
-      if (propertyText.length > 30) {
-        form.setValue('description', propertyText.slice(0, 500));
+      // Generate a description from the text
+      form.setValue('description', 
+        `${propertyText}. This property offers ${form.getValues('beds')} bedrooms and ${form.getValues('baths')} bathrooms with ${form.getValues('sqft')} square feet of living space.`
+      );
+      
+      // Fallback to Cohere API for anything we couldn't extract with regex
+      if (!addressMatch || !bedsMatch || !bathsMatch || !sqftMatch || !askingMatch) {
+        console.log("Using Cohere API to supplement extraction");
+        
+        const response = await fetch('https://api.cohere.ai/v1/generate', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'command-nightly',
+            prompt: `Extract the following information from this real estate listing text: address, city, state, zip code, number of bedrooms, number of bathrooms, square footage, property type, asking price, and after repair value (ARV). Format the response as JSON.\n\nText: ${propertyText}\n\nJSON:`,
+            max_tokens: 300,
+            temperature: 0.2,
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Cohere API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const generatedText = data.generations[0].text;
+        
+        try {
+          // Try to parse the generated JSON
+          const startIdx = generatedText.indexOf('{');
+          const endIdx = generatedText.lastIndexOf('}') + 1;
+          if (startIdx >= 0 && endIdx > startIdx) {
+            const jsonStr = generatedText.substring(startIdx, endIdx);
+            const extractedData = JSON.parse(jsonStr);
+            console.log("Extracted data from Cohere:", extractedData);
+            
+            // Fill in any missing values from the API response
+            if (!form.getValues('address') && extractedData.address) {
+              form.setValue('address', extractedData.address);
+            }
+            if (!form.getValues('city') && extractedData.city) {
+              form.setValue('city', extractedData.city);
+            }
+            if (!form.getValues('state') && extractedData.state) {
+              form.setValue('state', extractedData.state);
+            }
+            if (!form.getValues('zipCode') && extractedData.zip_code) {
+              form.setValue('zipCode', extractedData.zip_code);
+            }
+            if (!form.getValues('beds') && extractedData.bedrooms) {
+              form.setValue('beds', String(extractedData.bedrooms));
+            }
+            if (!form.getValues('baths') && extractedData.bathrooms) {
+              form.setValue('baths', String(extractedData.bathrooms));
+            }
+            if (!form.getValues('sqft') && extractedData.square_footage) {
+              form.setValue('sqft', String(extractedData.square_footage).replace(/,/g, ''));
+            }
+            if (!form.getValues('propertyType') && extractedData.property_type) {
+              form.setValue('propertyType', extractedData.property_type);
+            }
+            if (!form.getValues('price') && extractedData.asking_price) {
+              const price = String(extractedData.asking_price).replace(/[$,]/g, '');
+              form.setValue('price', price);
+              
+              // Set market price slightly higher if we now have a price
+              if (!form.getValues('marketPrice')) {
+                const marketPrice = Math.round(parseFloat(price) * 1.1);
+                form.setValue('marketPrice', String(marketPrice));
+              }
+            }
+            if (!form.getValues('afterRepairValue') && extractedData.arv) {
+              form.setValue('afterRepairValue', String(extractedData.arv).replace(/[$,]/g, ''));
+            }
+          }
+        } catch (e) {
+          console.error("Error parsing Cohere response:", e);
+          // Continue with what we have from regex
+        }
+      }
+      
+      // Calculate estimated rehab costs if we have ARV and price
+      const arv = form.getValues('afterRepairValue');
+      const price = form.getValues('price');
+      if (arv && price) {
+        const estimatedRehab = Math.round((parseFloat(arv) - parseFloat(price)) * 0.7);
+        if (estimatedRehab > 0) {
+          form.setValue('estimatedRehab', String(estimatedRehab));
+        }
       }
 
       toast.success("Property details extracted successfully!");
@@ -125,7 +239,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
         <Textarea 
           value={propertyText}
           onChange={(e) => setPropertyText(e.target.value)}
-          placeholder="Paste property details here... (e.g. '3 bed, 2 bath house located at 123 Main St, Portland, OR 97204. 1,800 sqft. Asking $450,000.')"
+          placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
           className="min-h-[120px] bg-white border-gray-300 hover:border-gray-400 focus:border-gray-500"
         />
       </div>
@@ -134,7 +248,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
         <Button
           type="button" 
           onClick={extractPropertyDetails}
-          disabled={isProcessing || propertyText.length < 50}
+          disabled={isProcessing || !propertyText.trim()}
           className="relative group"
         >
           {isProcessing ? (
