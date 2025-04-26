@@ -38,7 +38,9 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
         className="min-h-[120px] relative z-10 transition-all border-gray-200 hover:border-gray-300 bg-white"
         style={{ 
           backgroundColor: 'white',
-          borderColor: isProcessing ? 'transparent' : undefined 
+          borderColor: isProcessing ? 'transparent' : undefined,
+          position: 'relative',
+          zIndex: 1
         }}
       />
     </div>
