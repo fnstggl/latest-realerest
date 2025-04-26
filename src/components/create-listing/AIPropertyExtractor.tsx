@@ -8,6 +8,7 @@ import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { formSchema } from './formSchema';
 import { supabase } from '@/integrations/supabase/client';
+import { GlowEffect } from '@/components/ui/glow-effect';
 
 interface AIPropertyExtractorProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -447,35 +448,54 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
   };
 
   return (
-    <div className="mb-6">
-      <div className="relative">
-        <Textarea 
-          value={propertyText}
-          onChange={(e) => setPropertyText(e.target.value)}
-          placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-          className="min-h-[120px] bg-white border-gray-300 hover:border-gray-400 focus:border-gray-500"
+    <div className="mb-12 relative">
+      <div className="bg-slate-50/50 backdrop-blur-sm rounded-xl p-8 relative overflow-hidden">
+        {/* Glow Effect */}
+        <GlowEffect
+          colors={['#0892D0', '#2563eb', '#3b82f6', '#60a5fa']}
+          mode="flowHorizontal"
+          blur="soft"
+          scale={1.05}
+          duration={8}
         />
-      </div>
-      
-      <div className="flex justify-end mt-4">
-        <Button
-          type="button" 
-          onClick={extractPropertyDetails}
-          disabled={isProcessing || !propertyText.trim()}
-          className="relative group"
-        >
-          {isProcessing ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Extracting...</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Wand2 className="h-4 w-4" />
-              <span>Extract Details</span>
-            </div>
-          )}
-        </Button>
+        
+        {/* Content */}
+        <div className="relative z-10">
+          <h3 className="text-2xl font-bold mb-2">AI Autofill</h3>
+          <p className="text-sm text-gray-600 mb-6">
+            Paste your property details here and Realer Estate will automatically sort it for you
+          </p>
+          
+          <div className="relative">
+            <Textarea 
+              value={propertyText}
+              onChange={(e) => setPropertyText(e.target.value)}
+              placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
+              className="min-h-[120px] bg-white/80 backdrop-blur-sm border-gray-300 hover:border-gray-400 focus:border-gray-500"
+            />
+          </div>
+          
+          <div className="flex justify-end mt-4">
+            <Button
+              type="button" 
+              onClick={extractPropertyDetails}
+              disabled={isProcessing || !propertyText.trim()}
+              className="relative group"
+            >
+              {isProcessing ? (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Extracting...</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Wand2 className="h-4 w-4" />
+                  <span>Extract Details</span>
+                </div>
+              )}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
