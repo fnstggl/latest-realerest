@@ -1,4 +1,3 @@
-
 import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, Check, X, MessageCircle } from "lucide-react";
@@ -194,7 +193,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                           </Button>
                           <Button 
                             size="sm" 
-                            className="bg-white text-[#FF5C00] hover:text-white hover:bg-[#FF5C00] border border-white/40 hover:border-[#FF5C00] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(255,92,0,0.5)]"
+                            className="bg-white text-[#FD3DB5] hover:text-white hover:bg-[#FD3DB5] border border-white/40 hover:border-[#FD3DB5] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(253,61,181,0.5)]"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'declined', 

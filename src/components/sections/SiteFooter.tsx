@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LocationAlertForm from '@/components/LocationAlertForm';
@@ -19,28 +18,28 @@ const SiteFooter: React.FC = () => {
           <div>
             <h3 className="font-bold text-black mb-4 text-lg">Platform</h3>
             <ul className="space-y-2">
-              <li><Link to="/search" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">Search Homes</Link></li>
-              <li><Link to="/sell/create" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">List Property</Link></li>
-              <li><Link to="/faq" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">FAQ</Link></li>
+              <li><Link to="/search" className="text-gray-600 hover:text-black transition-colors font-medium">Search Homes</Link></li>
+              <li><Link to="/sell/create" className="text-gray-600 hover:text-black transition-colors font-medium">List Property</Link></li>
+              <li><Link to="/faq" className="text-gray-600 hover:text-black transition-colors font-medium">FAQ</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-bold text-black mb-4 text-lg">Company</h3>
             <ul className="space-y-2">
-              <li><Link to="/about" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">About Us</Link></li>
-              <li><Link to="/blog" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">Blog</Link></li>
-              <li><Link to="/careers" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">Careers</Link></li>
-              <li><Link to="/contact" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">Contact</Link></li>
+              <li><Link to="/about" className="text-gray-600 hover:text-black transition-colors font-medium">About Us</Link></li>
+              <li><Link to="/blog" className="text-gray-600 hover:text-black transition-colors font-medium">Blog</Link></li>
+              <li><Link to="/careers" className="text-gray-600 hover:text-black transition-colors font-medium">Careers</Link></li>
+              <li><Link to="/contact" className="text-gray-600 hover:text-black transition-colors font-medium">Contact</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-bold text-black mb-4 text-lg">Legal</h3>
             <ul className="space-y-2">
-              <li><Link to="/terms" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">Terms of Service</Link></li>
-              <li><Link to="/privacy" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">Privacy Policy</Link></li>
-              <li><Link to="/cookies" className="text-gray-600 hover:text-[#0892D0] transition-colors font-medium">Cookie Policy</Link></li>
+              <li><Link to="/terms" className="text-gray-600 hover:text-black transition-colors font-medium">Terms of Service</Link></li>
+              <li><Link to="/privacy" className="text-gray-600 hover:text-black transition-colors font-medium">Privacy Policy</Link></li>
+              <li><Link to="/cookies" className="text-gray-600 hover:text-black transition-colors font-medium">Cookie Policy</Link></li>
             </ul>
           </div>
         </div>
