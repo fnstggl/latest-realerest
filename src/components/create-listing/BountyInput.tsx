@@ -52,6 +52,10 @@ const BountyInput: React.FC<BountyInputProps> = ({ value, onChange }) => {
         className="w-full"
       />
       
+      <p className="text-sm italic text-[#8E9196] mt-1">
+        Recommended: $5,000 - $10,000 for maximum wholesaler interest
+      </p>
+      
       {bountyAmount >= 3000 && (
         <p className={getFeedbackStyle(bountyAmount)}>
           {getFeedbackText(bountyAmount)}
