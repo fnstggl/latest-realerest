@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Loader2, Wand2 } from "lucide-react";
@@ -406,9 +407,9 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
   return (
     <div className="mb-12">
       <div className="bg-white rounded-xl p-8 px-[32px] py-0">
-        <h3 className="text-2xl font-bold mb-2">Autofill Property Details</h3>
+        <h3 className="text-2xl font-bold mb-2">Paste Property Details</h3>
         <p className="text-sm text-gray-600 mb-6">
-          Paste your property details here and Realer Estate will automatically sort it for you
+          List faster with AI. Just paste your property details here and Realer Estate will sort it for you
         </p>
         
         <div className="relative">
@@ -424,12 +425,12 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
             {isProcessing ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Extracting...</span>
+                <span className="font-bold">Extracting...</span>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Wand2 className="h-4 w-4" />
-                <span>Extract Details</span>
+                <span className="font-bold">Extract Details</span>
               </div>
             )}
           </Button>
