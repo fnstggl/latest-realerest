@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -16,6 +17,7 @@ import BountyInput from '@/components/create-listing/BountyInput';
 // Import formSchema (small import)
 import { formSchema } from '@/components/create-listing/formSchema';
 import { uploadImagesToSupabase, createNotification } from '@/components/create-listing/UploadService';
+import AIPropertyExtractor from '@/components/create-listing/AIPropertyExtractor';
 
 // Lazy load heavier components
 const PropertyTypeSection = lazy(() => import('@/components/create-listing/PropertyTypeSection'));
@@ -313,6 +315,9 @@ const CreateListing: React.FC = () => {
           <div className="bg-white border border-black/10 p-8 rounded-xl">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                {/* Add the AI Property Extractor component at the top */}
+                <AIPropertyExtractor form={form} />
+                
                 <Suspense fallback={<LoadingFallback />}>
                   <PropertyTypeSection form={form} />
                 </Suspense>
