@@ -91,8 +91,8 @@ const GuideBuying: React.FC = () => {
           }} className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
               <div className="w-full md:w-1/2 md:pr-6">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full flex items a\\center justify-center bg-transparent">
-                    <Search size={32} className="text-black" />
+                  <div className="w-16 h-16 rounded-full flex items a\\\\center justify-center bg-transparent my-0">
+                    <Search size={32} className="text-black my-[15px]" />
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold mb-3">
                     <span className="font-playfair italic pr-2">Step 1:</span>
