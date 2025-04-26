@@ -111,7 +111,7 @@ const GuideSelling: React.FC = () => {
                     </Link>
                   </div>
                 </div>
-                <div className="w-full md:w-1/2 relative">
+                <div className="w-full md:w-1/2 relative aspect-[16/9]">
                   <img 
                     src="/placeholder.svg" 
                     alt={`Step ${step.number}`}
