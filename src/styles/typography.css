@@ -1,3 +1,4 @@
+
 @layer components {
   .story-link {
     @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-[#0892D0] after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
@@ -64,8 +65,8 @@
   }
   
   .gradient-hover-text:hover {
-    color: black;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.2);
+    color: #0892D0;
+    text-shadow: 0 0 10px rgba(8, 146, 208, 0.5), 0 0 20px rgba(8, 146, 208, 0.3);
   }
 
   /* Gradient text styles for navigation */
@@ -82,5 +83,6 @@
     font-family: 'Playfair Display', serif;
     font-weight: 700;
     font-style: italic;
+    /* Removed transition property to make the change immediate */
   }
 }

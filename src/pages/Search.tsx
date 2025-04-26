@@ -1,82 +1,132 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '../integrations/supabase/client';
-import PropertyCard from '@/components/PropertyCard';
-import { BeatLoader } from 'react-spinners';
-import Navbar from '@/components/Navbar';
-import SearchBar from '@/components/SearchBar';
 
-const Search = () => {
-  const [properties, setProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const searchQuery = queryParams.get('q') || '';
+import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import { useListings } from '@/hooks/useListings';
+import SearchHeader from '@/components/search/SearchHeader';
+import SearchFilters from '@/components/search/SearchFilters';
+import SearchResults from '@/components/search/SearchResults';
+import SearchFooter from '@/components/search/SearchFooter';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import LocationAlertForm from '@/components/LocationAlertForm';
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('property_listings')
-          .select('*')
-          .textSearch('full_address', searchQuery)
-          .order('created_at', { ascending: false });
+const Search: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('q') || '';
+  const [isGridView, setIsGridView] = useState(true);
+  const [sortOption, setSortOption] = useState("recommended");
+  const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const {
+    listings: properties,
+    loading,
+    error
+  } = useListings(undefined, searchQuery);
 
-        if (error) {
-          console.error('Error fetching properties:', error);
-        }
-
-        setProperties(data || []);
-      } finally {
-        setLoading(false);
+  const handleFilterChange = (filters: any) => {
+    let results = [...properties];
+    
+    // Filter logic
+    results = results.filter(property => {
+      if (property.price < filters.minPrice || property.price > filters.maxPrice) {
+        return false;
       }
-    };
-
-    if (searchQuery) {
-      fetchProperties();
-    } else {
-      setLoading(false);
-    }
-  }, [searchQuery]);
-
-  const handleCardClick = (propertyId: string) => {
-    navigate(`/property/${propertyId}`);
+      if (property.belowMarket < filters.belowMarket) {
+        return false;
+      }
+      if (filters.propertyType !== "any") {
+        if (filters.propertyType === "house" && property.propertyType !== "House") {
+          return false;
+        }
+        if (filters.propertyType === "apartment" && property.propertyType !== "Apartment") {
+          return false;
+        }
+        if (filters.propertyType === "condo" && property.propertyType !== "Condo") {
+          return false;
+        }
+        if (filters.propertyType === "duplex" && property.propertyType !== "Duplex") {
+          return false;
+        }
+      }
+      if (filters.bedrooms !== "any") {
+        if (property.beds < parseInt(filters.bedrooms)) {
+          return false;
+        }
+      }
+      if (filters.bathrooms !== "any") {
+        if (property.baths < parseInt(filters.bathrooms)) {
+          return false;
+        }
+      }
+      return true;
+    });
+    
+    sortProperties(results, sortOption);
   };
 
-  const sortedProperties = properties.sort((a, b) => {
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
+  const handleSortChange = (option: string) => {
+    setSortOption(option);
+    let sorted = [...properties];
+    
+    switch (option) {
+      case "price-low":
+        sorted.sort((a, b) => a.price - b.price);
+        break;
+      case "price-high":
+        sorted.sort((a, b) => b.price - a.price);
+        break;
+      case "below-market":
+        sorted.sort((a, b) => b.belowMarket - a.belowMarket);
+        break;
+      case "newest":
+        break;
+      default:
+        break;
+    }
+  };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (properties.length === 0 && searchQuery) {
+    if (isAuthenticated) {
+      return (
+        <div className="min-h-screen bg-[#FCFBF8] pt-24">
+          <SearchHeader />
+          <div className="w-full">
+            <LocationAlertForm />
+          </div>
+        </div>
+      );
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-[#FCFBF8]">
-      <Navbar />
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex justify-center mb-8">
-          <SearchBar />
+    <div className="min-h-screen bg-[#FCFBF8] pt-24">
+      <SearchHeader />
+      
+      <div className="container px-4 lg:px-8 mx-auto py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <SearchFilters
+            onFilterChange={handleFilterChange}
+            isFiltersCollapsed={isFiltersCollapsed}
+            setIsFiltersCollapsed={setIsFiltersCollapsed}
+          />
+          
+          <SearchResults
+            properties={properties}
+            sortOption={sortOption}
+            onSortChange={handleSortChange}
+            isGridView={isGridView}
+            setIsGridView={setIsGridView}
+            isAuthenticated={isAuthenticated}
+            searchQuery={searchQuery}
+          />
         </div>
-        <h1 className="text-2xl font-bold mb-4">
-          Search Results for "{searchQuery}"
-        </h1>
-        {loading ? (
-          <div className="flex justify-center">
-            <BeatLoader color="#d60013" />
-          </div>
-        ) : properties.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedProperties.map((property: any) => (
-              <PropertyCard
-                key={property.id}
-                listing={property}
-                onClick={() => handleCardClick(property.id)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-gray-500">No properties found for "{searchQuery}".</div>
-        )}
       </div>
+      
+      <SearchFooter />
     </div>
   );
 };

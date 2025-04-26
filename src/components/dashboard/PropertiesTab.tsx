@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { Building2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-
 interface Property {
   id: string;
   title: string;
@@ -18,7 +17,6 @@ interface Property {
   belowMarket: number;
   waitlistCount?: number;
 }
-
 interface PropertiesTabProps {
   myProperties: Property[];
   setMyProperties: React.Dispatch<React.SetStateAction<Property[]>>;
@@ -29,7 +27,6 @@ interface PropertiesTabProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   user: any;
 }
-
 const PropertiesTab: React.FC<PropertiesTabProps> = ({
   myProperties,
   setMyProperties,
@@ -42,65 +39,23 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
 }) => {
   const handleUnlistProperty = async (propertyId: string) => {
     if (!user) return;
-    
     try {
-      const { data: property, error: fetchError } = await supabase
-        .from('property_listings')
-        .select('images')
-        .eq('id', propertyId)
-        .eq('user_id', user.id)
-        .single();
-        
-      if (fetchError) {
-        console.error("Error fetching property images:", fetchError);
+      const {
+        error
+      } = await supabase.from('property_listings').delete().eq('id', propertyId).eq('user_id', user.id);
+      if (error) {
+        console.error("Error deleting property:", error);
         toast.error("Failed to unlist property");
         return;
       }
-
-      const { error: deleteError } = await supabase
-        .from('property_listings')
-        .delete()
-        .eq('id', propertyId)
-        .eq('user_id', user.id);
-
-      if (deleteError) {
-        console.error("Error deleting property:", deleteError);
-        toast.error("Failed to unlist property");
-        return;
-      }
-
-      if (property?.images && property.images.length > 0) {
-        const filePaths = property.images.map(imageUrl => {
-          try {
-            const match = imageUrl.match(/\/storage\/v1\/object\/public\/[^/]+\/(.+)/);
-            return match ? match[1] : null;
-          } catch (e) {
-            console.error("Error parsing image URL:", e);
-            return null;
-          }
-        }).filter(Boolean);
-
-        if (filePaths.length > 0) {
-          const { error: storageError } = await supabase.storage
-            .from('property_images')
-            .remove(filePaths);
-
-          if (storageError) {
-            console.error("Error deleting property images:", storageError);
-          }
-        }
-      }
-
       const updatedProperties = myProperties.filter(property => property.id !== propertyId);
       setMyProperties(updatedProperties);
       toast.success("Property unlisted successfully");
-      
     } catch (error) {
       console.error("Exception unlisting property:", error);
       toast.error("Failed to unlist property");
     }
   };
-
   return <>
       {isLoading ? <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
           <p className="mb-6">Loading your properties...</p>
