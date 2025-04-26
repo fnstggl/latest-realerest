@@ -112,7 +112,7 @@ const GuideWholesale: React.FC = () => {
                             backgroundClip: "border-box",
                             WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                             WebkitMaskComposite: "xor",
-                            maskComposite: "exclude",
+                            maskComposite: "exclude"
                           }} 
                         />
                       </Button>
@@ -152,7 +152,7 @@ const GuideWholesale: React.FC = () => {
                     backgroundClip: "border-box",
                     WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                     WebkitMaskComposite: "xor",
-                    maskComposite: "exclude",
+                    maskComposite: "exclude"
                   }} 
                 />
               </Button>
