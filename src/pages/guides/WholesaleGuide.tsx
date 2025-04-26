@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GuideStep } from '@/components/guide/GuideStep';
 import { ArrowLeft, Banknote, UserPlus, SearchCheck, DollarSign } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -35,13 +35,7 @@ const WholesaleGuide = () => {
           title="Find Bounties to Accept" 
           icon={<SearchCheck className="w-12 h-12 text-blue-600 mb-4" />}
           description={
-            <>
-              Search through our curated properties with bounties. These are sellers offering 
-              incentives for bringing buyers.{' '}
-              <Link to="/search?type=bounty" className="text-blue-600 hover:text-blue-800 underline">
-                View available bounties →
-              </Link>
-            </>
+            "Search through our curated properties with bounties. These are sellers offering incentives for bringing buyers."
           }
         />
         
@@ -51,13 +45,7 @@ const WholesaleGuide = () => {
           title="Bring an Interested Buyer" 
           icon={<UserPlus className="w-12 h-12 text-blue-600 mb-4" />}
           description={
-            <>
-              Connect with investors in your network or find new buyers through our platform. 
-              Use our contract templates to secure the deal.{' '}
-              <Link to="/blog/finding-real-estate-investors" className="text-blue-600 hover:text-blue-800 underline">
-                Tips for finding investors →
-              </Link>
-            </>
+            "Connect with investors in your network or find new buyers through our platform. Use our contract templates to secure the deal."
           }
         />
         
@@ -67,13 +55,7 @@ const WholesaleGuide = () => {
           title="Get Deal to Closing" 
           icon={<Banknote className="w-12 h-12 text-blue-600 mb-4" />}
           description={
-            <>
-              Work with the seller and buyer to complete the transaction. Our platform helps 
-              facilitate a smooth closing process.{' '}
-              <Link to="/blog/wholesale-closing-process" className="text-blue-600 hover:text-blue-800 underline">
-                Learn about the closing process →
-              </Link>
-            </>
+            "Work with the seller and buyer to complete the transaction. Our platform helps facilitate a smooth closing process."
           }
         />
 
@@ -83,20 +65,14 @@ const WholesaleGuide = () => {
           title="Get Paid" 
           icon={<DollarSign className="w-12 h-12 text-blue-600 mb-4" />}
           description={
-            <>
-              Receive your bounty payment once the deal closes. Track your earnings and manage 
-              your wholesale deals through our platform.{' '}
-              <Link to="/dashboard/bounties" className="text-blue-600 hover:text-blue-800 underline">
-                View your bounties →
-              </Link>
-            </>
+            "Receive your bounty payment once the deal closes. Track your earnings and manage your wholesale deals through our platform."
           }
         />
 
         <div className="text-center mt-12">
-          <Link to="/search?type=bounty" className="text-blue-600 hover:text-black font-medium transition-colors">
-            Start finding bounties →
-          </Link>
+          <span className="text-blue-600 font-medium">
+            Start finding bounties
+          </span>
         </div>
       </div>
     </div>
