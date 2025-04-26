@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, Wand2 } from "lucide-react";
@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { formSchema } from './formSchema';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AIPropertyExtractorProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -15,10 +16,37 @@ interface AIPropertyExtractorProps {
 const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
   const [propertyText, setPropertyText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+
+  useEffect(() => {
+    const fetchCohereApiKey = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('fetch-cohere-key');
+        
+        if (error) throw error;
+        
+        if (data?.apiKey) {
+          setApiKey(data.apiKey);
+        } else {
+          toast.error("Could not retrieve Cohere API key");
+        }
+      } catch (error) {
+        console.error("Error fetching Cohere API key:", error);
+        toast.error("Failed to load API key");
+      }
+    };
+
+    fetchCohereApiKey();
+  }, []);
 
   const extractPropertyDetails = async () => {
     if (!propertyText.trim() || propertyText.length < 50) {
       toast.error("Please enter more details about your property");
+      return;
+    }
+
+    if (!apiKey) {
+      toast.error("Cohere API key not available");
       return;
     }
 
@@ -28,7 +56,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
       const response = await fetch('https://api.cohere.ai/v1/classify', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer jriYm6w64hIS9CruxyACLRXX5SoU9ZvoLw9Thp8O`,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
