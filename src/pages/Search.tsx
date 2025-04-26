@@ -68,7 +68,7 @@ const Search = () => {
             {sortedProperties.map((property: any) => (
               <PropertyCard
                 key={property.id}
-                property={property}
+                listing={property}
                 onClick={() => handleCardClick(property.id)}
               />
             ))}

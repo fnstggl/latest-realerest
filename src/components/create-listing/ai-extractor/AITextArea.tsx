@@ -13,9 +13,9 @@ interface AITextAreaProps {
 const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
   return (
     <div className="relative w-full">
-      {/* Main textarea container with relative positioning */}
-      <div className="relative w-full group overflow-hidden rounded-xl">
-        {/* This is the glow effect that appears on hover */}
+      {/* Main container with padding to create space for the glow */}
+      <div className="relative w-full group p-[3px] rounded-xl">
+        {/* Glow effect container - positioned behind the textarea */}
         <div className="absolute inset-0 rounded-xl overflow-hidden z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <GlowEffect
             colors={['#00FFA3', '#DC1FFF', '#FFB800']}
@@ -26,13 +26,16 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
           />
         </div>
         
-        <Textarea 
-          value={value}
-          onChange={onChange}
-          placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-          className="w-full px-6 py-4 min-h-[120px] text-lg bg-white border-black text-foreground rounded-xl backdrop-blur-sm relative z-10 focus:border-black"
-          style={{ backgroundColor: 'white' }}
-        />
+        {/* Textarea with solid white background */}
+        <div className="relative z-10 rounded-xl overflow-hidden">
+          <Textarea 
+            value={value}
+            onChange={onChange}
+            placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
+            className="w-full px-6 py-4 min-h-[120px] text-lg bg-white border border-black text-foreground rounded-xl focus:border-black"
+            style={{ backgroundColor: 'white' }}
+          />
+        </div>
         
         <AnimatePresence>
           {isProcessing && (
