@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GuideStep } from '@/components/guide/GuideStep';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Home, ListChecks, Send, Key } from 'lucide-react';
 
 const BuyingGuide = () => {
   const navigate = useNavigate();
@@ -27,9 +27,10 @@ const BuyingGuide = () => {
       <GuideStep
         number={1}
         position="left"
-        title="Browse Available Properties"
+        title="Find a property you love"
+        icon={<Home className="w-12 h-12 text-blue-600 mb-4" />}
         description={
-          `Start your journey by exploring our curated selection of below-market properties. Use our advanced filters to find properties that match your criteria. ${
+          `Browse through our curated selection of below-market properties. Use our advanced filters to find properties that match your criteria. ${
             `Visit our `
           } property search page to get started.`
         }
@@ -38,15 +39,25 @@ const BuyingGuide = () => {
       <GuideStep
         number={2}
         position="right"
-        title="Contact Sellers Directly"
-        description="Once you've found a property you're interested in, reach out to the seller directly through our platform. No middlemen or unnecessary fees - just direct communication with the property owner."
+        title="Join the waitlist to contact Sellers directly"
+        icon={<ListChecks className="w-12 h-12 text-blue-600 mb-4" />}
+        description="Get direct access to property owners through our platform. No middlemen or unnecessary fees - just direct communication with motivated sellers."
       />
       
       <GuideStep
         number={3}
         position="left"
-        title="Close the Deal"
-        description="After negotiating terms with the seller, proceed with the standard closing process. Our platform helps facilitate the transaction while letting you maintain control of the process."
+        title="Send in an offer"
+        icon={<Send className="w-12 h-12 text-blue-600 mb-4" />}
+        description="Submit your offer directly through our platform. Our streamlined process makes it easy to negotiate and reach an agreement with the seller."
+      />
+
+      <GuideStep
+        number={4}
+        position="right"
+        title="Get the keys"
+        icon={<Key className="w-12 h-12 text-blue-600 mb-4" />}
+        description="Close the deal and get your new property. Our platform helps facilitate the transaction while letting you maintain control of the process."
       />
       
       <div className="text-center mt-12">

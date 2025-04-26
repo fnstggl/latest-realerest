@@ -8,6 +8,7 @@ interface GuideStepProps {
   description: string;
   position: 'left' | 'right';
   className?: string;
+  icon?: React.ReactNode;
 }
 
 export const GuideStep: React.FC<GuideStepProps> = ({
@@ -15,7 +16,8 @@ export const GuideStep: React.FC<GuideStepProps> = ({
   title,
   description,
   position,
-  className
+  className,
+  icon
 }) => {
   return (
     <div className={cn(
@@ -28,6 +30,7 @@ export const GuideStep: React.FC<GuideStepProps> = ({
           Step {number}
         </span>
       </div>
+      {icon}
       <h3 className="font-playfair text-2xl font-bold italic mb-4">{title}</h3>
       <p className="text-gray-600 leading-relaxed">{description}</p>
     </div>

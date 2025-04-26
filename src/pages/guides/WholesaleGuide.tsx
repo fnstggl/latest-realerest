@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GuideStep } from '@/components/guide/GuideStep';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Search, Users, Check, DollarSign } from 'lucide-react';
 
 const WholesaleGuide = () => {
   const navigate = useNavigate();
@@ -27,26 +27,33 @@ const WholesaleGuide = () => {
       <GuideStep
         number={1}
         position="left"
-        title="Find Deals"
+        title="Find bounty to accept"
+        icon={<Search className="w-12 h-12 text-blue-600 mb-4" />}
         description="Search for properties with significant equity or motivated sellers. Our platform provides access to below-market properties that could be perfect for wholesaling opportunities."
       />
       
       <GuideStep
         number={2}
         position="right"
-        title="Secure the Contract"
-        description="Once you've identified a property, negotiate with the seller to get it under contract. Make sure to include assignment clauses that allow you to transfer the contract to another buyer."
+        title="Bring an interested buyer to the deal"
+        icon={<Users className="w-12 h-12 text-blue-600 mb-4" />}
+        description="Market the property to your network of buyers or find new buyers through our platform. Connect with investors who are actively looking for deals."
       />
       
       <GuideStep
         number={3}
         position="left"
-        title="Find Your Buyer"
-        description={
-          `Market the property to your network of buyers or find new buyers through our platform. ${
-            `Connect with investors `
-          } who are actively looking for deals.`
-        }
+        title="Get deal to closing"
+        icon={<Check className="w-12 h-12 text-blue-600 mb-4" />}
+        description="Facilitate the transaction between the seller and your buyer. Ensure all parties are aligned and the deal moves smoothly towards closing."
+      />
+
+      <GuideStep
+        number={4}
+        position="right"
+        title="Get paid"
+        icon={<DollarSign className="w-12 h-12 text-blue-600 mb-4" />}
+        description="Collect your wholesale fee once the deal closes. Our platform helps ensure a transparent and efficient process for all parties involved."
       />
       
       <div className="text-center mt-12">
