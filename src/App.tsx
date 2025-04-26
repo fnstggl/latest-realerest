@@ -50,6 +50,10 @@ const PropertyEdit = lazy(() => import("./pages/PropertyEdit"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Conversation = lazy(() => import("./pages/Conversation"));
 const SellerProfile = lazy(() => import("./pages/SellerProfile"));
+const Guides = lazy(() => import("./pages/Guides"));
+const BuyingGuide = lazy(() => import("./pages/guides/BuyingGuide"));
+const SellingGuide = lazy(() => import("./pages/guides/SellingGuide"));
+const WholesaleGuide = lazy(() => import("./pages/guides/WholesaleGuide"));
 
 // Updated loading fallback to use our standardized component
 const LoadingFallback = () => <LoadingSpinner fullScreen />;
@@ -126,6 +130,10 @@ const App = () => (
           {/* Redirect the /pricing route to the home page */}
           <Route path="/pricing" element={<Navigate to="/" replace />} />
           <Route path="/seller/:sellerId" element={<SellerProfile />} />
+          <Route path="/guides" element={<Guides />} />
+          <Route path="/guides/buying" element={<BuyingGuide />} />
+          <Route path="/guides/selling" element={<SellingGuide />} />
+          <Route path="/guides/wholesale" element={<WholesaleGuide />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
