@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -60,11 +61,11 @@ const Navbar: React.FC = () => {
             <Link to="/sell/create" className="text-black hover:nav-sell-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Sell
             </Link>
+            <Link to="/guide" className="text-black hover:nav-guide-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+              Guide
+            </Link>
             <Link to="/about" className="text-black hover:nav-about-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               About
-            </Link>
-            <Link to="/contact" className="text-black hover:nav-contact-hover transition-colors font-bold text-base sm:text-lg md:text-xl py-2 sm:py-3">
-              Contact
             </Link>
           </nav>
 
@@ -97,8 +98,8 @@ const Navbar: React.FC = () => {
           <Link to="/" className="playfair-hover font-semibold text-sm lg:text-base">Home</Link>
           <Link to="/search" className="playfair-hover font-semibold text-sm lg:text-base">Browse</Link>
           <Link to="/sell/create" className="playfair-hover font-semibold text-sm lg:text-base">Sell</Link>
+          <Link to="/guide" className="playfair-hover font-semibold text-sm lg:text-base">Guide</Link>
           <Link to="/about" className="playfair-hover font-semibold text-sm lg:text-base">About</Link>
-          <Link to="/contact" className="playfair-hover font-semibold text-sm lg:text-base">Contact</Link>
         </div>
 
         <div className="flex items-center gap-1 xs:gap-2 sm:gap-4">

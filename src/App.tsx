@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -50,6 +51,12 @@ const PropertyEdit = lazy(() => import("./pages/PropertyEdit"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Conversation = lazy(() => import("./pages/Conversation"));
 const SellerProfile = lazy(() => import("./pages/SellerProfile"));
+
+// New guide pages
+const Guide = lazy(() => import("./pages/Guide"));
+const GuideBuying = lazy(() => import("./pages/GuideBuying"));
+const GuideSelling = lazy(() => import("./pages/GuideSelling"));
+const GuideWholesale = lazy(() => import("./pages/GuideWholesale"));
 
 // Updated loading fallback to use our standardized component
 const LoadingFallback = () => <LoadingSpinner fullScreen />;
@@ -107,6 +114,10 @@ const App = () => (
           />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/guide" element={<Guide />} />
+          <Route path="/guide/buying" element={<GuideBuying />} />
+          <Route path="/guide/selling" element={<GuideSelling />} />
+          <Route path="/guide/wholesale" element={<GuideWholesale />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/faq" element={<FAQ />} />
