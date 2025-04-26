@@ -1,11 +1,25 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GuideStep } from '@/components/guide/GuideStep';
+import { ArrowLeft } from 'lucide-react';
 
 const SellingGuide = () => {
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate('/guides');
+  };
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 space-y-16">
+    <div className="max-w-6xl mx-auto px-4 py-12 space-y-16 relative">
+      <button 
+        onClick={handleGoBack} 
+        className="absolute top-4 left-4 text-gray-700 hover:text-black transition-colors"
+      >
+        <ArrowLeft size={32} />
+      </button>
+
       <h1 className="text-4xl font-playfair font-bold italic text-center mb-12">
         How to Sell Properties
       </h1>
