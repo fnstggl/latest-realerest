@@ -21,12 +21,12 @@ const ExtractButton = ({ isProcessing, onClick, disabled }: ExtractButtonProps) 
         {isProcessing ? (
           <div className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Extracting...</span>
+            <span className="font-bold">Extracting...</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
             <Wand2 className="h-4 w-4" />
-            <span>Extract Details</span>
+            <span className="font-bold">Extract Details</span>
           </div>
         )}
       </Button>
