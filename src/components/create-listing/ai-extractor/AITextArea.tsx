@@ -18,7 +18,7 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
           value={value}
           onChange={onChange}
           placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-          className="w-full px-6 py-4 min-h-[120px] text-lg glass-input text-foreground rounded-xl bg-white backdrop-blur-sm border-transparent transition-all duration-300 relative z-20 focus:outline-none focus:ring-0 focus:border-transparent"
+          className="w-full px-6 py-4 min-h-[120px] text-lg glass-input text-foreground rounded-xl bg-white backdrop-blur-sm border-black transition-all duration-300 relative z-20 focus:outline-none focus:ring-0 focus:border-black"
         />
         
         {/* This is the glow effect that appears on hover */}
