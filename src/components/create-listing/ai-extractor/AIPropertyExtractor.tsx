@@ -27,6 +27,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
         <AITextArea 
           value={propertyText}
           onChange={(e) => setPropertyText(e.target.value)}
+          isProcessing={isProcessing}
         />
         <ExtractButton 
           isProcessing={isProcessing}
