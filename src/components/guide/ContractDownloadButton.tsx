@@ -1,0 +1,46 @@
+
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { FilePdf } from 'lucide-react';
+import { supabase } from "@/integrations/supabase/client";
+
+const ContractDownloadButton = () => {
+  const handleDownload = async () => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('contract_documents')
+        .download('wholesale-contract-template.pdf');
+        
+      if (error) {
+        console.error('Error downloading contract:', error);
+        return;
+      }
+
+      // Create a blob URL and trigger download
+      const blob = new Blob([data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'wholesale-contract-template.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading contract:', error);
+    }
+  };
+
+  return (
+    <Button 
+      onClick={handleDownload}
+      variant="outline"
+      className="flex items-center gap-2 mt-4"
+    >
+      <FilePdf className="h-5 w-5" />
+      Download Contract Template
+    </Button>
+  );
+};
+
+export default ContractDownloadButton;

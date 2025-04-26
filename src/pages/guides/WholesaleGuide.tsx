@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { GuideStep } from '@/components/guide/GuideStep';
 import { ArrowLeft, Banknote, UserPlus, SearchCheck, DollarSign } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import ContractDownloadButton from '@/components/guide/ContractDownloadButton';
 
 const WholesaleGuide = () => {
   const navigate = useNavigate();
@@ -48,6 +49,10 @@ const WholesaleGuide = () => {
             "Connect with investors in your network or find new buyers through our platform. Use our contract templates to secure the deal."
           }
         />
+        
+        <div className="flex justify-center">
+          <ContractDownloadButton />
+        </div>
         
         <GuideStep 
           number={3} 
