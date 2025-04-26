@@ -22,7 +22,7 @@ const GuideBuying: React.FC = () => {
     {
       number: 2,
       title: 'Join the waitlist to contact sellers directly',
-      description: 'When you find a property you're interested in, join its waitlist to get direct access to the seller. This gives you an opportunity to ask questions and express your interest.',
+      description: "When you find a property you're interested in, join its waitlist to get direct access to the seller. This gives you an opportunity to ask questions and express your interest.",
       icon: Users,
       link: '/search',
       linkText: 'Discover Properties'
@@ -30,7 +30,7 @@ const GuideBuying: React.FC = () => {
     {
       number: 3,
       title: 'Send in an offer',
-      description: 'Once you've found your ideal property and connected with the seller, submit your offer directly through our platform. You can negotiate terms and make contingent offers.',
+      description: "Once you've found your ideal property and connected with the seller, submit your offer directly through our platform. You can negotiate terms and make contingent offers.",
       icon: ClipboardCheck,
       link: '/dashboard',
       linkText: 'View Your Dashboard'

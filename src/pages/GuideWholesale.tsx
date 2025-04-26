@@ -38,7 +38,7 @@ const GuideWholesale: React.FC = () => {
     {
       number: 4,
       title: 'Get paid your bounty',
-      description: 'Once the deal closes successfully, you'll receive your bounty payment directly through our secure platform. No waiting, no chasing down payments.',
+      description: "Once the deal closes successfully, you'll receive your bounty payment directly through our secure platform. No waiting, no chasing down payments.",
       icon: Award,
       link: '/dashboard',
       linkText: 'Track Your Bounties'
