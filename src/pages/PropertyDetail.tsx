@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -246,7 +245,7 @@ const PropertyDetail: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
                   <div className="text-lg font-bold text-black">
-                    {property?.afterRepairValue.toLocaleString('en-US', {
+                    {Number(property?.afterRepairValue).toLocaleString('en-US', {
                       style: 'currency',
                       currency: 'USD'
                     })}
@@ -255,7 +254,7 @@ const PropertyDetail: React.FC = () => {
                 </div>
                 <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
                   <div className="text-lg font-bold text-black">
-                    {property?.estimatedRehab.toLocaleString('en-US', {
+                    {Number(property?.estimatedRehab).toLocaleString('en-US', {
                       style: 'currency',
                       currency: 'USD'
                     })}
