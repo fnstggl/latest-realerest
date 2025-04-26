@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -64,25 +63,26 @@ const Search: React.FC = () => {
     sortProperties(results, sortOption);
   };
 
-  const handleSortChange = (option: string) => {
-    setSortOption(option);
-    let sorted = [...properties];
-    
+  const sortProperties = (properties: any[], option: string) => {
     switch (option) {
       case "price-low":
-        sorted.sort((a, b) => a.price - b.price);
+        properties.sort((a, b) => a.price - b.price);
         break;
       case "price-high":
-        sorted.sort((a, b) => b.price - a.price);
+        properties.sort((a, b) => b.price - a.price);
         break;
       case "below-market":
-        sorted.sort((a, b) => b.belowMarket - a.belowMarket);
+        properties.sort((a, b) => b.belowMarket - a.belowMarket);
         break;
       case "newest":
         break;
       default:
         break;
     }
+  };
+
+  const handleSortChange = (option: string) => {
+    setSortOption(option);
   };
 
   if (loading) {

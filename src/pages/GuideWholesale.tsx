@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, DollarSign, Handshake, Briefcase, Award } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+
 const GuideWholesale: React.FC = () => {
   const navigate = useNavigate();
   const steps = [{
@@ -36,6 +37,7 @@ const GuideWholesale: React.FC = () => {
     link: '/dashboard',
     linkText: 'Track Your Bounties'
   }];
+
   return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
@@ -110,13 +112,11 @@ const GuideWholesale: React.FC = () => {
                   </div>
                 </div>
                 <div className="w-full md:w-1/2 relative">
-                  <div className="bg-gradient-to-r from-pink-50 to-orange-50 rounded-xl p-8 aspect-video flex items-center justify-center shadow-md relative overflow-hidden">
-                    <div className="absolute inset-0 bg-white/50 backdrop-blur-sm"></div>
-                    <step.icon size={120} className="text-pink-500/20 absolute" />
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center relative z-10 font-playfair italic text-black">
-                      Step {step.number}
-                    </h3>
-                  </div>
+                  <img 
+                    src="/placeholder.svg" 
+                    alt={`Step ${step.number}`}
+                    className="w-full h-full object-cover rounded-xl"
+                  />
                 </div>
               </motion.div>)}
           </div>
@@ -155,4 +155,5 @@ const GuideWholesale: React.FC = () => {
       <SiteFooter />
     </div>;
 };
+
 export default GuideWholesale;
