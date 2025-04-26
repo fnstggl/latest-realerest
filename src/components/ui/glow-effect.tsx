@@ -1,4 +1,3 @@
-
 'use client';
 import { cn } from '@/lib/utils';
 import { motion, Transition } from 'framer-motion';
@@ -26,6 +25,7 @@ export type GlowEffectProps = {
   transition?: Transition;
   scale?: number;
   duration?: number;
+  edgeFade?: number;
 };
 
 export function GlowEffect({
@@ -37,6 +37,7 @@ export function GlowEffect({
   transition,
   scale = 1,
   duration = 5,
+  edgeFade = 2,
 }: GlowEffectProps) {
   const BASE_TRANSITION = {
     repeat: Infinity,
@@ -132,14 +133,23 @@ export function GlowEffect({
 
   return (
     <motion.div
-      style={
-        {
-          ...style,
-          '--scale': scale,
-          willChange: 'transform',
-          backfaceVisibility: 'hidden',
-        } as React.CSSProperties
-      }
+      style={{
+        ...style,
+        '--scale': scale,
+        '--edge-fade': `${edgeFade}px`,
+        willChange: 'transform',
+        backfaceVisibility: 'hidden',
+        WebkitMask: `linear-gradient(to right, 
+          transparent 0%, 
+          white var(--edge-fade), 
+          white calc(100% - var(--edge-fade)), 
+          transparent 100%)`,
+        mask: `linear-gradient(to right, 
+          transparent 0%, 
+          white var(--edge-fade), 
+          white calc(100% - var(--edge-fade)), 
+          transparent 100%)`,
+      } as React.CSSProperties}
       animate={animations[mode]}
       className={cn(
         'pointer-events-none absolute inset-0 h-full w-full',

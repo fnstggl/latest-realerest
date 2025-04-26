@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Textarea } from "@/components/ui/textarea";
 import { AnimatePresence, motion } from 'framer-motion';
@@ -13,20 +12,18 @@ interface AITextAreaProps {
 const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
   return (
     <div className="relative w-full">
-      {/* Main container with increased padding to create more space for the glow */}
       <div className="relative w-full group p-[5px] rounded-xl">
-        {/* Glow effect container - positioned behind the textarea with increased opacity and scale */}
         <div className="absolute inset-0 rounded-xl overflow-hidden z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <GlowEffect
             colors={['#00FFA3', '#DC1FFF', '#FFB800']}
             mode="breathe"
             blur="medium"
-            scale={1.1}  // Increased scale to make glow more prominent
+            scale={1.1}
             duration={7}
+            edgeFade={2}
           />
         </div>
         
-        {/* Textarea with solid white background */}
         <div className="relative z-10 rounded-xl overflow-hidden">
           <Textarea 
             value={value}
@@ -51,7 +48,8 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
                 mode="flowHorizontal"
                 blur="soft"
                 duration={3}
-                scale={1.1}  // Consistent scale with hover glow
+                scale={1.1}
+                edgeFade={2}
               />
             </motion.div>
           )}
