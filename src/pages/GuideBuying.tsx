@@ -18,7 +18,7 @@ const GuideBuying: React.FC = () => {
       icon: Search,
       link: '/search',
       linkText: 'Browse Properties',
-      image: '/lovable-uploads/db0abb4a-f50c-46bb-bc1c-0ffa549ee770.png'
+      image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
     },
     {
       number: 2,
@@ -27,7 +27,7 @@ const GuideBuying: React.FC = () => {
       icon: Users,
       link: '/search',
       linkText: 'Discover Properties',
-      image: '/lovable-uploads/2987e215-cce6-480f-bd59-9909d61b3268.png'
+      image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
     },
     {
       number: 3,
@@ -36,7 +36,7 @@ const GuideBuying: React.FC = () => {
       icon: ClipboardCheck,
       link: '/dashboard',
       linkText: 'View Your Dashboard',
-      image: '/lovable-uploads/97e32e0a-d2c7-4e49-9051-1e05654ea460.png'
+      image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
     },
     {
       number: 4,
@@ -45,7 +45,7 @@ const GuideBuying: React.FC = () => {
       icon: Key,
       link: '/faq',
       linkText: 'Read FAQs',
-      image: '/lovable-uploads/a5fa5940-8203-4f75-9742-3183974fbe5e.png'
+      image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
     }
   ];
 
@@ -124,7 +124,7 @@ const GuideBuying: React.FC = () => {
                 </div>
                 <div className="w-full md:w-1/2 relative">
                   <div className="rounded-xl overflow-hidden shadow-lg">
-                    <img src={step.image} alt={step.title} className="w-full h-auto" />
+                    <img src={step.image} alt={`Step ${step.number}: ${step.title}`} className="w-full h-auto" />
                   </div>
                 </div>
               </motion.div>
