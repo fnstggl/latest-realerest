@@ -114,7 +114,10 @@ const GuideSelling: React.FC = () => {
                 </div>
                 <div className="w-full md:w-1/2 aspect-[16/9]">
                   <img 
-                    src="/placeholder.svg" 
+                    src={index === 0 ? "/placeholder-list.svg" : 
+                         index === 1 ? "/placeholder-chat.svg" :
+                         index === 2 ? "/placeholder-offer.svg" :
+                         "/placeholder-home.svg"}
                     alt={`Step ${step.number}`}
                     className="w-full h-full object-cover rounded-xl"
                   />
