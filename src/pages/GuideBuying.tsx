@@ -91,7 +91,7 @@ const GuideBuying: React.FC = () => {
           }} className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
               <div className="w-full md:w-1/2 md:pr-6">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-white flex items a\center justify-center">
+                  <div className="w-16 h-16 rounded-full flex items a\\center justify-center bg-transparent">
                     <Search size={32} className="text-black" />
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold mb-3">
@@ -136,7 +136,7 @@ const GuideBuying: React.FC = () => {
           }} className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12">
               <div className="w-full md:w-1/2 md:pl-6">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-transparent">
                     <Users size={32} className="text-black" />
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold mb-3">
@@ -181,7 +181,7 @@ const GuideBuying: React.FC = () => {
           }} className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
               <div className="w-full md:w-1/2 md:pr-6">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-transparent">
                     <ClipboardCheck size={32} className="text-black" />
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold mb-3">
@@ -226,7 +226,7 @@ const GuideBuying: React.FC = () => {
           }} className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12">
               <div className="w-full md:w-1/2 md:pl-6">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-transparent">
                     <Key size={32} className="text-black" />
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold mb-3">
