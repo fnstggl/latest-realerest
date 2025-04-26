@@ -13,17 +13,22 @@ const AITextArea = ({ value, onChange }: AITextAreaProps) => {
     <div className="relative">
       <div className="relative rounded-md overflow-hidden">
         <GlowEffect
-          colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
+          colors={['#0894FF', '#C959DD', '#FF2E54', '#FF9004']}
           mode="flowHorizontal"
           blur="soft"
           scale={1.02}
           duration={8}
+          className="opacity-60"
+          style={{
+            margin: '-1px',
+            padding: '1px',
+          }}
         />
         <Textarea 
           value={value}
           onChange={onChange}
           placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-          className="min-h-[120px] bg-white/80 backdrop-blur-sm border-gray-300 hover:border-gray-400 focus:border-gray-500 relative z-10"
+          className="min-h-[120px] bg-white relative z-10 border-transparent focus:border-transparent focus:ring-0"
         />
       </div>
     </div>
