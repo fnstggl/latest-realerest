@@ -35,6 +35,9 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   userId,
   propertyId
 }) => {
+  // Round belowMarket to the nearest whole number
+  const roundedBelowMarket = Math.round(belowMarket);
+
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
       return <span className="font-medium text-sm sm:text-base break-words">
@@ -53,7 +56,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-          <span className="text-black font-playfair font-bold italic mr-1">{belowMarket}%</span> 
+          <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
           <span className="text-black font-playfair font-bold italic">Below Market</span>
         </div>
         {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
