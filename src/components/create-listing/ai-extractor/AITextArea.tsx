@@ -12,11 +12,11 @@ interface AITextAreaProps {
 
 const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
   return (
-    <div className="relative">
+    <div className="relative rounded-md">
       <AnimatePresence>
         {isProcessing && (
           <motion.div 
-            className="absolute -inset-[2px] rounded-lg overflow-hidden"
+            className="absolute -inset-[2px] rounded-lg overflow-hidden z-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -35,12 +35,10 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
         value={value}
         onChange={onChange}
         placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-        className="min-h-[120px] relative z-10 transition-all border-gray-200 hover:border-gray-300 bg-white"
+        className="min-h-[120px] bg-white border-2 relative z-10"
         style={{ 
           backgroundColor: 'white',
           borderColor: isProcessing ? 'transparent' : undefined,
-          position: 'relative',
-          zIndex: 1
         }}
       />
     </div>

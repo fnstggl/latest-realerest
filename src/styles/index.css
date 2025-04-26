@@ -6,3 +6,34 @@
 @import './cards.css';
 @import './animations.css';
 @import './utilities.css';
+
+/* Add custom glow effect styles */
+.glow-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(90deg, #0894FF, #C959DD, #FF2E54, #FF9004);
+  z-index: -1;
+  border-radius: inherit;
+  animation: animate-glow 3s linear infinite;
+}
+
+@keyframes animate-glow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
