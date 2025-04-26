@@ -11,6 +11,8 @@
 .glow-border {
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .glow-border::before {
@@ -24,6 +26,12 @@
   z-index: -1;
   border-radius: inherit;
   animation: animate-glow 3s linear infinite;
+}
+
+/* Show glow border on hover and focus */
+.group:hover .glow-border,
+.group:focus-within .glow-border {
+  opacity: 1;
 }
 
 @keyframes animate-glow {

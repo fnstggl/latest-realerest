@@ -14,15 +14,15 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
   return (
     <div className="relative w-full">
       <div className="relative group">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-[#3C79F5] via-[#D946EF] to-[#FF3CAC] rounded-xl opacity-0 group-hover:opacity-75 transition duration-300 blur-md"></div>
-        <div className="relative">
-          <Textarea 
-            value={value}
-            onChange={onChange}
-            placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-            className="min-h-[120px] w-full bg-white rounded-xl border-transparent focus:border-transparent focus:ring-0 relative z-10"
-          />
-        </div>
+        {/* Glow effect wrapper */}
+        <div className="glow-border absolute -inset-[0.5px] rounded-xl pointer-events-none"></div>
+        
+        <Textarea 
+          value={value}
+          onChange={onChange}
+          placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
+          className="min-h-[120px] w-full bg-white rounded-xl border-transparent focus:border-transparent focus:ring-0 relative z-10"
+        />
         
         <AnimatePresence>
           {isProcessing && (
