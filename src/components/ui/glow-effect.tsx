@@ -1,3 +1,4 @@
+
 'use client';
 import { cn } from '@/lib/utils';
 import { motion, Transition } from 'framer-motion';
@@ -139,16 +140,36 @@ export function GlowEffect({
         '--edge-fade': `${edgeFade}px`,
         willChange: 'transform',
         backfaceVisibility: 'hidden',
-        WebkitMask: `linear-gradient(to right, 
-          transparent 0%, 
-          white var(--edge-fade), 
-          white calc(100% - var(--edge-fade)), 
-          transparent 100%)`,
-        mask: `linear-gradient(to right, 
-          transparent 0%, 
-          white var(--edge-fade), 
-          white calc(100% - var(--edge-fade)), 
-          transparent 100%)`,
+        WebkitMask: `
+          linear-gradient(to right, 
+            transparent 0%, 
+            white var(--edge-fade), 
+            white calc(100% - var(--edge-fade)), 
+            transparent 100%
+          ),
+          linear-gradient(to bottom, 
+            transparent 0%, 
+            white var(--edge-fade), 
+            white calc(100% - var(--edge-fade)), 
+            transparent 100%
+          )
+        `,
+        mask: `
+          linear-gradient(to right, 
+            transparent 0%, 
+            white var(--edge-fade), 
+            white calc(100% - var(--edge-fade)), 
+            transparent 100%
+          ),
+          linear-gradient(to bottom, 
+            transparent 0%, 
+            white var(--edge-fade), 
+            white calc(100% - var(--edge-fade)), 
+            transparent 100%
+          )
+        `,
+        maskComposite: 'intersect',
+        WebkitMaskComposite: 'source-in'
       } as React.CSSProperties}
       animate={animations[mode]}
       className={cn(
