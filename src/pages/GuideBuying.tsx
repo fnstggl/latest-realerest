@@ -208,7 +208,7 @@ const GuideBuying: React.FC = () => {
               </div>
               <div className="w-full md:w-1/2 relative">
                 <div className="rounded-xl overflow-hidden shadow-lg">
-                  <img src="/step3-image.jpg" alt="Send in an offer" className="w-full h-auto" />
+                  <img alt="Send in an offer" className="w-full h-auto" src="/lovable-uploads/57567df8-e8fd-4f5d-b8d2-23355d03943d.png" />
                 </div>
               </div>
             </motion.div>
