@@ -15,16 +15,10 @@ interface AIPropertyExtractorProps {
 const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
   const [propertyText, setPropertyText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [apiKey, setApiKey] = useState('');
 
   const extractPropertyDetails = async () => {
     if (!propertyText.trim() || propertyText.length < 50) {
       toast.error("Please enter more details about your property");
-      return;
-    }
-
-    if (!apiKey) {
-      toast.error("Please enter your Cohere API key");
       return;
     }
 
@@ -34,7 +28,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
       const response = await fetch('https://api.cohere.ai/v1/classify', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
+          'Authorization': `Bearer jriYm6w64hIS9CruxyACLRXX5SoU9ZvoLw9Thp8O`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -98,26 +92,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
   };
 
   return (
-    <div className="rounded-xl border border-black/10 bg-white p-6 mb-6">
-      <div className="mb-4">
-        <input
-          type="password"
-          placeholder="Enter Cohere API Key"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4 text-sm"
-        />
-      </div>
-      
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-        <Wand2 className="h-5 w-5" /> 
-        AI Property Details Extractor
-      </h2>
-      
-      <p className="text-sm text-gray-600 mb-4">
-        Paste property details, listing information, or description and let AI extract the details for you.
-      </p>
-      
+    <div className="mb-6">
       <div className="relative">
         <Textarea 
           value={propertyText}

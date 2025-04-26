@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -26,9 +25,17 @@ interface PropertyDetailType {
   bounty?: number;
   estimatedRehab?: number;
   afterRepairValue?: number;
-  yearBuilt?: string; // Added optional
-  lotSize?: string;   // Added optional
-  parking?: string;   // Added optional
+  yearBuilt?: string;
+  lotSize?: string;
+  parking?: string;
+  belowMarket?: string;
+  fullAddress?: string;
+  userId?: string;
+  propertyType?: string;
+  sellerName?: string;
+  sellerEmail?: string;
+  sellerPhone?: string;
+  sellerId?: string;
 }
 
 export const usePropertyDetail = (propertyId?: string) => {
@@ -174,7 +181,7 @@ export const usePropertyDetail = (propertyId?: string) => {
           sellerData = profileData;
         }
 
-        setProperty({
+        const propertyData = {
           id: data.id,
           title: data.title,
           description: data.description || '',
@@ -191,11 +198,20 @@ export const usePropertyDetail = (propertyId?: string) => {
           bounty: data.bounty,
           estimatedRehab: data.estimated_rehab,
           afterRepairValue: data.after_repair_value,
-          // Add with fallback default values
-          yearBuilt: 'N/A', // Default value
-          lotSize: 'N/A',   // Default value
-          parking: 'N/A',   // Default value
-        });
+          yearBuilt: data.year_built || 'N/A',
+          lotSize: data.lot_size || 'N/A',
+          parking: data.parking || 'N/A',
+          belowMarket: String(((data.market_price - data.price) / data.market_price * 100).toFixed(1)),
+          fullAddress: data.full_address,
+          userId: data.user_id,
+          propertyType: data.property_type,
+          sellerName: sellerData?.name,
+          sellerEmail: sellerData?.email,
+          sellerPhone: sellerData?.phone,
+          sellerId: sellerData?.id,
+        };
+
+        setProperty(propertyData);
       } catch (error) {
         console.error('Exception fetching property:', error);
         setError('An error occurred while loading the property details');
@@ -212,6 +228,16 @@ export const usePropertyDetail = (propertyId?: string) => {
     isLoading,
     error,
     isLiked,
-    toggleLike
+    toggleLike,
+    sellerInfo: property?.seller,
+    waitlistStatus: 'pending',
+    isOwner: false,
+    isApproved: false,
+    shouldShowSellerInfo: true,
+    refreshProperty: () => {
+      if (propertyId) {
+        setIsLoading(true);
+      }
+    }
   };
 };
