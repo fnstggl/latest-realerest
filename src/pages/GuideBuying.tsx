@@ -17,7 +17,8 @@ const GuideBuying: React.FC = () => {
       description: 'Browse our selection of below-market value properties. Use filters to narrow down your search based on location, price, and property features.',
       icon: Search,
       link: '/search',
-      linkText: 'Browse Properties'
+      linkText: 'Browse Properties',
+      image: '/lovable-uploads/81056460-1bf7-455a-a7cc-82acf5437124.png'
     },
     {
       number: 2,
@@ -25,7 +26,8 @@ const GuideBuying: React.FC = () => {
       description: "When you find a property you're interested in, join its waitlist to get direct access to the seller. This gives you an opportunity to ask questions and express your interest.",
       icon: Users,
       link: '/search',
-      linkText: 'Discover Properties'
+      linkText: 'Discover Properties',
+      image: '/lovable-uploads/eb2621fe-525a-410a-9d88-b71c65cc68b6.png'
     },
     {
       number: 3,
@@ -33,7 +35,8 @@ const GuideBuying: React.FC = () => {
       description: "Once you've found your ideal property and connected with the seller, submit your offer directly through our platform. You can negotiate terms and make contingent offers.",
       icon: ClipboardCheck,
       link: '/dashboard',
-      linkText: 'View Your Dashboard'
+      linkText: 'View Your Dashboard',
+      image: '/lovable-uploads/4b0c9c1d-4067-4573-b666-7eece05c5509.png'
     },
     {
       number: 4,
@@ -41,7 +44,8 @@ const GuideBuying: React.FC = () => {
       description: 'After your offer is accepted, complete the transaction process and receive the keys to your new home. Congratulations on your below-market purchase!',
       icon: Key,
       link: '/faq',
-      linkText: 'Read FAQs'
+      linkText: 'Read FAQs',
+      image: '/lovable-uploads/06ff0e76-d135-430a-8f8e-c8b0e14f1141.png'
     }
   ];
 
@@ -56,10 +60,9 @@ const GuideBuying: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="text-3xl md:text-4xl font-bold"
+              className="text-3xl md:text-4xl font-futura-extra-bold"
             >
-              <span className="font-playfair italic">How to </span>
-              Buy with Realer Estate
+              How to <span className="font-playfair italic">Buy</span> with Realer Estate
             </motion.h1>
             
             <Button 
@@ -92,7 +95,7 @@ const GuideBuying: React.FC = () => {
               >
                 <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-6' : 'md:pl-6'}`}>
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-extrabold text-xl mb-4">
+                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-black mb-4">
                       <step.icon size={32} />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-bold mb-3">
@@ -120,12 +123,8 @@ const GuideBuying: React.FC = () => {
                   </div>
                 </div>
                 <div className="w-full md:w-1/2 relative">
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8 aspect-video flex items-center justify-center shadow-md relative overflow-hidden">
-                    <div className="absolute inset-0 bg-white/50 backdrop-blur-sm"></div>
-                    <step.icon size={120} className="text-blue-500/20 absolute" />
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center relative z-10 font-playfair italic text-black">
-                      Step {step.number}
-                    </h3>
+                  <div className="rounded-xl overflow-hidden shadow-lg">
+                    <img src={step.image} alt={step.title} className="w-full h-auto" />
                   </div>
                 </div>
               </motion.div>

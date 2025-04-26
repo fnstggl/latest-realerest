@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import SiteFooter from '@/components/sections/SiteFooter';
@@ -56,10 +55,9 @@ const GuideSelling: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="text-3xl md:text-4xl font-bold"
+              className="text-3xl md:text-4xl font-futura-extra-bold"
             >
-              <span className="font-playfair italic">How to </span>
-              Sell with Realer Estate
+              How to <span className="font-playfair italic">Sell</span> with Realer Estate
             </motion.h1>
             
             <Button 
@@ -92,7 +90,7 @@ const GuideSelling: React.FC = () => {
               >
                 <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-6' : 'md:pl-6'}`}>
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-extrabold text-xl mb-4">
+                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-black mb-4">
                       <step.icon size={32} />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-bold mb-3">
