@@ -1,9 +1,17 @@
-
 import React from 'react';
 import { MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import LikeButton from './LikeButton';
 import RewardToolTip from './RewardToolTip';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
 
 interface PropertyHeaderProps {
   title: string;
@@ -20,6 +28,8 @@ interface PropertyHeaderProps {
   userId?: string;
   propertyId?: string;
   bounty?: number;
+  sellerName?: string;
+  waitlistStatus?: string | null;
 }
 
 const PropertyHeader: React.FC<PropertyHeaderProps> = ({
@@ -36,22 +46,29 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   onShowAddressClick,
   userId,
   propertyId,
-  bounty
+  bounty,
+  sellerName = "Seller",
+  waitlistStatus
 }) => {
+  const [showRewardDialog, setShowRewardDialog] = React.useState(false);
   const roundedBelowMarket = Math.round(belowMarket);
 
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
-      return <span className="font-medium text-sm sm:text-base break-words">
+      return (
+        <span className="font-medium text-sm sm:text-base break-words">
           {fullAddress}{location ? `, ${location}` : ''}
-        </span>;
+        </span>
+      );
     }
-    return <span className="font-medium text-sm sm:text-base">
+    return (
+      <span className="font-medium text-sm sm:text-base">
         <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
           Join Waitlist For Address
         </span>
         {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
-      </span>;
+      </span>
+    );
   };
 
   return (
@@ -64,7 +81,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           </div>
           {bounty && bounty >= 3000 && (
             <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-              <span className="text-black font-playfair font-bold italic mr-1">{formatCurrency(bounty)}</span> 
+              <span className="font-futura font-extrabold mr-1 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-teal-500">{formatCurrency(bounty)}</span> 
               <span className="text-black font-playfair font-bold italic mr-1">Reward</span>
               <RewardToolTip amount={bounty} />
             </div>
@@ -105,6 +122,60 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           <span className="ml-1 text-black">sqft</span>
         </div>
       </div>
+
+      {waitlistStatus === 'pending' && (
+        <div className="mt-4 space-y-3">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <p className="text-black font-medium">Waitlist Request Pending</p>
+          </div>
+          
+          <Link to={`/messages?seller=${userId}`} className="block w-full">
+            <Button 
+              variant="glass" 
+              className="w-full bg-white hover:bg-white relative group overflow-hidden"
+            >
+              <span className="text-black font-bold relative z-10">
+                Message {sellerName} Directly
+              </span>
+              <span 
+                className="absolute inset-0 opacity-100 rounded-lg pointer-events-none"
+                style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude"
+                }}
+              />
+            </Button>
+          </Link>
+          
+          <Button 
+            variant="default" 
+            className="w-full bg-black hover:bg-black/90 text-white"
+            onClick={() => setShowRewardDialog(true)}
+          >
+            Claim {formatCurrency(bounty || 0)} Reward
+          </Button>
+        </div>
+      )}
+
+      <Dialog open={showRewardDialog} onOpenChange={setShowRewardDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Reward Claim</DialogTitle>
+            <DialogDescription>
+              You've just accepted the {formatCurrency(bounty || 0)} reward for {title}. Find a buyer for the seller, get an assignment of contract agreement signed (download from "How to Wholesale" in guides) and get paid.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex justify-end">
+            <Button onClick={() => setShowRewardDialog(false)}>Close</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

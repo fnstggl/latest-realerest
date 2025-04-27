@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-// Update the type to include all required properties
 type PropertyDetailType = {
   id: string;
   title: string;
@@ -41,7 +40,7 @@ const usePropertyDetail = (propertyId?: string) => {
   const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
 
   useEffect(() => {
-    const fetchProperty = async () => {
+    const fetchPropertyData = async () => {
       setIsLoading(true);
       setError(null);
 
@@ -64,12 +63,10 @@ const usePropertyDetail = (propertyId?: string) => {
         }
 
         if (propertyData) {
-          // Calculate below market percentage
           const price = Number(propertyData.price);
           const marketPrice = Number(propertyData.market_price);
           const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
 
-          // Map database fields to property object structure
           const mappedProperty: PropertyDetailType = {
             id: propertyData.id,
             title: propertyData.title,
@@ -84,7 +81,7 @@ const usePropertyDetail = (propertyId?: string) => {
             images: propertyData.images || [],
             user_id: propertyData.user_id,
             below_market: parseFloat(belowMarket),
-            seller_name: '',  // Will be populated from seller info
+            seller_name: '',
             seller_email: '',
             seller_phone: '',
             seller_id: propertyData.user_id,
@@ -100,7 +97,6 @@ const usePropertyDetail = (propertyId?: string) => {
 
           setProperty(mappedProperty);
 
-          // Fetch seller info
           const { data: sellerData, error: sellerError } = await supabase
             .from('profiles')
             .select('name, phone, email, id')
@@ -116,7 +112,6 @@ const usePropertyDetail = (propertyId?: string) => {
               email: sellerData.email || null
             });
 
-            // Update the property with seller info
             setProperty(prev => {
               if (!prev) return null;
               return {
@@ -128,13 +123,11 @@ const usePropertyDetail = (propertyId?: string) => {
             });
           }
 
-          // Determine if the current user is the owner
           const { data: authData } = await supabase.auth.getUser();
           const currentUser = authData?.user;
           const isCurrentUserOwner = currentUser?.id === propertyData.user_id;
           setIsOwner(isCurrentUserOwner);
 
-          // Fetch waitlist status
           if (currentUser?.id && currentUser?.id !== propertyData.user_id) {
             const { data: waitlistData, error: waitlistError } = await supabase
               .from('waitlist_requests')
@@ -153,7 +146,7 @@ const usePropertyDetail = (propertyId?: string) => {
             }
           } else {
             setWaitlistStatus(null);
-            setIsApproved(isCurrentUserOwner); // Owner is automatically approved
+            setIsApproved(isCurrentUserOwner);
           }
         }
       } catch (err: any) {
@@ -164,7 +157,7 @@ const usePropertyDetail = (propertyId?: string) => {
       }
     };
 
-    fetchProperty();
+    fetchPropertyData();
   }, [propertyId]);
 
   useEffect(() => {
@@ -172,7 +165,7 @@ const usePropertyDetail = (propertyId?: string) => {
   }, [isOwner, isApproved]);
 
   const refreshProperty = () => {
-    fetchProperty();
+    fetchPropertyData();
   };
 
   return {
@@ -184,7 +177,7 @@ const usePropertyDetail = (propertyId?: string) => {
     isOwner,
     isApproved,
     shouldShowSellerInfo,
-    refreshProperty
+    refreshProperty: fetchPropertyData
   };
 };
 
