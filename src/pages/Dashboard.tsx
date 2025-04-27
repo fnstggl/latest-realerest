@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Home, User, Bell, ClipboardCheck, Plus, CreditCard, Heart, Award, Gift } from "lucide-react";
+import { Home, User, Bell, ClipboardCheck, Plus, CreditCard, Heart, Gift, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNotifications } from "@/context/NotificationContext";
 import PropertiesTab from "@/components/dashboard/PropertiesTab";
@@ -13,9 +13,9 @@ import OffersTab from "@/components/dashboard/OffersTab";
 import AccountTab from "@/components/dashboard/AccountTab";
 import NotificationsTab from "@/components/dashboard/NotificationsTab";
 import LikedPropertiesTab from "@/components/dashboard/LikedPropertiesTab";
-import BountiesTab from "@/components/dashboard/BountiesTab";
-import WaitlistedTab from "@/components/dashboard/WaitlistedTab";
 import RewardsTab from "@/components/dashboard/RewardsTab";
+import WaitlistedTab from "@/components/dashboard/WaitlistedTab";
+import PayoutsTab from "@/components/dashboard/PayoutsTab";
 import { useProperties } from "@/hooks/useProperties";
 import { TabNav } from "@/components/dashboard/TabNav";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -221,22 +221,22 @@ const Dashboard: React.FC = () => {
 
     return [
       {
-        name: "Bounties",
-        value: "bounties",
+        name: "Rewards", // Changed from "Bounties"
+        value: "rewards", // Changed from "bounties"
         icon: Award,
         content: (
-          <TabsContent value="bounties" className="space-y-6">
-            <BountiesTab />
+          <TabsContent value="rewards" className="space-y-6">
+            <RewardsTab />
           </TabsContent>
         )
       },
       {
-        name: "Rewards",
-        value: "rewards",
+        name: "Payouts", // Changed from "Rewards"
+        value: "payouts",
         icon: Gift,
         content: (
-          <TabsContent value="rewards" className="space-y-6">
-            <RewardsTab />
+          <TabsContent value="payouts" className="space-y-6">
+            <PayoutsTab />
           </TabsContent>
         )
       },
