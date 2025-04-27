@@ -25,7 +25,7 @@ const CTASection: React.FC = () => {
       <div className="container px-4 lg:px-8 mx-auto flex justify-center">
         <div className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 max-w-5xl w-full">
           <div>
-            <h2 className="text-4xl font-bold mb-4 text-foreground">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4 text-foreground">
               But how are these homes 
               actually
               <br />
@@ -33,7 +33,7 @@ const CTASection: React.FC = () => {
                 below-market?
               </span>
             </h2>
-            <p className="text-xl mb-8 text-foreground/80">We connect you with motivated sellers, skip the middlemen, and price homes to sell—fast.</p>
+            <p className="text-base sm:text-xl mb-8 text-foreground/80">We connect you with motivated sellers, skip the middlemen, and price homes to sell—fast.</p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl border border-white/30 electric-blue-button">
                 <Link to="/search">Find Homes</Link>
@@ -55,4 +55,3 @@ const CTASection: React.FC = () => {
 };
 
 export default CTASection;
-
