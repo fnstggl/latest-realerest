@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ListPlus, MessageCircle, CheckCircle, Home } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-
 const GuideSelling: React.FC = () => {
   const navigate = useNavigate();
   const steps = [{
@@ -37,7 +36,6 @@ const GuideSelling: React.FC = () => {
     link: '/faq',
     linkText: 'Read FAQs'
   }];
-
   return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
@@ -112,15 +110,11 @@ const GuideSelling: React.FC = () => {
                   </div>
                 </div>
                 <div className="w-full md:w-1/2 aspect-[16/9]">
-                  <img src={index === 0 ? "/lovable-uploads/1e4802da-835b-481c-b039-dae06e70bf88.png" : 
-                           index === 1 ? "/lovable-uploads/d41ec8a7-f6bd-4316-ad77-ad7129e35217.png" : 
-                           index === 2 ? "/lovable-uploads/7f5819d8-5929-405c-b21d-dff506b200cc.png" :
-                           "/lovable-uploads/0c63ec59-fc54-4feb-9d43-863d386c66ed.png"} 
-                       alt={`Step ${step.number}`} 
-                       className="w-full h-full object-cover rounded-xl" />
+                  <img src={index === 0 ? "/lovable-uploads/fd522395-c453-4112-b6c6-37fa8ea6a14d.png" : index === 1 ? "/lovable-uploads/d41ec8a7-f6bd-4316-ad77-ad7129e35217.png" : index === 2 ? "/lovable-uploads/7f5819d8-5929-405c-b21d-dff506b200cc.png" : "/lovable-uploads/68202d79-bf1b-49ce-b0ac-890de6a978c3.png"} alt={`Step ${step.number}`} className="w-full h-full object-cover rounded-xl" />
                 </div>
               </motion.div>)}
           </div>
+          
           
         </div>
       </div>
@@ -128,5 +122,4 @@ const GuideSelling: React.FC = () => {
       <SiteFooter />
     </div>;
 };
-
 export default GuideSelling;
