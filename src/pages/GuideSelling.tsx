@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import SiteFooter from '@/components/sections/SiteFooter';
@@ -117,7 +116,7 @@ const GuideSelling: React.FC = () => {
                     src={index === 0 ? "/lovable-uploads/338a75aa-c04a-4a61-bd1e-825ec133107a.png" : 
                          index === 1 ? "/lovable-uploads/d41ec8a7-f6bd-4316-ad77-ad7129e35217.png" :
                          index === 2 ? "/lovable-uploads/7f5819d8-5929-405c-b21d-dff506b200cc.png" :
-                         "/lovable-uploads/68202d79-bf1b-49ce-b0ac-890de6a978c3.png"}
+                         "/lovable-uploads/c8016fef-26ce-45b0-82e2-dc732b1d8e55.png"}
                     alt={`Step ${step.number}`}
                     className="w-full h-full object-cover rounded-xl"
                   />

@@ -12,34 +12,30 @@ const GuideBuying: React.FC = () => {
     number: 1,
     title: 'Find a property you love',
     description: 'Browse our selection of below-market value properties. Use filters to narrow down your search based on location, price, and property features.',
-    icon: Search,
+    icon: (props: any) => <Search {...props} />,
     link: '/search',
-    linkText: 'Browse Properties',
-    image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
+    linkText: 'Browse Properties'
   }, {
     number: 2,
     title: 'Join the waitlist to contact sellers directly',
     description: "When you find a property you're interested in, join its waitlist to get direct access to the seller. This gives you an opportunity to ask questions and express your interest.",
-    icon: Users,
+    icon: (props: any) => <Users {...props} />,
     link: '/search',
-    linkText: 'Discover Properties',
-    image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
+    linkText: 'Discover Properties'
   }, {
     number: 3,
     title: 'Send in an offer',
     description: "Once you've found your ideal property and connected with the seller, submit your offer directly through our platform. You can negotiate terms and make contingent offers.",
-    icon: ClipboardCheck,
+    icon: (props: any) => <ClipboardCheck {...props} />,
     link: '/dashboard',
-    linkText: 'View Your Dashboard',
-    image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
+    linkText: 'View Your Dashboard'
   }, {
     number: 4,
     title: 'Get the keys',
     description: 'After your offer is accepted, complete the transaction process and receive the keys to your new home. Congratulations on your below-market purchase!',
-    icon: Key,
+    icon: (props: any) => <Key {...props} />,
     link: '/faq',
-    linkText: 'Read FAQs',
-    image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
+    linkText: 'Read FAQs'
   }];
 
   return <div className="min-h-screen bg-[#FCFBF8]">
