@@ -180,6 +180,8 @@ const PropertyDetail: React.FC = () => {
               userId={property?.user_id}
               propertyId={property?.id}
               reward={property?.reward}
+              sellerName={property?.seller_name}
+              waitlistStatus={waitlistStatus}
             />
 
             {!isOwner && !isApproved && waitlistStatus !== 'pending' && (

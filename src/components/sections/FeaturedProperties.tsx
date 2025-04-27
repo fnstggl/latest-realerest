@@ -52,7 +52,7 @@ const FeaturedProperties: React.FC = () => {
                       baths={property.baths} 
                       sqft={property.sqft} 
                       belowMarket={property.belowMarket}
-                      bounty={property.bounty}
+                      reward={property.reward}
                     />
                   </div>
                 ))}
