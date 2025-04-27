@@ -6,6 +6,19 @@ import { Award, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
+type PropertyListing = {
+  id: string;
+  title: string;
+  reward: number;
+  location: string;
+  images: string[];
+};
+
+type BountyClaim = {
+  id: string;
+  property_listings: PropertyListing;
+};
+
 const RewardsTab = () => {
   const { data: rewards, isLoading } = useQuery({
     queryKey: ['rewards'],
@@ -25,7 +38,7 @@ const RewardsTab = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as BountyClaim[];
     }
   });
 

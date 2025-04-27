@@ -28,6 +28,7 @@ type PropertyDetailType = {
   lot_size?: number;
   parking?: string;
   comparable_addresses?: string[];
+  created_at?: string;
 };
 
 const usePropertyDetail = (propertyId?: string) => {
@@ -92,7 +93,8 @@ const usePropertyDetail = (propertyId?: string) => {
           year_built: propertyData.year_built,
           lot_size: propertyData.lot_size,
           parking: propertyData.parking,
-          comparable_addresses: propertyData.comparable_addresses
+          comparable_addresses: propertyData.comparable_addresses,
+          created_at: propertyData.created_at
         };
 
         setProperty(mappedProperty);

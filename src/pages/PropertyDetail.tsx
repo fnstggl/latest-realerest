@@ -227,12 +227,12 @@ const PropertyDetail: React.FC = () => {
             )}
             
             {isApproved ? (
-              <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
+              <div className="glass-card backdrop-blur-lg border border-white/40 p-4 rounded-xl">
                 <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
                 <p>You now have access to view the full property details and contact the seller directly.</p>
-              </div> 
+              </div>
             ) : waitlistStatus === 'pending' ? (
-              <div className="glass-card backdrop-blur-lg border border-white/40 shadow-lg p-4 rounded-xl layer-2">
+              <div className="bg-white border border-gray-200 p-4 rounded-xl">
                 <div className="font-bold text-black mb-2">Waitlist Request Pending</div>
                 <p>You've joined the waitlist for this property. The seller will review your request soon.</p>
               </div>

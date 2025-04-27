@@ -81,8 +81,8 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           </div>
           {bounty && bounty >= 3000 && (
             <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-              <span className="font-futura font-extrabold mr-1 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-teal-500">{formatCurrency(bounty)}</span> 
-              <span className="text-black font-playfair font-bold italic mr-1">Reward</span>
+              <span className="font-futura font-extrabold text-[#0892D0] mr-1">{formatCurrency(bounty)}</span> 
+              <span className="font-futura font-extrabold text-[#0892D0] mr-1">Reward</span>
               <RewardToolTip amount={bounty} />
             </div>
           )}
