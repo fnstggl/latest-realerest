@@ -18,6 +18,7 @@ interface PropertyCardProps {
   sqft: number;
   belowMarket: number;
   reward?: number;
+  bounty?: number; // Accept both reward and bounty properties to ensure compatibility
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -31,10 +32,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   baths,
   sqft,
   belowMarket,
-  reward
+  reward,
+  bounty
 }) => {
   const roundedBelowMarket = Math.round(belowMarket);
   const validImage = image || '/placeholder.svg';
+  // Use reward or bounty field (bounty is the field name in the database)
+  const rewardAmount = reward || bounty;
   
   const locationParts = location ? location.split(',') : ['Unknown', ''];
   const city = locationParts[0]?.trim() || 'Unknown';
@@ -59,7 +63,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             onError={handleImageError} 
             loading="lazy" 
             decoding="async"
-            fetchPriority="auto"
             width="400"
             height="240"
           />
@@ -83,10 +86,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 />
               </div>
             )}
-            {reward && reward >= 3000 && (
+            {rewardAmount && rewardAmount >= 3000 && (
               <div className="py-1 px-3 font-bold text-foreground bg-white/90 rounded-full flex items-center gap-2">
                 <Award size={16} className="text-black" />
-                <RewardToolTip amount={reward} inPropertyCard={true} className="text-black" />
+                <RewardToolTip amount={rewardAmount} inPropertyCard={true} className="text-black" />
               </div>
             )}
           </div>

@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import PropertyCard from '@/components/PropertyCard';
 import { Button } from "@/components/ui/button";
