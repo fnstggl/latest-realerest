@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, UserCheck, LogIn } from "lucide-react";
+import { ArrowRight, UserCheck, LogIn, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { formatCurrency } from '@/lib/utils';
 
 interface WaitlistButtonProps {
   propertyId: string;
@@ -15,6 +16,8 @@ interface WaitlistButtonProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   refreshProperty?: () => void;
+  bounty?: number;
+  sellerName?: string;
 }
 
 const WaitlistButton: React.FC<WaitlistButtonProps> = ({
@@ -22,16 +25,17 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   propertyTitle,
   open,
   onOpenChange,
-  refreshProperty
+  refreshProperty,
+  bounty,
+  sellerName = "the seller"
 }) => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showRewardDialog, setShowRewardDialog] = useState(false);
 
   React.useEffect(() => {
     if (user) {
@@ -123,34 +127,79 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     }
   };
 
-  return <>
+  const handleMessageSeller = () => {
+    navigate(`/messages/${propertyId}`);
+  };
+
+  const handleClaimReward = () => {
+    setShowRewardDialog(true);
+  };
+
+  return (
+    <>
       <Button variant="glass" onClick={handleButtonClick} className="w-full bg-white hover:bg-white group relative overflow-hidden">
-        {user ? <>
+        {user ? (
+          <>
             <UserCheck size={18} className="mr-2 text-black" />
             <span className="text-black font-bold relative z-10">
               Join Waitlist for Full Details
             </span>
-          </> : <>
+          </>
+        ) : (
+          <>
             <LogIn size={18} className="mr-2 text-black" />
             <span className="text-black font-bold relative z-10">
               Sign in to Join Waitlist
             </span>
-          </>}
-
+          </>
+        )}
         <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
-        background: "transparent",
-        border: "2px solid transparent",
-        backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-        backgroundOrigin: "border-box",
-        backgroundClip: "border-box",
-        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-        WebkitMaskComposite: "xor",
-        maskComposite: "exclude",
-        boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-      }}></span>
+          background: "transparent",
+          border: "2px solid transparent",
+          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+          backgroundOrigin: "border-box",
+          backgroundClip: "border-box",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude",
+          boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+        }}></span>
       </Button>
 
-      {user && <Dialog open={open} onOpenChange={onOpenChange}>
+      {bounty > 0 && user && (
+        <div className="space-y-2 mt-2">
+          <Button 
+            variant="outline"
+            onClick={handleMessageSeller}
+            className="w-full bg-white hover:bg-white relative group overflow-hidden"
+          >
+            <MessageSquare size={18} className="mr-2" />
+            <span className="relative z-10">Message {sellerName} Directly</span>
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
+              background: "transparent",
+              border: "2px solid transparent",
+              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+              backgroundOrigin: "border-box",
+              backgroundClip: "border-box",
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+            }}></span>
+          </Button>
+          
+          <Button 
+            variant="default"
+            onClick={handleClaimReward}
+            className="w-full bg-black hover:bg-black/90"
+          >
+            Claim {formatCurrency(bounty)} Reward
+          </Button>
+        </div>
+      )}
+
+      {user && (
+        <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent className="bg-white rounded-lg border border-gray-200 shadow-xl sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="text-xl font-bold">
@@ -198,8 +247,29 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>}
-    </>;
+        </Dialog>
+      )}
+
+      <Dialog open={showRewardDialog} onOpenChange={setShowRewardDialog}>
+        <DialogContent className="bg-white rounded-lg border border-gray-200 shadow-xl sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Claim Your Reward</DialogTitle>
+            <DialogDescription>
+              You've just accepted the {formatCurrency(bounty || 0)} reward for {propertyTitle}. Find a buyer for the seller, get an assignment of contract agreement signed (download from "How to Wholesale" in guides) and get paid.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              onClick={() => navigate('/guide/wholesale')}
+              className="bg-black hover:bg-black/90 text-white"
+            >
+              View Wholesale Guide
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 };
 
 export default WaitlistButton;

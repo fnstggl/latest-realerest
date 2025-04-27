@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -19,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import BountyBadge from '@/components/property-detail/BountyBadge';
+import RewardBadge from '@/components/property-detail/RewardBadge';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -125,7 +125,6 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
-  // Check if we have ARV and estimated rehab values to display property details
   const showPropertyDetails = property?.after_repair_value !== undefined || property?.estimated_rehab !== undefined;
 
   return (
@@ -159,7 +158,7 @@ const PropertyDetail: React.FC = () => {
           <div className="space-y-6">
             {property?.bounty > 0 && (
               <div className="mb-4">
-                <BountyBadge amount={property.bounty} />
+                <RewardBadge amount={property.bounty} />
               </div>
             )}
             <PropertyImages mainImage={property?.images[0]} images={property?.images} />
@@ -180,6 +179,7 @@ const PropertyDetail: React.FC = () => {
               onShowAddressClick={handleAddressClick}
               userId={property?.user_id}
               propertyId={property?.id}
+              bounty={property?.bounty}
             />
 
             {!isOwner && !isApproved && waitlistStatus !== 'pending' && (
@@ -189,6 +189,8 @@ const PropertyDetail: React.FC = () => {
                 open={showWaitlistDialog} 
                 onOpenChange={setShowWaitlistDialog}
                 refreshProperty={refreshProperty}
+                bounty={property?.bounty}
+                sellerName={property?.seller_name}
               />
             )}
 
