@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,19 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
-const RewardsTab = () => {
+const PayoutsTab = () => {
   const { user } = useAuth();
   
-  const { data: rewards, isLoading } = useQuery({
-    queryKey: ['wholesalerRewards'],
+  const { data: payouts, isLoading } = useQuery({
+    queryKey: ['wholesalerPayouts'],
     queryFn: async () => {
       if (!user?.id) return { total: 0, claimed: [] };
       
       const { data, error } = await supabase
         .from('bounty_claims')
         .select(`
-          id,
-          status,
+          *,
           property_listings (
             id,
             title,
@@ -34,13 +32,12 @@ const RewardsTab = () => {
 
       if (error) throw error;
       
-      // Calculate total reward amount
-      const totalReward = data?.reduce((sum, item) => {
+      const totalPayout = data?.reduce((sum, item) => {
         return sum + (Number(item.property_listings?.bounty) || 0);
       }, 0);
       
       return {
-        total: totalReward,
+        total: totalPayout,
         claimed: data || []
       };
     }
@@ -50,12 +47,12 @@ const RewardsTab = () => {
     return <div className="flex justify-center py-8">Loading...</div>;
   }
 
-  if (!rewards?.claimed.length) {
+  if (!payouts?.claimed.length) {
     return (
       <div className="text-center py-12 bg-white rounded-xl shadow-sm">
         <Gift size={32} className="mx-auto mb-4 text-gray-400" />
-        <h3 className="text-lg font-semibold mb-2">No rewards earned yet</h3>
-        <p className="text-gray-600 mb-6">Claim property bounties to earn rewards</p>
+        <h3 className="text-lg font-semibold mb-2">No payouts earned yet</h3>
+        <p className="text-gray-600 mb-6">Claim property rewards to earn payouts</p>
         <Button asChild variant="outline">
           <Link to="/search">Browse Properties</Link>
         </Button>
@@ -67,18 +64,18 @@ const RewardsTab = () => {
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold">Total Rewards Earned</h3>
+          <h3 className="text-xl font-semibold">Total Payouts Earned</h3>
           <div className="text-2xl font-bold text-green-600 flex items-center">
             <DollarSign size={24} />
-            {rewards.total.toLocaleString()}
+            {payouts.total.toLocaleString()}
           </div>
         </div>
       </div>
       
-      <h3 className="text-lg font-semibold pt-4">Rewards History</h3>
+      <h3 className="text-lg font-semibold pt-4">Payout History</h3>
       
       <div className="grid gap-4">
-        {rewards.claimed.map((reward: any) => (
+        {payouts.claimed.map((reward: any) => (
           <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <img 
@@ -107,4 +104,4 @@ const RewardsTab = () => {
   );
 };
 
-export default RewardsTab;
+export default PayoutsTab;

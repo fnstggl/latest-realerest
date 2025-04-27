@@ -5,19 +5,20 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, DollarSign, Handshake, Briefcase, Award } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+
 const GuideWholesale: React.FC = () => {
   const navigate = useNavigate();
   const steps = [{
     number: 1,
-    title: 'Find bounties to accept',
-    description: 'Browse properties with bounty incentives. These are opportunities for you to connect buyers with sellers and earn a commission when the deal closes successfully.',
+    title: 'Find rewards to accept',
+    description: 'Browse properties with reward incentives. These are opportunities for you to connect buyers with sellers and earn a commission when the deal closes successfully.',
     icon: DollarSign,
     link: '/search',
-    linkText: 'Browse Bounties'
+    linkText: 'Browse Rewards'
   }, {
     number: 2,
     title: 'Bring an interested buyer to the deal',
-    description: 'Connect your network of buyers to these below-market opportunities. When you find an interested buyer, join the waitlist to claim the potential bounty.',
+    description: 'Connect your network of buyers to these below-market opportunities. When you find an interested buyer, join the waitlist to claim the potential reward.',
     icon: Handshake,
     link: '/dashboard',
     linkText: 'View Your Dashboard'
@@ -30,12 +31,13 @@ const GuideWholesale: React.FC = () => {
     linkText: 'Check Messages'
   }, {
     number: 4,
-    title: 'Get paid your bounty',
-    description: "Once the deal closes successfully, you'll receive your bounty payment directly through our secure platform. No waiting, no chasing down payments.",
+    title: 'Get paid your reward',
+    description: "Once the deal closes successfully, you'll receive your reward payment directly through our secure platform. No waiting, no chasing down payments.",
     icon: Award,
     link: '/dashboard',
-    linkText: 'Track Your Bounties'
+    linkText: 'Track Your Rewards'
   }];
+
   return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
@@ -68,7 +70,7 @@ const GuideWholesale: React.FC = () => {
           duration: 0.5,
           delay: 0.1
         }} className="text-gray-600 mb-12 text-lg">
-            Follow these steps to earn bounties by connecting buyers with sellers on our platform.
+            Follow these steps to earn rewards by connecting buyers with sellers on our platform.
           </motion.p>
           
           <div className="space-y-16 md:space-y-24">
@@ -122,4 +124,5 @@ const GuideWholesale: React.FC = () => {
       <SiteFooter />
     </div>;
 };
+
 export default GuideWholesale;

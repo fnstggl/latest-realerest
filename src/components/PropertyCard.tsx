@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
@@ -15,6 +14,7 @@ interface PropertyCardProps {
   baths: number;
   sqft: number;
   belowMarket: number;
+  reward?: number;
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -27,7 +27,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   beds,
   baths,
   sqft,
-  belowMarket
+  belowMarket,
+  reward
 }) => {
   const roundedBelowMarket = Math.round(belowMarket);
   const validImage = image || '/placeholder.svg';

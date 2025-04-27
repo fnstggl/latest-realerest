@@ -3,11 +3,11 @@ import React from 'react';
 import { Award } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
-interface BountyBadgeProps {
+interface RewardBadgeProps {
   amount: number;
 }
 
-const BountyBadge: React.FC<BountyBadgeProps> = ({ amount }) => {
+const RewardBadge: React.FC<RewardBadgeProps> = ({ amount }) => {
   if (!amount || amount < 3000) return null;
   
   const getBadgeStyle = (amount: number) => {
@@ -19,9 +19,9 @@ const BountyBadge: React.FC<BountyBadgeProps> = ({ amount }) => {
   return (
     <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${getBadgeStyle(amount)}`}>
       <Award size={18} />
-      <span className="text-sm font-medium">{formatCurrency(amount)} Wholesaler Incentive</span>
+      <span className="text-sm font-medium">{formatCurrency(amount)} Wholesaler Reward</span>
     </div>
   );
 };
 
-export default BountyBadge;
+export default RewardBadge;
