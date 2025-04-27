@@ -14,7 +14,7 @@ export interface Listing {
   sqft: number;
   belowMarket: number;
   propertyType?: string;
-  bounty?: number;
+  reward?: number;
 }
 
 export const useListings = (limit?: number, searchQuery?: string | null) => {
@@ -59,7 +59,7 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
             sqft: item.sqft,
             belowMarket: calculateBelowMarket(Number(item.price), Number(item.market_price)),
             propertyType: item.property_type,
-            bounty: Number(item.reward || 0)
+            reward: Number(item.reward || 0)
           }));
           
           setListings(transformedData);

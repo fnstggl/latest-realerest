@@ -199,7 +199,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         </div>
       </div>
 
-      {waitlistStatus === 'pending' && <div className="mt-4 space-y-3">
+      {waitlistStatus === 'pending' && reward && <div className="mt-4 space-y-3">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <p className="text-black font-medium">Waitlist Request Pending</p>
             <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
@@ -214,13 +214,13 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             </Button>
           </Link>
           
-          <Button 
+          {reward > 0 && <Button 
             variant="default" 
             className="w-full bg-black hover:bg-black/90 text-white" 
             onClick={handleClaimReward}
           >
-            Claim {formatCurrency(reward || 0)} Reward
-          </Button>
+            Claim {formatCurrency(reward)} Reward
+          </Button>}
         </div>}
 
       <Dialog open={showRewardDialog} onOpenChange={setShowRewardDialog}>

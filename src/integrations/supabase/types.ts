@@ -313,7 +313,6 @@ export type Database = {
           after_repair_value: number | null
           baths: number | null
           beds: number | null
-          bounty: number | null
           comparable_addresses: string[] | null
           created_at: string
           description: string | null
@@ -325,6 +324,7 @@ export type Database = {
           market_price: number
           price: number
           property_type: string | null
+          reward: number | null
           sqft: number | null
           title: string
           updated_at: string
@@ -334,7 +334,6 @@ export type Database = {
           after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
-          bounty?: number | null
           comparable_addresses?: string[] | null
           created_at?: string
           description?: string | null
@@ -346,6 +345,7 @@ export type Database = {
           market_price: number
           price: number
           property_type?: string | null
+          reward?: number | null
           sqft?: number | null
           title: string
           updated_at?: string
@@ -355,7 +355,6 @@ export type Database = {
           after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
-          bounty?: number | null
           comparable_addresses?: string[] | null
           created_at?: string
           description?: string | null
@@ -367,6 +366,7 @@ export type Database = {
           market_price?: number
           price?: number
           property_type?: string | null
+          reward?: number | null
           sqft?: number | null
           title?: string
           updated_at?: string

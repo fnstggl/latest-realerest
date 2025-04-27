@@ -31,7 +31,7 @@ const RewardsTab = () => {
           property_listings (
             id,
             title,
-            bounty,
+            reward,
             location,
             images
           )
@@ -40,14 +40,7 @@ const RewardsTab = () => {
 
       if (error) throw error;
       
-      // Transform property_listings.bounty to property_listings.reward
-      return data?.map(item => ({
-        ...item,
-        property_listings: {
-          ...item.property_listings,
-          reward: item.property_listings.bounty
-        }
-      })) as BountyClaim[];
+      return data as BountyClaim[];
     }
   });
 
