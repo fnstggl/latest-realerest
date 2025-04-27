@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,13 +8,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+
 interface WaitlistButtonProps {
   propertyId: string;
   propertyTitle: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  refreshProperty?: () => void; // <-- added
+  refreshProperty?: () => void;
 }
+
 const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   propertyId,
   propertyTitle,
@@ -32,7 +33,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Pre-fill user info if available
   React.useEffect(() => {
     if (user) {
       const fetchUserProfile = async () => {
@@ -51,6 +51,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       fetchUserProfile();
     }
   }, [user]);
+
   const handleJoinWaitlist = useCallback(async () => {
     if (!user) {
       navigate("/signin", {
@@ -67,7 +68,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     try {
       setLoading(true);
 
-      // 1. Add to waitlist_requests table
       const {
         data,
         error
@@ -91,7 +91,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         }
       }
 
-      // 2. Get the property owner's ID
       const {
         data: propertyData,
         error: propertyError
@@ -99,7 +98,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       if (propertyError) {
         console.error("Error getting property owner:", propertyError);
       } else if (propertyData) {
-        // Removed the notification creation code here
       }
       onOpenChange(false);
       if (refreshProperty) {
@@ -112,6 +110,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       setLoading(false);
     }
   }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange, refreshProperty]);
+
   const handleButtonClick = () => {
     if (!user) {
       navigate("/signin", {
@@ -123,6 +122,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       onOpenChange(true);
     }
   };
+
   return <>
       <Button variant="glass" onClick={handleButtonClick} className="w-full bg-white hover:bg-white group relative overflow-hidden">
         {user ? <>
@@ -156,7 +156,9 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
               <DialogTitle className="text-xl font-bold">
                 Join Property Waitlist
               </DialogTitle>
-              
+              <DialogDescription className="text-sm text-gray-500">
+                Let the seller know you're interested. Once accepted from the waitlist, you'll have access to the full property details and can make an offer from there.
+              </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
@@ -199,4 +201,5 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         </Dialog>}
     </>;
 };
+
 export default WaitlistButton;
