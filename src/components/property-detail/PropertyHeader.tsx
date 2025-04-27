@@ -3,6 +3,7 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import LikeButton from './LikeButton';
+import RewardToolTip from './RewardToolTip';
 
 interface PropertyHeaderProps {
   title: string;
@@ -18,6 +19,7 @@ interface PropertyHeaderProps {
   onShowAddressClick: () => void;
   userId?: string;
   propertyId?: string;
+  bounty?: number;
 }
 
 const PropertyHeader: React.FC<PropertyHeaderProps> = ({
@@ -33,9 +35,9 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   showFullAddress,
   onShowAddressClick,
   userId,
-  propertyId
+  propertyId,
+  bounty
 }) => {
-  // Round belowMarket to the nearest whole number
   const roundedBelowMarket = Math.round(belowMarket);
 
   const renderLocation = () => {
@@ -55,9 +57,18 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   return (
     <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center justify-between gap-2 mb-2">
-        <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-          <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
-          <span className="text-black font-playfair font-bold italic">Below Market</span>
+        <div className="flex items-center gap-2">
+          <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
+            <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
+            <span className="text-black font-playfair font-bold italic">Below Market</span>
+          </div>
+          {bounty && bounty >= 3000 && (
+            <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
+              <span className="text-black font-playfair font-bold italic mr-1">{formatCurrency(bounty)}</span> 
+              <span className="text-black font-playfair font-bold italic mr-1">Reward</span>
+              <RewardToolTip amount={bounty} />
+            </div>
+          )}
         </div>
         {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
       </div>

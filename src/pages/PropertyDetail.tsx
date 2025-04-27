@@ -160,11 +160,6 @@ const PropertyDetail: React.FC = () => {
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="space-y-6">
-            {property?.bounty > 0 && (
-              <div className="mb-4">
-                <RewardBadge amount={property.bounty} />
-              </div>
-            )}
             <PropertyImages mainImage={property?.images[0]} images={property?.images} />
           </div>
           
@@ -183,6 +178,7 @@ const PropertyDetail: React.FC = () => {
               onShowAddressClick={handleAddressClick}
               userId={property?.user_id}
               propertyId={property?.id}
+              bounty={property?.bounty}
             />
 
             {!isOwner && !isApproved && waitlistStatus !== 'pending' && (

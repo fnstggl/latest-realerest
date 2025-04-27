@@ -20,7 +20,7 @@ type PropertyDetailType = {
   seller_email: string;
   seller_phone: string;
   seller_id: string;
-  bounty: number;
+  bounty?: number;
   after_repair_value?: number;
   estimated_rehab?: number;
   property_type?: string;
@@ -69,7 +69,7 @@ const usePropertyDetail = (propertyId?: string) => {
           const marketPrice = Number(propertyData.market_price);
           const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
 
-          // Map database fields to property object structure including camelCase for component use
+          // Map database fields to property object structure
           const mappedProperty: PropertyDetailType = {
             id: propertyData.id,
             title: propertyData.title,
@@ -92,6 +92,9 @@ const usePropertyDetail = (propertyId?: string) => {
             after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
             estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
             property_type: propertyData.property_type,
+            year_built: propertyData.year_built,
+            lot_size: propertyData.lot_size,
+            parking: propertyData.parking,
             comparable_addresses: propertyData.comparable_addresses
           };
 
@@ -170,126 +173,6 @@ const usePropertyDetail = (propertyId?: string) => {
 
   const refreshProperty = () => {
     fetchProperty();
-  };
-
-  const fetchProperty = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    if (!propertyId) {
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const { data: propertyData, error: propertyError } = await supabase
-        .from('property_listings')
-        .select('*')
-        .eq('id', propertyId)
-        .single();
-
-      if (propertyError) {
-        setError(propertyError);
-        console.error("Error fetching property:", propertyError);
-        return;
-      }
-
-      if (propertyData) {
-        // Calculate below market percentage
-        const price = Number(propertyData.price);
-        const marketPrice = Number(propertyData.market_price);
-        const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
-
-        // Map database fields to property object structure
-        const mappedProperty: PropertyDetailType = {
-          id: propertyData.id,
-          title: propertyData.title,
-          price: Number(propertyData.price),
-          market_price: Number(propertyData.market_price),
-          location: propertyData.location,
-          full_address: propertyData.full_address || '',
-          description: propertyData.description || '',
-          beds: propertyData.beds,
-          baths: propertyData.baths,
-          sqft: propertyData.sqft,
-          images: propertyData.images || [],
-          user_id: propertyData.user_id,
-          below_market: parseFloat(belowMarket),
-          seller_name: '',  // Will be populated from seller info
-          seller_email: '',
-          seller_phone: '',
-          seller_id: propertyData.user_id,
-          bounty: Number(propertyData.bounty || 0),
-          after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
-          estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
-          property_type: propertyData.property_type,
-          comparable_addresses: propertyData.comparable_addresses
-        };
-
-        setProperty(mappedProperty);
-
-        // Fetch seller info
-        const { data: sellerData, error: sellerError } = await supabase
-          .from('profiles')
-          .select('name, phone, email, id')
-          .eq('id', propertyData.user_id)
-          .single();
-
-        if (sellerError) {
-          console.error("Error fetching seller info:", sellerError);
-        } else if (sellerData) {
-          setSellerInfo({
-            name: sellerData.name || null,
-            phone: sellerData.phone || null,
-            email: sellerData.email || null
-          });
-
-          // Update the property with seller info
-          setProperty(prev => {
-            if (!prev) return null;
-            return {
-              ...prev,
-              seller_name: sellerData.name || '',
-              seller_email: sellerData.email || '',
-              seller_phone: sellerData.phone || '',
-            };
-          });
-        }
-
-        // Determine if the current user is the owner
-        const { data: authData } = await supabase.auth.getUser();
-        const currentUser = authData?.user;
-        const isCurrentUserOwner = currentUser?.id === propertyData.user_id;
-        setIsOwner(isCurrentUserOwner);
-
-        // Fetch waitlist status
-        if (currentUser?.id && currentUser?.id !== propertyData.user_id) {
-          const { data: waitlistData, error: waitlistError } = await supabase
-            .from('waitlist_requests')
-            .select('status')
-            .eq('property_id', propertyId)
-            .eq('user_id', currentUser.id)
-            .single();
-
-          if (waitlistError && !waitlistError.message.includes('No rows found')) {
-            console.error("Error fetching waitlist status:", waitlistError);
-          } else if (waitlistData) {
-            setWaitlistStatus(waitlistData.status || null);
-            setIsApproved(waitlistData.status === 'approved');
-          } else {
-            setWaitlistStatus(null);
-          }
-        } else {
-          setWaitlistStatus(null);
-          setIsApproved(isCurrentUserOwner); // Owner is automatically approved
-        }
-      }
-    } catch (err: any) {
-      setError(err);
-      console.error("Unexpected error:", err);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return {
