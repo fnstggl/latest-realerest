@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import RewardBadge from './RewardBadge';
 
 interface PropertyCardProps {
   id: string;
@@ -16,7 +15,6 @@ interface PropertyCardProps {
   baths: number;
   sqft: number;
   belowMarket: number;
-  bounty: number;  // Added bounty property
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -29,8 +27,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   beds,
   baths,
   sqft,
-  belowMarket,
-  bounty
+  belowMarket
 }) => {
   const roundedBelowMarket = Math.round(belowMarket);
   const validImage = image || '/placeholder.svg';
@@ -62,8 +59,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             width="400"
             height="240"
           />
-          
-          {bounty > 0 && <RewardBadge amount={bounty} isCard />}
           
           {belowMarket > 0 && (
             <div className="absolute top-4 left-4 py-1 px-3 font-bold text-foreground bg-white/90 rounded-full group overflow-hidden">

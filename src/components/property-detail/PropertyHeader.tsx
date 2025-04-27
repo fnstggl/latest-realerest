@@ -1,28 +1,23 @@
+
 import React from 'react';
-import { Bed, Bath, Square, MapPin, Info } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import LikeButton from './LikeButton';
 
 interface PropertyHeaderProps {
-  title?: string;
-  belowMarket?: number;
-  price?: number;
-  marketPrice?: number;
-  beds?: number;
-  baths?: number;
-  sqft?: number;
-  location?: string;
+  title: string;
+  belowMarket: number;
+  price: number;
+  marketPrice: number;
+  beds: number;
+  baths: number;
+  sqft: number;
+  location: string;
   fullAddress?: string;
-  showFullAddress?: boolean;
-  onShowAddressClick?: () => void;
+  showFullAddress: boolean;
+  onShowAddressClick: () => void;
   userId?: string;
   propertyId?: string;
-  bounty?: number;
 }
 
 const PropertyHeader: React.FC<PropertyHeaderProps> = ({
@@ -37,78 +32,66 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   fullAddress,
   showFullAddress,
   onShowAddressClick,
-  bounty
+  userId,
+  propertyId
 }) => {
+  // Round belowMarket to the nearest whole number
+  const roundedBelowMarket = Math.round(belowMarket);
+
+  const renderLocation = () => {
+    if (showFullAddress && fullAddress) {
+      return <span className="font-medium text-sm sm:text-base break-words">
+          {fullAddress}{location ? `, ${location}` : ''}
+        </span>;
+    }
+    return <span className="font-medium text-sm sm:text-base">
+        <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
+          Join Waitlist For Address
+        </span>
+        {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
+      </span>;
+  };
+
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-        {title || 'Property Details'}
-      </h1>
-
-      <div className="flex flex-wrap gap-2">
-        {belowMarket && belowMarket > 0 && (
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm">
-            <span className="text-sm font-medium text-black">{Math.round(belowMarket)}% Below Market</span>
-          </div>
-        )}
-
-        {bounty && bounty > 0 && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm">
-                  <span className="text-sm font-medium text-black">{formatCurrency(bounty)} Reward</span>
-                  <Info size={16} className="text-black/70" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="text-sm max-w-xs">
-                  Connect the seller with an interested buyer and get paid {formatCurrency(bounty)} if the deal closes. Join the waitlist to claim this reward.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-
-      <div className="mb-2">
-        <div className="text-lg text-muted-foreground line-through mb-1">
-          {formatCurrency(marketPrice || 0)}
+    <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
+          <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
+          <span className="text-black font-playfair font-bold italic">Below Market</span>
         </div>
-        <div className="text-3xl font-bold">{formatCurrency(price || 0)}</div>
+        {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
       </div>
-
-      <div className="flex items-center text-foreground/70 mb-4">
-        <MapPin size={16} className="mr-1 shrink-0" />
-        <span className="truncate">{location || 'Unknown location'}</span>
+      
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 break-words text-black">{title}</h1>
+      
+      <div className="flex items-start sm:items-center mb-4 flex-wrap">
+        <MapPin size={16} className="mr-1 sm:mr-2 text-black mt-1 sm:mt-0" />
+        {renderLocation()}
       </div>
-
-      {showFullAddress && fullAddress ? (
-        <div className="text-foreground/90 font-bold cursor-pointer hover:underline" onClick={onShowAddressClick}>
-          {fullAddress}
+      
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
+          <div className="text-lg sm:text-2xl font-bold text-black">{formatCurrency(price)}</div>
+          <div className="text-xs sm:text-sm text-black">Listing Price</div>
         </div>
-      ) : (
-        <button onClick={onShowAddressClick} className="text-sm text-blue-500 hover:underline">
-          Show Full Address
-        </button>
-      )}
-
-      <div className="border-t border-white/20 pt-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4 text-foreground/80">
-            <div className="flex items-center px-2 py-1 rounded-lg border border-white/30">
-              <Bed size={18} className="mr-1" />
-              <span className="font-bold">{beds}</span>
-            </div>
-            <div className="flex items-center px-2 py-1 rounded-lg border border-white/30">
-              <Bath size={18} className="mr-1" />
-              <span className="font-bold">{baths}</span>
-            </div>
-            <div className="flex items-center px-2 py-1 rounded-lg border border-white/30">
-              <Square size={18} className="mr-1" />
-              <span className="font-bold">{sqft?.toLocaleString()} sqft</span>
-            </div>
-          </div>
+        <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
+          <div className="text-base sm:text-xl font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
+          <div className="text-xs sm:text-sm text-black">Market Value</div>
+        </div>
+      </div>
+      
+      <div className="flex justify-between pt-2 sm:pt-3 border-t border-gray-200">
+        <div className="px-3 py-1 rounded-lg border border-gray-200">
+          <span className="font-bold text-black">{beds}</span>
+          <span className="ml-1 text-black">Beds</span>
+        </div>
+        <div className="px-3 py-1 rounded-lg border border-gray-200">
+          <span className="font-bold text-black">{baths}</span>
+          <span className="ml-1 text-black">Baths</span>
+        </div>
+        <div className="px-3 py-1 rounded-lg border border-gray-200">
+          <span className="font-bold text-black">{sqft?.toLocaleString()}</span>
+          <span className="ml-1 text-black">sqft</span>
         </div>
       </div>
     </div>
