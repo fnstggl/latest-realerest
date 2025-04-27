@@ -90,9 +90,9 @@ const usePropertyDetail = (propertyId?: string) => {
           after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
           estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
           property_type: propertyData.property_type,
-          year_built: propertyData.year_built,
-          lot_size: propertyData.lot_size,
-          parking: propertyData.parking,
+          year_built: propertyData.year_built || undefined,
+          lot_size: propertyData.lot_size || undefined,
+          parking: propertyData.parking || undefined,
           comparable_addresses: propertyData.comparable_addresses,
           created_at: propertyData.created_at
         };

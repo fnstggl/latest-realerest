@@ -18,10 +18,11 @@ const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = fals
           <div 
             className={`
               flex items-center justify-center 
-              ${inPropertyCard ? 'mr-4' : ''} 
+              ${inPropertyCard ? 'absolute top-2 right-2' : 'mr-4'} 
               w-8 h-8 rounded-full 
               bg-[#FEF7CD]
               border-2 border-[#F97316]
+              z-10
             `}
           >
             <svg
@@ -42,11 +43,11 @@ const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = fals
           </div>
         </TooltipTrigger>
         <TooltipContent 
-          side="left" 
+          side="top" 
           className="max-w-[250px] text-sm z-50"
           sideOffset={5}
         >
-          <p>Get paid {formatCurrency(amount)} for connecting the seller with a buyer</p>
+          <p>Earn {formatCurrency(amount)} for connecting the seller with a buyer</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

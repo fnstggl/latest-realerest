@@ -15,7 +15,7 @@ export interface Property {
   sqft: number;
   belowMarket: number;
   waitlistCount?: number;
-  reward?: number; // Add reward field
+  reward?: number;
 }
 
 export interface WaitlistUser {
@@ -75,7 +75,7 @@ export const useProperties = (userId: string | undefined) => {
           sqft: prop.sqft || 0,
           belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100),
           waitlistCount: 0,
-          reward: Number(prop.bounty || 0) // Map bounty to reward
+          reward: Number(prop.reward || 0) // Changed from bounty to reward
         }));
         
         setMyProperties(formattedProperties);
