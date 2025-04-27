@@ -199,35 +199,29 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         </div>
       </div>
 
-      {waitlistStatus === 'pending' && reward && reward >= 3000 && (
-        <div className="mt-4 space-y-3">
+      {waitlistStatus === 'pending' && <div className="mt-4 space-y-3">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <p className="text-black font-medium">Waitlist Request Pending</p>
             <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
           </div>
           
-          {userId && (
-            <Link to={`/messages?seller=${userId}`} className="block w-full">
-              <Button variant="outline" className="w-full relative group">
-                <MessageSquare className="mr-2" />
-                <span className="relative z-10">
-                  Message {sellerName || 'Seller'} Directly
-                </span>
-              </Button>
-            </Link>
-          )}
-          
-          {reward && reward >= 3000 && (
-            <Button 
-              variant="default" 
-              className="w-full bg-black hover:bg-black/90 text-white" 
-              onClick={handleClaimReward}
-            >
-              Claim {formatCurrency(reward)} Reward
+          <Link to={`/messages?seller=${userId}`} className="block w-full">
+            <Button variant="outline" className="w-full relative group">
+              <MessageSquare className="mr-2" />
+              <span className="relative z-10">
+                Message {sellerName || 'Seller'} Directly
+              </span>
             </Button>
-          )}
-        </div>
-      )}
+          </Link>
+          
+          <Button 
+            variant="default" 
+            className="w-full bg-black hover:bg-black/90 text-white" 
+            onClick={handleClaimReward}
+          >
+            Claim {formatCurrency(reward || 0)} Reward
+          </Button>
+        </div>}
 
       <Dialog open={showRewardDialog} onOpenChange={setShowRewardDialog}>
         <DialogContent className="sm:max-w-[425px]">

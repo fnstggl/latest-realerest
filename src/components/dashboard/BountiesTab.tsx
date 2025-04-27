@@ -31,7 +31,7 @@ const RewardsTab = () => {
           property_listings (
             id,
             title,
-            reward,
+            bounty,
             location,
             images
           )
@@ -39,7 +39,15 @@ const RewardsTab = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as BountyClaim[];
+      
+      // Transform property_listings.bounty to property_listings.reward
+      return data?.map(item => ({
+        ...item,
+        property_listings: {
+          ...item.property_listings,
+          reward: item.property_listings.bounty
+        }
+      })) as BountyClaim[];
     }
   });
 
