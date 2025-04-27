@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -6,6 +7,9 @@ import RewardToolTip from './RewardToolTip';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
+import { toast } from "@/hooks/use-toast";
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 
 interface PropertyHeaderProps {
   title: string;
@@ -46,6 +50,61 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
 }) => {
   const [showRewardDialog, setShowRewardDialog] = React.useState(false);
   const roundedBelowMarket = Math.round(belowMarket);
+  const { user } = useAuth();
+
+  const handleClaimReward = async () => {
+    if (!user?.id || !propertyId) return;
+
+    try {
+      const { data: userData } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+
+      const { error } = await supabase
+        .from('bounty_claims')
+        .insert([{
+          user_id: user.id,
+          property_id: propertyId,
+          status: 'claimed'
+        }]);
+
+      if (error) throw error;
+
+      // Create a conversation if it doesn't exist
+      const { data: conversation } = await supabase.rpc('get_or_create_conversation', {
+        participant1_id: user.id,
+        participant2_id: userId
+      });
+
+      if (conversation) {
+        // Send notification message
+        await supabase
+          .from('messages')
+          .insert([{
+            conversation_id: conversation.id,
+            sender_id: user.id,
+            content: `${userData?.name || 'A user'} has claimed the reward for your property listing.`,
+            property_id: propertyId
+          }]);
+      }
+
+      toast({
+        title: "Reward Claimed",
+        description: "The seller has been notified.",
+      });
+
+      setShowRewardDialog(true);
+    } catch (error) {
+      console.error('Error claiming reward:', error);
+      toast({
+        title: "Error",
+        description: "Failed to claim reward. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
@@ -113,28 +172,23 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       {waitlistStatus === 'pending' && <div className="mt-4 space-y-3">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <p className="text-black font-medium">Waitlist Request Pending</p>
+            <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
           </div>
           
           <Link to={`/messages?seller=${userId}`} className="block w-full">
-            <Button variant="glass" className="w-full bg-white hover:bg-white relative group overflow-hidden">
+            <Button variant="outline" className="w-full relative group">
               <MessageSquare className="mr-2" />
-              <span className="text-black font-bold relative z-10">
-                Message {sellerName} Directly
+              <span className="relative z-10">
+                Message {sellerName || 'Seller'} Directly
               </span>
-              <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude"
-              }} />
             </Button>
           </Link>
           
-          <Button variant="default" className="w-full bg-black hover:bg-black/90 text-white" onClick={() => setShowRewardDialog(true)}>
+          <Button 
+            variant="default" 
+            className="w-full bg-black hover:bg-black/90 text-white" 
+            onClick={handleClaimReward}
+          >
             Claim {formatCurrency(bounty || 0)} Reward
           </Button>
         </div>}
