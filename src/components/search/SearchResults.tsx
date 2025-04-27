@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropertyCard from '@/components/PropertyCard';
 import { Button } from "@/components/ui/button";
 import { Grid, List } from 'lucide-react';
@@ -40,12 +39,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       ? properties.slice(0, lastFullRowEndIndex)
       : [];
 
-  // Generate placeholder properties if needed for non-authenticated users with no search query
   const generatePlaceholderProperties = () => {
-    // Only generate placeholders for non-authenticated users with no search query
     if (isAuthenticated || searchQuery || properties.length > 0) return [];
-    
-    // Create placeholders for one row
     return Array(ITEMS_PER_ROW).fill(null).map((_, index) => ({
       id: `placeholder-${index}`,
       isPlaceholder: true
@@ -121,55 +116,52 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         ))}
 
         {/* Placeholder properties for unauthenticated users with no results */}
-        {placeholderProperties.length > 0 && (
-          <>
-            {placeholderProperties.map((_, index) => (
-              <div key={`placeholder-${index}`} className="relative pointer-events-none">
-                <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col rounded-xl">
-                  <Skeleton className="h-[240px] w-full rounded-t-xl" />
-                  <div className="p-6 flex-1 flex flex-col rounded-b-xl bg-white/90">
-                    <Skeleton className="h-6 w-3/4 mb-3" />
-                    <Skeleton className="h-4 w-1/2 mb-1" />
-                    <Skeleton className="h-6 w-2/3 mb-2" />
-                    <Skeleton className="h-4 w-5/6 mb-4" />
-                    
-                    <div className="border-t border-white/20 pt-4 mt-auto">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-4">
-                          <Skeleton className="h-8 w-12 rounded-lg" />
-                          <Skeleton className="h-8 w-12 rounded-lg" />
-                          <Skeleton className="h-8 w-16 rounded-lg" />
-                        </div>
-                      </div>
+        {placeholderProperties.length > 0 && placeholderProperties.map((_, index) => (
+          <div key={`placeholder-${index}`} className="relative pointer-events-none">
+            <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col rounded-xl">
+              <Skeleton className="h-[240px] w-full rounded-t-xl" />
+              <div className="p-6 flex-1 flex flex-col rounded-b-xl bg-white/90">
+                <Skeleton className="h-6 w-3/4 mb-3" />
+                <Skeleton className="h-4 w-1/2 mb-1" />
+                <Skeleton className="h-6 w-2/3 mb-2" />
+                <Skeleton className="h-4 w-5/6 mb-4" />
+                
+                <div className="border-t border-white/20 pt-4 mt-auto">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="h-8 w-12 rounded-lg" />
+                      <Skeleton className="h-8 w-12 rounded-lg" />
+                      <Skeleton className="h-8 w-16 rounded-lg" />
                     </div>
-                  </div>
-                  
-                  {/* Add the blur effect for placeholders */}
-                  <div className="absolute inset-0 z-10">
-                    <div 
-                      className="absolute inset-0 rounded-xl"
-                      style={{ 
-                        backdropFilter: 'blur(3px)',
-                        background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
-                      }}
-                    />
                   </div>
                 </div>
               </div>
-            ))}
-          </>
-        )}
+              
+              {/* Add the blur effect for placeholders */}
+              <div className="absolute inset-0 z-10">
+                <div 
+                  className="absolute inset-0 rounded-xl"
+                  style={{ 
+                    backdropFilter: 'blur(3px)',
+                    background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
         
-        {/* Sign in button always positioned in the center of the bottom row */}
+        {/* Sign in button positioned absolutely over the middle of bottom row */}
         {(!isAuthenticated && !searchQuery) && (properties.length > 0 || placeholderProperties.length > 0) && (
           <div 
             className="absolute z-20"
             style={{
               left: '50%',
-              transform: 'translateX(-50%)',
-              bottom: isMobile ? '25%' : '33%',
+              transform: 'translate(-50%, -50%)',
+              bottom: '0',
               width: 'auto',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              marginBottom: isMobile ? '25%' : '12%'
             }}
           >
             <Button 
