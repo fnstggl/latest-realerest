@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ListPlus, MessageCircle, CheckCircle, Home } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-
 const GuideSelling: React.FC = () => {
   const navigate = useNavigate();
   const steps = [{
@@ -37,7 +36,6 @@ const GuideSelling: React.FC = () => {
     link: '/faq',
     linkText: 'Read FAQs'
   }];
-
   return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
@@ -112,51 +110,16 @@ const GuideSelling: React.FC = () => {
                   </div>
                 </div>
                 <div className="w-full md:w-1/2 aspect-[16/9]">
-                  <img 
-                    src={index === 0 ? "/lovable-uploads/338a75aa-c04a-4a61-bd1e-825ec133107a.png" : 
-                         index === 1 ? "/lovable-uploads/d41ec8a7-f6bd-4316-ad77-ad7129e35217.png" :
-                         index === 2 ? "/lovable-uploads/7f5819d8-5929-405c-b21d-dff506b200cc.png" :
-                         "/lovable-uploads/c8016fef-26ce-45b0-82e2-dc732b1d8e55.png"}
-                    alt={`Step ${step.number}`}
-                    className="w-full h-full object-cover rounded-xl"
-                  />
+                  <img src={index === 0 ? "/lovable-uploads/fd522395-c453-4112-b6c6-37fa8ea6a14d.png" : index === 1 ? "/lovable-uploads/d41ec8a7-f6bd-4316-ad77-ad7129e35217.png" : index === 2 ? "/lovable-uploads/7f5819d8-5929-405c-b21d-dff506b200cc.png" : "/lovable-uploads/68202d79-bf1b-49ce-b0ac-890de6a978c3.png"} alt={`Step ${step.number}`} className="w-full h-full object-cover rounded-xl" />
                 </div>
               </motion.div>)}
           </div>
           
-          <motion.div initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.5,
-          delay: 0.7
-        }} className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 mt-16 text-center">
-            <h2 className="text-2xl font-bold mb-4">Ready to sell your property?</h2>
-            <p className="text-gray-600 mb-6">List your property below market value and find buyers quickly.</p>
-            <Link to="/sell/create">
-              <Button className="px-8 py-6 h-auto text-lg relative bg-white text-black border border-transparent hover:bg-white group">
-                List Your Property
-                <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #6C42F5, #D946EF 20%, #FF3CAC 40%, #FF5C00 60%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude"
-              }} />
-              </Button>
-            </Link>
-          </motion.div>
+          
         </div>
       </div>
       
       <SiteFooter />
     </div>;
 };
-
 export default GuideSelling;
