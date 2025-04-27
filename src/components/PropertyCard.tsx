@@ -86,7 +86,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               </div>
             )}
             {rewardAmount && rewardAmount >= 3000 && (
-              <div className="absolute top-0 right-0">
+              <div className="absolute top-0 right-4">
                 <RewardBadge amount={rewardAmount} inPropertyCard={true} />
               </div>
             )}

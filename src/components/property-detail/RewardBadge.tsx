@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Award } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -12,12 +11,34 @@ interface RewardBadgeProps {
 const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = false }) => {
   if (!amount || amount < 3000) return null;
   
-  const renderBadge = () => (
+  return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="inline-flex items-center">
-            <Award size={18} color="white" />
+          <div 
+            className={`
+              flex items-center justify-center 
+              ${inPropertyCard ? 'mr-4' : ''} 
+              w-8 h-8 rounded-full 
+              bg-[#FEF7CD]
+              border-2 border-[#F97316]
+            `}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-[#F97316]"
+            >
+              <path
+                d="M12 1L15.5 8.5L23 9.5L18 15L19.5 23L12 19.5L4.5 23L6 15L1 9.5L8.5 8.5L12 1Z"
+                fill="currentColor"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+            </svg>
           </div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-sm">
@@ -26,9 +47,6 @@ const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = fals
       </Tooltip>
     </TooltipProvider>
   );
-
-  return renderBadge();
 };
 
 export default RewardBadge;
-
