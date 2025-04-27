@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Grid, List } from 'lucide-react';
 import { Listing } from '@/hooks/useListings';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface SearchResultsProps {
   properties: Listing[];
@@ -29,12 +30,29 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   const ITEMS_PER_ROW = isGridView ? (isMobile ? 1 : 3) : 1;
   const totalItems = properties.length;
   const totalFullRows = Math.floor(totalItems / ITEMS_PER_ROW);
-  const lastFullRowStartIndex = (totalFullRows - 1) * ITEMS_PER_ROW;
+  const lastFullRowStartIndex = Math.max(0, (totalFullRows - 1) * ITEMS_PER_ROW);
   const lastFullRowEndIndex = lastFullRowStartIndex + ITEMS_PER_ROW;
 
-  const visibleProperties = !isAuthenticated && !searchQuery
-    ? properties.slice(0, lastFullRowEndIndex) 
-    : properties;
+  // Make sure we show property placeholders even if properties array is empty
+  const visibleProperties = isAuthenticated || searchQuery 
+    ? properties 
+    : properties.length > 0 
+      ? properties.slice(0, lastFullRowEndIndex)
+      : [];
+
+  // Generate placeholder properties if needed for non-authenticated users with no search query
+  const generatePlaceholderProperties = () => {
+    // Only generate placeholders for non-authenticated users with no search query
+    if (isAuthenticated || searchQuery || properties.length > 0) return [];
+    
+    // Create placeholders for one row
+    return Array(ITEMS_PER_ROW).fill(null).map((_, index) => ({
+      id: `placeholder-${index}`,
+      isPlaceholder: true
+    }));
+  };
+
+  const placeholderProperties = generatePlaceholderProperties();
 
   return (
     <div className="flex-1">
@@ -80,6 +98,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       </div>
       
       <div className={`grid gap-6 relative ${isGridView ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3' : 'space-y-6'}`}>
+        {/* Visible properties */}
         {visibleProperties.map((property, index) => (
           <div 
             key={property.id} 
@@ -100,8 +119,49 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             )}
           </div>
         ))}
+
+        {/* Placeholder properties for unauthenticated users with no results */}
+        {placeholderProperties.length > 0 && (
+          <>
+            {placeholderProperties.map((_, index) => (
+              <div key={`placeholder-${index}`} className="relative pointer-events-none">
+                <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col rounded-xl">
+                  <Skeleton className="h-[240px] w-full rounded-t-xl" />
+                  <div className="p-6 flex-1 flex flex-col rounded-b-xl bg-white/90">
+                    <Skeleton className="h-6 w-3/4 mb-3" />
+                    <Skeleton className="h-4 w-1/2 mb-1" />
+                    <Skeleton className="h-6 w-2/3 mb-2" />
+                    <Skeleton className="h-4 w-5/6 mb-4" />
+                    
+                    <div className="border-t border-white/20 pt-4 mt-auto">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-4">
+                          <Skeleton className="h-8 w-12 rounded-lg" />
+                          <Skeleton className="h-8 w-12 rounded-lg" />
+                          <Skeleton className="h-8 w-16 rounded-lg" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Add the blur effect for placeholders */}
+                  <div className="absolute inset-0 z-10">
+                    <div 
+                      className="absolute inset-0 rounded-xl"
+                      style={{ 
+                        backdropFilter: 'blur(3px)',
+                        background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
         
-        {!isAuthenticated && !searchQuery && lastFullRowStartIndex >= 0 && (
+        {/* Sign in button always positioned in the center of the bottom row */}
+        {(!isAuthenticated && !searchQuery) && (properties.length > 0 || placeholderProperties.length > 0) && (
           <div 
             className="absolute z-20"
             style={{

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -89,6 +90,7 @@ const Search: React.FC = () => {
     return <LoadingSpinner />;
   }
 
+  // Handle the case when there are no results for a search query
   if (properties.length === 0 && searchQuery) {
     return (
       <div className="min-h-screen bg-[#FCFBF8] pt-24">

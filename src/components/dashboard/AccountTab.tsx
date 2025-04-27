@@ -174,6 +174,17 @@ const AccountTab: React.FC<AccountTabProps> = ({
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      logout();
+      navigate('/', { replace: true });
+      toast.success("You have been signed out successfully");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast.error("Failed to sign out");
+    }
+  };
+
   return <div className="space-y-6">
     <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg">
       <AccountTypeSelector 
@@ -263,10 +274,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
         <Button 
           variant="outline" 
           className="w-full justify-center font-bold bg-white/50 hover:bg-red-50 text-red-600 border border-white/40 hover:border-red-500 hover:shadow-[0_0_10px_rgba(220,38,38,0.4)] transition-all" 
-          onClick={() => {
-            logout();
-            navigate('/');
-          }}
+          onClick={handleSignOut}
         >
           <LogOut size={18} className="mr-2" />
           Sign Out
