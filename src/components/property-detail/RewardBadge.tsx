@@ -2,7 +2,7 @@
 import React from 'react';
 import { Award } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import RewardToolTip from './RewardToolTip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface RewardBadgeProps {
   amount: number;
@@ -12,21 +12,23 @@ interface RewardBadgeProps {
 const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = false }) => {
   if (!amount || amount < 3000) return null;
   
-  console.log(`RewardBadge: amount=${amount}, inPropertyCard=${inPropertyCard}`);
-  
-  const getBadgeStyle = (amount: number) => {
-    if (amount >= 10000) return "bg-[#FEC6A1]/10 text-[#FEC6A1]";
-    if (amount > 5000) return "bg-[#FEF7CD]/10 text-[#FEF7CD]";
-    return "bg-[#F2FCE2]/10 text-[#F2FCE2]";
-  };
-  
-  return (
-    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${getBadgeStyle(amount)}`}>
-      <Award size={18} />
-      <span className="text-sm font-medium">{formatCurrency(amount)} Reward</span>
-      <RewardToolTip amount={amount} inPropertyCard={inPropertyCard} />
-    </div>
+  const renderBadge = () => (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="inline-flex items-center">
+            <Award size={18} color="white" />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-sm">
+          <p>Get paid {formatCurrency(amount)} for connecting the seller with a buyer</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
+
+  return renderBadge();
 };
 
 export default RewardBadge;
+

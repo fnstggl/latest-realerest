@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import RewardToolTip from '@/components/property-detail/RewardToolTip';
-import { Award } from 'lucide-react';
+import RewardBadge from '@/components/property-detail/RewardBadge';
 
 interface PropertyCardProps {
   id: string;
@@ -18,7 +16,7 @@ interface PropertyCardProps {
   sqft: number;
   belowMarket: number;
   reward?: number;
-  bounty?: number; // Accept both reward and bounty properties to ensure compatibility
+  bounty?: number; // Accept both reward and bounty properties
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -37,7 +35,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
 }) => {
   const roundedBelowMarket = Math.round(belowMarket);
   const validImage = image || '/placeholder.svg';
-  // Use reward or bounty field (bounty is the field name in the database)
   const rewardAmount = reward || bounty;
   
   const locationParts = location ? location.split(',') : ['Unknown', ''];
@@ -89,9 +86,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               </div>
             )}
             {rewardAmount && rewardAmount >= 3000 && (
-              <div className="py-1 px-3 font-bold text-foreground bg-white/90 rounded-full flex items-center gap-2">
-                <Award size={16} className="text-black" />
-                <RewardToolTip amount={rewardAmount} inPropertyCard={true} className="text-black" />
+              <div className="absolute top-0 right-0">
+                <RewardBadge amount={rewardAmount} inPropertyCard={true} />
               </div>
             )}
           </div>
