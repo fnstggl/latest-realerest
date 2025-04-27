@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
@@ -15,7 +16,7 @@ interface PropertyCardProps {
   baths: number;
   sqft: number;
   belowMarket: number;
-  bounty: number;
+  bounty: number;  // Added bounty property
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
