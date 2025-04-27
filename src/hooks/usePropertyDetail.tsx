@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -21,6 +20,7 @@ type PropertyDetailType = {
   seller_phone: string;
   seller_id: string;
   bounty?: number;
+  reward?: number;
   after_repair_value?: number;
   estimated_rehab?: number;
   property_type?: string;
