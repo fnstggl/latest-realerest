@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, DollarSign, Handshake, Briefcase, Award } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-
 const GuideWholesale: React.FC = () => {
   const navigate = useNavigate();
   const steps = [{
@@ -37,7 +36,6 @@ const GuideWholesale: React.FC = () => {
     link: '/dashboard',
     linkText: 'Track Your Bounties'
   }];
-
   return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
@@ -112,51 +110,16 @@ const GuideWholesale: React.FC = () => {
                   </div>
                 </div>
                 <div className="w-full md:w-1/2 aspect-[16/9]">
-                  <img 
-                    src={index === 0 ? "/lovable-uploads/45bf2e9a-4913-4ee4-80da-57be537411df.png" :
-                         index === 1 ? "/lovable-uploads/b5dc763e-cb86-4e73-9dbb-8c5521b79aba.png" :
-                         index === 2 ? "/lovable-uploads/b050484e-463e-4238-baba-7929c38b9ff1.png" :
-                         "/lovable-uploads/64f72233-82f9-4e2d-9252-7e7ae2f53866.png"}
-                    alt={`Step ${step.number}`}
-                    className="w-full h-full object-cover rounded-xl"
-                  />
+                  <img src={index === 0 ? "/lovable-uploads/45bf2e9a-4913-4ee4-80da-57be537411df.png" : index === 1 ? "/lovable-uploads/b5dc763e-cb86-4e73-9dbb-8c5521b79aba.png" : index === 2 ? "/lovable-uploads/b050484e-463e-4238-baba-7929c38b9ff1.png" : "/lovable-uploads/64f72233-82f9-4e2d-9252-7e7ae2f53866.png"} alt={`Step ${step.number}`} className="w-full h-full object-cover rounded-xl" />
                 </div>
               </motion.div>)}
           </div>
           
-          <motion.div initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.5,
-          delay: 0.7
-        }} className="bg-gradient-to-r from-pink-50 to-orange-50 rounded-xl p-8 mt-16 text-center">
-            <h2 className="text-2xl font-bold mb-4">Ready to start earning bounties?</h2>
-            <p className="text-gray-600 mb-6">Browse available properties with bounty incentives and start connecting buyers and sellers.</p>
-            <Link to="/search">
-              <Button className="px-8 py-6 h-auto text-lg relative bg-white text-black border border-transparent hover:bg-white group">
-                Browse Bounties
-                <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #D946EF, #FF3CAC 20%, #FF5C00 40%, #FF9004 60%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude"
-              }} />
-              </Button>
-            </Link>
-          </motion.div>
+          
         </div>
       </div>
       
       <SiteFooter />
     </div>;
 };
-
 export default GuideWholesale;
