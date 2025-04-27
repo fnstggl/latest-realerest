@@ -25,7 +25,7 @@ interface PropertyHeaderProps {
   onShowAddressClick: () => void;
   userId?: string;
   propertyId?: string;
-  bounty?: number;
+  reward?: number;
   sellerName?: string;
   waitlistStatus?: string | null;
 }
@@ -44,7 +44,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   onShowAddressClick,
   userId,
   propertyId,
-  bounty,
+  reward,
   sellerName = "Seller",
   waitlistStatus
 }) => {
@@ -73,21 +73,51 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       if (error) throw error;
 
       // Create a conversation if it doesn't exist
-      const { data: conversation } = await supabase.rpc('get_or_create_conversation', {
-        participant1_id: user.id,
-        participant2_id: userId
+      const { data: conversationData } = await supabase.rpc('get_user_email', {
+        user_id_param: userId
       });
 
-      if (conversation) {
-        // Send notification message
-        await supabase
-          .from('messages')
-          .insert([{
-            conversation_id: conversation.id,
-            sender_id: user.id,
-            content: `${userData?.name || 'A user'} has claimed the reward for your property listing.`,
-            property_id: propertyId
-          }]);
+      // Fix for the conversation creation
+      if (userId) {
+        // Get or create conversation using a query instead of RPC
+        const { data: existingConversation } = await supabase
+          .from('conversations')
+          .select('id')
+          .or(`participant1.eq.${user.id},participant2.eq.${user.id}`)
+          .or(`participant1.eq.${userId},participant2.eq.${userId}`)
+          .maybeSingle();
+          
+        let conversationId;
+        
+        if (existingConversation) {
+          conversationId = existingConversation.id;
+        } else {
+          // Create new conversation
+          const { data: newConversation } = await supabase
+            .from('conversations')
+            .insert({
+              participant1: user.id,
+              participant2: userId
+            })
+            .select('id')
+            .single();
+            
+          if (newConversation) {
+            conversationId = newConversation.id;
+          }
+        }
+
+        if (conversationId) {
+          // Send notification message
+          await supabase
+            .from('messages')
+            .insert([{
+              conversation_id: conversationId,
+              sender_id: user.id,
+              content: `${userData?.name || 'A user'} has claimed the reward for your property listing.`,
+              property_id: propertyId
+            }]);
+        }
       }
 
       toast({
@@ -127,10 +157,10 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
             <span className="text-black font-playfair font-bold italic">Below Market</span>
           </div>
-          {bounty && bounty >= 3000 && <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-              <span className="font-futura font-extrabold mr-1 text-sky-600">{formatCurrency(bounty)}</span> 
+          {reward && reward >= 3000 && <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
+              <span className="font-futura font-extrabold mr-1 text-sky-600">{formatCurrency(reward)}</span> 
               <span className="font-futura font-extrabold mr-1 text-sky-600">Reward</span>
-              <RewardToolTip amount={bounty} />
+              <RewardToolTip amount={reward} />
             </div>}
         </div>
         {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
@@ -189,7 +219,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             className="w-full bg-black hover:bg-black/90 text-white" 
             onClick={handleClaimReward}
           >
-            Claim {formatCurrency(bounty || 0)} Reward
+            Claim {formatCurrency(reward || 0)} Reward
           </Button>
         </div>}
 
@@ -198,7 +228,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           <DialogHeader>
             <DialogTitle>Reward Claim</DialogTitle>
             <DialogDescription>
-              You've just accepted the {formatCurrency(bounty || 0)} reward for {title}. Find a buyer for the seller, get an assignment of contract agreement signed (download from "How to Wholesale" in guides) and get paid.
+              You've just accepted the {formatCurrency(reward || 0)} reward for {title}. Find a buyer for the seller, get an assignment of contract agreement signed (download from "How to Wholesale" in guides) and get paid.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex justify-end">

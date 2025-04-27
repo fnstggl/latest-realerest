@@ -15,6 +15,7 @@ export interface Property {
   sqft: number;
   belowMarket: number;
   waitlistCount?: number;
+  reward?: number; // Add reward field
 }
 
 export interface WaitlistUser {
@@ -73,7 +74,8 @@ export const useProperties = (userId: string | undefined) => {
           baths: prop.baths || 0,
           sqft: prop.sqft || 0,
           belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100),
-          waitlistCount: 0 
+          waitlistCount: 0,
+          reward: Number(prop.bounty || 0) // Map bounty to reward
         }));
         
         setMyProperties(formattedProperties);
@@ -226,7 +228,7 @@ export const useProperties = (userId: string | undefined) => {
       clearTimeout(timeoutId);
       supabase.removeChannel(waitlistSubscription);
     };
-  }, [userId, fetchUserProperties, fetchWaitlistRequests]);
+  }, [userId, fetchUserProperties]);
 
   return {
     myProperties,

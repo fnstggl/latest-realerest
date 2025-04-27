@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -43,7 +44,7 @@ const PropertyDetail: React.FC = () => {
 
   useEffect(() => {
     console.log("PropertyDetail - property:", property);
-    console.log("PropertyDetail - bounty:", property?.bounty);
+    console.log("PropertyDetail - reward:", property?.reward);
   }, [property]);
   
   useEffect(() => {
@@ -178,7 +179,7 @@ const PropertyDetail: React.FC = () => {
               onShowAddressClick={handleAddressClick}
               userId={property?.user_id}
               propertyId={property?.id}
-              bounty={property?.bounty}
+              reward={property?.reward}
             />
 
             {!isOwner && !isApproved && waitlistStatus !== 'pending' && (

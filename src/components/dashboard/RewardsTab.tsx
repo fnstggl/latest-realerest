@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -5,6 +6,7 @@ import { Gift, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+
 const PayoutsTab = () => {
   const {
     user
@@ -35,15 +37,27 @@ const PayoutsTab = () => {
         ascending: false
       });
       if (error) throw error;
-      const totalPayout = data?.reduce((sum, item) => {
-        return sum + (Number(item.property_listings?.bounty) || 0);
+      
+      // Map bounty to reward in the returned data
+      const claimsWithRewards = data?.map(item => ({
+        ...item,
+        property_listings: {
+          ...item.property_listings,
+          reward: item.property_listings.bounty
+        }
+      }));
+      
+      const totalPayout = claimsWithRewards?.reduce((sum, item) => {
+        return sum + (Number(item.property_listings?.reward) || 0);
       }, 0);
+      
       return {
         total: totalPayout,
-        claimed: data || []
+        claimed: claimsWithRewards || []
       };
     }
   });
+  
   if (isLoading) {
     return <div className="flex justify-center py-8">Loading...</div>;
   }
@@ -82,7 +96,7 @@ const PayoutsTab = () => {
             <div className="text-right">
               <div className="flex items-center text-green-600 font-semibold">
                 <DollarSign size={16} className="mr-1" />
-                {reward.property_listings?.bounty}
+                {reward.property_listings?.reward}
               </div>
               <Button asChild className="mt-2" variant="outline" size="sm">
                 <Link to={`/property/${reward.property_listings?.id}`}>View Property</Link>
@@ -92,4 +106,5 @@ const PayoutsTab = () => {
       </div>
     </div>;
 };
+
 export default PayoutsTab;

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
@@ -16,7 +17,7 @@ interface PropertyCardProps {
   sqft: number;
   belowMarket: number;
   reward?: number;
-  bounty?: number; // Accept both reward and bounty properties
+  bounty?: number; // Accept both reward and bounty properties for backward compatibility
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -69,7 +70,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="absolute top-4 left-0 right-0 px-4 flex justify-between items-start">
             {belowMarket > 0 && (
               <div className="py-1 px-3 font-bold text-foreground bg-white/90 rounded-full">
-                <span className="relative z-10">{roundedBelowMarket}% OFF</span>
+                <span>{roundedBelowMarket}% OFF</span>
               </div>
             )}
             {rewardAmount && rewardAmount >= 3000 && (
