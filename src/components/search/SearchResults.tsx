@@ -107,7 +107,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             style={{
               left: '50%',
               transform: 'translateX(-50%)',
-              bottom: '25%',
+              bottom: isMobile ? '25%' : '33%',
               width: 'auto',
               pointerEvents: 'auto'
             }}

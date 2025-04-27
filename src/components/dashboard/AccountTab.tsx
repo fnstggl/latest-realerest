@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -261,10 +260,14 @@ const AccountTab: React.FC<AccountTabProps> = ({
       <h2 className="text-2xl font-bold mb-6">Account Actions</h2>
       
       <div className="space-y-4">
-        <Button variant="outline" className="w-full justify-center font-bold bg-white/50 hover:bg-red-50 text-red-600 border border-white/40 hover:border-red-500 hover:shadow-[0_0_10px_rgba(220,38,38,0.4)] transition-all" onClick={() => {
-          logout();
-          navigate('/');
-        }}>
+        <Button 
+          variant="outline" 
+          className="w-full justify-center font-bold bg-white/50 hover:bg-red-50 text-red-600 border border-white/40 hover:border-red-500 hover:shadow-[0_0_10px_rgba(220,38,38,0.4)] transition-all" 
+          onClick={() => {
+            logout();
+            navigate('/');
+          }}
+        >
           <LogOut size={18} className="mr-2" />
           Sign Out
         </Button>

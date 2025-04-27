@@ -90,16 +90,32 @@ const Search: React.FC = () => {
   }
 
   if (properties.length === 0 && searchQuery) {
-    if (isAuthenticated) {
-      return (
-        <div className="min-h-screen bg-[#FCFBF8] pt-24">
-          <SearchHeader />
-          <div className="w-full">
-            <LocationAlertForm />
+    return (
+      <div className="min-h-screen bg-[#FCFBF8] pt-24">
+        <SearchHeader />
+        <div className="container px-4 lg:px-8 mx-auto py-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            <SearchFilters
+              onFilterChange={handleFilterChange}
+              isFiltersCollapsed={isFiltersCollapsed}
+              setIsFiltersCollapsed={setIsFiltersCollapsed}
+            />
+            <SearchResults
+              properties={[]}
+              sortOption={sortOption}
+              onSortChange={handleSortChange}
+              isGridView={isGridView}
+              setIsGridView={setIsGridView}
+              isAuthenticated={isAuthenticated}
+              searchQuery={searchQuery}
+            />
           </div>
         </div>
-      );
-    }
+        <div className="w-full">
+          <LocationAlertForm />
+        </div>
+      </div>
+    );
   }
 
   return (
