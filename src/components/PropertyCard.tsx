@@ -49,6 +49,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
     e.currentTarget.src = '/placeholder.svg';
   };
 
+  console.log(`PropertyCard ${id}: belowMarket=${belowMarket}, rewardAmount=${rewardAmount}`);
+
   return (
     <Link 
       to={`/property/${id}`} 

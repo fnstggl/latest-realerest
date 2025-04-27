@@ -18,6 +18,8 @@ interface RewardToolTipProps {
 const RewardToolTip: React.FC<RewardToolTipProps> = ({ amount, className = "", inPropertyCard = false }) => {
   if (!amount || amount < 3000) return null;
   
+  console.log(`RewardToolTip: amount=${amount}, inPropertyCard=${inPropertyCard}`);
+  
   const tooltipContent = inPropertyCard
     ? `Get paid ${formatCurrency(amount)} if you connect the seller with a buyer and the deal goes through`
     : `Connect the seller with an interested buyer and get paid ${formatCurrency(amount)} if the deal closes. Join the waitlist to claim this reward`;
@@ -26,7 +28,7 @@ const RewardToolTip: React.FC<RewardToolTipProps> = ({ amount, className = "", i
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Info size={16} className={`text-white hover:text-white/80 transition-colors ${className}`} />
+          <Info size={16} className={`text-black hover:text-gray-700 transition-colors ${className}`} />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[300px] text-sm">
           <p>{tooltipContent}</p>

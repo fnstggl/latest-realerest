@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -42,6 +41,11 @@ const PropertyDetail: React.FC = () => {
     refreshProperty
   } = usePropertyDetail(id);
 
+  useEffect(() => {
+    console.log("PropertyDetail - property:", property);
+    console.log("PropertyDetail - bounty:", property?.bounty);
+  }, [property]);
+  
   useEffect(() => {
     console.log("PropertyDetail - isOwner:", isOwner);
     console.log("PropertyDetail - isApproved:", isApproved);

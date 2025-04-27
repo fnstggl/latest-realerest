@@ -12,6 +12,8 @@ interface RewardBadgeProps {
 const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = false }) => {
   if (!amount || amount < 3000) return null;
   
+  console.log(`RewardBadge: amount=${amount}, inPropertyCard=${inPropertyCard}`);
+  
   const getBadgeStyle = (amount: number) => {
     if (amount >= 10000) return "bg-[#FEC6A1]/10 text-[#FEC6A1]";
     if (amount > 5000) return "bg-[#FEF7CD]/10 text-[#FEF7CD]";
