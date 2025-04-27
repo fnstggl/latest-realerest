@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,7 +17,7 @@ const RewardsTab = () => {
           property_listings (
             id,
             title,
-            bounty,
+            reward,
             location,
             images
           )
@@ -47,28 +48,37 @@ const RewardsTab = () => {
 
   return (
     <div className="space-y-4">
-      {rewards.map((reward) => (
-        <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <img 
-              src={reward.property_listings.images[0]} 
-              alt={reward.property_listings.title}
-              className="w-16 h-16 object-cover rounded"
-            />
-            <div>
-              <h3 className="font-semibold">{reward.property_listings.title}</h3>
-              <p className="text-sm text-gray-600">{reward.property_listings.location}</p>
+      {rewards.map((reward) => {
+        // Handle potential undefined properties
+        const propertyListings = reward.property_listings || {};
+        const images = propertyListings.images || [];
+        const title = propertyListings.title || 'Property';
+        const location = propertyListings.location || 'Unknown location';
+        const rewardAmount = propertyListings.reward || 0;
+        
+        return (
+          <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <img 
+                src={images[0] || '/placeholder.svg'} 
+                alt={title}
+                className="w-16 h-16 object-cover rounded"
+              />
+              <div>
+                <h3 className="font-semibold">{title}</h3>
+                <p className="text-sm text-gray-600">{location}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center text-green-600 font-semibold">
+                <DollarSign size={16} className="mr-1" />
+                {rewardAmount}
+              </div>
+              <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="flex items-center text-green-600 font-semibold">
-              <DollarSign size={16} className="mr-1" />
-              {reward.property_listings.bounty}
-            </div>
-            <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
