@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -19,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import BountyBadge from '@/components/property-detail/BountyBadge';
+import RewardBadge from '@/components/property-detail/RewardBadge';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -125,7 +125,6 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
-  // Check if we have ARV and estimated rehab values to display property details
   const showPropertyDetails = property?.after_repair_value !== undefined || property?.estimated_rehab !== undefined;
 
   return (
@@ -157,9 +156,9 @@ const PropertyDetail: React.FC = () => {
         
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="space-y-6">
-            {property?.bounty > 0 && (
+            {property?.reward > 0 && (
               <div className="mb-4">
-                <BountyBadge amount={property.bounty} />
+                <RewardBadge amount={property.reward} />
               </div>
             )}
             <PropertyImages mainImage={property?.images[0]} images={property?.images} />

@@ -1,7 +1,10 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
+import RewardToolTip from '@/components/property-detail/RewardToolTip';
+import { Award } from 'lucide-react';
 
 interface PropertyCardProps {
   id: string;
@@ -61,25 +64,32 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             height="240"
           />
           
-          {belowMarket > 0 && (
-            <div className="absolute top-4 left-4 py-1 px-3 font-bold text-foreground bg-white/90 rounded-full group overflow-hidden">
-              <span className="relative z-10">{roundedBelowMarket}% OFF</span>
-              <span 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
-                style={{
-                  background: "transparent",
-                  border: "2px solid transparent",
-                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                  backgroundOrigin: "border-box",
-                  backgroundClip: "border-box",
-                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude",
-                  boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
-                }}
-              ></span>
-            </div>
-          )}
+          <div className="absolute top-4 left-0 right-0 px-4 flex justify-between items-start">
+            {belowMarket > 0 && (
+              <div className="py-1 px-3 font-bold text-foreground bg-white/90 rounded-full group overflow-hidden">
+                <span className="relative z-10">{roundedBelowMarket}% OFF</span>
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
+                  }}
+                />
+              </div>
+            )}
+            {reward && reward >= 3000 && (
+              <div className="py-1 px-3 font-bold text-foreground bg-white/90 rounded-full flex items-center gap-2">
+                <Award size={16} className="text-black" />
+                <RewardToolTip amount={reward} inPropertyCard={true} className="text-black" />
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="p-6 flex-1 flex flex-col rounded-b-xl bg-white/90">
