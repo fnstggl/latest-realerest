@@ -1,11 +1,12 @@
 import React from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import LikeButton from './LikeButton';
 import RewardToolTip from './RewardToolTip';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
+
 interface PropertyHeaderProps {
   title: string;
   belowMarket: number;
@@ -24,6 +25,7 @@ interface PropertyHeaderProps {
   sellerName?: string;
   waitlistStatus?: string | null;
 }
+
 const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   title,
   belowMarket,
@@ -44,6 +46,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
 }) => {
   const [showRewardDialog, setShowRewardDialog] = React.useState(false);
   const roundedBelowMarket = Math.round(belowMarket);
+
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
       return <span className="font-medium text-sm sm:text-base break-words">
@@ -57,6 +60,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
       </span>;
   };
+
   return <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2">
@@ -113,19 +117,20 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           
           <Link to={`/messages?seller=${userId}`} className="block w-full">
             <Button variant="glass" className="w-full bg-white hover:bg-white relative group overflow-hidden">
+              <MessageSquare className="mr-2" />
               <span className="text-black font-bold relative z-10">
                 Message {sellerName} Directly
               </span>
               <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
-            background: "transparent",
-            border: "2px solid transparent",
-            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-            backgroundOrigin: "border-box",
-            backgroundClip: "border-box",
-            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude"
-          }} />
+                background: "transparent",
+                border: "2px solid transparent",
+                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "border-box",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude"
+              }} />
             </Button>
           </Link>
           
@@ -149,4 +154,5 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       </Dialog>
     </div>;
 };
+
 export default PropertyHeader;
