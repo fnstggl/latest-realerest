@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const FeaturedProperties: React.FC = () => {
   const navigate = useNavigate();
-  const { listings, loading, error } = useListings(6); // No search query here, just limit
+  const { listings, loading, error } = useListings(6);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -19,12 +18,12 @@ const FeaturedProperties: React.FC = () => {
     <section className="py-16 relative overflow-hidden perspective-container">
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <h2 className="text-4xl font-editorial font-bold italic text-foreground tracking-wide">
+          <h2 className="text-2xl sm:text-4xl font-editorial font-bold italic text-foreground tracking-wide">
             Featured Homes
           </h2>
         </div>
         
-        <p className="text-xl text-foreground mb-8 max-w-3xl">
+        <p className="text-base sm:text-xl text-foreground mb-8 max-w-3xl">
           Real estate for <span className="font-editorial italic">real people</span>. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
         </p>
         
@@ -38,7 +37,7 @@ const FeaturedProperties: React.FC = () => {
         ) : (
           <>
             {listings.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
                 {listings.map((property) => (
                   <div key={property.id}>
                     <PropertyCard 

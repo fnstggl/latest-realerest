@@ -23,7 +23,7 @@ const stagger = {
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="pt-20 sm:pt-24 md:pt-36 pb-8 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
+    <section className="pt-32 sm:pt-24 md:pt-36 pb-16 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
       <div className="container px-4 lg:px-8 mx-auto relative flex justify-center">
         <div className="w-full max-w-5xl text-center mx-auto">
           <div className="flex flex-col items-center">
