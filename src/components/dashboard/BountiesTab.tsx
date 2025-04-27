@@ -17,6 +17,7 @@ type PropertyListing = {
 type BountyClaim = {
   id: string;
   property_listings: PropertyListing;
+  status: string;
 };
 
 const RewardsTab = () => {
@@ -62,12 +63,11 @@ const RewardsTab = () => {
   return (
     <div className="space-y-4">
       {rewards.map((reward) => {
-        // Handle potential undefined properties
-        const propertyListings = reward.property_listings || {};
-        const images = propertyListings.images || [];
-        const title = propertyListings.title || 'Property';
-        const location = propertyListings.location || 'Unknown location';
-        const rewardAmount = propertyListings.reward || 0;
+        const propertyListings = reward.property_listings;
+        const images = propertyListings?.images || [];
+        const title = propertyListings?.title || 'Property';
+        const location = propertyListings?.location || 'Unknown location';
+        const rewardAmount = propertyListings?.reward || 0;
         
         return (
           <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
@@ -97,3 +97,4 @@ const RewardsTab = () => {
 };
 
 export default RewardsTab;
+
