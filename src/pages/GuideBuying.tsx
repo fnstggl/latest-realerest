@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Search, Users, ClipboardCheck, Key } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+
 const GuideBuying: React.FC = () => {
   const navigate = useNavigate();
   const steps = [{
@@ -40,6 +41,7 @@ const GuideBuying: React.FC = () => {
     linkText: 'Read FAQs',
     image: '/lovable-uploads/e7c82a7c-28f7-473c-aa5e-9c31e8db0bf8.png'
   }];
+
   return <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
       
@@ -78,8 +80,7 @@ const GuideBuying: React.FC = () => {
           </motion.p>
           
           <div className="space-y-16 md:space-y-24">
-            {/* Step 1 */}
-            <motion.div initial={{
+            {steps.map((step, index) => <motion.div key={step.number} initial={{
             opacity: 0,
             y: 20
           }} animate={{
@@ -87,176 +88,48 @@ const GuideBuying: React.FC = () => {
             y: 0
           }} transition={{
             duration: 0.5,
-            delay: 0.2
-          }} className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-              <div className="w-full md:w-1/2 md:pr-6">
-                <div className="relative">
-                  <div className="w-16 h-16 rounded-full flex items a\\\\center justify-center bg-transparent my-0">
-                    <Search size={32} className="text-black my-[15px]" />
+            delay: 0.1 * index + 0.2
+          }} className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-8 md:gap-12`}>
+                <div className="w-full md:w-1/2 md:pr-6">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center bg-transparent">
+                      {step.icon}
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                      <span className="font-playfair italic pr-2">Step {step.number}:</span>
+                      {step.title}
+                    </h2>
+                    <p className="text-gray-600 mb-6">{step.description}</p>
+                    <Link to={step.link}>
+                      <Button className="relative bg-white text-black border border-transparent hover:bg-white group">
+                        {step.linkText}
+                        <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
+                          background: "transparent",
+                          border: "2px solid transparent",
+                          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                          backgroundOrigin: "border-box",
+                          backgroundClip: "border-box",
+                          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                          WebkitMaskComposite: "xor",
+                          maskComposite: "exclude"
+                        }} />
+                      </Button>
+                    </Link>
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                    <span className="font-playfair italic pr-2">Step 1:</span>
-                    Find a property you love
-                  </h2>
-                  <p className="text-gray-600 mb-6">Browse our selection of below-market value properties. Use filters to narrow down your search based on location, price, and property features.</p>
-                  <Link to="/search">
-                    <Button className="relative bg-white text-black border border-transparent hover:bg-white group">
-                      Browse Properties
-                      <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude"
-                    }} />
-                    </Button>
-                  </Link>
                 </div>
-              </div>
-              <div className="w-full md:w-1/2 relative">
-                <div className="rounded-xl overflow-hidden shadow-lg">
-                  <img alt="Find a property you love" className="w-full h-auto" src="/lovable-uploads/637849fa-cf2e-4528-a247-557df386b00e.png" />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Step 2 */}
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5,
-            delay: 0.3
-          }} className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12">
-              <div className="w-full md:w-1/2 md:pl-6">
-                <div className="relative">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-transparent">
-                    <Users size={32} className="text-black" />
+                <div className="w-full md:w-1/2 relative">
+                  <div className="rounded-xl overflow-hidden shadow-lg">
+                    <img 
+                      alt={`Step ${step.number}`} 
+                      className="w-full h-auto" 
+                      src={index === 0 ? "/lovable-uploads/637849fa-cf2e-4528-a247-557df386b00e.png" : 
+                           index === 1 ? "/lovable-uploads/8fc09b02-e367-4b00-9a0e-0018170f60cf.png" :
+                           index === 2 ? "/lovable-uploads/57567df8-e8fd-4f5d-b8d2-23355d03943d.png" :
+                           "/lovable-uploads/7fa9b177-3d0a-4b90-8cdc-e15b2cd7a8c8.png"}
+                    />
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                    <span className="font-playfair italic pr-2">Step 2:</span>
-                    Join the waitlist to contact sellers directly
-                  </h2>
-                  <p className="text-gray-600 mb-6">When you find a property you're interested in, join its waitlist to get direct access to the seller. This gives you an opportunity to ask questions and express your interest.</p>
-                  <Link to="/search">
-                    <Button className="relative bg-white text-black border border-transparent hover:bg-white group">
-                      Discover Properties
-                      <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude"
-                    }} />
-                    </Button>
-                  </Link>
                 </div>
-              </div>
-              <div className="w-full md:w-1/2 relative">
-                <div className="rounded-xl overflow-hidden shadow-lg">
-                  <img alt="Join the waitlist" className="w-full h-auto" src="/lovable-uploads/8fc09b02-e367-4b00-9a0e-0018170f60cf.png" />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Step 3 */}
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5,
-            delay: 0.4
-          }} className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-              <div className="w-full md:w-1/2 md:pr-6">
-                <div className="relative">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-transparent">
-                    <ClipboardCheck size={32} className="text-black" />
-                  </div>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                    <span className="font-playfair italic pr-2">Step 3:</span>
-                    Send in an offer
-                  </h2>
-                  <p className="text-gray-600 mb-6">Once you've found your ideal property and connected with the seller, submit your offer directly through our platform. You can negotiate terms and make contingent offers.</p>
-                  <Link to="/dashboard">
-                    <Button className="relative bg-white text-black border border-transparent hover:bg-white group">
-                      View Your Dashboard
-                      <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude"
-                    }} />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-              <div className="w-full md:w-1/2 relative">
-                <div className="rounded-xl overflow-hidden shadow-lg">
-                  <img alt="Send in an offer" className="w-full h-auto" src="/lovable-uploads/57567df8-e8fd-4f5d-b8d2-23355d03943d.png" />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Step 4 */}
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.5,
-            delay: 0.5
-          }} className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12">
-              <div className="w-full md:w-1/2 md:pl-6">
-                <div className="relative">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-transparent">
-                    <Key size={32} className="text-black" />
-                  </div>
-                  <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                    <span className="font-playfair italic pr-2">Step 4:</span>
-                    Get the keys
-                  </h2>
-                  <p className="text-gray-600 mb-6">After your offer is accepted, complete the transaction process and receive the keys to your new home. Congratulations on your below-market purchase!</p>
-                  <Link to="/faq">
-                    <Button className="relative bg-white text-black border border-transparent hover:bg-white group">
-                      Read FAQs
-                      <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude"
-                    }} />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-              <div className="w-full md:w-1/2 relative">
-                <div className="rounded-xl overflow-hidden shadow-lg">
-                  <img alt="Get the keys" className="w-full h-auto" src="/lovable-uploads/860e85dd-90ec-4699-a497-666240a0c6e5.png" />
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>)}
           </div>
           
           <motion.div initial={{
@@ -293,4 +166,5 @@ const GuideBuying: React.FC = () => {
       <SiteFooter />
     </div>;
 };
+
 export default GuideBuying;
