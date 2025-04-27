@@ -23,7 +23,7 @@ const RewardToolTip: React.FC<RewardToolTipProps> = ({ amount, className = "" })
         <TooltipTrigger asChild>
           <Info size={16} className={`text-black hover:text-gray-700 transition-colors ${className}`} />
         </TooltipTrigger>
-        <TooltipContent side="left" className="max-w-[300px] text-sm">
+        <TooltipContent side="left" className="max-w-[300px] text-sm z-50">
           <p>Connect the seller with an interested buyer and get paid {formatCurrency(amount)} if the deal closes. Join the waitlist to claim this reward.</p>
         </TooltipContent>
       </Tooltip>
