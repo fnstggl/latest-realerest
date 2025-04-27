@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Bed, Bath, Square, ArrowRight, MapPin, Coins } from 'lucide-react';
+import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import RewardBadge from '@/components/property-detail/RewardBadge';
 
@@ -17,7 +16,7 @@ interface PropertyCardProps {
   sqft: number;
   belowMarket: number;
   reward?: number;
-  bounty?: number;
+  bounty?: number; // Accept both reward and bounty properties
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
@@ -47,6 +46,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
     e.currentTarget.src = '/placeholder.svg';
   };
 
+  console.log(`PropertyCard ${id}: belowMarket=${belowMarket}, rewardAmount=${rewardAmount}`);
+
   return (
     <Link 
       to={`/property/${id}`} 
@@ -67,34 +68,26 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           
           <div className="absolute top-4 left-0 right-0 px-4 flex justify-between items-start">
             {belowMarket > 0 && (
-              <div className="relative py-1 px-3 font-bold text-foreground bg-white/90 rounded-full group overflow-hidden">
+              <div className="py-1 px-3 font-bold text-foreground bg-white/90 rounded-full group overflow-hidden">
                 <span className="relative z-10">{roundedBelowMarket}% OFF</span>
                 <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
                   style={{
-                    background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text"
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
                   }}
-                >{roundedBelowMarket}% OFF</span>
+                />
               </div>
             )}
             {rewardAmount && rewardAmount >= 3000 && (
-              <div className="absolute top-0 right-4">
-                <div className="flex items-center bg-white text-black px-2 py-1 rounded-lg border border-gray-200">
-                  <Coins 
-                    size={16} 
-                    className="mr-1"
-                    style={{
-                      background: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text"
-                    }}
-                  />
-                  <span className="font-futura font-extrabold text-black">{formatCurrency(rewardAmount)}</span>
-                </div>
+              <div className="absolute top-0 right-0">
+                <RewardBadge amount={rewardAmount} inPropertyCard={true} />
               </div>
             )}
           </div>
