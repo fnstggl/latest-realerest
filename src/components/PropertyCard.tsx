@@ -68,21 +68,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           
           <div className="absolute top-4 left-0 right-0 px-4 flex justify-between items-start">
             {belowMarket > 0 && (
-              <div className="py-1 px-3 font-bold text-foreground bg-white/90 rounded-full group overflow-hidden">
+              <div className="py-1 px-3 font-bold text-foreground bg-white/90 rounded-full">
                 <span className="relative z-10">{roundedBelowMarket}% OFF</span>
-                <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude",
-                  }}
-                />
               </div>
             )}
             {rewardAmount && rewardAmount >= 3000 && (

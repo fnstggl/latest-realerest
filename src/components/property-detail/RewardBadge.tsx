@@ -41,7 +41,12 @@ const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = fals
             </svg>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-[250px] text-sm">
+        <TooltipContent 
+          side="bottom" 
+          className="max-w-[250px] text-sm z-50"
+          sideOffset={5}
+          align="end"
+        >
           <p>Get paid {formatCurrency(amount)} for connecting the seller with a buyer</p>
         </TooltipContent>
       </Tooltip>
