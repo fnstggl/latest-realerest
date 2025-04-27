@@ -3,16 +3,9 @@ import { MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import LikeButton from './LikeButton';
 import RewardToolTip from './RewardToolTip';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
-
 interface PropertyHeaderProps {
   title: string;
   belowMarket: number;
@@ -31,7 +24,6 @@ interface PropertyHeaderProps {
   sellerName?: string;
   waitlistStatus?: string | null;
 }
-
 const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   title,
   belowMarket,
@@ -52,40 +44,31 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
 }) => {
   const [showRewardDialog, setShowRewardDialog] = React.useState(false);
   const roundedBelowMarket = Math.round(belowMarket);
-
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
-      return (
-        <span className="font-medium text-sm sm:text-base break-words">
+      return <span className="font-medium text-sm sm:text-base break-words">
           {fullAddress}{location ? `, ${location}` : ''}
-        </span>
-      );
+        </span>;
     }
-    return (
-      <span className="font-medium text-sm sm:text-base">
+    return <span className="font-medium text-sm sm:text-base">
         <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
           Join Waitlist For Address
         </span>
         {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
-      </span>
-    );
+      </span>;
   };
-
-  return (
-    <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
+  return <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2">
           <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
             <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
             <span className="text-black font-playfair font-bold italic">Below Market</span>
           </div>
-          {bounty && bounty >= 3000 && (
-            <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-              <span className="font-futura font-extrabold text-[#0892D0] mr-1">{formatCurrency(bounty)}</span> 
-              <span className="font-futura font-extrabold text-[#0892D0] mr-1">Reward</span>
+          {bounty && bounty >= 3000 && <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
+              <span className="font-futura font-extrabold mr-1 text-sky-600">{formatCurrency(bounty)}</span> 
+              <span className="font-futura font-extrabold mr-1 text-sky-600">Reward</span>
               <RewardToolTip amount={bounty} />
-            </div>
-          )}
+            </div>}
         </div>
         {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
       </div>
@@ -123,45 +106,33 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         </div>
       </div>
 
-      {waitlistStatus === 'pending' && (
-        <div className="mt-4 space-y-3">
+      {waitlistStatus === 'pending' && <div className="mt-4 space-y-3">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <p className="text-black font-medium">Waitlist Request Pending</p>
           </div>
           
           <Link to={`/messages?seller=${userId}`} className="block w-full">
-            <Button 
-              variant="glass" 
-              className="w-full bg-white hover:bg-white relative group overflow-hidden"
-            >
+            <Button variant="glass" className="w-full bg-white hover:bg-white relative group overflow-hidden">
               <span className="text-black font-bold relative z-10">
                 Message {sellerName} Directly
               </span>
-              <span 
-                className="absolute inset-0 opacity-100 rounded-lg pointer-events-none"
-                style={{
-                  background: "transparent",
-                  border: "2px solid transparent",
-                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                  backgroundOrigin: "border-box",
-                  backgroundClip: "border-box",
-                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude"
-                }}
-              />
+              <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
+            background: "transparent",
+            border: "2px solid transparent",
+            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+            backgroundOrigin: "border-box",
+            backgroundClip: "border-box",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude"
+          }} />
             </Button>
           </Link>
           
-          <Button 
-            variant="default" 
-            className="w-full bg-black hover:bg-black/90 text-white"
-            onClick={() => setShowRewardDialog(true)}
-          >
+          <Button variant="default" className="w-full bg-black hover:bg-black/90 text-white" onClick={() => setShowRewardDialog(true)}>
             Claim {formatCurrency(bounty || 0)} Reward
           </Button>
-        </div>
-      )}
+        </div>}
 
       <Dialog open={showRewardDialog} onOpenChange={setShowRewardDialog}>
         <DialogContent className="sm:max-w-[425px]">
@@ -176,8 +147,6 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default PropertyHeader;
