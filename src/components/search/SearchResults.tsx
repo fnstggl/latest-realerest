@@ -27,7 +27,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const ITEMS_PER_ROW = isGridView ? (isMobile ? 1 : 3) : 1;
-  const totalItems = properties.length;
+
+  // If user is not authenticated and there's a search with no results,
+  // show skeleton listings
+  const shouldShowSkeletons = !isAuthenticated && searchQuery && properties.length === 0;
+  const totalItems = shouldShowSkeletons ? ITEMS_PER_ROW : properties.length;
   const totalFullRows = Math.floor(totalItems / ITEMS_PER_ROW);
   const lastFullRowStartIndex = Math.max(0, (totalFullRows - 1) * ITEMS_PER_ROW);
   const lastFullRowEndIndex = lastFullRowStartIndex + ITEMS_PER_ROW;
@@ -40,6 +44,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       : [];
 
   const generatePlaceholderProperties = () => {
+    if (shouldShowSkeletons) {
+      return Array(ITEMS_PER_ROW).fill(null);
+    }
     if (isAuthenticated || searchQuery || properties.length > 0) return [];
     return Array(ITEMS_PER_ROW).fill(null).map((_, index) => ({
       id: `placeholder-${index}`,
@@ -93,7 +100,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       </div>
       
       <div className={`grid gap-6 relative ${isGridView ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3' : 'space-y-6'}`}>
-        {/* Visible properties */}
         {visibleProperties.map((property, index) => (
           <div 
             key={property.id} 
@@ -115,9 +121,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           </div>
         ))}
 
-        {/* Placeholder properties for unauthenticated users with no results */}
-        {placeholderProperties.length > 0 && placeholderProperties.map((_, index) => (
-          <div key={`placeholder-${index}`} className="relative pointer-events-none">
+        {shouldShowSkeletons && placeholderProperties.map((_, index) => (
+          <div key={`skeleton-${index}`} className="relative">
             <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col rounded-xl">
               <Skeleton className="h-[240px] w-full rounded-t-xl" />
               <div className="p-6 flex-1 flex flex-col rounded-b-xl bg-white/90">
@@ -137,7 +142,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 </div>
               </div>
               
-              {/* Add the blur effect for placeholders */}
               <div className="absolute inset-0 z-10">
                 <div 
                   className="absolute inset-0 rounded-xl"
@@ -151,8 +155,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           </div>
         ))}
         
-        {/* Sign in button positioned absolutely over the middle of bottom row */}
-        {(!isAuthenticated && !searchQuery) && (properties.length > 0 || placeholderProperties.length > 0) && (
+        {(!isAuthenticated && (shouldShowSkeletons || (!searchQuery && properties.length > 0))) && (
           <div 
             className="absolute z-20"
             style={{
