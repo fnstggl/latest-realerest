@@ -1,15 +1,16 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import LikeButton from './LikeButton';
 import RewardToolTip from './RewardToolTip';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
+import RewardBadge from './RewardBadge';
 
 interface PropertyHeaderProps {
   title: string;
@@ -48,7 +49,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   sellerName = "Seller",
   waitlistStatus
 }) => {
-  const [showRewardDialog, setShowRewardDialog] = React.useState(false);
+  const [hasClaimedReward, setHasClaimedReward] = useState(false);
   const roundedBelowMarket = Math.round(belowMarket);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -132,56 +133,61 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
               message: `${userData?.name || 'A user'} has claimed the reward for your property "${title}"`,
               type: 'reward',
               properties: {
-                propertyId: propertyId
+                propertyId
               }
             }
           ]);
         }
       }
 
-      toast({
-        title: "Reward Claimed",
+      toast.success("Reward Claimed", {
         description: "The seller has been notified.",
       });
 
-      setShowRewardDialog(true);
+      setHasClaimedReward(true);
     } catch (error) {
       console.error('Error claiming reward:', error);
       toast.error("Failed to claim reward. Please try again.");
     }
   };
 
-  const handleRewardDialogClose = () => {
-    setShowRewardDialog(false);
+  const navigateToRewards = () => {
     navigate('/dashboard', { state: { activeTab: 'rewards' } });
   };
 
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
-      return <span className="font-medium text-sm sm:text-base break-words">
+      return (
+        <span className="font-medium text-sm sm:text-base break-words">
           {fullAddress}{location ? `, ${location}` : ''}
-        </span>;
+        </span>
+      );
     }
-    return <span className="font-medium text-sm sm:text-base">
+    return (
+      <span className="font-medium text-sm sm:text-base">
         <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
           Join Waitlist For Address
         </span>
         {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
-      </span>;
+      </span>
+    );
   };
 
-  return <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
+  return (
+    <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2">
           <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
             <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
             <span className="text-black font-playfair font-bold italic">Below Market</span>
           </div>
-          {reward && reward >= 3000 && <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
+          {reward && reward >= 3000 && (
+            <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
               <span className="font-futura font-extrabold mr-1 text-sky-600">{formatCurrency(reward)}</span> 
               <span className="font-futura font-extrabold mr-1 text-sky-600">Reward</span>
               <RewardToolTip amount={reward} />
-            </div>}
+            </div>
+          )}
         </div>
         {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
       </div>
@@ -219,7 +225,8 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         </div>
       </div>
 
-      {waitlistStatus === 'pending' && <div className="mt-4 space-y-3">
+      {waitlistStatus === 'pending' && (
+        <div className="mt-4 space-y-3">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <p className="text-black font-medium">Waitlist Request Pending</p>
             <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
@@ -234,29 +241,29 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             </Button>
           </Link>
           
-          {reward && reward > 0 && <Button 
-            variant="default" 
-            className="w-full bg-black hover:bg-black/90 text-white" 
-            onClick={handleClaimReward}
-          >
-            Claim {formatCurrency(reward)} Reward
-          </Button>}
-        </div>}
-
-      <Dialog open={showRewardDialog} onOpenChange={handleRewardDialogClose}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Reward Claim</DialogTitle>
-            <DialogDescription>
-              You've just accepted the {formatCurrency(reward || 0)} reward for {title}. Find a buyer for the seller, get an assignment of contract agreement signed (download from "How to Wholesale" in guides) and get paid.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-4 flex justify-end">
-            <Button onClick={handleRewardDialogClose}>Go to Rewards Dashboard</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>;
+          {reward && reward > 0 && !hasClaimedReward && (
+            <Button 
+              variant="default" 
+              className="w-full bg-black hover:bg-black/90 text-white" 
+              onClick={handleClaimReward}
+            >
+              Claim {formatCurrency(reward)} Reward
+            </Button>
+          )}
+          
+          {reward && reward > 0 && hasClaimedReward && (
+            <Button 
+              variant="default" 
+              className="w-full bg-green-600 hover:bg-green-700 text-white" 
+              onClick={navigateToRewards}
+            >
+              See Reward Progress in Dashboard
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default PropertyHeader;

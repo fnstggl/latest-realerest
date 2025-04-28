@@ -17,18 +17,20 @@ interface RewardProgressProps {
 
 const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initialStatus }) => {
   const [status, setStatus] = useState(initialStatus);
+  const [isUpdating, setIsUpdating] = useState(false);
   
   const steps = [
-    { id: 'claimed', label: 'Claimed Reward', checked: status.claimed },
-    { id: 'foundBuyer', label: 'Found Interested Buyer', checked: status.foundBuyer },
-    { id: 'submittedOffer', label: 'Buyer Submitted an Offer', checked: status.submittedOffer },
-    { id: 'offerAccepted', label: 'Offer Accepted', checked: status.offerAccepted },
+    { id: 'claimed', label: 'Claimed reward', checked: status.claimed },
+    { id: 'foundBuyer', label: 'Found interested buyer', checked: status.foundBuyer },
+    { id: 'submittedOffer', label: 'Buyer submitted an offer', checked: status.submittedOffer },
+    { id: 'offerAccepted', label: 'Offer accepted', checked: status.offerAccepted },
     { id: 'dealClosed', label: 'Deal Closed', checked: status.dealClosed }
   ];
 
   const handleCheckStep = async (stepId: string) => {
-    if (stepId === 'claimed') return; // Cannot uncheck the claimed step
+    if (stepId === 'claimed' || isUpdating) return; // Cannot uncheck the claimed step or if already updating
     
+    setIsUpdating(true);
     const newStatus = { ...status };
     
     // Toggle the status
@@ -54,13 +56,7 @@ const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initi
       const { error } = await supabase
         .from('bounty_claims')
         .update({
-          status_details: {
-            claimed: newStatus.claimed,
-            foundBuyer: newStatus.foundBuyer,
-            submittedOffer: newStatus.submittedOffer,
-            offerAccepted: newStatus.offerAccepted,
-            dealClosed: newStatus.dealClosed
-          }
+          status_details: newStatus
         })
         .eq('id', rewardId);
         
@@ -71,6 +67,8 @@ const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initi
     } catch (error) {
       console.error("Error updating reward progress:", error);
       toast.error("Failed to update progress");
+    } finally {
+      setIsUpdating(false);
     }
   };
   
@@ -78,33 +76,33 @@ const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initi
   const progress = Math.round((completedSteps / steps.length) * 100);
   
   return (
-    <div className="mt-3">
+    <div className="mt-6">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-gray-500">Deal Progress</span>
         <span className="text-sm font-medium text-gray-700">{progress}%</span>
       </div>
       
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
         <div 
-          className="bg-gradient-to-r from-blue-500 to-purple-500 h-2.5 rounded-full" 
+          className="bg-blue-500 h-2.5 rounded-full" 
           style={{ width: `${progress}%` }}
         ></div>
       </div>
       
-      <div className="mt-3 space-y-2">
-        {steps.map((step) => (
-          <div 
-            key={step.id}
-            className={`flex items-center p-2 rounded-lg ${step.checked ? 'bg-green-50 border border-green-100' : 'bg-gray-50 border border-gray-100'}`}
-            onClick={() => step.id !== 'claimed' && handleCheckStep(step.id)}
-          >
-            <div 
-              className={`w-5 h-5 rounded-full flex items-center justify-center mr-2 cursor-pointer
-                ${step.id === 'claimed' ? 'bg-green-500 cursor-default' : step.checked ? 'bg-green-500' : 'bg-gray-200'}`}
+      <div className="flex justify-between items-center mt-2">
+        {steps.map((step, index) => (
+          <div key={step.id} className="flex flex-col items-center max-w-[100px] text-center">
+            <button 
+              className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
+                step.id === 'claimed' ? 'bg-blue-500 cursor-default' : 
+                step.checked ? 'bg-blue-500 cursor-pointer' : 'bg-gray-200 cursor-pointer'
+              } ${isUpdating ? 'opacity-50' : ''}`}
+              onClick={() => handleCheckStep(step.id)}
+              disabled={step.id === 'claimed' || isUpdating}
             >
-              {step.checked && <Check size={14} className="text-white" />}
-            </div>
-            <span className={`text-sm ${step.checked ? 'font-medium' : ''}`}>{step.label}</span>
+              {step.checked && <Check size={20} className="text-white" />}
+            </button>
+            <span className="text-xs text-center">{step.label}</span>
           </div>
         ))}
       </div>

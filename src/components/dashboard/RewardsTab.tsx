@@ -20,13 +20,13 @@ type BountyClaim = {
   id: string;
   property_listings: PropertyListing;
   status: string;
-  status_details?: {
+  status_details: {
     claimed: boolean;
     foundBuyer: boolean;
     submittedOffer: boolean;
     offerAccepted: boolean;
     dealClosed: boolean;
-  } | null;
+  };
 };
 
 const RewardsTab = () => {
@@ -55,15 +55,15 @@ const RewardsTab = () => {
       
       return (data || []).map(claim => {
         // Ensure status_details has all required fields
-        const status_details = claim.status_details || {};
+        const statusDetails = claim.status_details || {};
         return {
           ...claim,
           status_details: {
             claimed: true, // Always true since it's claimed
-            foundBuyer: status_details.foundBuyer || false,
-            submittedOffer: status_details.submittedOffer || false,
-            offerAccepted: status_details.offerAccepted || false,
-            dealClosed: status_details.dealClosed || false
+            foundBuyer: statusDetails.foundBuyer || false,
+            submittedOffer: statusDetails.submittedOffer || false,
+            offerAccepted: statusDetails.offerAccepted || false,
+            dealClosed: statusDetails.dealClosed || false
           }
         };
       }) as BountyClaim[];
@@ -88,7 +88,7 @@ const RewardsTab = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {rewards.map((reward) => {
         const propertyListings = reward.property_listings;
         const images = propertyListings?.images || [];
@@ -97,29 +97,29 @@ const RewardsTab = () => {
         const rewardAmount = propertyListings?.reward || 0;
         
         return (
-          <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div key={reward.id} className="bg-white p-6 rounded-lg border border-gray-200">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div className="flex items-center space-x-4">
                 <Link to={`/property/${propertyListings?.id}`} className="block">
                   <img 
                     src={images[0] || '/placeholder.svg'} 
                     alt={title}
-                    className="w-20 h-20 object-cover rounded"
+                    className="w-24 h-24 object-cover rounded-lg"
                   />
                 </Link>
                 <div>
                   <Link to={`/property/${propertyListings?.id}`} className="hover:underline">
-                    <h3 className="font-semibold">{title}</h3>
+                    <h3 className="font-semibold text-lg">{title}</h3>
                   </Link>
                   <p className="text-sm text-gray-600">{location}</p>
-                  <div className="flex items-center text-green-600 font-semibold mt-1">
-                    <DollarSign size={16} className="mr-1" />
+                  <div className="flex items-center text-green-600 font-semibold mt-2 text-lg">
+                    <DollarSign size={18} className="mr-1" />
                     {rewardAmount.toLocaleString()}
                   </div>
                 </div>
               </div>
               
-              <Link to={`/property/${propertyListings?.id}`} className="md:self-start">
+              <Link to={`/property/${propertyListings?.id}`} className="self-center md:self-start">
                 <Button variant="outline" size="sm" className="flex items-center gap-2">
                   View Property
                   <ArrowRight size={14} />
@@ -129,13 +129,7 @@ const RewardsTab = () => {
             
             <RewardProgress 
               rewardId={reward.id} 
-              status={reward.status_details || {
-                claimed: true,
-                foundBuyer: false,
-                submittedOffer: false,
-                offerAccepted: false,
-                dealClosed: false
-              }}
+              status={reward.status_details}
             />
           </div>
         );
