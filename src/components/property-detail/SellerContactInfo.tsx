@@ -4,8 +4,6 @@ import { Phone, Mail, User, MessageSquare, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useMessages } from "@/hooks/useMessages";
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
 
 interface SellerContactInfoProps {
   name?: string;
@@ -35,7 +33,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   });
 
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { getOrCreateConversation } = useMessages();
 
   // Return null early if we shouldn't display contact info
   if (!showContact) {
@@ -44,58 +42,17 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   }
   
   const isPending = waitlistStatus === 'pending';
-  const displayName = name || 'Unknown Seller';
+  const displayName = name || 'Unknown Seller'; // Changed from 'Property Owner' to 'Unknown Seller'
 
   // Handler for direct messaging seller
   const handleMessageSeller = async (event: React.MouseEvent) => {
     event.preventDefault();
-    if (!sellerId || !user?.id) return;
-    
+    if (!sellerId) return;
     try {
-      // Get or create conversation
-      const { data: existingConversation } = await supabase
-        .from('conversations')
-        .select('id')
-        .or(`participant1.eq.${user.id},participant2.eq.${user.id}`)
-        .or(`participant1.eq.${sellerId},participant2.eq.${sellerId}`)
-        .maybeSingle();
-        
-      let conversationId;
-      
-      if (existingConversation) {
-        conversationId = existingConversation.id;
-      } else {
-        // Create new conversation
-        const { data: newConversation } = await supabase
-          .from('conversations')
-          .insert({
-            participant1: user.id,
-            participant2: sellerId
-          })
-          .select('id')
-          .single();
-          
-        if (newConversation) {
-          conversationId = newConversation.id;
-        }
-      }
-      
+      const conversationId = await getOrCreateConversation(sellerId);
       if (conversationId) {
-        // Send a notification about the new conversation
-        await supabase
-          .from('notifications')
-          .insert([{
-            user_id: sellerId,
-            title: 'New Message',
-            message: `${user?.email || 'Someone'} has sent you a message about your property.`,
-            type: 'info',
-            properties: { conversationId }
-          }]);
-        
-        // Navigate to the specific conversation
         navigate(`/messages/${conversationId}`);
       } else {
-        // Fallback to messages page
         navigate('/messages');
       }
     } catch (err) {
@@ -197,6 +154,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
         )}
         
         {sellerId && !isPending && (
+          // Note: Use a button instead of Link so we can dynamically navigate after conversation creation
           <button
             type="button"
             onClick={handleMessageSeller}
@@ -206,6 +164,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
             }
             style={{
               position: "relative",
+              // Ensure the button's stacking context does not block the span
               zIndex: 1,
             }}
           >
@@ -213,7 +172,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
               <MessageSquare size={18} className="mr-2 text-black" />
               <span className="relative z-10">Message Seller</span>
             </span>
-            {/* Gradient border - always visible */}
+            {/* Gradient border - always visible now */}
             <span
               className="absolute inset-0 opacity-100 rounded-xl pointer-events-none"
               style={{
@@ -248,3 +207,4 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
 };
 
 export default SellerContactInfo;
+

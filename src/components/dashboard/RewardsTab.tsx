@@ -2,124 +2,109 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Award, DollarSign } from 'lucide-react';
+import { Gift, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import RewardProgressTracker from './RewardProgressTracker';
+import { useAuth } from '@/context/AuthContext';
 
-type PropertyListing = {
-  id: string;
-  title: string;
-  reward: number;
-  location: string;
-  images: string[];
-};
-
-type BountyClaim = {
-  id: string;
-  property_listings: PropertyListing;
-  status: string;
-  created_at: string;
-};
-
-const RewardsTab = () => {
-  const { data: rewards, isLoading } = useQuery({
-    queryKey: ['rewards'],
+const PayoutsTab = () => {
+  const {
+    user
+  } = useAuth();
+  const {
+    data: payouts,
+    isLoading
+  } = useQuery({
+    queryKey: ['wholesalerPayouts'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('bounty_claims')
-        .select(`
-          id,
-          status,
-          created_at,
+      if (!user?.id) return {
+        total: 0,
+        claimed: []
+      };
+      const {
+        data,
+        error
+      } = await supabase.from('bounty_claims').select(`
+          *,
           property_listings (
             id,
             title,
-            reward,
+            bounty,
             location,
             images
           )
-        `)
-        .order('created_at', { ascending: false });
-
+        `).eq('user_id', user.id).eq('status', 'claimed').order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
       
-      return data as BountyClaim[];
+      // Map bounty to reward in the returned data
+      const claimsWithRewards = data?.map(item => ({
+        ...item,
+        property_listings: {
+          ...item.property_listings,
+          reward: item.property_listings.bounty
+        }
+      }));
+      
+      const totalPayout = claimsWithRewards?.reduce((sum, item) => {
+        return sum + (Number(item.property_listings?.reward) || 0);
+      }, 0);
+      
+      return {
+        total: totalPayout,
+        claimed: claimsWithRewards || []
+      };
     }
   });
-
+  
   if (isLoading) {
     return <div className="flex justify-center py-8">Loading...</div>;
   }
-
-  if (!rewards?.length) {
-    return (
-      <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-        <Award size={32} className="mx-auto mb-4 text-gray-400" />
-        <h3 className="text-lg font-semibold mb-2">No claimed rewards yet</h3>
-        <p className="text-gray-600 mb-6">Claim property rewards to earn commissions</p>
+  if (!payouts?.claimed.length) {
+    return <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+        <Gift size={32} className="mx-auto mb-4 text-gray-400" />
+        <h3 className="text-lg font-semibold mb-2">No rewards claimed yet</h3>
+        <p className="text-gray-600 mb-6">Claim rewards from properties with finder's fees to get paid thousands.</p>
         <Button asChild variant="outline">
           <Link to="/search">Browse Properties</Link>
         </Button>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-6">
-      {rewards.map((reward) => {
-        const propertyListings = reward.property_listings;
-        if (!propertyListings) return null;
-        
-        const images = propertyListings?.images || [];
-        const title = propertyListings?.title || 'Property';
-        const location = propertyListings?.location || 'Unknown location';
-        const rewardAmount = propertyListings?.reward || 0;
-        
-        return (
-          <div key={reward.id} className="bg-white p-6 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-4">
-                <Link to={`/property/${propertyListings.id}`}>
-                  <img 
-                    src={images[0] || '/placeholder.svg'} 
-                    alt={title}
-                    className="w-20 h-20 object-cover rounded"
-                  />
-                </Link>
-                <div>
-                  <Link to={`/property/${propertyListings.id}`} className="hover:underline">
-                    <h3 className="font-semibold text-lg">{title}</h3>
-                  </Link>
-                  <p className="text-gray-600">{location}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center text-green-600 font-bold text-lg">
-                  <DollarSign size={18} className="mr-1" />
-                  {rewardAmount.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                  })}
-                </div>
-                <div className="text-sm text-gray-500">Potential Reward</div>
+  return <div className="space-y-6">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold">Total Payouts Earned</h3>
+          <div className="text-2xl font-bold text-green-600 flex items-center">
+            <DollarSign size={24} />
+            {payouts.total.toLocaleString()}
+          </div>
+        </div>
+      </div>
+      
+      <h3 className="text-lg font-semibold pt-4">Payout History</h3>
+      
+      <div className="grid gap-4">
+        {payouts.claimed.map((reward: any) => <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <img src={reward.property_listings?.images?.[0] || "https://placehold.co/600x400?text=Property+Image"} alt={reward.property_listings?.title} className="w-16 h-16 object-cover rounded" />
+              <div>
+                <h3 className="font-semibold">{reward.property_listings?.title}</h3>
+                <p className="text-sm text-gray-600">{reward.property_listings?.location}</p>
               </div>
             </div>
-            
-            <RewardProgressTracker claimId={reward.id} initialStatus={reward.status} />
-            
-            <div className="mt-4 flex justify-end">
-              <Button asChild variant="outline" size="sm">
-                <Link to={`/property/${propertyListings.id}`}>View Property</Link>
+            <div className="text-right">
+              <div className="flex items-center text-green-600 font-semibold">
+                <DollarSign size={16} className="mr-1" />
+                {reward.property_listings?.reward}
+              </div>
+              <Button asChild className="mt-2" variant="outline" size="sm">
+                <Link to={`/property/${reward.property_listings?.id}`}>View Property</Link>
               </Button>
             </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+          </div>)}
+      </div>
+    </div>;
 };
 
-export default RewardsTab;
+export default PayoutsTab;

@@ -6,7 +6,7 @@ import LikeButton from './LikeButton';
 import RewardToolTip from './RewardToolTip';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from "@/hooks/use-toast";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -51,7 +51,6 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const [showRewardDialog, setShowRewardDialog] = React.useState(false);
   const roundedBelowMarket = Math.round(belowMarket);
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const handleClaimReward = async () => {
     if (!user?.id || !propertyId) return;
@@ -63,19 +62,22 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         .eq('id', user.id)
         .single();
 
-      const { error, data: claimData } = await supabase
+      const { error } = await supabase
         .from('bounty_claims')
         .insert([{
           user_id: user.id,
           property_id: propertyId,
           status: 'claimed'
-        }])
-        .select('id')
-        .single();
+        }]);
 
       if (error) throw error;
 
       // Create a conversation if it doesn't exist
+      const { data: conversationData } = await supabase.rpc('get_user_email', {
+        user_id_param: userId
+      });
+
+      // Fix for the conversation creation
       if (userId) {
         // Get or create conversation using a query instead of RPC
         const { data: existingConversation } = await supabase
@@ -105,17 +107,6 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           }
         }
 
-        // Create notification for the seller
-        await supabase
-          .from('notifications')
-          .insert([{
-            user_id: userId,
-            title: 'Reward Claimed',
-            message: `${userData?.name || 'A user'} has claimed the reward for your property: ${title}`,
-            type: 'reward',
-            properties: { propertyId, rewardAmount: reward }
-          }]);
-
         if (conversationId) {
           // Send notification message
           await supabase
@@ -135,9 +126,6 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       });
 
       setShowRewardDialog(true);
-      setTimeout(() => {
-        navigate('/dashboard', { state: { activeTab: 'rewards' } });
-      }, 2000);
     } catch (error) {
       console.error('Error claiming reward:', error);
       toast({
@@ -217,58 +205,14 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
           </div>
           
-          {userId && (
-            <Button 
-              variant="outline" 
-              className="w-full relative group"
-              onClick={() => {
-                if (user?.id && userId && propertyId) {
-                  // Get or create conversation and navigate
-                  supabase
-                    .from('conversations')
-                    .select('id')
-                    .or(`participant1.eq.${user.id},participant2.eq.${user.id}`)
-                    .or(`participant1.eq.${userId},participant2.eq.${userId}`)
-                    .maybeSingle()
-                    .then(({ data: existingConversation, error }) => {
-                      if (error) {
-                        console.error("Error finding conversation:", error);
-                        return;
-                      }
-                      
-                      if (existingConversation) {
-                        navigate(`/messages/${existingConversation.id}`);
-                      } else {
-                        // Create new conversation
-                        supabase
-                          .from('conversations')
-                          .insert({
-                            participant1: user.id,
-                            participant2: userId
-                          })
-                          .select('id')
-                          .single()
-                          .then(({ data: newConversation, error }) => {
-                            if (error) {
-                              console.error("Error creating conversation:", error);
-                              return;
-                            }
-                            
-                            if (newConversation) {
-                              navigate(`/messages/${newConversation.id}`);
-                            }
-                          });
-                      }
-                    });
-                }
-              }}
-            >
+          <Link to={`/messages?seller=${userId}`} className="block w-full">
+            <Button variant="outline" className="w-full relative group">
               <MessageSquare className="mr-2" />
               <span className="relative z-10">
                 Message {sellerName || 'Seller'} Directly
               </span>
             </Button>
-          )}
+          </Link>
           
           {reward && reward > 0 && <Button 
             variant="default" 
@@ -282,16 +226,13 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       <Dialog open={showRewardDialog} onOpenChange={setShowRewardDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Reward Claimed</DialogTitle>
+            <DialogTitle>Reward Claim</DialogTitle>
             <DialogDescription>
               You've just accepted the {formatCurrency(reward || 0)} reward for {title}. Find a buyer for the seller, get an assignment of contract agreement signed (download from "How to Wholesale" in guides) and get paid.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex justify-end">
-            <Button onClick={() => {
-              setShowRewardDialog(false);
-              navigate('/dashboard', { state: { activeTab: 'rewards' } });
-            }}>Go to Rewards Dashboard</Button>
+            <Button onClick={() => setShowRewardDialog(false)}>Close</Button>
           </div>
         </DialogContent>
       </Dialog>
