@@ -22,6 +22,7 @@ const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = fals
               w-8 h-8 rounded-full 
               bg-[#FEF7CD]
               border-2 border-[#F97316]
+              cursor-pointer
             `}
           >
             <svg

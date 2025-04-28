@@ -24,9 +24,9 @@ type PropertyDetailType = {
   after_repair_value?: number;
   estimated_rehab?: number;
   property_type?: string;
-  year_built?: number;
-  lot_size?: number;
-  parking?: string;
+  year_built?: number | null;
+  lot_size?: number | null;
+  parking?: string | null;
   comparable_addresses?: string[];
   created_at?: string;
 };
@@ -90,9 +90,9 @@ const usePropertyDetail = (propertyId?: string) => {
           after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
           estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
           property_type: propertyData.property_type,
-          year_built: propertyData.year_built,
-          lot_size: propertyData.lot_size,
-          parking: propertyData.parking,
+          year_built: propertyData.year_built || null,
+          lot_size: propertyData.lot_size || null,
+          parking: propertyData.parking || null,
           comparable_addresses: propertyData.comparable_addresses,
           created_at: propertyData.created_at
         };

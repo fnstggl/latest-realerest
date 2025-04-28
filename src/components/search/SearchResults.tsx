@@ -1,182 +1,160 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropertyCard from '@/components/PropertyCard';
-import { Button } from "@/components/ui/button";
-import { Grid, List } from 'lucide-react';
-import { Listing } from '@/hooks/useListings';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useListings } from '@/hooks/useListings';
+import { Button } from '@/components/ui/button';
+import LoadingSpinner from '../ui/LoadingSpinner';
+import { Search, Ghost } from 'lucide-react';
 
 interface SearchResultsProps {
-  properties: Listing[];
-  sortOption: string;
-  onSortChange: (option: string) => void;
-  isGridView: boolean;
-  setIsGridView: (isGrid: boolean) => void;
-  isAuthenticated: boolean;
-  searchQuery: string | null;
+  location: string;
+  minPrice: number;
+  maxPrice: number;
+  minBeds: number;
+  minBaths: number;
+  propertyType: string;
+  nearbyOnly: boolean;
+  belowMarket: boolean;
+  sort: string;
+  includeRental: boolean;
+  withPhotosOnly: boolean;
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({
-  properties,
-  sortOption,
-  onSortChange,
-  isGridView,
-  setIsGridView,
-  isAuthenticated,
-  searchQuery
+  location,
+  minPrice,
+  maxPrice,
+  minBeds,
+  minBaths,
+  propertyType,
+  nearbyOnly,
+  belowMarket,
+  sort,
+  includeRental,
+  withPhotosOnly
 }) => {
-  const isMobile = useIsMobile();
-  const ITEMS_PER_ROW = isGridView ? (isMobile ? 1 : 3) : 1;
+  const { listings, isLoading, error, fetchListings } = useListings();
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchListings({
+        location,
+        minPrice,
+        maxPrice,
+        minBeds,
+        minBaths,
+        propertyType,
+        nearbyOnly,
+        belowMarket,
+        sort,
+        includeRental,
+        withPhotosOnly
+      });
+    };
+    
+    fetchData();
+  }, [
+    location,
+    minPrice,
+    maxPrice,
+    minBeds,
+    minBaths,
+    propertyType,
+    nearbyOnly,
+    belowMarket,
+    sort,
+    includeRental,
+    withPhotosOnly
+  ]);
 
-  // If user is not authenticated and there's a search with no results,
-  // show skeleton listings
-  const shouldShowSkeletons = !isAuthenticated && searchQuery && properties.length === 0;
-  const totalItems = shouldShowSkeletons ? ITEMS_PER_ROW : properties.length;
-  const totalFullRows = Math.floor(totalItems / ITEMS_PER_ROW);
-  const lastFullRowStartIndex = Math.max(0, (totalFullRows - 1) * ITEMS_PER_ROW);
-  const lastFullRowEndIndex = lastFullRowStartIndex + ITEMS_PER_ROW;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
 
-  // Make sure we show property placeholders even if properties array is empty
-  const visibleProperties = isAuthenticated || searchQuery 
-    ? properties 
-    : properties.length > 0 
-      ? properties.slice(0, lastFullRowEndIndex)
-      : [];
-
-  const generatePlaceholderProperties = () => {
-    if (shouldShowSkeletons) {
-      return Array(ITEMS_PER_ROW).fill(null);
-    }
-    if (isAuthenticated || searchQuery || properties.length > 0) return [];
-    return Array(ITEMS_PER_ROW).fill(null).map((_, index) => ({
-      id: `placeholder-${index}`,
-      isPlaceholder: true
-    }));
-  };
-
-  const placeholderProperties = generatePlaceholderProperties();
-
-  return (
-    <div className="flex-1">
-      <div className="bg-white rounded-xl p-4 mb-6 neo-container">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="font-editorial font-bold italic text-lg">
-            Below-market homes you can buy today.
-          </h1>
-          
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <select 
-              className="flex-1 sm:flex-none border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary neo-input" 
-              value={sortOption} 
-              onChange={e => onSortChange(e.target.value)}
-            >
-              <option value="recommended">Recommended</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="below-market">Highest Discount</option>
-              <option value="newest">Newest</option>
-            </select>
-            
-            <div className="hidden sm:flex border rounded-md neo-border">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`rounded-r-none ${isGridView ? 'bg-gray-100' : ''}`} 
-                onClick={() => setIsGridView(true)}
-              >
-                <Grid size={18} />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`rounded-l-none ${!isGridView ? 'bg-gray-100' : ''}`} 
-                onClick={() => setIsGridView(false)}
-              >
-                <List size={18} />
-              </Button>
-            </div>
+  if (error) {
+    return (
+      <div className="text-center py-16">
+        <div className="flex justify-center">
+          <div className="p-4 bg-red-50 rounded-full mb-4">
+            <Search className="h-10 w-10 text-red-500" />
           </div>
         </div>
+        <h3 className="text-xl font-bold mb-2">Search Error</h3>
+        <p className="text-gray-600 mb-4">
+          There was a problem with your search. Please try again.
+        </p>
+        <Button onClick={() => fetchListings({
+          location,
+          minPrice,
+          maxPrice,
+          minBeds,
+          minBaths,
+          propertyType,
+          nearbyOnly,
+          belowMarket,
+          sort,
+          includeRental,
+          withPhotosOnly
+        })}>
+          Try Again
+        </Button>
       </div>
-      
-      <div className={`grid gap-6 relative ${isGridView ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3' : 'space-y-6'}`}>
-        {visibleProperties.map((property, index) => (
-          <div 
-            key={property.id} 
-            className={`relative ${index >= lastFullRowStartIndex && !isAuthenticated && !searchQuery ? 'pointer-events-none' : ''}`}
-          >
-            <PropertyCard {...property} />
-            
-            {!isAuthenticated && !searchQuery && index >= lastFullRowStartIndex && index < lastFullRowEndIndex && (
-              <div className="absolute inset-0 z-10">
-                <div 
-                  className="absolute inset-0 rounded-xl"
-                  style={{ 
-                    backdropFilter: 'blur(3px)',
-                    background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        ))}
+    );
+  }
 
-        {shouldShowSkeletons && placeholderProperties.map((_, index) => (
-          <div key={`skeleton-${index}`} className="relative">
-            <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col rounded-xl">
-              <Skeleton className="h-[240px] w-full rounded-t-xl" />
-              <div className="p-6 flex-1 flex flex-col rounded-b-xl bg-white/90">
-                <Skeleton className="h-6 w-3/4 mb-3" />
-                <Skeleton className="h-4 w-1/2 mb-1" />
-                <Skeleton className="h-6 w-2/3 mb-2" />
-                <Skeleton className="h-4 w-5/6 mb-4" />
-                
-                <div className="border-t border-white/20 pt-4 mt-auto">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                      <Skeleton className="h-8 w-12 rounded-lg" />
-                      <Skeleton className="h-8 w-12 rounded-lg" />
-                      <Skeleton className="h-8 w-16 rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="absolute inset-0 z-10">
-                <div 
-                  className="absolute inset-0 rounded-xl"
-                  style={{ 
-                    backdropFilter: 'blur(3px)',
-                    background: 'linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)'
-                  }}
-                />
-              </div>
-            </div>
+  if (!listings || listings.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <div className="flex justify-center">
+          <div className="p-4 bg-gray-50 rounded-full mb-4">
+            <Ghost className="h-10 w-10 text-gray-400" />
           </div>
-        ))}
-        
-        {(!isAuthenticated && (shouldShowSkeletons || (!searchQuery && properties.length > 0))) && (
-          <div 
-            className="absolute z-20"
-            style={{
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              bottom: '0',
-              width: 'auto',
-              pointerEvents: 'auto',
-              marginBottom: isMobile ? '25%' : '12%'
-            }}
-          >
-            <Button 
-              className="relative bg-white text-black px-8 py-6 rounded-lg shadow-xl font-bold border-2 border-transparent gradient-border-button hover:bg-white/95 cursor-pointer"
-              onClick={() => window.location.href = '/signin'}
-            >
-              Sign in to view more properties
-            </Button>
-          </div>
-        )}
+        </div>
+        <h3 className="text-xl font-bold mb-2">No Properties Found</h3>
+        <p className="text-gray-600 mb-4">
+          We couldn't find any properties matching your criteria.
+        </p>
+        <Button onClick={() => fetchListings({
+          location: '',
+          minPrice: 0,
+          maxPrice: 10000000,
+          minBeds: 0,
+          minBaths: 0,
+          propertyType: '',
+          nearbyOnly: false,
+          belowMarket: false,
+          sort: 'newest',
+          includeRental: true,
+          withPhotosOnly: false
+        })}>
+          Reset Filters
+        </Button>
       </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {listings.map((property) => (
+        <PropertyCard
+          key={property.id}
+          id={property.id}
+          price={Number(property.price)}
+          marketPrice={Number(property.market_price)}
+          location={property.location}
+          address={property.title}
+          image={property.images?.[0] || '/placeholder.svg'}
+          beds={property.beds || 0}
+          baths={property.baths || 0}
+          sqft={property.sqft || 0}
+          belowMarket={((Number(property.market_price) - Number(property.price)) / Number(property.market_price)) * 100}
+          reward={property.reward}
+        />
+      ))}
     </div>
   );
 };

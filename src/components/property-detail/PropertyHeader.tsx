@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -6,10 +5,11 @@ import LikeButton from './LikeButton';
 import RewardToolTip from './RewardToolTip';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Link } from 'react-router-dom';
-import { toast } from "@/hooks/use-toast";
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { useNotifications } from '@/context/NotificationContext';
 
 interface PropertyHeaderProps {
   title: string;
@@ -51,6 +51,8 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const [showRewardDialog, setShowRewardDialog] = React.useState(false);
   const roundedBelowMarket = Math.round(belowMarket);
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { addNotification } = useNotifications();
 
   const handleClaimReward = async () => {
     if (!user?.id || !propertyId) return;
@@ -62,22 +64,26 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         .eq('id', user.id)
         .single();
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('bounty_claims')
         .insert([{
           user_id: user.id,
           property_id: propertyId,
-          status: 'claimed'
-        }]);
+          status: 'claimed',
+          status_details: {
+            claimed: true,
+            foundBuyer: false,
+            submittedOffer: false,
+            offerAccepted: false,
+            dealClosed: false
+          }
+        }])
+        .select()
+        .single();
 
       if (error) throw error;
 
       // Create a conversation if it doesn't exist
-      const { data: conversationData } = await supabase.rpc('get_user_email', {
-        user_id_param: userId
-      });
-
-      // Fix for the conversation creation
       if (userId) {
         // Get or create conversation using a query instead of RPC
         const { data: existingConversation } = await supabase
@@ -117,6 +123,19 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
               content: `${userData?.name || 'A user'} has claimed the reward for your property listing.`,
               property_id: propertyId
             }]);
+            
+          // Create notification for the seller
+          await supabase.from('notifications').insert([
+            {
+              user_id: userId,
+              title: 'Reward Claimed',
+              message: `${userData?.name || 'A user'} has claimed the reward for your property "${title}"`,
+              type: 'reward',
+              properties: {
+                propertyId: propertyId
+              }
+            }
+          ]);
         }
       }
 
@@ -128,12 +147,13 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       setShowRewardDialog(true);
     } catch (error) {
       console.error('Error claiming reward:', error);
-      toast({
-        title: "Error",
-        description: "Failed to claim reward. Please try again.",
-        variant: "destructive"
-      });
+      toast.error("Failed to claim reward. Please try again.");
     }
+  };
+
+  const handleRewardDialogClose = () => {
+    setShowRewardDialog(false);
+    navigate('/dashboard', { state: { activeTab: 'rewards' } });
   };
 
   const renderLocation = () => {
@@ -223,7 +243,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           </Button>}
         </div>}
 
-      <Dialog open={showRewardDialog} onOpenChange={setShowRewardDialog}>
+      <Dialog open={showRewardDialog} onOpenChange={handleRewardDialogClose}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Reward Claim</DialogTitle>
@@ -232,7 +252,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex justify-end">
-            <Button onClick={() => setShowRewardDialog(false)}>Close</Button>
+            <Button onClick={handleRewardDialogClose}>Go to Rewards Dashboard</Button>
           </div>
         </DialogContent>
       </Dialog>

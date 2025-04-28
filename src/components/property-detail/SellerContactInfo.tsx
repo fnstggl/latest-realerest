@@ -4,6 +4,9 @@ import { Phone, Mail, User, MessageSquare, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useMessages } from "@/hooks/useMessages";
+import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 
 interface SellerContactInfoProps {
   name?: string;
@@ -12,6 +15,8 @@ interface SellerContactInfoProps {
   showContact: boolean;
   sellerId?: string | null;
   waitlistStatus?: string | null;
+  propertyId?: string;
+  propertyTitle?: string;
 }
 
 const SellerContactInfo: React.FC<SellerContactInfoProps> = ({ 
@@ -20,7 +25,9 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   email, 
   showContact,
   sellerId,
-  waitlistStatus
+  waitlistStatus,
+  propertyId,
+  propertyTitle
 }) => {
   // Make sure we're doing proper debugging
   console.log("SellerContactInfo rendering:", { 
@@ -34,6 +41,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
 
   const navigate = useNavigate();
   const { getOrCreateConversation } = useMessages();
+  const { user } = useAuth();
 
   // Return null early if we shouldn't display contact info
   if (!showContact) {
@@ -42,21 +50,43 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   }
   
   const isPending = waitlistStatus === 'pending';
-  const displayName = name || 'Unknown Seller'; // Changed from 'Property Owner' to 'Unknown Seller'
+  const displayName = name || 'Unknown Seller';
 
   // Handler for direct messaging seller
   const handleMessageSeller = async (event: React.MouseEvent) => {
     event.preventDefault();
     if (!sellerId) return;
+    
     try {
+      // Get or create conversation
       const conversationId = await getOrCreateConversation(sellerId);
+      
       if (conversationId) {
+        // Create a notification for the seller
+        if (user?.id && propertyId && propertyTitle) {
+          await supabase.from('notifications').insert([
+            {
+              user_id: sellerId,
+              title: 'New Message',
+              message: `You have a new message about your property "${propertyTitle}"`,
+              type: 'message',
+              properties: {
+                conversationId: conversationId,
+                propertyId: propertyId
+              }
+            }
+          ]);
+        }
+        
         navigate(`/messages/${conversationId}`);
+        toast.success("Connected with seller");
       } else {
+        toast.error("Couldn't create conversation");
         navigate('/messages');
       }
     } catch (err) {
       console.error("Failed to navigate to seller conversation:", err);
+      toast.error("Failed to connect with seller");
       navigate('/messages');
     }
   };
@@ -207,4 +237,3 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
 };
 
 export default SellerContactInfo;
-
