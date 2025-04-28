@@ -56,7 +56,10 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const { addNotification } = useNotifications();
 
   const handleClaimReward = async () => {
-    if (!user?.id || !propertyId) return;
+    if (!user?.id || !propertyId) {
+      toast.error("Please log in to claim the reward");
+      return;
+    }
 
     try {
       const { data: userData } = await supabase
@@ -241,7 +244,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             </Button>
           </Link>
           
-          {reward && reward > 0 && !hasClaimedReward && (
+          {reward && reward > 0 && !hasClaimedReward && user && (
             <Button 
               variant="default" 
               className="w-full bg-black hover:bg-black/90 text-white" 

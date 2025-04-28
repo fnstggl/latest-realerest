@@ -13,9 +13,10 @@ interface RewardProgressProps {
     offerAccepted: boolean;
     dealClosed: boolean;
   };
+  rewardAmount?: number;
 }
 
-const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initialStatus }) => {
+const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initialStatus, rewardAmount }) => {
   const [status, setStatus] = useState(initialStatus);
   const [isUpdating, setIsUpdating] = useState(false);
   
@@ -79,12 +80,19 @@ const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initi
     <div className="mt-6">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-gray-500">Deal Progress</span>
-        <span className="text-sm font-medium text-gray-700">{progress}%</span>
+        <div className="flex items-center">
+          <span className="text-sm font-medium text-gray-700 mr-2">{progress}%</span>
+          {rewardAmount && (
+            <span className="text-sm font-bold text-green-600">
+              ${rewardAmount.toLocaleString()}
+            </span>
+          )}
+        </div>
       </div>
       
       <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
         <div 
-          className="bg-blue-500 h-2.5 rounded-full" 
+          className="bg-black h-2.5 rounded-full" 
           style={{ width: `${progress}%` }}
         ></div>
       </div>
@@ -94,8 +102,8 @@ const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initi
           <div key={step.id} className="flex flex-col items-center max-w-[100px] text-center">
             <button 
               className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
-                step.id === 'claimed' ? 'bg-blue-500 cursor-default' : 
-                step.checked ? 'bg-blue-500 cursor-pointer' : 'bg-gray-200 cursor-pointer'
+                step.id === 'claimed' ? 'bg-black cursor-default' : 
+                step.checked ? 'bg-black cursor-pointer' : 'bg-gray-200 cursor-pointer'
               } ${isUpdating ? 'opacity-50' : ''}`}
               onClick={() => handleCheckStep(step.id)}
               disabled={step.id === 'claimed' || isUpdating}

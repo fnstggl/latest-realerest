@@ -130,6 +130,7 @@ const RewardsTab = () => {
             <RewardProgress 
               rewardId={reward.id} 
               status={reward.status_details}
+              rewardAmount={rewardAmount}
             />
           </div>
         );
