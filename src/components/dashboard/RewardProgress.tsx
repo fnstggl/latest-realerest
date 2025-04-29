@@ -1,149 +1,83 @@
 
 import React, { useState } from 'react';
+import { Check, X } from 'lucide-react';
+import { Button } from '../ui/button';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { Check } from 'lucide-react';
-import { toast } from "sonner";
-import { useAuth } from '@/context/AuthContext';
+import { RewardStatusDetails } from '@/types/bounty';
 
 interface RewardProgressProps {
-  rewardId: string;
-  status: {
-    claimed: boolean;
-    foundBuyer: boolean;
-    submittedOffer: boolean;
-    offerAccepted: boolean;
-    dealClosed: boolean;
-  };
-  rewardAmount?: number;
+  claimId: string;
+  initialStatus: RewardStatusDetails;
+  onStatusUpdate: () => void;
 }
 
-const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initialStatus, rewardAmount }) => {
-  const [status, setStatus] = useState(initialStatus);
+const RewardProgress = ({ claimId, initialStatus, onStatusUpdate }: RewardProgressProps) => {
+  const [status, setStatus] = useState<RewardStatusDetails>(initialStatus);
   const [isUpdating, setIsUpdating] = useState(false);
-  const { user } = useAuth();
-  
+
   const steps = [
-    { id: 'claimed', label: 'Claimed reward', checked: status.claimed },
-    { id: 'foundBuyer', label: 'Found interested buyer', checked: status.foundBuyer },
-    { id: 'submittedOffer', label: 'Buyer submitted an offer', checked: status.submittedOffer },
-    { id: 'offerAccepted', label: 'Offer accepted', checked: status.offerAccepted },
-    { id: 'dealClosed', label: 'Deal Closed', checked: status.dealClosed }
+    { key: 'foundBuyer', label: 'Found Buyer' },
+    { key: 'submittedOffer', label: 'Submitted Offer' },
+    { key: 'offerAccepted', label: 'Offer Accepted' },
+    { key: 'dealClosed', label: 'Deal Closed' }
   ];
 
-  const handleCheckStep = async (stepId: string) => {
-    if (stepId === 'claimed' || isUpdating || !user?.id) return; // Cannot uncheck the claimed step, if already updating, or if not logged in
+  const handleStepToggle = async (step: keyof RewardStatusDetails) => {
+    if (isUpdating) return;
     
     setIsUpdating(true);
+    const newStatus = { ...status, [step]: !status[step] };
     
     try {
-      // First, verify the user owns this reward claim
-      const { data: claimData, error: claimError } = await supabase
-        .from('bounty_claims')
-        .select('id, user_id')
-        .eq('id', rewardId)
-        .single();
-      
-      if (claimError || !claimData) {
-        toast.error("Cannot update progress: Reward claim not found");
-        setIsUpdating(false);
-        return;
-      }
-      
-      if (claimData.user_id !== user.id) {
-        toast.error("Cannot update progress: Unauthorized");
-        setIsUpdating(false);
-        return;
-      }
-      
-      // Apply optimistic update
-      const newStatus = { ...status };
-      
-      // Toggle the status
-      switch (stepId) {
-        case 'foundBuyer':
-          newStatus.foundBuyer = !newStatus.foundBuyer;
-          break;
-        case 'submittedOffer':
-          newStatus.submittedOffer = !newStatus.submittedOffer;
-          break;
-        case 'offerAccepted':
-          newStatus.offerAccepted = !newStatus.offerAccepted;
-          break;
-        case 'dealClosed':
-          newStatus.dealClosed = !newStatus.dealClosed;
-          break;
-        default:
-          break;
-      }
-      
-      // Apply optimistic update
-      setStatus(newStatus);
-      
-      // Update the status in Supabase
       const { error } = await supabase
         .from('bounty_claims')
-        .update({
-          status_details: newStatus
+        .update({ 
+          status_details: newStatus,
+          status: newStatus.dealClosed ? 'completed' : 'claimed'
         })
-        .eq('id', rewardId)
-        .eq('user_id', user.id); // Additional safety check
-        
+        .eq('id', claimId);
+      
       if (error) {
-        // Revert optimistic update if there's an error
-        setStatus(status);
-        console.error("Error updating reward progress:", error);
         throw error;
       }
       
-      toast.success("Progress updated successfully");
+      setStatus(newStatus);
+      onStatusUpdate();
+      toast.success('Progress updated!');
     } catch (error: any) {
-      console.error("Error updating reward progress:", error);
+      console.error('Error updating progress:', error);
       toast.error(`Failed to update progress: ${error.message || "Please try again"}`);
     } finally {
       setIsUpdating(false);
     }
   };
-  
-  const completedSteps = Object.values(status).filter(Boolean).length;
-  const progress = Math.round((completedSteps / steps.length) * 100);
-  
+
   return (
-    <div className="mt-6">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-500">Deal Progress</span>
-        <div className="flex items-center">
-          <span className="text-sm font-medium text-gray-700 mr-2">{progress}%</span>
-          {rewardAmount && (
-            <span className="text-sm font-bold text-green-600">
-              ${rewardAmount.toLocaleString()}
-            </span>
-          )}
-        </div>
-      </div>
+    <div className="space-y-2 mt-3">
+      <h3 className="font-semibold mb-1">Track Your Progress</h3>
       
-      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-        <div 
-          className="bg-black h-2.5 rounded-full" 
-          style={{ width: `${progress}%` }}
-        ></div>
-      </div>
-      
-      <div className="flex justify-between items-center mt-2">
+      <div className="space-y-2">
         {steps.map((step) => (
-          <div key={step.id} className="flex flex-col items-center max-w-[100px] text-center">
-            <button 
-              className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
-                step.id === 'claimed' ? 'bg-black cursor-default' : 
-                step.checked ? 'bg-black cursor-pointer' : 'bg-gray-200 cursor-pointer'
-              } ${isUpdating ? 'opacity-50' : ''}`}
-              onClick={() => handleCheckStep(step.id)}
-              disabled={step.id === 'claimed' || isUpdating}
-            >
-              {step.checked && <Check size={20} className="text-white" />}
-            </button>
-            <span className="text-xs text-center">{step.label}</span>
+          <div 
+            key={step.key} 
+            className="flex items-center justify-between p-2 border rounded-lg cursor-pointer hover:bg-gray-50"
+            onClick={() => handleStepToggle(step.key as keyof RewardStatusDetails)}
+          >
+            <span>{step.label}</span>
+            <div className={`w-6 h-6 flex items-center justify-center rounded-full ${status[step.key as keyof RewardStatusDetails] ? 'bg-green-500' : 'bg-gray-200'}`}>
+              {status[step.key as keyof RewardStatusDetails] ? (
+                <Check size={14} className="text-white" />
+              ) : (
+                <X size={14} className="text-gray-500" />
+              )}
+            </div>
           </div>
         ))}
+      </div>
+      
+      <div className="text-xs text-gray-500 mt-2">
+        Click each step to mark it as complete when you reach that milestone
       </div>
     </div>
   );

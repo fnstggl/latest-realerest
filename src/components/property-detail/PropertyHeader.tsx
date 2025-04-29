@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import LikeButton from './LikeButton';
@@ -54,6 +54,29 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const { user } = useAuth();
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
+
+  useEffect(() => {
+    const checkExistingClaim = async () => {
+      if (!user?.id || !propertyId) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('bounty_claims')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('property_id', propertyId)
+          .maybeSingle();
+        
+        if (data) {
+          setHasClaimedReward(true);
+        }
+      } catch (error) {
+        console.error("Error checking existing claim:", error);
+      }
+    };
+    
+    checkExistingClaim();
+  }, [user?.id, propertyId]);
 
   const handleClaimReward = async () => {
     if (!user?.id || !propertyId) {

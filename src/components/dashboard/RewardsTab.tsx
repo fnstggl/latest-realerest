@@ -2,11 +2,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Award, DollarSign, ArrowRight } from 'lucide-react';
+import { Award, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import RewardProgress from './RewardProgress';
-import { useAuth } from '@/context/AuthContext';
 import { RewardStatusDetails } from '@/types/bounty';
 
 type PropertyListing = {
@@ -25,12 +23,9 @@ type BountyClaim = {
 };
 
 const RewardsTab = () => {
-  const { user } = useAuth();
   const { data: rewards, isLoading } = useQuery({
-    queryKey: ['rewards', user?.id],
+    queryKey: ['rewards'],
     queryFn: async () => {
-      if (!user?.id) return [];
-      
       const { data, error } = await supabase
         .from('bounty_claims')
         .select(`
@@ -43,25 +38,11 @@ const RewardsTab = () => {
             images
           )
         `)
-        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      return (data || []).map(claim => {
-        // Ensure status_details has all required fields
-        const statusDetails = claim.status_details || {};
-        return {
-          ...claim,
-          status_details: {
-            claimed: true, // Always true since it's claimed
-            foundBuyer: statusDetails.foundBuyer || false,
-            submittedOffer: statusDetails.submittedOffer || false,
-            offerAccepted: statusDetails.offerAccepted || false,
-            dealClosed: statusDetails.dealClosed || false
-          }
-        };
-      }) as BountyClaim[];
+      return data as BountyClaim[];
     }
   });
 
@@ -83,7 +64,7 @@ const RewardsTab = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {rewards.map((reward) => {
         const propertyListings = reward.property_listings;
         const images = propertyListings?.images || [];
@@ -92,41 +73,25 @@ const RewardsTab = () => {
         const rewardAmount = propertyListings?.reward || 0;
         
         return (
-          <div key={reward.id} className="bg-white p-6 rounded-lg border border-gray-200">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <div className="flex items-center space-x-4">
-                <Link to={`/property/${propertyListings?.id}`} className="block">
-                  <img 
-                    src={images[0] || '/placeholder.svg'} 
-                    alt={title}
-                    className="w-24 h-24 object-cover rounded-lg"
-                  />
-                </Link>
-                <div>
-                  <Link to={`/property/${propertyListings?.id}`} className="hover:underline">
-                    <h3 className="font-semibold text-lg">{title}</h3>
-                  </Link>
-                  <p className="text-sm text-gray-600">{location}</p>
-                  <div className="flex items-center text-green-600 font-semibold mt-2 text-lg">
-                    <DollarSign size={18} className="mr-1" />
-                    {rewardAmount.toLocaleString()}
-                  </div>
-                </div>
+          <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <img 
+                src={images[0] || '/placeholder.svg'} 
+                alt={title}
+                className="w-16 h-16 object-cover rounded"
+              />
+              <div>
+                <h3 className="font-semibold">{title}</h3>
+                <p className="text-sm text-gray-600">{location}</p>
               </div>
-              
-              <Link to={`/property/${propertyListings?.id}`} className="self-center md:self-start">
-                <Button variant="outline" size="sm" className="flex items-center gap-2">
-                  View Property
-                  <ArrowRight size={14} />
-                </Button>
-              </Link>
             </div>
-            
-            <RewardProgress 
-              rewardId={reward.id} 
-              status={reward.status_details}
-              rewardAmount={rewardAmount}
-            />
+            <div className="text-right">
+              <div className="flex items-center text-green-600 font-semibold">
+                <DollarSign size={16} className="mr-1" />
+                {rewardAmount}
+              </div>
+              <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
+            </div>
           </div>
         );
       })}
