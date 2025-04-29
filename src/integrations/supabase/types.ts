@@ -66,6 +66,7 @@ export type Database = {
           id: string
           property_id: string
           status: string
+          status_details: Json | null
           updated_at: string
           user_id: string
         }
@@ -75,6 +76,7 @@ export type Database = {
           id?: string
           property_id: string
           status?: string
+          status_details?: Json | null
           updated_at?: string
           user_id: string
         }
@@ -84,6 +86,7 @@ export type Database = {
           id?: string
           property_id?: string
           status?: string
+          status_details?: Json | null
           updated_at?: string
           user_id?: string
         }
