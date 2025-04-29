@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -50,6 +49,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   waitlistStatus
 }) => {
   const [hasClaimedReward, setHasClaimedReward] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
   const roundedBelowMarket = Math.round(belowMarket);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -61,12 +61,45 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       return;
     }
 
+    if (isClaiming) return;
+    setIsClaiming(true);
+
     try {
-      const { data: userData } = await supabase
+      const { data: propertyData, error: propertyError } = await supabase
+        .from('property_listings')
+        .select('id')
+        .eq('id', propertyId)
+        .single();
+      
+      if (propertyError || !propertyData) {
+        toast.error("Invalid property. Cannot claim reward.");
+        setIsClaiming(false);
+        return;
+      }
+
+      const { data: userData, error: userError } = await supabase
         .from('profiles')
         .select('name')
         .eq('id', user.id)
         .single();
+      
+      if (userError) {
+        console.error('Error fetching user profile:', userError);
+      }
+
+      const { data: existingClaim } = await supabase
+        .from('bounty_claims')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('property_id', propertyId)
+        .maybeSingle();
+      
+      if (existingClaim) {
+        toast.error("You have already claimed this reward");
+        setIsClaiming(false);
+        setHasClaimedReward(true);
+        return;
+      }
 
       const { data, error } = await supabase
         .from('bounty_claims')
@@ -85,11 +118,12 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error claiming reward:', error);
+        throw error;
+      }
 
-      // Create a conversation if it doesn't exist
       if (userId) {
-        // Get or create conversation using a query instead of RPC
         const { data: existingConversation } = await supabase
           .from('conversations')
           .select('id')
@@ -102,8 +136,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         if (existingConversation) {
           conversationId = existingConversation.id;
         } else {
-          // Create new conversation
-          const { data: newConversation } = await supabase
+          const { data: newConversation, error: convError } = await supabase
             .from('conversations')
             .insert({
               participant1: user.id,
@@ -112,13 +145,14 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             .select('id')
             .single();
             
-          if (newConversation) {
+          if (convError) {
+            console.error('Error creating conversation:', convError);
+          } else if (newConversation) {
             conversationId = newConversation.id;
           }
         }
 
         if (conversationId) {
-          // Send notification message
           await supabase
             .from('messages')
             .insert([{
@@ -128,7 +162,6 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
               property_id: propertyId
             }]);
             
-          // Create notification for the seller
           await supabase.from('notifications').insert([
             {
               user_id: userId,
@@ -148,9 +181,11 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       });
 
       setHasClaimedReward(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error claiming reward:', error);
-      toast.error("Failed to claim reward. Please try again.");
+      toast.error(`Failed to claim reward: ${error.message || "Please try again"}`);
+    } finally {
+      setIsClaiming(false);
     }
   };
 
@@ -249,8 +284,9 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
               variant="default" 
               className="w-full bg-black hover:bg-black/90 text-white" 
               onClick={handleClaimReward}
+              disabled={isClaiming}
             >
-              Claim {formatCurrency(reward)} Reward
+              {isClaiming ? 'Claiming...' : `Claim ${formatCurrency(reward)} Reward`}
             </Button>
           )}
           

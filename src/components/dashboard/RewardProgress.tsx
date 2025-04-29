@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Check } from 'lucide-react';
 import { toast } from "sonner";
+import { useAuth } from '@/context/AuthContext';
 
 interface RewardProgressProps {
   rewardId: string;
@@ -19,6 +20,7 @@ interface RewardProgressProps {
 const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initialStatus, rewardAmount }) => {
   const [status, setStatus] = useState(initialStatus);
   const [isUpdating, setIsUpdating] = useState(false);
+  const { user } = useAuth();
   
   const steps = [
     { id: 'claimed', label: 'Claimed reward', checked: status.claimed },
@@ -29,45 +31,74 @@ const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initi
   ];
 
   const handleCheckStep = async (stepId: string) => {
-    if (stepId === 'claimed' || isUpdating) return; // Cannot uncheck the claimed step or if already updating
+    if (stepId === 'claimed' || isUpdating || !user?.id) return; // Cannot uncheck the claimed step, if already updating, or if not logged in
     
     setIsUpdating(true);
-    const newStatus = { ...status };
     
-    // Toggle the status
-    switch (stepId) {
-      case 'foundBuyer':
-        newStatus.foundBuyer = !newStatus.foundBuyer;
-        break;
-      case 'submittedOffer':
-        newStatus.submittedOffer = !newStatus.submittedOffer;
-        break;
-      case 'offerAccepted':
-        newStatus.offerAccepted = !newStatus.offerAccepted;
-        break;
-      case 'dealClosed':
-        newStatus.dealClosed = !newStatus.dealClosed;
-        break;
-      default:
-        break;
-    }
-    
-    // Update the status in Supabase
     try {
+      // First, verify the user owns this reward claim
+      const { data: claimData, error: claimError } = await supabase
+        .from('bounty_claims')
+        .select('id, user_id')
+        .eq('id', rewardId)
+        .single();
+      
+      if (claimError || !claimData) {
+        toast.error("Cannot update progress: Reward claim not found");
+        setIsUpdating(false);
+        return;
+      }
+      
+      if (claimData.user_id !== user.id) {
+        toast.error("Cannot update progress: Unauthorized");
+        setIsUpdating(false);
+        return;
+      }
+      
+      // Apply optimistic update
+      const newStatus = { ...status };
+      
+      // Toggle the status
+      switch (stepId) {
+        case 'foundBuyer':
+          newStatus.foundBuyer = !newStatus.foundBuyer;
+          break;
+        case 'submittedOffer':
+          newStatus.submittedOffer = !newStatus.submittedOffer;
+          break;
+        case 'offerAccepted':
+          newStatus.offerAccepted = !newStatus.offerAccepted;
+          break;
+        case 'dealClosed':
+          newStatus.dealClosed = !newStatus.dealClosed;
+          break;
+        default:
+          break;
+      }
+      
+      // Apply optimistic update
+      setStatus(newStatus);
+      
+      // Update the status in Supabase
       const { error } = await supabase
         .from('bounty_claims')
         .update({
           status_details: newStatus
         })
-        .eq('id', rewardId);
+        .eq('id', rewardId)
+        .eq('user_id', user.id); // Additional safety check
         
-      if (error) throw error;
+      if (error) {
+        // Revert optimistic update if there's an error
+        setStatus(status);
+        console.error("Error updating reward progress:", error);
+        throw error;
+      }
       
-      setStatus(newStatus);
       toast.success("Progress updated successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating reward progress:", error);
-      toast.error("Failed to update progress");
+      toast.error(`Failed to update progress: ${error.message || "Please try again"}`);
     } finally {
       setIsUpdating(false);
     }
@@ -98,7 +129,7 @@ const RewardProgress: React.FC<RewardProgressProps> = ({ rewardId, status: initi
       </div>
       
       <div className="flex justify-between items-center mt-2">
-        {steps.map((step, index) => (
+        {steps.map((step) => (
           <div key={step.id} className="flex flex-col items-center max-w-[100px] text-center">
             <button 
               className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${

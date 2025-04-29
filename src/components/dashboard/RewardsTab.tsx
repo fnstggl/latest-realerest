@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import RewardProgress from './RewardProgress';
 import { useAuth } from '@/context/AuthContext';
+import { RewardStatusDetails } from '@/types/bounty';
 
 type PropertyListing = {
   id: string;
@@ -20,13 +21,7 @@ type BountyClaim = {
   id: string;
   property_listings: PropertyListing;
   status: string;
-  status_details: {
-    claimed: boolean;
-    foundBuyer: boolean;
-    submittedOffer: boolean;
-    offerAccepted: boolean;
-    dealClosed: boolean;
-  };
+  status_details: RewardStatusDetails;
 };
 
 const RewardsTab = () => {
