@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -8,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface WaitlistButtonProps {
   propertyId: string;
@@ -124,31 +126,54 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   };
 
   return <>
-      <Button variant="glass" onClick={handleButtonClick} className="w-full bg-white hover:bg-white group relative overflow-hidden">
-        {user ? <>
-            <UserCheck size={18} className="mr-2 text-black" />
-            <span className="text-black font-bold relative z-10">
-              Join Waitlist for Full Details
-            </span>
-          </> : <>
-            <LogIn size={18} className="mr-2 text-black" />
-            <span className="text-black font-bold relative z-10">
-              Sign in to Join Waitlist
-            </span>
-          </>}
-
-        <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
-        background: "transparent",
-        border: "2px solid transparent",
-        backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-        backgroundOrigin: "border-box",
-        backgroundClip: "border-box",
-        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-        WebkitMaskComposite: "xor",
-        maskComposite: "exclude",
-        boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-      }}></span>
-      </Button>
+      {user ? (
+        <Button variant="glass" onClick={handleButtonClick} className="w-full bg-white hover:bg-white group relative overflow-hidden">
+          <UserCheck size={18} className="mr-2 text-black" />
+          <span className="text-black font-bold relative z-10">
+            Join Waitlist for Full Details
+          </span>
+        
+          <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
+            background: "transparent",
+            border: "2px solid transparent",
+            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+            backgroundOrigin: "border-box",
+            backgroundClip: "border-box",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+            boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+          }}></span>
+        </Button>
+      ) : (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="glass" onClick={handleButtonClick} className="w-full bg-white hover:bg-white group relative overflow-hidden">
+                <LogIn size={18} className="mr-2 text-black" />
+                <span className="text-black font-bold relative z-10">
+                  Sign in to Join Waitlist
+                </span>
+                
+                <span className="absolute inset-0 opacity-100 rounded-lg pointer-events-none" style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: "border-box",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                  boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+                }}></span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="p-3 max-w-[300px] text-sm">
+              Joining the waitlist shows the seller that you're interested in the property, and it will give you access to see the full property details and will allow you to contact the seller directly so you can move forward with the buying process.
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
 
       {user && <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent className="bg-white rounded-lg border border-gray-200 shadow-xl sm:max-w-md">
