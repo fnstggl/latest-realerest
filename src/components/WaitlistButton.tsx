@@ -168,11 +168,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
                 }}></span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent 
-              side="bottom" 
-              className="p-3 max-w-[300px] text-sm"
-              sideOffset={5}
-            >
+            <TooltipContent className="p-3 max-w-[300px] text-sm">
               Joining the waitlist shows the seller that you're interested in the property, and it will give you access to see the full property details and will allow you to contact the seller directly so you can move forward with the buying process.
             </TooltipContent>
           </Tooltip>
