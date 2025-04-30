@@ -31,7 +31,7 @@ const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = fals
               height="16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="text-[#F97316]"
+              className="text-[#4CA154]"
             >
               <path
                 d="M12 1L15.5 8.5L23 9.5L18 15L19.5 23L12 19.5L4.5 23L6 15L1 9.5L8.5 8.5L12 1Z"
