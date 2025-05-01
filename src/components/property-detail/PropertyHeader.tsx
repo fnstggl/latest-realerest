@@ -244,8 +244,8 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           </div>
           {reward && reward >= 3000 && (
             <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-              <span className="font-futura font-extrabold mr-1 text-sky-600">{formatCurrency(reward)}</span> 
-              <span className="font-futura font-extrabold mr-1 text-sky-600">Reward</span>
+              <span className="font-futura font-extrabold mr-1 text-[#4CA154]">{formatCurrency(reward)}</span> 
+              <span className="font-futura font-extrabold mr-1 text-[#4CA154]">Reward</span>
               <RewardToolTip amount={reward} />
             </div>
           )}
