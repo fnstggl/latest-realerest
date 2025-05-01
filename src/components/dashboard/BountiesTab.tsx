@@ -2,7 +2,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Award, DollarSign, ArrowRight } from 'lucide-react';
+import { Award, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { RewardStatusDetails } from '@/types/bounty';
@@ -22,7 +22,7 @@ type BountyClaim = {
   status_details: RewardStatusDetails;
 };
 
-const BountiesTab = () => {
+const RewardsTab = () => {
   const { data: rewards, isLoading } = useQuery({
     queryKey: ['rewards'],
     queryFn: async () => {
@@ -72,40 +72,25 @@ const BountiesTab = () => {
         const location = propertyListings?.location || 'Unknown location';
         const rewardAmount = propertyListings?.reward || 0;
         
-        // Calculate status for display
-        // Only show "Completed" when the last step (dealClosed) is true
-        const isCompleted = reward.status_details.dealClosed;
-        const displayStatus = isCompleted ? 'completed' : 'in progress';
-        
         return (
-          <div key={reward.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center space-x-4">
-                <img 
-                  src={images[0] || '/placeholder.svg'} 
-                  alt={title}
-                  className="w-16 h-16 object-cover rounded"
-                />
-                <div>
-                  <h3 className="font-semibold">{title}</h3>
-                  <p className="text-sm text-gray-600">{location}</p>
-                </div>
+          <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <img 
+                src={images[0] || '/placeholder.svg'} 
+                alt={title}
+                className="w-16 h-16 object-cover rounded"
+              />
+              <div>
+                <h3 className="font-semibold">{title}</h3>
+                <p className="text-sm text-gray-600">{location}</p>
               </div>
-              <div className="flex items-center">
-                <div className="text-right mr-4">
-                  <div className="flex items-center text-green-600 font-semibold text-xl">
-                    <span className="text-[#4CA154]">${rewardAmount}</span>
-                  </div>
-                  <div className="text-sm text-gray-500 capitalize border border-dashed border-gray-300 px-2 py-1 rounded-md">
-                    {displayStatus}
-                  </div>
-                </div>
-                <Button asChild variant="ghost" className="p-2">
-                  <Link to={`/property/${propertyListings.id}`}>
-                    <ArrowRight size={20} />
-                  </Link>
-                </Button>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center text-green-600 font-semibold">
+                <DollarSign size={16} className="mr-1" />
+                {rewardAmount}
               </div>
+              <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
             </div>
           </div>
         );
@@ -114,4 +99,4 @@ const BountiesTab = () => {
   );
 };
 
-export default BountiesTab;
+export default RewardsTab;
