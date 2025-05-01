@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { supabase } from '../integrations/supabase/client';
 import { useAuth } from './AuthContext';
@@ -9,7 +10,7 @@ type Notification = {
   type: string;
   read: boolean;
   timestamp: string;
-  properties: {
+  properties?: {
     propertyId?: string;
     conversationId?: string;
     [key: string]: any;
@@ -67,8 +68,7 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
             read: n.read || false,
             timestamp: n.created_at,
             properties: n.properties || {},
-          })) as Notification[];
-          
+          }));
           setNotifications(formattedNotifications);
         }
       } catch (error) {
@@ -97,7 +97,7 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
             read: payload.new.read || false,
             timestamp: payload.new.created_at,
             properties: payload.new.properties || {},
-          } as Notification;
+          };
           
           setNotifications(prev => [newNotification, ...prev]);
         }
@@ -180,7 +180,7 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
       }
 
       if (data && data.length > 0) {
-        const newNotification: Notification = {
+        const newNotification = {
           id: data[0].id,
           title: data[0].title,
           message: data[0].message,
