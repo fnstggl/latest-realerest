@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Award, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { RewardStatusDetails } from '@/types/bounty';
 
 type PropertyListing = {
   id: string;
@@ -18,6 +19,7 @@ type BountyClaim = {
   id: string;
   property_listings: PropertyListing;
   status: string;
+  status_details: RewardStatusDetails;
 };
 
 const RewardsTab = () => {
@@ -40,7 +42,7 @@ const RewardsTab = () => {
 
       if (error) throw error;
       
-      return data as BountyClaim[];
+      return data as unknown as BountyClaim[];
     }
   });
 

@@ -1,11 +1,12 @@
 
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Award, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { RewardStatusDetails } from '@/types/bounty';
+import RewardProgress from './RewardProgress';
 
 type PropertyListing = {
   id: string;
@@ -23,6 +24,9 @@ type BountyClaim = {
 };
 
 const RewardsTab = () => {
+  const [expandedRewardId, setExpandedRewardId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
   const { data: rewards, isLoading } = useQuery({
     queryKey: ['rewards'],
     queryFn: async () => {
@@ -42,9 +46,18 @@ const RewardsTab = () => {
 
       if (error) throw error;
       
-      return data as BountyClaim[];
+      return data as unknown as BountyClaim[];
     }
   });
+
+  const handleStatusUpdate = () => {
+    // Refetch rewards data after status update
+    queryClient.invalidateQueries({ queryKey: ['rewards'] });
+  };
+
+  const toggleRewardExpanded = (rewardId: string) => {
+    setExpandedRewardId(expandedRewardId === rewardId ? null : rewardId);
+  };
 
   if (isLoading) {
     return <div className="flex justify-center py-8">Loading...</div>;
@@ -71,27 +84,43 @@ const RewardsTab = () => {
         const title = propertyListings?.title || 'Property';
         const location = propertyListings?.location || 'Unknown location';
         const rewardAmount = propertyListings?.reward || 0;
+        const isExpanded = expandedRewardId === reward.id;
         
         return (
-          <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img 
-                src={images[0] || '/placeholder.svg'} 
-                alt={title}
-                className="w-16 h-16 object-cover rounded"
-              />
-              <div>
-                <h3 className="font-semibold">{title}</h3>
-                <p className="text-sm text-gray-600">{location}</p>
+          <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200">
+            <div 
+              className="flex items-center justify-between cursor-pointer"
+              onClick={() => toggleRewardExpanded(reward.id)}
+            >
+              <div className="flex items-center space-x-4">
+                <img 
+                  src={images[0] || '/placeholder.svg'} 
+                  alt={title}
+                  className="w-16 h-16 object-cover rounded"
+                />
+                <div>
+                  <h3 className="font-semibold">{title}</h3>
+                  <p className="text-sm text-gray-600">{location}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="flex items-center text-green-600 font-semibold">
+                  <DollarSign size={16} className="mr-1" />
+                  {rewardAmount}
+                </div>
+                <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="flex items-center text-green-600 font-semibold">
-                <DollarSign size={16} className="mr-1" />
-                {rewardAmount}
+            
+            {isExpanded && (
+              <div className="mt-4 border-t pt-4">
+                <RewardProgress 
+                  claimId={reward.id} 
+                  initialStatus={reward.status_details} 
+                  onStatusUpdate={handleStatusUpdate}
+                />
               </div>
-              <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
-            </div>
+            )}
           </div>
         );
       })}

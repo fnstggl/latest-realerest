@@ -5,6 +5,10 @@ export interface RewardStatusDetails {
   submittedOffer: boolean;
   offerAccepted: boolean;
   dealClosed: boolean;
+  foundBuyerDate?: string;
+  submittedOfferDate?: string;
+  offerAcceptedDate?: string;
+  dealClosedDate?: string;
 }
 
 export interface BountyClaim {
