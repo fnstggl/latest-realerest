@@ -9,6 +9,7 @@ export interface RewardStatusDetails {
   submittedOfferDate?: string;
   offerAcceptedDate?: string;
   dealClosedDate?: string;
+  buyerName?: string;
 }
 
 export interface BountyClaim {
@@ -20,4 +21,5 @@ export interface BountyClaim {
   created_at: string;
   updated_at: string;
   status_details: RewardStatusDetails;
+  buyers?: RewardStatusDetails[];
 }

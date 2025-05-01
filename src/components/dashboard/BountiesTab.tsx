@@ -20,9 +20,10 @@ type BountyClaim = {
   property_listings: PropertyListing;
   status: string;
   status_details: RewardStatusDetails;
+  buyers?: RewardStatusDetails[];
 };
 
-const RewardsTab = () => {
+const BountiesTab = () => {
   const { data: rewards, isLoading } = useQuery({
     queryKey: ['rewards'],
     queryFn: async () => {
@@ -63,6 +64,13 @@ const RewardsTab = () => {
     );
   }
 
+  const getStatusText = (statusDetails: RewardStatusDetails) => {
+    if (statusDetails.dealClosed) {
+      return 'Completed';
+    }
+    return statusDetails.claimed ? 'In Progress' : 'New';
+  };
+
   return (
     <div className="space-y-4">
       {rewards.map((reward) => {
@@ -71,6 +79,7 @@ const RewardsTab = () => {
         const title = propertyListings?.title || 'Property';
         const location = propertyListings?.location || 'Unknown location';
         const rewardAmount = propertyListings?.reward || 0;
+        const statusText = getStatusText(reward.status_details);
         
         return (
           <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
@@ -90,7 +99,7 @@ const RewardsTab = () => {
                 <DollarSign size={16} className="mr-1" />
                 {rewardAmount}
               </div>
-              <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
+              <div className={`text-sm ${statusText === 'Completed' ? 'text-green-500' : 'text-amber-500'} capitalize`}>{statusText}</div>
             </div>
           </div>
         );
@@ -99,4 +108,4 @@ const RewardsTab = () => {
   );
 };
 
-export default RewardsTab;
+export default BountiesTab;

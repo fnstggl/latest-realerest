@@ -11,9 +11,17 @@ interface RewardProgressProps {
   claimId: string;
   initialStatus: RewardStatusDetails;
   onStatusUpdate: () => void;
+  isPrimaryBuyer?: boolean;
+  buyerIndex?: number;
 }
 
-const RewardProgress = ({ claimId, initialStatus, onStatusUpdate }: RewardProgressProps) => {
+const RewardProgress = ({ 
+  claimId, 
+  initialStatus, 
+  onStatusUpdate, 
+  isPrimaryBuyer = false,
+  buyerIndex 
+}: RewardProgressProps) => {
   const [status, setStatus] = useState<RewardStatusDetails>(initialStatus);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -42,16 +50,38 @@ const RewardProgress = ({ claimId, initialStatus, onStatusUpdate }: RewardProgre
     const newOverallStatus = newStatus.dealClosed ? 'completed' : 'claimed';
     
     try {
-      const { error } = await supabase
-        .from('bounty_claims')
-        .update({ 
-          status_details: newStatus,
-          status: newOverallStatus
-        })
-        .eq('id', claimId);
-      
-      if (error) {
-        throw error;
+      if (isPrimaryBuyer) {
+        // Update the main status_details in the record
+        const { error } = await supabase
+          .from('bounty_claims')
+          .update({ 
+            status_details: newStatus,
+            status: newOverallStatus
+          })
+          .eq('id', claimId);
+        
+        if (error) throw error;
+      } else if (buyerIndex !== undefined) {
+        // Get the current bounty claim
+        const { data: currentClaim, error: fetchError } = await supabase
+          .from('bounty_claims')
+          .select('buyers')
+          .eq('id', claimId)
+          .single();
+        
+        if (fetchError) throw fetchError;
+        
+        // Update the specific buyer in the buyers array
+        const updatedBuyers = [...(currentClaim.buyers || [])];
+        updatedBuyers[buyerIndex] = newStatus;
+        
+        // Update the record
+        const { error: updateError } = await supabase
+          .from('bounty_claims')
+          .update({ buyers: updatedBuyers })
+          .eq('id', claimId);
+        
+        if (updateError) throw updateError;
       }
       
       setStatus(newStatus);
@@ -77,9 +107,7 @@ const RewardProgress = ({ claimId, initialStatus, onStatusUpdate }: RewardProgre
   };
 
   return (
-    <div className="space-y-2 mt-3">
-      <h3 className="font-semibold mb-1">Track Your Progress</h3>
-      
+    <div className="space-y-2">
       <div className="space-y-2">
         {steps.map((step) => {
           const dateKey = step.dateKey as keyof RewardStatusDetails;
