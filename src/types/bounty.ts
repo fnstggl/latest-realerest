@@ -21,3 +21,9 @@ export interface BountyClaim {
   updated_at: string;
   status_details: RewardStatusDetails;
 }
+
+export interface BuyerProgress {
+  id: string;
+  buyerName: string;
+  statusDetails: RewardStatusDetails;
+}
