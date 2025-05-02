@@ -67,6 +67,7 @@ const usePropertyDetail = (propertyId?: string) => {
         const price = Number(propertyData.price);
         const marketPrice = Number(propertyData.market_price);
         const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
+        const rewardAmount = propertyData.reward ? Number(propertyData.reward) : 0;
 
         const mappedProperty: PropertyDetailType = {
           id: propertyData.id,
@@ -86,7 +87,7 @@ const usePropertyDetail = (propertyId?: string) => {
           seller_email: '',
           seller_phone: '',
           seller_id: propertyData.user_id,
-          reward: Number(propertyData.reward || 0),
+          reward: rewardAmount,
           after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
           estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
           property_type: propertyData.property_type,

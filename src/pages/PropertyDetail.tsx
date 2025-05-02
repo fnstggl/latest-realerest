@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -40,19 +41,6 @@ const PropertyDetail: React.FC = () => {
     shouldShowSellerInfo,
     refreshProperty
   } = usePropertyDetail(id);
-
-  useEffect(() => {
-    console.log("PropertyDetail - property:", property);
-    console.log("PropertyDetail - reward:", property?.reward);
-  }, [property]);
-  
-  useEffect(() => {
-    console.log("PropertyDetail - isOwner:", isOwner);
-    console.log("PropertyDetail - isApproved:", isApproved);
-    console.log("PropertyDetail - waitlistStatus:", waitlistStatus);
-    console.log("PropertyDetail - shouldShowSellerInfo:", shouldShowSellerInfo);
-    console.log("PropertyDetail - property:", property);
-  }, [property, isOwner, isApproved, waitlistStatus, shouldShowSellerInfo]);
   
   useEffect(() => {
     if (id) {

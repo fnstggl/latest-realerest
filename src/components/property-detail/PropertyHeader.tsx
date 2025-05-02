@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -54,6 +55,9 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const { user } = useAuth();
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
+
+  // Check if reward is valid (greater than 0)
+  const hasValidReward = reward && reward >= 3000;
 
   useEffect(() => {
     const checkExistingClaim = async () => {
@@ -242,7 +246,9 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
             <span className="text-black font-playfair font-bold italic">Below Market</span>
           </div>
-          {reward && reward >= 3000 && (
+          
+          {/* Only render the reward section if there's a valid reward */}
+          {hasValidReward && (
             <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
               <span className="font-futura font-extrabold mr-1 text-[#4CA154]">{formatCurrency(reward)}</span> 
               <span className="font-futura font-extrabold mr-1 text-[#4CA154]">Reward</span>
@@ -302,7 +308,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             </Button>
           </Link>
           
-          {reward && reward > 0 && !hasClaimedReward && user && (
+          {hasValidReward && !hasClaimedReward && user && (
             <Button 
               variant="default" 
               className="w-full bg-black hover:bg-black/90 text-white" 
@@ -313,7 +319,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             </Button>
           )}
           
-          {reward && reward > 0 && hasClaimedReward && (
+          {hasValidReward && hasClaimedReward && (
             <Button 
               variant="default" 
               className="w-full bg-green-600 hover:bg-green-700 text-white" 

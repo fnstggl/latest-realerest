@@ -9,6 +9,7 @@ interface RewardBadgeProps {
 }
 
 const RewardBadge: React.FC<RewardBadgeProps> = ({ amount, inPropertyCard = false }) => {
+  // Don't render anything if the amount is less than 3000 or doesn't exist
   if (!amount || amount < 3000) return null;
   
   return (
