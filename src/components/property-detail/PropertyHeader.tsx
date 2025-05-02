@@ -56,8 +56,8 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
 
-  // Check if reward is valid (greater than 0)
-  const hasValidReward = reward && reward >= 3000;
+  // Check if reward is valid (greater than or equal to 3000)
+  const hasValidReward = reward !== undefined && reward !== null && reward >= 3000;
 
   useEffect(() => {
     const checkExistingClaim = async () => {

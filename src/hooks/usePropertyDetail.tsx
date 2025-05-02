@@ -20,7 +20,7 @@ type PropertyDetailType = {
   seller_email: string;
   seller_phone: string;
   seller_id: string;
-  reward: number;
+  reward: number | null; // Ensure reward can be null
   after_repair_value?: number;
   estimated_rehab?: number;
   property_type?: string;
@@ -67,7 +67,9 @@ const usePropertyDetail = (propertyId?: string) => {
         const price = Number(propertyData.price);
         const marketPrice = Number(propertyData.market_price);
         const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
-        const rewardAmount = propertyData.reward ? Number(propertyData.reward) : 0;
+        
+        // Handle null or undefined reward properly
+        const rewardAmount = propertyData.reward ? Number(propertyData.reward) : null;
 
         const mappedProperty: PropertyDetailType = {
           id: propertyData.id,
