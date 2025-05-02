@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Award, DollarSign, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { RewardStatusDetails, BuyerProgress } from '@/types/bounty';
+import { RewardStatusDetails, BuyerProgress, BuyerStatus } from '@/types/bounty';
 import RewardProgress from './RewardProgress';
 
 type PropertyListing = {
@@ -53,6 +53,7 @@ const RewardsTab = () => {
           claim.status_details.buyers = [{
             id: crypto.randomUUID(),
             name: "Primary Buyer",
+            status: "Interested Buyer",
             foundBuyer: claim.status_details.foundBuyer || false,
             submittedOffer: claim.status_details.submittedOffer || false,
             offerAccepted: claim.status_details.offerAccepted || false,
@@ -62,6 +63,12 @@ const RewardsTab = () => {
             offerAcceptedDate: claim.status_details.offerAcceptedDate,
             dealClosedDate: claim.status_details.dealClosedDate
           }];
+        } else {
+          // Ensure all existing buyers have a status
+          claim.status_details.buyers = claim.status_details.buyers.map((buyer: any) => ({
+            ...buyer,
+            status: buyer.status || "Interested Buyer"
+          }));
         }
         return claim;
       }) as BountyClaim[];

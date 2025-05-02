@@ -1,7 +1,10 @@
 
+export type BuyerStatus = "Interested Buyer" | "Considering Buyer" | "Uninterested Buyer";
+
 export interface BuyerProgress {
   id: string;
   name: string;
+  status?: BuyerStatus;
   foundBuyer: boolean;
   submittedOffer: boolean;
   offerAccepted: boolean;
