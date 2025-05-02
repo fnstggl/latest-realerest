@@ -221,8 +221,8 @@ const Dashboard: React.FC = () => {
 
     return [
       {
-        name: "Rewards", // Changed from "Bounties"
-        value: "rewards", // Changed from "bounties"
+        name: "Rewards",
+        value: "rewards",
         icon: Award,
         content: (
           <TabsContent value="rewards" className="space-y-6">
@@ -231,7 +231,7 @@ const Dashboard: React.FC = () => {
         )
       },
       {
-        name: "Payouts", // Changed from "Rewards"
+        name: "Payouts",
         value: "payouts",
         icon: Gift,
         content: (

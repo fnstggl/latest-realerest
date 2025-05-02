@@ -22,7 +22,7 @@ type BountyClaim = {
   status_details: RewardStatusDetails;
 };
 
-const RewardsTab = () => {
+const BountiesTab = () => {
   const { data: rewards, isLoading } = useQuery({
     queryKey: ['rewards'],
     queryFn: async () => {
@@ -42,7 +42,25 @@ const RewardsTab = () => {
 
       if (error) throw error;
       
-      return data as unknown as BountyClaim[];
+      // Initialize the buyers array if it doesn't exist
+      return data.map((claim: any) => {
+        if (!claim.status_details.buyers) {
+          // Create a default buyer if there are no buyers yet
+          claim.status_details.buyers = [{
+            id: crypto.randomUUID(),
+            name: "Primary Buyer",
+            foundBuyer: claim.status_details.foundBuyer || false,
+            submittedOffer: claim.status_details.submittedOffer || false,
+            offerAccepted: claim.status_details.offerAccepted || false,
+            dealClosed: claim.status_details.dealClosed || false,
+            foundBuyerDate: claim.status_details.foundBuyerDate,
+            submittedOfferDate: claim.status_details.submittedOfferDate,
+            offerAcceptedDate: claim.status_details.offerAcceptedDate,
+            dealClosedDate: claim.status_details.dealClosedDate
+          }];
+        }
+        return claim;
+      }) as unknown as BountyClaim[];
     }
   });
 
@@ -72,6 +90,9 @@ const RewardsTab = () => {
         const location = propertyListings?.location || 'Unknown location';
         const rewardAmount = propertyListings?.reward || 0;
         
+        // Calculate if any buyer has completed all steps
+        const isCompleted = reward.status_details.buyers?.some(buyer => buyer.dealClosed) || false;
+        
         return (
           <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200 flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -90,7 +111,9 @@ const RewardsTab = () => {
                 <DollarSign size={16} className="mr-1" />
                 {rewardAmount}
               </div>
-              <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
+              <div className="text-sm text-gray-500 capitalize">
+                {isCompleted ? 'Completed' : 'In Progress'}
+              </div>
             </div>
           </div>
         );
@@ -99,4 +122,4 @@ const RewardsTab = () => {
   );
 };
 
-export default RewardsTab;
+export default BountiesTab;

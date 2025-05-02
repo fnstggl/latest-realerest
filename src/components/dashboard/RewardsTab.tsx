@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Award, DollarSign } from 'lucide-react';
+import { Award, DollarSign, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { RewardStatusDetails } from '@/types/bounty';
+import { RewardStatusDetails, BuyerProgress } from '@/types/bounty';
 import RewardProgress from './RewardProgress';
 
 type PropertyListing = {
@@ -46,7 +46,25 @@ const RewardsTab = () => {
 
       if (error) throw error;
       
-      return data as unknown as BountyClaim[];
+      // Initialize the buyers array if it doesn't exist
+      return data.map((claim: any) => {
+        if (!claim.status_details.buyers) {
+          // Create a default buyer if there are no buyers yet
+          claim.status_details.buyers = [{
+            id: crypto.randomUUID(),
+            name: "Primary Buyer",
+            foundBuyer: claim.status_details.foundBuyer || false,
+            submittedOffer: claim.status_details.submittedOffer || false,
+            offerAccepted: claim.status_details.offerAccepted || false,
+            dealClosed: claim.status_details.dealClosed || false,
+            foundBuyerDate: claim.status_details.foundBuyerDate,
+            submittedOfferDate: claim.status_details.submittedOfferDate,
+            offerAcceptedDate: claim.status_details.offerAcceptedDate,
+            dealClosedDate: claim.status_details.dealClosedDate
+          }];
+        }
+        return claim;
+      }) as BountyClaim[];
     }
   });
 
@@ -57,6 +75,18 @@ const RewardsTab = () => {
 
   const toggleRewardExpanded = (rewardId: string) => {
     setExpandedRewardId(expandedRewardId === rewardId ? null : rewardId);
+  };
+
+  const calculateOverallProgress = (statusDetails: RewardStatusDetails): number => {
+    if (!statusDetails.buyers || statusDetails.buyers.length === 0) return 0;
+    
+    // Get the buyer with the most progress
+    const highestProgress = Math.max(...statusDetails.buyers.map(buyer => {
+      const steps = [buyer.foundBuyer, buyer.submittedOffer, buyer.offerAccepted, buyer.dealClosed];
+      return (steps.filter(Boolean).length / 4) * 100;
+    }));
+    
+    return highestProgress;
   };
 
   if (isLoading) {
@@ -86,8 +116,12 @@ const RewardsTab = () => {
         const rewardAmount = propertyListings?.reward || 0;
         const isExpanded = expandedRewardId === reward.id;
         
+        // Calculate if any buyer has completed all steps
+        const isCompleted = reward.status_details.buyers?.some(buyer => buyer.dealClosed) || false;
+        const progress = calculateOverallProgress(reward.status_details);
+        
         return (
-          <div key={reward.id} className="bg-white p-4 rounded-lg border border-gray-200">
+          <div key={reward.id} className="bg-white p-6 rounded-lg border border-gray-200">
             <div 
               className="flex items-center justify-between cursor-pointer"
               onClick={() => toggleRewardExpanded(reward.id)}
@@ -99,21 +133,28 @@ const RewardsTab = () => {
                   className="w-16 h-16 object-cover rounded"
                 />
                 <div>
-                  <h3 className="font-semibold">{title}</h3>
+                  <h3 className="font-semibold text-lg">{title}</h3>
                   <p className="text-sm text-gray-600">{location}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="flex items-center text-green-600 font-semibold">
-                  <DollarSign size={16} className="mr-1" />
-                  {rewardAmount}
+              <div className="flex items-center">
+                <div className="text-right mr-4">
+                  <div className="flex items-center text-green-600 font-semibold text-xl">
+                    <DollarSign className="mr-1" />
+                    {rewardAmount.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {isCompleted ? 'Completed' : 'In Progress'}
+                  </div>
                 </div>
-                <div className="text-sm text-gray-500 capitalize">{reward.status}</div>
+                <Button variant="ghost" size="sm">
+                  <ChevronRight className={`transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                </Button>
               </div>
             </div>
             
             {isExpanded && (
-              <div className="mt-4 border-t pt-4">
+              <div className="mt-6">
                 <RewardProgress 
                   claimId={reward.id} 
                   initialStatus={reward.status_details} 

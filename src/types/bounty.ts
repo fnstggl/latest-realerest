@@ -1,6 +1,7 @@
 
-export interface RewardStatusDetails {
-  claimed: boolean;
+export interface BuyerProgress {
+  id: string;
+  name: string;
   foundBuyer: boolean;
   submittedOffer: boolean;
   offerAccepted: boolean;
@@ -9,6 +10,11 @@ export interface RewardStatusDetails {
   submittedOfferDate?: string;
   offerAcceptedDate?: string;
   dealClosedDate?: string;
+}
+
+export interface RewardStatusDetails {
+  claimed: boolean;
+  buyers: BuyerProgress[];
 }
 
 export interface BountyClaim {
