@@ -1,31 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, MessageSquare } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
-import LikeButton from './LikeButton';
-import RewardToolTip from './RewardToolTip';
-import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from "sonner";
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
-import { useNotifications } from '@/context/NotificationContext';
+
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import RewardBadge from './RewardBadge';
+import RewardToolTip from './RewardToolTip';
 
 interface PropertyHeaderProps {
-  title: string;
-  belowMarket: number;
-  price: number;
-  marketPrice: number;
-  beds: number;
-  baths: number;
-  sqft: number;
-  location: string;
+  title?: string;
+  belowMarket?: number;
+  price?: number;
+  marketPrice?: number;
+  beds?: number;
+  baths?: number;
+  sqft?: number;
+  location?: string;
   fullAddress?: string;
-  showFullAddress: boolean;
-  onShowAddressClick: () => void;
+  showFullAddress?: boolean;
+  onShowAddressClick?: () => void;
   userId?: string;
   propertyId?: string;
-  reward?: number;
+  reward?: number | null;
   sellerName?: string;
   waitlistStatus?: string | null;
 }
@@ -45,285 +40,83 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   userId,
   propertyId,
   reward,
-  sellerName = "Seller",
+  sellerName,
   waitlistStatus
 }) => {
-  const [hasClaimedReward, setHasClaimedReward] = useState(false);
-  const [isClaiming, setIsClaiming] = useState(false);
-  const roundedBelowMarket = Math.round(belowMarket);
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const { addNotification } = useNotifications();
-
-  useEffect(() => {
-    const checkExistingClaim = async () => {
-      if (!user?.id || !propertyId) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('bounty_claims')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('property_id', propertyId)
-          .maybeSingle();
-        
-        if (data) {
-          setHasClaimedReward(true);
-        }
-      } catch (error) {
-        console.error("Error checking existing claim:", error);
-      }
-    };
-    
-    checkExistingClaim();
-  }, [user?.id, propertyId]);
-
-  const handleClaimReward = async () => {
-    if (!user?.id || !propertyId) {
-      toast.error("Please log in to claim the reward");
-      return;
-    }
-
-    if (isClaiming) return;
-    setIsClaiming(true);
-
-    try {
-      const { data: propertyData, error: propertyError } = await supabase
-        .from('property_listings')
-        .select('id')
-        .eq('id', propertyId)
-        .single();
-      
-      if (propertyError || !propertyData) {
-        toast.error("Invalid property. Cannot claim reward.");
-        setIsClaiming(false);
-        return;
-      }
-
-      const { data: userData, error: userError } = await supabase
-        .from('profiles')
-        .select('name')
-        .eq('id', user.id)
-        .single();
-      
-      if (userError) {
-        console.error('Error fetching user profile:', userError);
-      }
-
-      const { data: existingClaim } = await supabase
-        .from('bounty_claims')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('property_id', propertyId)
-        .maybeSingle();
-      
-      if (existingClaim) {
-        toast.error("You have already claimed this reward");
-        setIsClaiming(false);
-        setHasClaimedReward(true);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('bounty_claims')
-        .insert([{
-          user_id: user.id,
-          property_id: propertyId,
-          status: 'claimed',
-          status_details: {
-            claimed: true,
-            foundBuyer: false,
-            submittedOffer: false,
-            offerAccepted: false,
-            dealClosed: false
-          }
-        }])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error claiming reward:', error);
-        throw error;
-      }
-
-      if (userId) {
-        const { data: existingConversation } = await supabase
-          .from('conversations')
-          .select('id')
-          .or(`participant1.eq.${user.id},participant2.eq.${user.id}`)
-          .or(`participant1.eq.${userId},participant2.eq.${userId}`)
-          .maybeSingle();
-          
-        let conversationId;
-        
-        if (existingConversation) {
-          conversationId = existingConversation.id;
-        } else {
-          const { data: newConversation, error: convError } = await supabase
-            .from('conversations')
-            .insert({
-              participant1: user.id,
-              participant2: userId
-            })
-            .select('id')
-            .single();
-            
-          if (convError) {
-            console.error('Error creating conversation:', convError);
-          } else if (newConversation) {
-            conversationId = newConversation.id;
-          }
-        }
-
-        if (conversationId) {
-          await supabase
-            .from('messages')
-            .insert([{
-              conversation_id: conversationId,
-              sender_id: user.id,
-              content: `${userData?.name || 'A user'} has claimed the reward for your property listing.`,
-              property_id: propertyId
-            }]);
-            
-          await supabase.from('notifications').insert([
-            {
-              user_id: userId,
-              title: 'Reward Claimed',
-              message: `${userData?.name || 'A user'} has claimed the reward for your property "${title}"`,
-              type: 'reward',
-              properties: {
-                propertyId
-              }
-            }
-          ]);
-        }
-      }
-
-      toast.success("Reward Claimed", {
-        description: "The seller has been notified.",
-      });
-
-      setHasClaimedReward(true);
-    } catch (error: any) {
-      console.error('Error claiming reward:', error);
-      toast.error(`Failed to claim reward: ${error.message || "Please try again"}`);
-    } finally {
-      setIsClaiming(false);
-    }
-  };
-
-  const navigateToRewards = () => {
-    navigate('/dashboard', { state: { activeTab: 'rewards' } });
-  };
-
-  const renderLocation = () => {
-    if (showFullAddress && fullAddress) {
-      return (
-        <span className="font-medium text-sm sm:text-base break-words">
-          {fullAddress}{location ? `, ${location}` : ''}
-        </span>
-      );
-    }
-    return (
-      <span className="font-medium text-sm sm:text-base">
-        <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
-          Join Waitlist For Address
-        </span>
-        {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
-      </span>
-    );
-  };
-
+  // Only show the reward amount if it exists and is greater than 0
+  const showReward = reward !== null && reward > 0;
+  
   return (
-    <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2">
-          <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-            <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
-            <span className="text-black font-playfair font-bold italic">Below Market</span>
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 flex-wrap">
+        {belowMarket && belowMarket > 0 && (
+          <div className="glass-card backdrop-blur-sm py-1.5 px-3 rounded-full font-semibold text-sm flex items-center gap-1.5">
+            {belowMarket}% Below Market {showReward && reward}
           </div>
-          {reward && reward >= 3000 && (
-            <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-              <span className="font-futura font-extrabold mr-1 text-[#4CA154]">{formatCurrency(reward)}</span> 
-              <span className="font-futura font-extrabold mr-1 text-[#4CA154]">Reward</span>
-              <RewardToolTip amount={reward} />
-            </div>
-          )}
-        </div>
-        {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
+        )}
+        
+        {showReward && <RewardBadge reward={reward} />}
+        
+        {reward !== null && reward > 0 && (
+          <RewardToolTip 
+            sellerName={sellerName || 'Property Owner'} 
+            rewardAmount={reward}
+          />
+        )}
       </div>
       
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 break-words text-black">{title}</h1>
+      <h1 className="text-3xl font-bold">{title}</h1>
       
-      <div className="flex items-start sm:items-center mb-4 flex-wrap">
-        <MapPin size={16} className="mr-1 sm:mr-2 text-black mt-1 sm:mt-0" />
-        {renderLocation()}
-      </div>
-      
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
-        <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
-          <div className="text-lg sm:text-2xl font-bold text-black">{formatCurrency(price)}</div>
-          <div className="text-xs sm:text-sm text-black">Listing Price</div>
-        </div>
-        <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
-          <div className="text-base sm:text-xl font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
-          <div className="text-xs sm:text-sm text-black">Market Value</div>
-        </div>
-      </div>
-      
-      <div className="flex justify-between pt-2 sm:pt-3 border-t border-gray-200">
-        <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{beds}</span>
-          <span className="ml-1 text-black">Beds</span>
-        </div>
-        <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{baths}</span>
-          <span className="ml-1 text-black">Baths</span>
-        </div>
-        <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{sqft?.toLocaleString()}</span>
-          <span className="ml-1 text-black">sqft</span>
-        </div>
-      </div>
-
-      {waitlistStatus === 'pending' && (
-        <div className="mt-4 space-y-3">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <p className="text-black font-medium">Waitlist Request Pending</p>
-            <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
+      {location && (
+        <div className="flex items-center gap-1">
+          <MapPin size={16} className="text-gray-600" />
+          <div className="text-md text-gray-800">
+            {showFullAddress ? fullAddress : location}
+            {!showFullAddress && onShowAddressClick && (
+              <Button 
+                variant="link" 
+                className="p-0 h-auto text-blue-600 ml-1 font-semibold hover:text-blue-800" 
+                onClick={onShowAddressClick}
+              >
+                Join Waitlist For Address
+              </Button>
+            )}
           </div>
-          
-          <Link to={`/messages?seller=${userId}`} className="block w-full">
-            <Button variant="outline" className="w-full relative group">
-              <MessageSquare className="mr-2" />
-              <span className="relative z-10">
-                Message {sellerName || 'Seller'} Directly
-              </span>
-            </Button>
-          </Link>
-          
-          {reward && reward > 0 && !hasClaimedReward && user && (
-            <Button 
-              variant="default" 
-              className="w-full bg-black hover:bg-black/90 text-white" 
-              onClick={handleClaimReward}
-              disabled={isClaiming}
-            >
-              {isClaiming ? 'Claiming...' : `Claim ${formatCurrency(reward)} Reward`}
-            </Button>
-          )}
-          
-          {reward && reward > 0 && hasClaimedReward && (
-            <Button 
-              variant="default" 
-              className="w-full bg-green-600 hover:bg-green-700 text-white" 
-              onClick={navigateToRewards}
-            >
-              See Reward Progress in Dashboard
-            </Button>
-          )}
         </div>
       )}
+      
+      <div className="grid grid-cols-2 gap-4 mt-6">
+        <div className="bg-white border border-gray-200 p-4 rounded-xl">
+          <div className="text-2xl font-bold">
+            ${price?.toLocaleString()}
+          </div>
+          <div className="text-sm text-gray-600">Listing Price</div>
+        </div>
+        <div className="bg-white border border-gray-200 p-4 rounded-xl">
+          <div className="text-2xl font-bold text-gray-500">
+            ${marketPrice?.toLocaleString()}
+          </div>
+          <div className="text-sm text-gray-600">Market Value</div>
+        </div>
+      </div>
+      
+      <div className="flex flex-wrap gap-2">
+        {beds && (
+          <div className="bg-white border border-gray-200 px-4 py-2 rounded-full">
+            <span className="font-semibold">{beds} {beds === 1 ? 'Bed' : 'Beds'}</span>
+          </div>
+        )}
+        {baths && (
+          <div className="bg-white border border-gray-200 px-4 py-2 rounded-full">
+            <span className="font-semibold">{baths} {baths === 1 ? 'Bath' : 'Baths'}</span>
+          </div>
+        )}
+        {sqft && (
+          <div className="bg-white border border-gray-200 px-4 py-2 rounded-full">
+            <span className="font-semibold">{sqft.toLocaleString()} sqft</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

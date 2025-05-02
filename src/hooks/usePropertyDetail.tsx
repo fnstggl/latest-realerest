@@ -20,7 +20,7 @@ type PropertyDetailType = {
   seller_email: string;
   seller_phone: string;
   seller_id: string;
-  reward: number;
+  reward: number | null;
   after_repair_value?: number;
   estimated_rehab?: number;
   property_type?: string;
@@ -86,7 +86,7 @@ const usePropertyDetail = (propertyId?: string) => {
           seller_email: '',
           seller_phone: '',
           seller_id: propertyData.user_id,
-          reward: Number(propertyData.reward || 0),
+          reward: propertyData.reward !== null ? Number(propertyData.reward || 0) : null,
           after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
           estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
           property_type: propertyData.property_type,
