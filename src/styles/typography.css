@@ -85,4 +85,36 @@
     font-style: italic;
     /* Removed transition property to make the change immediate */
   }
+  
+  /* Editorial text overlay style for headers */
+  .editorial-overlay {
+    position: relative;
+  }
+  
+  .editorial-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.05);
+    z-index: -1;
+  }
+  
+  .text-overlay-container {
+    position: relative;
+  }
+  
+  .text-overlay-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.05;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+    z-index: -1;
+  }
 }
