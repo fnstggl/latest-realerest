@@ -25,7 +25,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           warning: "border-yellow-500",
           closeButton: "rounded-full p-1 hover:bg-gray-100"
         },
-        duration: 5000,
+        duration: 2000,
       }}
       // Prevent stacking/duplicate toasts
       expand={false}

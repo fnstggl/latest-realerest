@@ -87,7 +87,10 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         if (error.code === "23505") {
           onOpenChange(false);
           if (refreshProperty) {
-            refreshProperty();
+            // Add a slight delay before refreshing to allow toast to be visible
+            setTimeout(() => {
+              refreshProperty();
+            }, 2000);
           }
           return;
         } else {
@@ -130,21 +133,27 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       }
       
       onOpenChange(false);
-      if (refreshProperty) {
-        refreshProperty();
-      }
       
       // Only show success toast if we haven't shown one yet
       if (!toastShownRef.current) {
         toast.success("Waitlist Request Submitted", {
-          description: `You've successfully joined the waitlist for ${propertyTitle}`
+          description: `You've successfully joined the waitlist for ${propertyTitle}`,
+          duration: 2000, // 2 seconds
         });
         toastShownRef.current = true;
+      }
+      
+      // Add a slight delay before refreshing to allow toast to be visible
+      if (refreshProperty) {
+        setTimeout(() => {
+          refreshProperty();
+        }, 2000);
       }
     } catch (error) {
       console.error("Error joining waitlist:", error);
       toast.error("Error Joining Waitlist.", {
-        description: "Failed to join waitlist. Please try again."
+        description: "Failed to join waitlist. Please try again.",
+        duration: 2000, // 2 seconds
       });
     } finally {
       setLoading(false);
