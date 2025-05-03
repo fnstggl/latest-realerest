@@ -46,32 +46,6 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
   const lastAddedNotificationRef = useRef<string>('');
   // Add a ref to track notification toasts to prevent duplicates
   const notificationToastsRef = useRef<Set<string>>(new Set());
-  // Add a ref for shown waitlist notifications to prevent repeated toasts
-  const shownWaitlistNotificationsRef = useRef<Set<string>>(new Set());
-
-  // Load previously shown waitlist notifications from localStorage
-  useEffect(() => {
-    try {
-      const storedIds = localStorage.getItem('shown_waitlist_notifications');
-      if (storedIds) {
-        shownWaitlistNotificationsRef.current = new Set(JSON.parse(storedIds));
-      }
-    } catch (error) {
-      console.error('Error loading shown waitlist notifications:', error);
-    }
-    
-    // Save to localStorage when component unmounts
-    return () => {
-      try {
-        localStorage.setItem(
-          'shown_waitlist_notifications', 
-          JSON.stringify([...shownWaitlistNotificationsRef.current])
-        );
-      } catch (error) {
-        console.error('Error saving shown waitlist notifications:', error);
-      }
-    };
-  }, []);
 
   // Fetch notifications when user changes
   useEffect(() => {
@@ -94,22 +68,15 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
         }
 
         if (data) {
-          const formattedNotifications: Notification[] = data.map(n => {
-            // For waitlist notifications, mark them as already shown in the UI
-            if (n.type === 'new_listing' && !n.read) {
-              shownWaitlistNotificationsRef.current.add(n.id);
-            }
-            
-            return {
-              id: n.id,
-              title: n.title,
-              message: n.message,
-              type: n.type || 'info',
-              read: n.read || false,
-              timestamp: n.created_at,
-              properties: n.properties as NotificationProperties || {},
-            };
-          });
+          const formattedNotifications: Notification[] = data.map(n => ({
+            id: n.id,
+            title: n.title,
+            message: n.message,
+            type: n.type || 'info',
+            read: n.read || false,
+            timestamp: n.created_at,
+            properties: n.properties as NotificationProperties || {},
+          }));
           setNotifications(formattedNotifications);
         }
       } catch (error) {
@@ -250,11 +217,6 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
           timestamp: data[0].created_at,
           properties: data[0].properties as NotificationProperties || {},
         };
-
-        // For waitlist notifications, mark them as already shown
-        if (newNotification.type === 'new_listing') {
-          shownWaitlistNotificationsRef.current.add(newNotification.id);
-        }
 
         setNotifications(prev => [newNotification, ...prev]);
       }
