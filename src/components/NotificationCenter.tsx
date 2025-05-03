@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -21,6 +20,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const latestNotificationRef = useRef<string | null>(null);
 
   // Show a toast for new notifications (but not when popover is open)
   useEffect(() => {
@@ -34,11 +34,15 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
     };
 
     const latestUnread = getLatestUnread();
-    if (latestUnread && !isOpen) {
-      // Only show toast if notification popup is not open
-      toast(latestUnread.title, {
-        description: latestUnread.message,
-        duration: 5000,
+    if (latestUnread && !isOpen && latestUnread.id !== latestNotificationRef.current) {
+      // Only show toast if notification popup is not open and we haven't shown this notification before
+      latestNotificationRef.current = latestUnread.id;
+      
+      const toastType = latestUnread.type === 'info' ? 'info' : 
+                         latestUnread.type === 'error' ? 'error' : 'success';
+      
+      toast[toastType](latestUnread.title, {
+        description: latestUnread.message
       });
     }
   }, [notifications, isOpen]);
@@ -99,7 +103,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={handleOpenChange}>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button 
           variant="ghost" 

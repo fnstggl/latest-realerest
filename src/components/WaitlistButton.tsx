@@ -61,7 +61,9 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       return;
     }
     if (!name.trim()) {
-      toast.error("Please provide your name");
+      toast.error("Error Joining Waitlist.", {
+        description: "Please provide your name"
+      });
       return;
     }
     try {
@@ -127,10 +129,14 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         refreshProperty();
       }
       
-      toast.success("Successfully joined waitlist!");
+      toast.success("Waitlist Request Submitted", {
+        description: `You've successfully joined the waitlist for a house in ${propertyTitle}`
+      });
     } catch (error) {
       console.error("Error joining waitlist:", error);
-      toast.error("Failed to join waitlist. Please try again.");
+      toast.error("Error Joining Waitlist.", {
+        description: "Failed to join waitlist. Please try again."
+      });
     } finally {
       setLoading(false);
     }
