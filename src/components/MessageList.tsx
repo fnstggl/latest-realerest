@@ -29,7 +29,14 @@ const MessageList: React.FC<MessageListProps> = ({
       if (conversations.length === 0) return;
       
       // Get unique user IDs from all conversations
-      const userIds = [...new Set(conversations.map(conv => conv.otherUserId))];
+      const userIds = [...new Set(conversations.map(conv => conv.otherUserId).filter(Boolean))];
+      
+      if (userIds.length === 0) {
+        console.error('No valid user IDs found in conversations');
+        return;
+      }
+      
+      console.log('Fetching profiles for user IDs:', userIds);
       
       try {
         // Fetch profiles for all users at once
@@ -42,6 +49,8 @@ const MessageList: React.FC<MessageListProps> = ({
           console.error('Error fetching user details:', error);
           return;
         }
+        
+        console.log('Profiles data received:', data);
         
         const detailsMap: Record<string, { name: string; role: UserRole }> = {};
         
@@ -63,6 +72,7 @@ const MessageList: React.FC<MessageListProps> = ({
           };
         });
         
+        console.log('User details map created:', detailsMap);
         setUserDetails(detailsMap);
       } catch (err) {
         console.error('Error processing user details:', err);
@@ -117,11 +127,18 @@ const MessageList: React.FC<MessageListProps> = ({
       {conversations.map(conversation => {
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
-        // Get user details from our state, falling back to conversation data
-        const userDetail = userDetails[conversation.otherUserId] || { 
-          name: conversation.otherUserName || 'Unknown User', 
-          role: 'buyer' 
-        };
+        // Ensure otherUserId exists before trying to access userDetails
+        if (!conversation.otherUserId) {
+          console.warn('Conversation missing otherUserId:', conversation.id);
+        }
+        
+        // Get user details from our state, with better logging and fallbacks
+        const userDetail = conversation.otherUserId && userDetails[conversation.otherUserId] 
+          ? userDetails[conversation.otherUserId] 
+          : { 
+              name: conversation.otherUserName || 'Unknown User', 
+              role: conversation.otherUserRole || 'buyer' 
+            };
         
         return <div 
                 key={conversation.id} 

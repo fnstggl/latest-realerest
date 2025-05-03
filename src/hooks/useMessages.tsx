@@ -107,6 +107,8 @@ export const useMessages = () => {
     
     setLoading(true);
     try {
+      console.log('Fetching conversations for user ID:', user.id);
+      
       // Get all conversations for the current user
       const { data: conversationData, error: conversationError } = await supabase
         .from('conversations')
@@ -120,10 +122,13 @@ export const useMessages = () => {
       }
       
       if (!conversationData || conversationData.length === 0) {
+        console.log('No conversations found for user:', user.id);
         setConversations([]);
         setLoading(false);
         return;
       }
+      
+      console.log('Conversations found:', conversationData.length);
       
       const conversationsWithDetails = await Promise.all(
         conversationData.map(async (conversation) => {
@@ -131,29 +136,46 @@ export const useMessages = () => {
             ? conversation.participant2 
             : conversation.participant1;
             
+          if (!otherUserId) {
+            console.error('Invalid conversation data - missing participant:', conversation);
+            return null;
+          }
+          
+          console.log(`Processing conversation ${conversation.id} with other user ${otherUserId}`);
+          
           // Get both name and account_type
           const { data: profileData } = await supabase
             .from('profiles')
-            .select('name, email, account_type')
+            .select('id, name, email, account_type')
             .eq('id', otherUserId)
             .maybeSingle();
             
+          console.log('Profile data for user:', profileData);
+          
           let otherUserName = "Unknown User";
           let otherUserRole: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
           
-          if (profileData?.name) {
-            otherUserName = profileData.name;
-            otherUserRole = profileData.account_type as 'seller' | 'buyer' | 'wholesaler' || 'buyer';
-          } else if (profileData?.email) {
-            otherUserName = profileData.email;
+          if (profileData) {
+            // Prefer name over email for display
+            otherUserName = profileData.name || profileData.email || "Unknown User";
+            
+            // Ensure account_type is valid, default to 'buyer' if not
+            otherUserRole = (profileData.account_type === 'seller' || 
+                          profileData.account_type === 'buyer' || 
+                          profileData.account_type === 'wholesaler') 
+                          ? profileData.account_type as 'seller' | 'buyer' | 'wholesaler' 
+                          : 'buyer';
+                          
+            console.log(`User ${otherUserId} has role: ${otherUserRole}`);
           } else {
-            // Fallback to RPC
+            // Fallback to RPC for email
             const { data: userData } = await supabase.rpc('get_user_email', {
               user_id_param: otherUserId
             });
             
             if (userData) {
               otherUserName = userData;
+              console.log(`Using email as name fallback for ${otherUserId}: ${userData}`);
             }
           }
             
@@ -226,9 +248,15 @@ export const useMessages = () => {
         })
       );
       
-      setConversations(conversationsWithDetails);
+      // Filter out any null entries (from invalid conversations)
+      const validConversations = conversationsWithDetails.filter(
+        (conv): conv is Conversation => conv !== null
+      );
       
-      const unread = conversationsWithDetails.reduce((count, conversation) => {
+      console.log('Processed conversations:', validConversations);
+      setConversations(validConversations);
+      
+      const unread = validConversations.reduce((count, conversation) => {
         if (!conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user.id) {
           return count + 1;
         }
