@@ -8,7 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import MessageGroup from '@/components/conversation/MessageGroup';
 import MessageInput from '@/components/conversation/MessageInput';
-import { Message } from '@/hooks/useMessages';
+import { Message } from '@/types/messages';
 import { motion } from 'framer-motion';
 import UserTag, { UserRole } from '@/components/UserTag';
 

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -53,21 +54,21 @@ export const useProperties = (): UsePropertiesResult => {
               id: property.id,
               title: property.title,
               description: property.description,
-              location: property.location,
-              price: property.price,
-              bedrooms: property.bedrooms,
-              bathrooms: property.bathrooms,
+              location: property.location || property.full_address,
+              price: property.price || property.listing_price,
+              bedrooms: property.bedrooms || property.beds,
+              bathrooms: property.bathrooms || property.baths,
               images: property.images,
               created_at: property.created_at,
               user_id: property.user_id,
-              status: property.status,
-              type: property.type,
-              amenities: property.amenities,
-              offer_type: property.offer_type,
-              square_meters: property.square_meters,
-              year_built: property.year_built,
-              lot_size: property.lot_size,
-              parking: property.parking,
+              status: property.status || 'active',
+              type: property.type || 'house',
+              amenities: property.amenities || [],
+              offer_type: property.offer_type || 'sale',
+              square_meters: property.square_meters || 0,
+              year_built: property.year_built || 0,
+              lot_size: property.lot_size || 0,
+              parking: property.parking || '',
               bounty: 0,
             };
             return propertyWithDetails;

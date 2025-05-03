@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Conversation } from '@/hooks/useMessages';
+import { Conversation } from '@/types/messages';
 import { formatDistanceToNow } from 'date-fns';
 import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
