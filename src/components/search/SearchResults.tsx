@@ -33,7 +33,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   includeRental,
   withPhotosOnly
 }) => {
-  const { listings, isLoading, error, fetchListings } = useListings();
+  const { listings, loading: isLoading, error, fetchListings } = useListings();
   
   useEffect(() => {
     const fetchData = async () => {
@@ -70,7 +70,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <LoadingSpinner size="lg" />
+        <LoadingSpinner />
       </div>
     );
   }
@@ -143,15 +143,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         <PropertyCard
           key={property.id}
           id={property.id}
-          price={Number(property.price)}
-          marketPrice={Number(property.market_price)}
+          price={property.price}
+          marketPrice={property.marketPrice}
           location={property.location}
           address={property.title}
-          image={property.images?.[0] || '/placeholder.svg'}
+          image={property.image || '/placeholder.svg'}
           beds={property.beds || 0}
           baths={property.baths || 0}
           sqft={property.sqft || 0}
-          belowMarket={((Number(property.market_price) - Number(property.price)) / Number(property.market_price)) * 100}
+          belowMarket={property.belowMarket}
           reward={property.reward}
         />
       ))}
