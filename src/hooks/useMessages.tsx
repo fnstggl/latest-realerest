@@ -26,6 +26,7 @@ export interface Message {
   content: string;
   timestamp: string;
   isRead: boolean;
+  isMine?: boolean;
   relatedOfferId?: string;
   propertyId?: string;
 }
@@ -153,7 +154,7 @@ export const useMessages = () => {
           let propertyTitle = undefined;
           let propertyImage = undefined;
           
-          // Check if the message has property_id directly (from the new column)
+          // Check if the message has property_id directly
           if (messageData?.property_id) {
             propertyId = messageData.property_id;
           }
@@ -245,7 +246,10 @@ export const useMessages = () => {
       const processedMessages = await Promise.all(data.map(async (message) => {
         let propertyId = undefined;
         
-        if (message.related_offer_id) {
+        if (message.property_id) {
+          propertyId = message.property_id;
+        }
+        else if (message.related_offer_id) {
           const { data: offerData } = await supabase
             .from('property_offers')
             .select('property_id')
@@ -264,6 +268,7 @@ export const useMessages = () => {
           content: message.content,
           timestamp: message.created_at,
           isRead: message.is_read,
+          isMine: message.sender_id === user?.id,
           relatedOfferId: message.related_offer_id,
           propertyId
         };
@@ -275,6 +280,23 @@ export const useMessages = () => {
       return [];
     }
   }, [user?.id]);
+
+  const markMessagesAsRead = useCallback(async (conversationId: string) => {
+    if (!user?.id) return;
+    
+    try {
+      await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('conversation_id', conversationId)
+        .neq('sender_id', user.id)
+        .eq('is_read', false);
+        
+      fetchConversations();
+    } catch (error) {
+      console.error('Error marking conversation as read:', error);
+    }
+  }, [user?.id, fetchConversations]);
 
   const sendMessage = useCallback(async (
     conversationId: string, 
@@ -452,6 +474,7 @@ export const useMessages = () => {
     sendMessage,
     getOrCreateConversation,
     markConversationAsRead,
+    markMessagesAsRead,
     refreshConversations: fetchConversations,
     getUserDisplayName // Export this function so other components can use it
   };

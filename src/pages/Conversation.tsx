@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMessages } from '@/hooks/useMessages';
@@ -22,7 +23,7 @@ const Conversation: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const { markMessagesAsRead } = useMessages();
+  const { markMessagesAsRead, fetchMessages } = useMessages();
 
   useEffect(() => {
     if (!conversationId) {
@@ -30,14 +31,14 @@ const Conversation: React.FC = () => {
       return;
     }
     
-    const fetchMessages = async () => {
+    const fetchConversationData = async () => {
       setLoading(true);
       
       try {
         // First, get conversation participants
         const { data: convoData, error: convoError } = await supabase
           .from('conversations')
-          .select('user_id_1, user_id_2')
+          .select('participant1, participant2')
           .eq('id', conversationId)
           .single();
           
@@ -48,7 +49,7 @@ const Conversation: React.FC = () => {
         }
         
         // Find the other user's ID
-        const otherUserId = convoData.user_id_1 === user?.id ? convoData.user_id_2 : convoData.user_id_1;
+        const otherUserId = convoData.participant1 === user?.id ? convoData.participant2 : convoData.participant1;
         
         // Get other user's profile info
         const { data: profileData, error: profileError } = await supabase
@@ -70,29 +71,13 @@ const Conversation: React.FC = () => {
           setOtherUserRole(roleType);
         }
         
-        // Get messages
-        const { data: messagesData, error: messagesError } = await supabase
-          .from('messages')
-          .select('*')
-          .eq('conversation_id', conversationId)
-          .order('created_at');
-          
-        if (messagesError) {
-          console.error('Error fetching messages:', messagesError);
-        } else if (messagesData) {
-          const formattedMessages = messagesData.map(message => ({
-            id: message.id,
-            content: message.content,
-            senderId: message.sender_id,
-            timestamp: message.created_at,
-            isRead: message.is_read,
-            isMine: message.sender_id === user?.id,
-          }));
-          
-          setMessages(formattedMessages);
+        // Get messages using our hook
+        if (conversationId && fetchMessages) {
+          const messagesData = await fetchMessages(conversationId);
+          setMessages(messagesData);
           
           // Mark messages as read
-          if (conversationId) {
+          if (conversationId && markMessagesAsRead) {
             markMessagesAsRead(conversationId);
           }
         }
@@ -103,7 +88,7 @@ const Conversation: React.FC = () => {
       }
     };
     
-    fetchMessages();
+    fetchConversationData();
     
     // Set up subscription for new messages
     const messagesSubscription = supabase
@@ -120,6 +105,7 @@ const Conversation: React.FC = () => {
             id: payload.new.id,
             content: payload.new.content,
             senderId: payload.new.sender_id,
+            conversationId: payload.new.conversation_id,
             timestamp: payload.new.created_at,
             isRead: payload.new.is_read,
             isMine: payload.new.sender_id === user?.id,
@@ -128,7 +114,7 @@ const Conversation: React.FC = () => {
           setMessages(prevMessages => [...prevMessages, newMessage]);
           
           // Mark received message as read immediately
-          if (payload.new.sender_id !== user?.id && conversationId) {
+          if (payload.new.sender_id !== user?.id && conversationId && markMessagesAsRead) {
             markMessagesAsRead(conversationId);
           }
         }
@@ -138,7 +124,7 @@ const Conversation: React.FC = () => {
     return () => {
       supabase.removeChannel(messagesSubscription);
     };
-  }, [conversationId, user?.id, navigate, markMessagesAsRead]);
+  }, [conversationId, user?.id, navigate, markMessagesAsRead, fetchMessages]);
   
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -179,25 +165,21 @@ const Conversation: React.FC = () => {
   }, [conversationId, user?.id]);
   
   const groupMessages = (messages: Message[]) => {
-    const groupedMessages: { senderId: string; messages: Message[] }[] = [];
-    let currentGroup: { senderId: string; messages: Message[] } | null = null;
+    // Group messages by date
+    const messagesByDate: Record<string, Message[]> = {};
     
     messages.forEach(message => {
-      if (!currentGroup || currentGroup.senderId !== message.senderId) {
-        if (currentGroup) {
-          groupedMessages.push(currentGroup);
-        }
-        currentGroup = { senderId: message.senderId, messages: [message] };
-      } else {
-        currentGroup.messages.push(message);
+      const date = new Date(message.timestamp).toLocaleDateString();
+      if (!messagesByDate[date]) {
+        messagesByDate[date] = [];
       }
+      messagesByDate[date].push(message);
     });
     
-    if (currentGroup) {
-      groupedMessages.push(currentGroup);
-    }
-    
-    return groupedMessages;
+    return Object.entries(messagesByDate).map(([date, messages]) => ({
+      date,
+      messages
+    }));
   };
   
   const groupedMessages = groupMessages(messages);
@@ -245,9 +227,9 @@ const Conversation: React.FC = () => {
                   groupedMessages.map((group, i) => (
                     <MessageGroup 
                       key={i}
+                      date={group.date}
                       messages={group.messages}
-                      isMine={group.messages[0].isMine}
-                      senderName={group.messages[0].isMine ? 'You' : otherUserName}
+                      currentUserId={user?.id}
                     />
                   ))
                 )}
