@@ -15,13 +15,18 @@ interface MessageListProps {
   loading: boolean;
 }
 
+interface UserDetail {
+  name: string;
+  role: UserRole;
+}
+
 const MessageList: React.FC<MessageListProps> = ({
   conversations,
   loading
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [userDetails, setUserDetails] = useState<Record<string, { name: string; role: UserRole }>>({});
+  const [userDetails, setUserDetails] = useState<Record<string, UserDetail>>({});
 
   // Fetch user profiles directly and more efficiently
   useEffect(() => {
@@ -34,43 +39,80 @@ const MessageList: React.FC<MessageListProps> = ({
       try {
         console.log('Fetching profiles for user IDs:', userIds);
         
-        // Fetch all profiles in a single query
-        const { data, error } = await supabase
+        // First attempt: Try to get profile data from the profiles table
+        let { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
           .select('id, name, email, account_type')
           .in('id', userIds);
           
-        if (error) {
-          console.error('Error fetching user profiles:', error);
+        if (profilesError) {
+          console.error('Error fetching user profiles:', profilesError);
           return;
         }
         
-        if (!data || data.length === 0) {
-          console.warn('No profile data returned for user IDs:', userIds);
-          return;
-        }
+        // Create a map to store user emails for those without profiles
+        const userEmailsMap: Record<string, string> = {};
         
-        console.log('Fetched profiles:', data);
+        // Even if we got profile data, some users might be missing
+        // Let's get their emails via RPC as fallback
+        for (const userId of userIds) {
+          try {
+            // Check if this user has a profile
+            const hasProfile = profilesData?.some(profile => profile.id === userId);
+            
+            if (!hasProfile) {
+              console.log(`No profile found for user ${userId}, getting email via RPC`);
+              const { data: email } = await supabase.rpc('get_user_email', {
+                user_id_param: userId
+              });
+              
+              if (email) {
+                userEmailsMap[userId] = email;
+                console.log(`Retrieved email for ${userId} via RPC:`, email);
+              }
+            }
+          } catch (err) {
+            console.error(`Error getting email for user ${userId}:`, err);
+          }
+        }
         
         // Create a map of user details for quick lookup
-        const detailsMap: Record<string, { name: string; role: UserRole }> = {};
+        const detailsMap: Record<string, UserDetail> = {};
         
-        data.forEach(profile => {
-          // Validate the role type is one of our allowed types
-          const validRoles: UserRole[] = ['seller', 'buyer', 'wholesaler'];
-          const roleType = validRoles.includes(profile.account_type as UserRole) 
-            ? (profile.account_type as UserRole) 
-            : 'buyer';
+        // Process profiles data first
+        if (profilesData && profilesData.length > 0) {
+          console.log('Fetched profiles:', profilesData);
           
-          // Use name if available, fall back to email only if name is null/empty
-          const displayName = profile.name || profile.email || "Unknown User";
-          
-          detailsMap[profile.id] = {
-            name: displayName,
-            role: roleType
-          };
-          
-          console.log(`Mapped user ${profile.id}: name=${displayName}, role=${roleType}`);
+          profilesData.forEach(profile => {
+            if (!profile.id) return; // Skip if no ID
+            
+            // Validate the role type is one of our allowed types
+            const validRoles: UserRole[] = ['seller', 'buyer', 'wholesaler'];
+            const roleType = validRoles.includes(profile.account_type as UserRole) 
+              ? (profile.account_type as UserRole) 
+              : 'buyer';
+            
+            // Use name if available, fall back to email only if name is null/empty
+            const displayName = profile.name || profile.email || userEmailsMap[profile.id] || "Unknown User";
+            
+            detailsMap[profile.id] = {
+              name: displayName,
+              role: roleType
+            };
+            
+            console.log(`Mapped user ${profile.id}: name=${displayName}, role=${roleType}`);
+          });
+        }
+        
+        // Add users who only had emails via RPC but no profile
+        Object.keys(userEmailsMap).forEach(userId => {
+          if (!detailsMap[userId]) {
+            detailsMap[userId] = {
+              name: userEmailsMap[userId],
+              role: 'buyer' // Default role
+            };
+            console.log(`Mapped user ${userId} from RPC: name=${userEmailsMap[userId]}, role=buyer (default)`);
+          }
         });
         
         setUserDetails(detailsMap);
@@ -129,7 +171,9 @@ const MessageList: React.FC<MessageListProps> = ({
         // Get user details from our state, with improved fallback handling
         const userDetail = userDetails[conversation.otherUserId];
         const displayName = userDetail?.name || conversation.otherUserName || 'Unknown User';
-        const userRole = userDetail?.role || (conversation.otherUserRole || 'buyer');
+        const userRole = userDetail?.role || (conversation.otherUserRole as UserRole || 'buyer');
+        
+        console.log(`Rendering conversation with ${conversation.otherUserId}: name=${displayName}, role=${userRole}`);
         
         return <div 
                 key={conversation.id} 

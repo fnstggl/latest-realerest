@@ -50,6 +50,7 @@ const Conversation: React.FC = () => {
         
         // Find the other user's ID
         const otherUserId = convoData.participant1 === user?.id ? convoData.participant2 : convoData.participant1;
+        console.log('Other user ID in conversation:', otherUserId);
         
         // Get other user's profile with improved profile data fetching
         const { data: profileData, error: profileError } = await supabase
@@ -58,33 +59,39 @@ const Conversation: React.FC = () => {
           .eq('id', otherUserId)
           .maybeSingle();
           
-        console.log('Fetched profile data for Conversation page:', profileData);
-          
+        console.log('Fetched profile data for Conversation page:', profileData, 'Error:', profileError);
+        
+        let userName = 'Unknown User';
+        let userRole: UserRole = 'buyer';
+        
         if (!profileError && profileData) {
-          // Prefer name over email for display
-          setOtherUserName(profileData.name || profileData.email || 'Unknown User');
+          // Profile exists, use data from there
+          userName = profileData.name || profileData.email || 'Unknown User';
           
           // Validate the role type
           const validRoles: UserRole[] = ['seller', 'buyer', 'wholesaler'];
-          const roleType = validRoles.includes(profileData.account_type as UserRole)
+          userRole = validRoles.includes(profileData.account_type as UserRole)
             ? profileData.account_type as UserRole
             : 'buyer';
             
-          setOtherUserRole(roleType);
-          console.log(`Set user role for ${otherUserId} to ${roleType}`);
+          console.log(`Set user information from profile: name=${userName}, role=${userRole}`);
         } else {
-          console.warn('Profile fetch failed, falling back to RPC:', profileError);
+          // Profile not found or error, fallback to getting email via RPC function
+          console.log('Profile fetch failed, falling back to RPC for user:', otherUserId);
           
-          // Fallback to getting email via RPC function if profile fetch fails
-          const { data: userData } = await supabase.rpc('get_user_email', {
+          const { data: emailData, error: emailError } = await supabase.rpc('get_user_email', {
             user_id_param: otherUserId
           });
           
-          if (userData) {
-            setOtherUserName(userData);
-            setOtherUserRole('buyer'); // Default role if we couldn't get from profile
+          if (!emailError && emailData) {
+            userName = emailData;
+            console.log(`Set user name from RPC: ${userName}`);
           }
         }
+        
+        // Set state with the gathered information
+        setOtherUserName(userName);
+        setOtherUserRole(userRole);
         
         // Get messages using our hook
         if (conversationId && fetchMessages) {
