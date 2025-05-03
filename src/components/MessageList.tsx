@@ -71,9 +71,16 @@ const MessageList: React.FC<MessageListProps> = ({
         
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
-        // Get user display info from conversation object directly
+        // Ensure we have valid values for display
         const displayName = conversation.otherUserName || 'Unknown User';
-        const userRole: UserRole = conversation.otherUserRole || 'buyer';
+        
+        // Validate that role is one of our expected types
+        const userRole: UserRole = 
+          (conversation.otherUserRole === 'seller' || 
+           conversation.otherUserRole === 'buyer' || 
+           conversation.otherUserRole === 'wholesaler') 
+            ? conversation.otherUserRole as UserRole 
+            : 'buyer';
                 
         return <div 
                 key={conversation.id} 

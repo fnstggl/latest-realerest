@@ -38,55 +38,54 @@ export const useConversations = () => {
       
       console.log('Conversations found:', conversationData.length);
       
-      const conversationsWithDetails = await Promise.all(
+      const processedConversations = await Promise.all(
         conversationData.map(async (conversation) => {
           // Determine the other user's ID
           const otherUserId = conversation.participant1 === user.id 
             ? conversation.participant2 
             : conversation.participant1;
             
-          if (!otherUserId) {
-            console.error('Invalid conversation data - missing participant:', conversation);
-            return null;
-          }
-          
           console.log(`Processing conversation ${conversation.id} with other user ${otherUserId}`);
           
-          // Get profile data including name and account_type
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('id, name, email, account_type')
-            .eq('id', otherUserId)
-            .maybeSingle();
-            
-          console.log('Profile data for user:', profileData);
-          
-          // Initialize with default values
+          // Default values
           let otherUserName = "Unknown User";
-          let otherUserRole: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
+          let otherUserRole = "buyer";
           
-          if (profileData) {
-            // Prioritize name over email
-            otherUserName = profileData.name || profileData.email || "Unknown User";
+          if (otherUserId) {
+            // Direct query to profiles table with a single call
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('name, email, account_type')
+              .eq('id', otherUserId)
+              .maybeSingle();
             
-            // Validate account_type before using as role
-            if (profileData.account_type === 'seller' || 
-                profileData.account_type === 'buyer' || 
-                profileData.account_type === 'wholesaler') {
-              otherUserRole = profileData.account_type as 'seller' | 'buyer' | 'wholesaler';
-            }
-          } else {
-            // If no profile found, try to get email as fallback
-            const { data: userData } = await supabase.rpc('get_user_email', {
-              user_id_param: otherUserId
-            });
+            console.log('Profile data for user:', profileData);
             
-            if (userData) {
-              otherUserName = userData;
+            if (profileData) {
+              // Set name with clear priority: name first, then email, then default
+              otherUserName = profileData.name || profileData.email || "Unknown User";
+              
+              // Explicitly validate the account_type before using it
+              if (profileData.account_type === 'seller' || 
+                  profileData.account_type === 'buyer' || 
+                  profileData.account_type === 'wholesaler') {
+                otherUserRole = profileData.account_type;
+              }
+              
+              console.log(`User ${otherUserId} has role: ${otherUserRole}`);
+            } else {
+              // Backup plan: get email directly if profile fetch fails
+              const { data: userData } = await supabase.rpc('get_user_email', {
+                user_id_param: otherUserId
+              });
+              
+              if (userData) {
+                otherUserName = userData;
+              }
             }
           }
             
-          // Get the latest message and property information
+          // Get the latest message in a separate query
           const { data: messageData } = await supabase
             .from('messages')
             .select('*, property_offers(property_id)')
@@ -95,28 +94,31 @@ export const useConversations = () => {
             .limit(1)
             .maybeSingle();
             
+          // Property information processing
           let propertyId = undefined;
           let propertyTitle = undefined;
           let propertyImage = undefined;
           
-          // Check if the message has property_id directly
-          if (messageData && 'property_id' in messageData && messageData.property_id) {
-            propertyId = messageData.property_id;
-          }
-          // If not, check if it has a related offer
-          else if (messageData?.related_offer_id) {
-            const { data: offerData } = await supabase
-              .from('property_offers')
-              .select('property_id')
-              .eq('id', messageData.related_offer_id)
-              .maybeSingle();
-              
-            if (offerData?.property_id) {
-              propertyId = offerData.property_id;
+          if (messageData) {
+            // Try to get property_id from message directly
+            if (messageData.property_id) {
+              propertyId = messageData.property_id;
+            }
+            // Or from related offer
+            else if (messageData.related_offer_id) {
+              const { data: offerData } = await supabase
+                .from('property_offers')
+                .select('property_id')
+                .eq('id', messageData.related_offer_id)
+                .maybeSingle();
+                
+              if (offerData?.property_id) {
+                propertyId = offerData.property_id;
+              }
             }
           }
           
-          // If we have a property ID, get the property details
+          // If we found a property ID, get its details
           if (propertyId) {
             const { data: propertyData } = await supabase
               .from('property_listings')
@@ -132,7 +134,7 @@ export const useConversations = () => {
             }
           }
           
-          // Create the conversation object
+          // Create the conversation object with all collected data
           return {
             id: conversation.id,
             otherUserId,
@@ -156,10 +158,8 @@ export const useConversations = () => {
         })
       );
       
-      // Filter out any null conversations (from invalid data)
-      const validConversations = conversationsWithDetails.filter(
-        (conv): conv is Conversation => conv !== null
-      );
+      // Filter out any invalid conversations
+      const validConversations = processedConversations.filter(Boolean);
       
       console.log('Processed conversations:', validConversations);
       

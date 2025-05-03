@@ -9,33 +9,36 @@ interface UserTagProps {
 }
 
 const UserTag: React.FC<UserTagProps> = ({ role }) => {
-  let bgColor = '';
-  let textColor = '';
+  // Default to buyer if role isn't one of our expected types
+  const safeRole: UserRole = ['seller', 'buyer', 'wholesaler'].includes(role) 
+    ? role as UserRole 
+    : 'buyer';
   
-  switch (role) {
-    case 'seller':
-      bgColor = '#FDE1D3'; // Light red
-      textColor = '#ea384c'; // Dark red
-      break;
-    case 'wholesaler':
-      bgColor = '#FEF7CD'; // Light yellow
-      textColor = '#F97316'; // Dark yellow
-      break;
-    case 'buyer':
-      bgColor = '#F2FCE2'; // Light green - keeping current green
-      textColor = '#4CA154'; // Dark green - keeping current dark green
-      break;
-    default:
-      bgColor = '#F5F5F5'; // Light gray
-      textColor = '#6B7280'; // Dark gray
-  }
+  // Updated color mapping with more distinct colors
+  const colorMap = {
+    seller: {
+      bg: '#FDE1D3', // Light red
+      text: '#ea384c', // Dark red
+    },
+    wholesaler: {
+      bg: '#FEF7CD', // Light yellow
+      text: '#F97316', // Dark yellow/orange
+    },
+    buyer: {
+      bg: '#F2FCE2', // Light green
+      text: '#4CA154', // Dark green
+    }
+  };
   
   return (
     <Badge 
       className="ml-2 font-medium text-xs py-0.5 px-2 capitalize"
-      style={{ backgroundColor: bgColor, color: textColor }}
+      style={{ 
+        backgroundColor: colorMap[safeRole].bg, 
+        color: colorMap[safeRole].text 
+      }}
     >
-      {role}
+      {safeRole}
     </Badge>
   );
 };
