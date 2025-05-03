@@ -28,15 +28,18 @@ const MessageList: React.FC<MessageListProps> = ({
     const fetchUserDetails = async () => {
       if (conversations.length === 0) return;
       
-      // Get unique user IDs from all conversations, filtering out undefined or null values
-      const userIds = [...new Set(conversations
+      // Filter out any undefined or null otherUserIds before creating the Set
+      const validUserIds = conversations
         .map(conv => conv.otherUserId)
-        .filter(Boolean))];
+        .filter((id): id is string => !!id);
       
-      if (userIds.length === 0) {
-        console.error('No valid user IDs found in conversations');
+      if (validUserIds.length === 0) {
+        console.log('No valid user IDs found in conversations');
         return;
       }
+      
+      // Create a Set from the filtered array to get unique IDs
+      const userIds = [...new Set(validUserIds)];
       
       console.log('Fetching profiles for user IDs:', userIds);
       
@@ -54,25 +57,29 @@ const MessageList: React.FC<MessageListProps> = ({
         
         console.log('Profiles data received:', data);
         
+        // Initialize the details map
         const detailsMap: Record<string, { name: string; role: UserRole }> = {};
         
         // Process all user profiles
-        data?.forEach(profile => {
-          // Determine role type, defaulting to 'buyer' if invalid
-          const roleType = profile.account_type === 'seller' || 
-                         profile.account_type === 'buyer' || 
-                         profile.account_type === 'wholesaler' 
-                         ? profile.account_type as UserRole 
-                         : 'buyer';
-          
-          // Use profile name if available, otherwise use email
-          const displayName = profile.name || profile.email || "Unknown User";
-          
-          detailsMap[profile.id] = {
-            name: displayName,
-            role: roleType
-          };
-        });
+        if (data) {
+          data.forEach(profile => {
+            // Validate account_type before using it as role
+            let roleType: UserRole = 'buyer';
+            if (profile.account_type === 'seller' || 
+                profile.account_type === 'wholesaler' || 
+                profile.account_type === 'buyer') {
+              roleType = profile.account_type as UserRole;
+            }
+            
+            // Prioritize name in profile over email
+            const displayName = profile.name || profile.email || 'Unknown User';
+            
+            detailsMap[profile.id] = {
+              name: displayName,
+              role: roleType
+            };
+          });
+        }
         
         console.log('User details map created:', detailsMap);
         setUserDetails(detailsMap);
@@ -85,7 +92,6 @@ const MessageList: React.FC<MessageListProps> = ({
   }, [conversations]);
 
   const handleConversationClick = (conversation: Conversation) => {
-    // Navigate to the conversation detail page
     navigate(`/messages/${conversation.id}`);
   };
   
@@ -127,22 +133,27 @@ const MessageList: React.FC<MessageListProps> = ({
   
   return <div className="divide-y divide-gray-200">
       {conversations.map(conversation => {
-        const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
-        
-        // Make sure otherUserId exists and is valid before trying to access userDetails
-        if (!conversation.otherUserId) {
-          console.warn('Conversation missing otherUserId:', conversation.id);
+        if (!conversation.id) {
+          console.warn('Conversation missing ID, skipping render');
+          return null;
         }
         
-        // First check if we have the user in our userDetails state
-        const userDetail = conversation.otherUserId && userDetails[conversation.otherUserId] 
-          ? userDetails[conversation.otherUserId] 
-          : { 
-              // If not in userDetails, use conversation information directly if available
-              name: conversation.otherUserName || 'Unknown User', 
-              role: conversation.otherUserRole || 'buyer' 
-            };
+        const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
+        // Determine the user details to display
+        let displayName = 'Unknown User';
+        let userRole: UserRole = 'buyer';
+        
+        if (conversation.otherUserId && userDetails[conversation.otherUserId]) {
+          // If we have the user details in our state, use them
+          displayName = userDetails[conversation.otherUserId].name;
+          userRole = userDetails[conversation.otherUserId].role;
+        } else if (conversation.otherUserName) {
+          // Fallback to the name provided in the conversation
+          displayName = conversation.otherUserName;
+          userRole = conversation.otherUserRole || 'buyer';
+        }
+                
         return <div 
                 key={conversation.id} 
                 className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''} rounded-lg my-2 mx-1`} 
@@ -151,16 +162,16 @@ const MessageList: React.FC<MessageListProps> = ({
               <div className="flex items-start">
                 <div className="mr-3 flex flex-col items-center">
                   <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">
-                    {userDetail.name?.charAt(0).toUpperCase() || '?'}
+                    {displayName?.charAt(0).toUpperCase() || '?'}
                   </div>
                 </div>
                 
                 <div className="flex-1">
                   <div className="flex items-center">
                     <h3 className="font-bold text-lg">
-                      {userDetail.name}
+                      {displayName}
                     </h3>
-                    <UserTag role={userDetail.role} />
+                    <UserTag role={userRole} />
                   </div>
                   
                   {conversation.propertyId && conversation.propertyTitle && <div className="flex items-center text-sm text-[#0892D0] cursor-pointer hover:underline mb-1" onClick={e => handlePropertyClick(e, conversation.propertyId)}>

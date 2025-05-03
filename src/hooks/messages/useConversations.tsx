@@ -41,6 +41,7 @@ export const useConversations = () => {
       
       const conversationsWithDetails = await Promise.all(
         conversationData.map(async (conversation) => {
+          // Determine the other user's ID
           const otherUserId = conversation.participant1 === user.id 
             ? conversation.participant2 
             : conversation.participant1;
@@ -52,7 +53,7 @@ export const useConversations = () => {
           
           console.log(`Processing conversation ${conversation.id} with other user ${otherUserId}`);
           
-          // Get both name and account_type
+          // Get profile data including name and account_type
           const { data: profileData } = await supabase
             .from('profiles')
             .select('id, name, email, account_type')
@@ -61,35 +62,32 @@ export const useConversations = () => {
             
           console.log('Profile data for user:', profileData);
           
+          // Initialize with default values
           let otherUserName = "Unknown User";
           let otherUserRole: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
           
           if (profileData) {
-            // Prefer name over email for display
+            // Prioritize name over email
             otherUserName = profileData.name || profileData.email || "Unknown User";
             
-            // Ensure account_type is valid, default to 'buyer' if not
+            // Validate account_type before using as role
             if (profileData.account_type === 'seller' || 
                 profileData.account_type === 'buyer' || 
                 profileData.account_type === 'wholesaler') {
               otherUserRole = profileData.account_type as 'seller' | 'buyer' | 'wholesaler';
-              console.log(`User ${otherUserId} has role: ${otherUserRole}`);
-            } else {
-              console.log(`User ${otherUserId} has invalid role: ${profileData.account_type}, using default 'buyer'`);
             }
           } else {
-            // Fallback to RPC for email
+            // If no profile found, try to get email as fallback
             const { data: userData } = await supabase.rpc('get_user_email', {
               user_id_param: otherUserId
             });
             
             if (userData) {
               otherUserName = userData;
-              console.log(`Using email as name fallback for ${otherUserId}: ${userData}`);
             }
           }
             
-          // Get the latest message and check if it's related to a property
+          // Get the latest message and property information
           const { data: messageData } = await supabase
             .from('messages')
             .select('*, property_offers(property_id)')
@@ -135,6 +133,7 @@ export const useConversations = () => {
             }
           }
           
+          // Create the conversation object
           return {
             id: conversation.id,
             otherUserId,
@@ -158,14 +157,17 @@ export const useConversations = () => {
         })
       );
       
-      // Filter out any null entries (from invalid conversations)
+      // Filter out any null conversations (from invalid data)
       const validConversations = conversationsWithDetails.filter(
         (conv): conv is Conversation => conv !== null
       );
       
       console.log('Processed conversations:', validConversations);
+      
+      // Set the conversations state
       setConversations(validConversations);
       
+      // Calculate unread message count
       const unread = validConversations.reduce((count, conversation) => {
         if (!conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user.id) {
           return count + 1;
