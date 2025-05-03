@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMessages } from '@/hooks/useMessages';
@@ -34,6 +35,8 @@ const Conversation: React.FC = () => {
       setLoading(true);
       
       try {
+        console.log(`[Conversation] Starting data fetch for conversation: ${conversationId}`);
+        
         // First, get conversation participants
         const { data: convoData, error: convoError } = await supabase
           .from('conversations')
@@ -49,30 +52,54 @@ const Conversation: React.FC = () => {
         
         // Find the other user's ID
         const otherUserId = convoData.participant1 === user?.id ? convoData.participant2 : convoData.participant1;
-        console.log('[Conversation] Other user ID in conversation:', otherUserId);
+        console.log('[Conversation] Identified other user ID in conversation:', otherUserId);
         
-        // Use the improved getUserDisplayName function from our hook
+        // Use the improved getUserDisplayName function with better error handling
         if (getUserDisplayName) {
-          const userInfo = await getUserDisplayName(otherUserId);
-          console.log(`[Conversation] User info from getUserDisplayName:`, userInfo);
-          
-          // Set state with the gathered information
-          setOtherUserName(userInfo.name);
-          setOtherUserRole(userInfo.role);
-          
-          console.log(`[Conversation] Set user information from profile: name=${userInfo.name}, role=${userInfo.role}`);
+          try {
+            const userInfo = await getUserDisplayName(otherUserId);
+            console.log(`[Conversation] User info response:`, userInfo);
+            
+            // Validate name and use a fallback if needed
+            const displayName = userInfo.name || "Unknown User";
+            
+            // Validate role to ensure it's a valid UserRole type
+            const validRoles: UserRole[] = ['buyer', 'seller', 'wholesaler'];
+            let safeRole: UserRole = 'buyer';
+            
+            if (userInfo.role && validRoles.includes(userInfo.role as UserRole)) {
+              safeRole = userInfo.role as UserRole;
+            }
+            
+            // Set state with the validated information
+            setOtherUserName(displayName);
+            setOtherUserRole(safeRole);
+            
+            console.log(`[Conversation] Set validated user information: name="${displayName}", role="${safeRole}"`);
+          } catch (error) {
+            console.error('[Conversation] Error getting user display info:', error);
+            setOtherUserName("Unknown User");
+            setOtherUserRole("buyer");
+          }
         } else {
           console.error('[Conversation] getUserDisplayName function not available');
+          setOtherUserName("Unknown User");
+          setOtherUserRole("buyer");
         }
         
         // Get messages using our hook
         if (conversationId && fetchMessages) {
-          const messagesData = await fetchMessages(conversationId);
-          setMessages(messagesData);
-          
-          // Mark messages as read
-          if (conversationId && markMessagesAsRead) {
-            markMessagesAsRead(conversationId);
+          try {
+            const messagesData = await fetchMessages(conversationId);
+            console.log(`[Conversation] Fetched ${messagesData.length} messages`);
+            setMessages(messagesData);
+            
+            // Mark messages as read
+            if (conversationId && markMessagesAsRead) {
+              markMessagesAsRead(conversationId);
+            }
+          } catch (error) {
+            console.error('[Conversation] Error fetching messages:', error);
           }
         }
       } catch (error) {

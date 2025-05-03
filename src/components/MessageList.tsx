@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -29,10 +30,13 @@ const MessageList: React.FC<MessageListProps> = ({
   const [userDetails, setUserDetails] = useState<Record<string, UserDetail>>({});
   const { getUserDisplayName } = useMessages();
 
-  // Fetch user profiles directly using the improved getUserDisplayName function
+  // Improved user profile fetching with better error handling and logging
   useEffect(() => {
     const fetchUserDetails = async () => {
-      if (conversations.length === 0 || !getUserDisplayName) return;
+      if (!conversations.length || !getUserDisplayName) {
+        console.log('[MessageList] No conversations or getUserDisplayName function unavailable');
+        return;
+      }
       
       // Get unique user IDs from all conversations
       const userIds = [...new Set(conversations.map(conv => conv.otherUserId))];
@@ -40,23 +44,36 @@ const MessageList: React.FC<MessageListProps> = ({
       try {
         console.log('[MessageList] Fetching profiles for user IDs:', userIds);
         
-        // Process each user ID using our improved getUserDisplayName function
         const detailsMap: Record<string, UserDetail> = {};
         
         for (const userId of userIds) {
           try {
             const userInfo = await getUserDisplayName(userId);
+            
+            // Validate and normalize the role to ensure it's a valid UserRole
+            const validRoles: UserRole[] = ['buyer', 'seller', 'wholesaler'];
+            let safeRole: UserRole = 'buyer';
+            
+            if (userInfo.role && validRoles.includes(userInfo.role as UserRole)) {
+              safeRole = userInfo.role as UserRole;
+            }
+            
             detailsMap[userId] = {
-              name: userInfo.name,
-              role: userInfo.role
+              name: userInfo.name || 'Unknown User',
+              role: safeRole
             };
             
-            console.log(`[MessageList] Mapped user ${userId}: name=${userInfo.name}, role=${userInfo.role}`);
+            console.log(`[MessageList] Mapped user ${userId}: name="${userInfo.name}", role="${safeRole}"`);
           } catch (err) {
             console.error(`[MessageList] Error getting user details for ${userId}:`, err);
+            detailsMap[userId] = {
+              name: 'Unknown User',
+              role: 'buyer'
+            };
           }
         }
         
+        console.log('[MessageList] Completed user details mapping:', detailsMap);
         setUserDetails(detailsMap);
       } catch (err) {
         console.error('[MessageList] Error processing user details:', err);
@@ -110,12 +127,19 @@ const MessageList: React.FC<MessageListProps> = ({
       {conversations.map(conversation => {
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
-        // Get user details from our state, with improved fallback handling
+        // Improved user detail handling with better fallbacks
         const userDetail = userDetails[conversation.otherUserId];
-        const displayName = userDetail?.name || conversation.otherUserName || 'Unknown User';
-        const userRole = userDetail?.role || (conversation.otherUserRole as UserRole || 'buyer');
+        const displayName = (userDetail?.name || conversation.otherUserName || 'Unknown User');
         
-        console.log(`[MessageList] Rendering conversation with ${conversation.otherUserId}: name=${displayName}, role=${userRole}`);
+        // Ensure we have a valid role that matches UserRole type
+        let userRole: UserRole = 'buyer';
+        if (userDetail?.role) {
+          userRole = userDetail.role;
+        } else if (conversation.otherUserRole && ['buyer', 'seller', 'wholesaler'].includes(conversation.otherUserRole)) {
+          userRole = conversation.otherUserRole as UserRole;
+        }
+        
+        console.log(`[MessageList] Rendering conversation with ${conversation.otherUserId}: name="${displayName}", role="${userRole}"`);
         
         return <div 
                 key={conversation.id} 
