@@ -28,9 +28,11 @@ const MessageList: React.FC<MessageListProps> = ({
     const fetchUserDetails = async () => {
       if (conversations.length === 0) return;
       
-      const userIds = conversations.map(conv => conv.otherUserId);
+      // Get unique user IDs from all conversations
+      const userIds = [...new Set(conversations.map(conv => conv.otherUserId))];
       
       try {
+        // Fetch profiles for all users at once
         const { data, error } = await supabase
           .from('profiles')
           .select('id, name, email, account_type')
@@ -42,15 +44,17 @@ const MessageList: React.FC<MessageListProps> = ({
         }
         
         const detailsMap: Record<string, { name: string; role: UserRole }> = {};
-        data.forEach(profile => {
-          // Ensure we only assign valid role types
+        
+        // Process all user profiles
+        data?.forEach(profile => {
+          // Determine role type, defaulting to 'buyer' if invalid
           const roleType = profile.account_type === 'seller' || 
                          profile.account_type === 'buyer' || 
                          profile.account_type === 'wholesaler' 
                          ? profile.account_type as UserRole 
                          : 'buyer';
-                         
-          // Use name if available, otherwise use email as fallback
+          
+          // Use profile name if available, otherwise use email
           const displayName = profile.name || profile.email || "Unknown User";
           
           detailsMap[profile.id] = {
@@ -70,7 +74,6 @@ const MessageList: React.FC<MessageListProps> = ({
 
   const handleConversationClick = (conversation: Conversation) => {
     // Navigate to the conversation detail page
-    console.log("Navigating to conversation:", conversation.id);
     navigate(`/messages/${conversation.id}`);
   };
   
@@ -112,67 +115,72 @@ const MessageList: React.FC<MessageListProps> = ({
   
   return <div className="divide-y divide-gray-200">
       {conversations.map(conversation => {
-      const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
-      const userDetail = userDetails[conversation.otherUserId] || { name: conversation.otherUserName || 'Unknown User', role: 'buyer' };
-      
-      return <div 
-              key={conversation.id} 
-              className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''} rounded-lg my-2 mx-1`} 
-              onClick={() => handleConversationClick(conversation)}
-            >
-            <div className="flex items-start">
-              <div className="mr-3 flex flex-col items-center">
-                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">
-                  {userDetail.name?.charAt(0).toUpperCase() || '?'}
-                </div>
-              </div>
-              
-              <div className="flex-1">
-                <div className="flex items-center">
-                  <h3 className="font-bold text-lg">
-                    {userDetail.name}
-                  </h3>
-                  <UserTag role={userDetail.role} />
-                </div>
-                
-                {conversation.propertyId && conversation.propertyTitle && <div className="flex items-center text-sm text-[#0892D0] cursor-pointer hover:underline mb-1" onClick={e => handlePropertyClick(e, conversation.propertyId)}>
-                    <Home size={14} className="mr-1" />
-                    <span>Regarding: {conversation.propertyTitle}</span>
-                    <ExternalLink size={12} className="ml-1" />
-                  </div>}
-                
-                <p className={`text-sm ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
-                  {conversation.latestMessage.senderId === user?.id ? 'You: ' : ''}
-                  {truncateMessage(conversation.latestMessage.content)}
-                </p>
-              </div>
-              
-              <div className="text-right flex flex-col items-end">
-                <p className="text-xs text-gray-500 mb-2">
-                  {formatDistanceToNow(new Date(conversation.latestMessage.timestamp), {
-                addSuffix: true
-              })}
-                </p>
-                
-                {isUnread && <div className="px-2 py-1 text-xs font-bold rounded mt-1 inline-block text-white bg-rose-600">
-                    NEW
-                  </div>}
-                  
-                {conversation.propertyImage && (
-                  <div 
-                    className="h-16 w-16 rounded-md border border-gray-200 shadow-sm overflow-hidden mt-2 cursor-pointer" 
-                    onClick={e => handlePropertyClick(e, conversation.propertyId)}
-                  >
-                    <img 
-                      src={conversation.propertyImage} 
-                      alt={conversation.propertyTitle || 'Property'} 
-                      className="h-full w-full object-cover" 
-                    />
+        const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
+        
+        // Get user details from our state, falling back to conversation data
+        const userDetail = userDetails[conversation.otherUserId] || { 
+          name: conversation.otherUserName || 'Unknown User', 
+          role: 'buyer' 
+        };
+        
+        return <div 
+                key={conversation.id} 
+                className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''} rounded-lg my-2 mx-1`} 
+                onClick={() => handleConversationClick(conversation)}
+              >
+              <div className="flex items-start">
+                <div className="mr-3 flex flex-col items-center">
+                  <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">
+                    {userDetail.name?.charAt(0).toUpperCase() || '?'}
                   </div>
-                )}
+                </div>
+                
+                <div className="flex-1">
+                  <div className="flex items-center">
+                    <h3 className="font-bold text-lg">
+                      {userDetail.name}
+                    </h3>
+                    <UserTag role={userDetail.role} />
+                  </div>
+                  
+                  {conversation.propertyId && conversation.propertyTitle && <div className="flex items-center text-sm text-[#0892D0] cursor-pointer hover:underline mb-1" onClick={e => handlePropertyClick(e, conversation.propertyId)}>
+                      <Home size={14} className="mr-1" />
+                      <span>Regarding: {conversation.propertyTitle}</span>
+                      <ExternalLink size={12} className="ml-1" />
+                    </div>}
+                  
+                  <p className={`text-sm ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
+                    {conversation.latestMessage.senderId === user?.id ? 'You: ' : ''}
+                    {truncateMessage(conversation.latestMessage.content)}
+                  </p>
+                </div>
+                
+                <div className="text-right flex flex-col items-end">
+                  <p className="text-xs text-gray-500 mb-2">
+                    {formatDistanceToNow(new Date(conversation.latestMessage.timestamp), {
+                      addSuffix: true
+                    })}
+                  </p>
+                  
+                  {isUnread && <div className="px-2 py-1 text-xs font-bold rounded mt-1 inline-block text-white bg-rose-600">
+                      NEW
+                    </div>}
+                    
+                  {conversation.propertyImage && (
+                    <div 
+                      className="h-16 w-16 rounded-md border border-gray-200 shadow-sm overflow-hidden mt-2 cursor-pointer" 
+                      onClick={e => handlePropertyClick(e, conversation.propertyId)}
+                    >
+                      <img 
+                        src={conversation.propertyImage} 
+                        alt={conversation.propertyTitle || 'Property'} 
+                        className="h-full w-full object-cover" 
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>;
+            </div>;
       })}
     </div>;
 };

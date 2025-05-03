@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMessages } from '@/hooks/useMessages';
@@ -51,7 +50,7 @@ const Conversation: React.FC = () => {
         // Find the other user's ID
         const otherUserId = convoData.participant1 === user?.id ? convoData.participant2 : convoData.participant1;
         
-        // Get other user's profile info
+        // Get other user's profile info with improved profile data fetching
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('name, email, account_type')
@@ -59,7 +58,7 @@ const Conversation: React.FC = () => {
           .single();
           
         if (!profileError && profileData) {
-          // Use name if available, otherwise use email as fallback
+          // Prefer name over email for display
           setOtherUserName(profileData.name || profileData.email || 'Unknown User');
           
           // Ensure we only use valid role types
@@ -70,6 +69,16 @@ const Conversation: React.FC = () => {
               ? profileData.account_type as UserRole 
               : 'buyer';
           setOtherUserRole(roleType);
+        } else {
+          // Fallback to getting email via RPC function if profile fetch fails
+          const { data: userData } = await supabase.rpc('get_user_email', {
+            user_id_param: otherUserId
+          });
+          
+          if (userData) {
+            setOtherUserName(userData);
+            setOtherUserRole('buyer'); // Default role if we couldn't get from profile
+          }
         }
         
         // Get messages using our hook
