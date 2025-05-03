@@ -3,6 +3,14 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { supabase } from '../integrations/supabase/client';
 import { useAuth } from './AuthContext';
 
+type NotificationProperties = {
+  propertyId?: string;
+  conversationId?: string;
+  buyerId?: string;
+  sellerId?: string;
+  [key: string]: any;
+};
+
 type Notification = {
   id: string;
   title: string;
@@ -10,11 +18,7 @@ type Notification = {
   type: string;
   read: boolean;
   timestamp: string;
-  properties?: {
-    propertyId?: string;
-    conversationId?: string;
-    [key: string]: any;
-  };
+  properties?: NotificationProperties;
 };
 
 type NotificationContextType = {
@@ -60,14 +64,14 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
         }
 
         if (data) {
-          const formattedNotifications = data.map(n => ({
+          const formattedNotifications: Notification[] = data.map(n => ({
             id: n.id,
             title: n.title,
             message: n.message,
             type: n.type || 'info',
             read: n.read || false,
             timestamp: n.created_at,
-            properties: n.properties || {},
+            properties: n.properties as NotificationProperties || {},
           }));
           setNotifications(formattedNotifications);
         }
@@ -89,14 +93,14 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
           filter: `user_id=eq.${user.id}`
         }, 
         (payload) => {
-          const newNotification = {
+          const newNotification: Notification = {
             id: payload.new.id,
             title: payload.new.title,
             message: payload.new.message,
             type: payload.new.type || 'info',
             read: payload.new.read || false,
             timestamp: payload.new.created_at,
-            properties: payload.new.properties || {},
+            properties: payload.new.properties as NotificationProperties || {},
           };
           
           setNotifications(prev => [newNotification, ...prev]);
@@ -180,14 +184,14 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
       }
 
       if (data && data.length > 0) {
-        const newNotification = {
+        const newNotification: Notification = {
           id: data[0].id,
           title: data[0].title,
           message: data[0].message,
           type: data[0].type,
           read: false,
           timestamp: data[0].created_at,
-          properties: data[0].properties || {},
+          properties: data[0].properties as NotificationProperties || {},
         };
 
         setNotifications(prev => [newNotification, ...prev]);

@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useNotifications } from "@/context/NotificationContext";
 
 interface WaitlistButtonProps {
   propertyId: string;
@@ -26,22 +27,18 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   onOpenChange,
   refreshProperty
 }) => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const { addNotification } = useNotifications();
 
   React.useEffect(() => {
     if (user) {
       const fetchUserProfile = async () => {
-        const {
-          data,
-          error
-        } = await supabase.from("profiles").select("name, email, phone").eq("id", user.id).maybeSingle();
+        const { data, error } = await supabase.from("profiles").select("name, email, phone").eq("id", user.id).maybeSingle();
         if (data && !error) {
           setName(data.name || "");
           setEmail(data.email || "");
@@ -70,10 +67,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
     try {
       setLoading(true);
 
-      const {
-        data,
-        error
-      } = await supabase.from("waitlist_requests").insert({
+      const { data, error } = await supabase.from("waitlist_requests").insert({
         property_id: propertyId,
         user_id: user.id,
         name: name.trim(),
@@ -81,6 +75,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         phone: phone.trim(),
         status: "pending"
       }).select().single();
+      
       if (error) {
         if (error.code === "23505") {
           onOpenChange(false);
@@ -93,25 +88,53 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         }
       }
 
-      const {
-        data: propertyData,
-        error: propertyError
-      } = await supabase.from("property_listings").select("user_id").eq("id", propertyId).single();
+      // Create notification for the buyer/user who joined the waitlist
+      await addNotification({
+        title: "Waitlist Request Submitted",
+        message: `You have successfully joined the waitlist for ${propertyTitle}`,
+        type: "info",
+        properties: {
+          propertyId: propertyId
+        }
+      });
+
+      // Get property owner details and create a notification for them
+      const { data: propertyData, error: propertyError } = await supabase
+        .from("property_listings")
+        .select("user_id, title")
+        .eq("id", propertyId)
+        .single();
+        
       if (propertyError) {
         console.error("Error getting property owner:", propertyError);
       } else if (propertyData) {
+        // Create notification for the seller/property owner
+        // Note: This is done directly with supabase since addNotification is tied to current user
+        await supabase.from("notifications").insert({
+          user_id: propertyData.user_id,
+          title: "New Waitlist Request",
+          message: `${name} has joined the waitlist for your property: ${propertyTitle}`,
+          type: "new_listing",
+          properties: {
+            propertyId: propertyId,
+            buyerId: user.id
+          }
+        });
       }
+      
       onOpenChange(false);
       if (refreshProperty) {
         refreshProperty();
       }
+      
+      toast.success("Successfully joined waitlist!");
     } catch (error) {
       console.error("Error joining waitlist:", error);
       toast.error("Failed to join waitlist. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange, refreshProperty]);
+  }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange, refreshProperty, addNotification]);
 
   const handleButtonClick = () => {
     if (!user) {

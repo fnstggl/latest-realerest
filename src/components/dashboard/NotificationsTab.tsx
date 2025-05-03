@@ -5,14 +5,22 @@ import { Bell, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
+interface NotificationProperties {
+  propertyId?: string;
+  conversationId?: string;
+  buyerId?: string;
+  sellerId?: string;
+  [key: string]: any;
+}
+
 interface Notification {
   id: string;
   title: string;
   message: string;
   read: boolean;
   timestamp: Date;
-  type?: 'info' | 'success' | 'warning' | 'error' | 'new_listing';
-  properties?: any;
+  type?: 'info' | 'success' | 'warning' | 'error' | 'new_listing' | 'message';
+  properties?: NotificationProperties;
 }
 
 interface NotificationsTabProps {

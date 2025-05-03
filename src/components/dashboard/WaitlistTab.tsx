@@ -1,3 +1,4 @@
+
 import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, Check, X, MessageCircle } from "lucide-react";
@@ -5,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "react-router-dom";
 import { useMessages } from "@/hooks/useMessages";
+import { useAuth } from "@/context/AuthContext";
 
 interface WaitlistUser {
   id: string;
@@ -12,6 +14,7 @@ interface WaitlistUser {
   email: string;
   phone: string;
   propertyId: string;
+  user_id: string;
   property?: {
     title: string;
   };
@@ -27,6 +30,7 @@ interface WaitlistTabProps {
 const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUsers }) => {
   const navigate = useNavigate();
   const { getOrCreateConversation } = useMessages();
+  const { user } = useAuth();
   
   const handleMessageClick = async (userId: string) => {
     try {
@@ -63,7 +67,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
     }
   };
 
-  const handleUpdateWaitlistStatus = async (userId: string, newStatus: "accepted" | "declined", propertyId: string, propertyTitle: string, requesterName: string, userEmail: string) => {
+  const handleUpdateWaitlistStatus = async (userId: string, newStatus: "accepted" | "declined", propertyId: string, propertyTitle: string, requesterName: string, userEmail: string, requesterUserId: string) => {
     try {
       const { error } = await supabase
         .from('waitlist_requests')
@@ -83,7 +87,34 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
       
       setWaitlistUsers(updatedUsers);
       
-      // Removed notification creation code here
+      // Create notification for the waitlist requester (buyer)
+      await supabase.from("notifications").insert({
+        user_id: requesterUserId,
+        title: `Waitlist Request ${newStatus === "accepted" ? "Accepted" : "Declined"}`,
+        message: newStatus === "accepted" 
+          ? `Your request to join the waitlist for ${propertyTitle} has been accepted!` 
+          : `Your request to join the waitlist for ${propertyTitle} has been declined.`,
+        type: newStatus === "accepted" ? "success" : "info",
+        properties: {
+          propertyId: propertyId
+        }
+      });
+
+      // Create notification for the seller (current user)
+      if (user?.id) {
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          title: `Waitlist Request ${newStatus === "accepted" ? "Accepted" : "Declined"}`,
+          message: newStatus === "accepted"
+            ? `You accepted ${requesterName}'s request to join the waitlist for ${propertyTitle}.`
+            : `You declined ${requesterName}'s request to join the waitlist for ${propertyTitle}.`,
+          type: "info",
+          properties: {
+            propertyId: propertyId,
+            buyerId: requesterUserId
+          }
+        });
+      }
       
       if (newStatus === "accepted") {
         toast.success(`${requesterName} accepted to waitlist!`);
@@ -185,7 +216,8 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                               user.propertyId, 
                               user.property?.title || 'Property', 
                               user.name,
-                              user.email
+                              user.email,
+                              user.user_id
                             )}
                           >
                             <Check size={16} className="mr-1" />
@@ -200,7 +232,8 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                               user.propertyId, 
                               user.property?.title || 'Property', 
                               user.name,
-                              user.email
+                              user.email,
+                              user.user_id
                             )}
                           >
                             <X size={16} className="mr-1" />
