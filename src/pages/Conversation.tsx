@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -11,6 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import MessageGroup from '@/components/conversation/MessageGroup';
 import MessageInput from '@/components/conversation/MessageInput';
+import UserTag from '@/components/UserTag';
 
 const Conversation: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +21,11 @@ const Conversation: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [otherUser, setOtherUser] = useState<{ id: string; name: string } | null>(null);
+  const [otherUser, setOtherUser] = useState<{ 
+    id: string; 
+    name: string;
+    role?: 'seller' | 'buyer' | 'wholesaler';
+  } | null>(null);
   const [propertyInfo, setPropertyInfo] = useState<{ id: string; title: string; image?: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { fetchMessages, sendMessage, markConversationAsRead } = useMessages();
@@ -39,16 +45,27 @@ const Conversation: React.FC = () => {
           return;
         }
         const otherUserId = conversation.participant1 === user.id ? conversation.participant2 : conversation.participant1;
-        const { data: profileData } = await supabase.from('profiles').select('name').eq('id', otherUserId).maybeSingle();
+        
+        // Get user profile including role/account_type
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('name, account_type')
+          .eq('id', otherUserId)
+          .maybeSingle();
+          
         let userName = "Unknown User";
+        let userRole: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
+        
         if (profileData && profileData.name) {
           userName = profileData.name;
+          userRole = profileData.account_type || 'buyer';
         } else {
           console.log("No profile name found, falling back to email for user ID:", otherUserId);
           const { data: userData } = await supabase.rpc('get_user_email', { user_id_param: otherUserId });
           userName = userData || "Unknown User";
         }
-        setOtherUser({ id: otherUserId, name: userName });
+        
+        setOtherUser({ id: otherUserId, name: userName, role: userRole });
         const messageData = await fetchMessages(id);
         setMessages(messageData);
         console.log("Messages data:", messageData);
@@ -162,20 +179,21 @@ const Conversation: React.FC = () => {
         >
           <div 
             className="flex items-center justify-between mb-4" 
-            style={{ marginTop: '75px' }} // Changed from 120px to 75px as requested
+            style={{ marginTop: '75px' }}
           >
             <Button
               variant="outline"
               size="sm"
               onClick={() => navigate('/messages')}
-              className="flex items-center gap-1 hover:border-[#0892D0] text-black"
+              className="flex items-center gap-1 text-black border-gray-200 hover:bg-gray-100 hover:text-black hover:border-gray-300"
             >
               <ArrowLeft size={16} />
               Back
             </Button>
 
-            <div>
+            <div className="flex items-center">
               <h1 className="text-2xl font-bold">{loading ? 'Loading...' : otherUser?.name || "Unknown User"}</h1>
+              {otherUser?.role && <UserTag role={otherUser.role} />}
             </div>
 
             {propertyInfo && (

@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Conversation } from '@/hooks/useMessages';
@@ -6,31 +7,70 @@ import { formatDistanceToNow } from 'date-fns';
 import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import UserTag from '@/components/UserTag';
+
 interface MessageListProps {
   conversations: Conversation[];
   loading: boolean;
 }
+
 const MessageList: React.FC<MessageListProps> = ({
   conversations,
   loading
 }) => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
+  const [userRoles, setUserRoles] = useState<Record<string, 'seller' | 'buyer' | 'wholesaler'>>({});
+
+  // Fetch user roles for all users in conversations
+  useEffect(() => {
+    const fetchUserRoles = async () => {
+      if (conversations.length === 0) return;
+      
+      const userIds = conversations.map(conv => conv.otherUserId);
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, account_type')
+          .in('id', userIds);
+          
+        if (error) {
+          console.error('Error fetching user roles:', error);
+          return;
+        }
+        
+        const rolesMap: Record<string, 'seller' | 'buyer' | 'wholesaler'> = {};
+        data.forEach(profile => {
+          rolesMap[profile.id] = profile.account_type || 'buyer';
+        });
+        
+        setUserRoles(rolesMap);
+      } catch (err) {
+        console.error('Error processing user roles:', err);
+      }
+    };
+    
+    fetchUserRoles();
+  }, [conversations]);
+
   const handleConversationClick = (conversation: Conversation) => {
     navigate(`/messages/${conversation.id}`);
   };
+  
   const handlePropertyClick = (e: React.MouseEvent, propertyId?: string) => {
     if (propertyId) {
       e.stopPropagation();
       navigate(`/property/${propertyId}`);
     }
   };
+  
   const truncateMessage = (message: string, maxLength: number = 50) => {
     if (message.length <= maxLength) return message;
     return message.substring(0, maxLength) + '...';
   };
+  
   if (loading) {
     return <div className="p-4 space-y-4">
         {[1, 2, 3].map(i => <div key={i} className="flex items-center space-x-4 p-4 border-b border-gray-200">
@@ -43,6 +83,7 @@ const MessageList: React.FC<MessageListProps> = ({
           </div>)}
       </div>;
   }
+  
   if (conversations.length === 0) {
     return <div className="p-12 text-center">
         <MessageSquare size={48} className="mx-auto mb-4 text-gray-400" />
@@ -53,19 +94,27 @@ const MessageList: React.FC<MessageListProps> = ({
         </Button>
       </div>;
   }
+  
   return <div className="divide-y divide-gray-200">
       {conversations.map(conversation => {
       const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
-      return <div key={conversation.id} className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''}`} onClick={() => handleConversationClick(conversation)}>
+      const userRole = userRoles[conversation.otherUserId] || 'buyer';
+      
+      return <div key={conversation.id} className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''} rounded-lg my-2 mx-1`} onClick={() => handleConversationClick(conversation)}>
             <div className="flex items-start">
-              {conversation.propertyImage && <div className="h-16 w-16 rounded-md border border-gray-200 shadow-sm overflow-hidden mr-3 flex-shrink-0 cursor-pointer" onClick={e => handlePropertyClick(e, conversation.propertyId)}>
-                  <img src={conversation.propertyImage || '/placeholder.svg'} alt={conversation.propertyTitle || 'Property'} className="h-full w-full object-cover" />
-                </div>}
+              <div className="mr-3 flex flex-col items-center">
+                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">
+                  {conversation.otherUserName?.charAt(0).toUpperCase() || '?'}
+                </div>
+              </div>
               
               <div className="flex-1">
-                <h3 className="font-bold text-lg">
-                  {conversation.otherUserName || 'Unknown User'}
-                </h3>
+                <div className="flex items-center">
+                  <h3 className="font-bold text-lg">
+                    {conversation.otherUserName || 'Unknown User'}
+                  </h3>
+                  <UserTag role={userRole} />
+                </div>
                 
                 {conversation.propertyId && conversation.propertyTitle && <div className="flex items-center text-sm text-[#0892D0] cursor-pointer hover:underline mb-1" onClick={e => handlePropertyClick(e, conversation.propertyId)}>
                     <Home size={14} className="mr-1" />
@@ -79,19 +128,34 @@ const MessageList: React.FC<MessageListProps> = ({
                 </p>
               </div>
               
-              <div className="text-right">
-                <p className="text-xs text-gray-500">
+              <div className="text-right flex flex-col items-end">
+                <p className="text-xs text-gray-500 mb-2">
                   {formatDistanceToNow(new Date(conversation.latestMessage.timestamp), {
                 addSuffix: true
               })}
                 </p>
+                
                 {isUnread && <div className="px-2 py-1 text-xs font-bold rounded mt-1 inline-block text-white bg-rose-600">
                     NEW
                   </div>}
+                  
+                {conversation.propertyImage && (
+                  <div 
+                    className="h-16 w-16 rounded-md border border-gray-200 shadow-sm overflow-hidden mt-2 cursor-pointer" 
+                    onClick={e => handlePropertyClick(e, conversation.propertyId)}
+                  >
+                    <img 
+                      src={conversation.propertyImage} 
+                      alt={conversation.propertyTitle || 'Property'} 
+                      className="h-full w-full object-cover" 
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>;
-    })}
+      })}
     </div>;
 };
+
 export default MessageList;

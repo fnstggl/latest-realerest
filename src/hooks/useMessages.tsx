@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -8,6 +7,7 @@ export interface Conversation {
   id: string;
   otherUserId: string;
   otherUserName: string;
+  otherUserRole?: 'seller' | 'buyer' | 'wholesaler';
   latestMessage: {
     content: string;
     timestamp: string;
@@ -114,7 +114,31 @@ export const useMessages = () => {
             ? conversation.participant2 
             : conversation.participant1;
             
-          const otherUserName = await getUserDisplayName(otherUserId);
+          // Get both name and account_type
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('name, email, account_type')
+            .eq('id', otherUserId)
+            .maybeSingle();
+            
+          let otherUserName = "Unknown User";
+          let otherUserRole: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
+          
+          if (profileData?.name) {
+            otherUserName = profileData.name;
+            otherUserRole = profileData.account_type as 'seller' | 'buyer' | 'wholesaler' || 'buyer';
+          } else if (profileData?.email) {
+            otherUserName = profileData.email;
+          } else {
+            // Fallback to RPC
+            const { data: userData } = await supabase.rpc('get_user_email', {
+              user_id_param: otherUserId
+            });
+            
+            if (userData) {
+              otherUserName = userData;
+            }
+          }
             
           // Get the latest message and check if it's related to a property
           const { data: messageData } = await supabase
@@ -129,8 +153,12 @@ export const useMessages = () => {
           let propertyTitle = undefined;
           let propertyImage = undefined;
           
-          // If the message has a related offer, get the property details
-          if (messageData?.related_offer_id) {
+          // Check if the message has property_id directly (from the new column)
+          if (messageData?.property_id) {
+            propertyId = messageData.property_id;
+          }
+          // If not, check if it has a related offer
+          else if (messageData?.related_offer_id) {
             const { data: offerData } = await supabase
               .from('property_offers')
               .select('property_id')
@@ -139,19 +167,21 @@ export const useMessages = () => {
               
             if (offerData?.property_id) {
               propertyId = offerData.property_id;
+            }
+          }
+          
+          // If we have a property ID, get the property details
+          if (propertyId) {
+            const { data: propertyData } = await supabase
+              .from('property_listings')
+              .select('title, images')
+              .eq('id', propertyId)
+              .maybeSingle();
               
-              // Get the property title and image
-              const { data: propertyData } = await supabase
-                .from('property_listings')
-                .select('title, images')
-                .eq('id', propertyId)
-                .maybeSingle();
-                
-              if (propertyData) {
-                propertyTitle = propertyData.title;
-                if (propertyData.images && propertyData.images.length > 0) {
-                  propertyImage = propertyData.images[0];
-                }
+            if (propertyData) {
+              propertyTitle = propertyData.title;
+              if (propertyData.images && propertyData.images.length > 0) {
+                propertyImage = propertyData.images[0];
               }
             }
           }
@@ -160,6 +190,7 @@ export const useMessages = () => {
             id: conversation.id,
             otherUserId,
             otherUserName,
+            otherUserRole,
             propertyId,
             propertyTitle,
             propertyImage,
