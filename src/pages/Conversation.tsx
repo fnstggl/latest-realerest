@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMessages } from '@/hooks/useMessages';
@@ -50,26 +51,30 @@ const Conversation: React.FC = () => {
         // Find the other user's ID
         const otherUserId = convoData.participant1 === user?.id ? convoData.participant2 : convoData.participant1;
         
-        // Get other user's profile info with improved profile data fetching
+        // Get other user's profile with improved profile data fetching
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('name, email, account_type')
           .eq('id', otherUserId)
-          .single();
+          .maybeSingle();
+          
+        console.log('Fetched profile data for Conversation page:', profileData);
           
         if (!profileError && profileData) {
           // Prefer name over email for display
           setOtherUserName(profileData.name || profileData.email || 'Unknown User');
           
-          // Ensure we only use valid role types
-          const roleType = 
-            profileData.account_type === 'seller' || 
-            profileData.account_type === 'buyer' || 
-            profileData.account_type === 'wholesaler' 
-              ? profileData.account_type as UserRole 
-              : 'buyer';
+          // Validate the role type
+          const validRoles: UserRole[] = ['seller', 'buyer', 'wholesaler'];
+          const roleType = validRoles.includes(profileData.account_type as UserRole)
+            ? profileData.account_type as UserRole
+            : 'buyer';
+            
           setOtherUserRole(roleType);
+          console.log(`Set user role for ${otherUserId} to ${roleType}`);
         } else {
+          console.warn('Profile fetch failed, falling back to RPC:', profileError);
+          
           // Fallback to getting email via RPC function if profile fetch fails
           const { data: userData } = await supabase.rpc('get_user_email', {
             user_id_param: otherUserId

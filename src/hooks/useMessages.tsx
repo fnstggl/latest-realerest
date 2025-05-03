@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -53,15 +52,15 @@ export const useMessages = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const { user } = useAuth();
 
-  // Get user display name with better error handling
-  const getUserDisplayName = useCallback(async (userId: string): Promise<string> => {
+  // Improved user profile fetching with better error handling and debugging
+  const getUserDisplayName = useCallback(async (userId: string): Promise<{name: string; role: 'seller' | 'buyer' | 'wholesaler'}> => {
     try {
-      console.log(`Attempting to get display name for user ID: ${userId}`);
+      console.log(`Fetching user profile for ID: ${userId}`);
       
-      // First try to get the profile name directly
+      // First try to get the profile directly from profiles table
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('name, email')
+        .select('name, email, account_type')
         .eq('id', userId)
         .maybeSingle();
       
@@ -69,36 +68,45 @@ export const useMessages = () => {
         console.error(`Error fetching profile for ${userId}:`, profileError);
       }
       
-      if (profileData?.name) {
-        console.log(`Found profile name for ${userId}:`, profileData.name);
-        return profileData.name;
+      // If we found a valid profile with name and account_type
+      if (profileData) {
+        const validRoles = ['seller', 'buyer', 'wholesaler'];
+        const role = validRoles.includes(profileData.account_type) 
+          ? (profileData.account_type as 'seller' | 'buyer' | 'wholesaler')
+          : 'buyer';
+          
+        // Use name if available (even if empty string), otherwise use email
+        if (profileData.name) {
+          console.log(`Found profile with name for ${userId}:`, profileData.name, 'role:', role);
+          return { name: profileData.name, role };
+        }
+        
+        if (profileData.email) {
+          console.log(`No name in profile for ${userId}, using email:`, profileData.email, 'role:', role);
+          return { name: profileData.email, role };
+        }
       }
       
-      if (profileData?.email) {
-        console.log(`No profile name found for ${userId}, using email:`, profileData.email);
-        return profileData.email;
-      }
-      
-      // If no profile found or no name, get the email as fallback
-      console.log(`No profile found for user ID: ${userId}, falling back to email via RPC`);
+      // If no profile name/email, get the email as fallback
       const { data: userData, error: userError } = await supabase.rpc('get_user_email', {
         user_id_param: userId
       });
       
       if (userError) {
         console.error(`Error getting email for ${userId}:`, userError);
+        return { name: "Unknown User", role: 'buyer' };
       }
       
       if (userData) {
-        console.log(`Retrieved email for ${userId}:`, userData);
-        return userData;
+        console.log(`Retrieved email for ${userId} via RPC:`, userData);
+        return { name: userData, role: 'buyer' };
       }
       
       console.warn(`Could not find any identifying information for user ${userId}`);
-      return "Unknown User";
+      return { name: "Unknown User", role: 'buyer' };
     } catch (error) {
       console.error(`Error getting user display name for ${userId}:`, error);
-      return "Unknown User";
+      return { name: "Unknown User", role: 'buyer' };
     }
   }, []);
 
@@ -125,37 +133,15 @@ export const useMessages = () => {
         return;
       }
       
+      // Process each conversation to get other user details and latest message
       const conversationsWithDetails = await Promise.all(
         conversationData.map(async (conversation) => {
           const otherUserId = conversation.participant1 === user.id 
             ? conversation.participant2 
             : conversation.participant1;
-            
-          // Get both name and account_type
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('name, email, account_type')
-            .eq('id', otherUserId)
-            .maybeSingle();
-            
-          let otherUserName = "Unknown User";
-          let otherUserRole: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
           
-          if (profileData?.name) {
-            otherUserName = profileData.name;
-            otherUserRole = profileData.account_type as 'seller' | 'buyer' | 'wholesaler' || 'buyer';
-          } else if (profileData?.email) {
-            otherUserName = profileData.email;
-          } else {
-            // Fallback to RPC
-            const { data: userData } = await supabase.rpc('get_user_email', {
-              user_id_param: otherUserId
-            });
-            
-            if (userData) {
-              otherUserName = userData;
-            }
-          }
+          // Get both name and account_type with improved error handling
+          const userInfo = await getUserDisplayName(otherUserId);
             
           // Get the latest message and check if it's related to a property
           const { data: messageData } = await supabase
@@ -206,8 +192,8 @@ export const useMessages = () => {
           return {
             id: conversation.id,
             otherUserId,
-            otherUserName,
-            otherUserRole,
+            otherUserName: userInfo.name,
+            otherUserRole: userInfo.role,
             propertyId,
             propertyTitle,
             propertyImage,
@@ -434,13 +420,13 @@ export const useMessages = () => {
             
             if (message.sender_id !== user.id) {
               getUserDisplayName(message.sender_id)
-                .then(senderName => {
+                .then(userInfo => {
                   supabase
                     .from('notifications')
                     .insert({
                       user_id: user.id,
                       title: 'New Message',
-                      message: `${senderName}: ${message.content}`,
+                      message: `${userInfo.name}: ${message.content}`,
                       type: 'message',
                       properties: {
                         conversationId: message.conversation_id,
@@ -449,7 +435,7 @@ export const useMessages = () => {
                     });
                     
                   toast('New Message', {
-                    description: `${senderName}: ${message.content}`,
+                    description: `${userInfo.name}: ${message.content}`,
                     action: {
                       label: 'View',
                       onClick: () => window.location.href = `/messages/${message.conversation_id}`

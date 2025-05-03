@@ -23,7 +23,7 @@ const MessageList: React.FC<MessageListProps> = ({
   const { user } = useAuth();
   const [userDetails, setUserDetails] = useState<Record<string, { name: string; role: UserRole }>>({});
 
-  // Fetch user names and roles for all users in conversations
+  // Fetch user profiles directly and more efficiently
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (conversations.length === 0) return;
@@ -32,35 +32,45 @@ const MessageList: React.FC<MessageListProps> = ({
       const userIds = [...new Set(conversations.map(conv => conv.otherUserId))];
       
       try {
-        // Fetch profiles for all users at once
+        console.log('Fetching profiles for user IDs:', userIds);
+        
+        // Fetch all profiles in a single query
         const { data, error } = await supabase
           .from('profiles')
           .select('id, name, email, account_type')
           .in('id', userIds);
           
         if (error) {
-          console.error('Error fetching user details:', error);
+          console.error('Error fetching user profiles:', error);
           return;
         }
         
+        if (!data || data.length === 0) {
+          console.warn('No profile data returned for user IDs:', userIds);
+          return;
+        }
+        
+        console.log('Fetched profiles:', data);
+        
+        // Create a map of user details for quick lookup
         const detailsMap: Record<string, { name: string; role: UserRole }> = {};
         
-        // Process all user profiles
-        data?.forEach(profile => {
-          // Determine role type, defaulting to 'buyer' if invalid
-          const roleType = profile.account_type === 'seller' || 
-                         profile.account_type === 'buyer' || 
-                         profile.account_type === 'wholesaler' 
-                         ? profile.account_type as UserRole 
-                         : 'buyer';
+        data.forEach(profile => {
+          // Validate the role type is one of our allowed types
+          const validRoles: UserRole[] = ['seller', 'buyer', 'wholesaler'];
+          const roleType = validRoles.includes(profile.account_type as UserRole) 
+            ? (profile.account_type as UserRole) 
+            : 'buyer';
           
-          // Use profile name if available, otherwise use email
+          // Use name if available, fall back to email only if name is null/empty
           const displayName = profile.name || profile.email || "Unknown User";
           
           detailsMap[profile.id] = {
             name: displayName,
             role: roleType
           };
+          
+          console.log(`Mapped user ${profile.id}: name=${displayName}, role=${roleType}`);
         });
         
         setUserDetails(detailsMap);
@@ -73,7 +83,6 @@ const MessageList: React.FC<MessageListProps> = ({
   }, [conversations]);
 
   const handleConversationClick = (conversation: Conversation) => {
-    // Navigate to the conversation detail page
     navigate(`/messages/${conversation.id}`);
   };
   
@@ -117,11 +126,10 @@ const MessageList: React.FC<MessageListProps> = ({
       {conversations.map(conversation => {
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
-        // Get user details from our state, falling back to conversation data
-        const userDetail = userDetails[conversation.otherUserId] || { 
-          name: conversation.otherUserName || 'Unknown User', 
-          role: 'buyer' 
-        };
+        // Get user details from our state, with improved fallback handling
+        const userDetail = userDetails[conversation.otherUserId];
+        const displayName = userDetail?.name || conversation.otherUserName || 'Unknown User';
+        const userRole = userDetail?.role || (conversation.otherUserRole || 'buyer');
         
         return <div 
                 key={conversation.id} 
@@ -131,16 +139,16 @@ const MessageList: React.FC<MessageListProps> = ({
               <div className="flex items-start">
                 <div className="mr-3 flex flex-col items-center">
                   <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">
-                    {userDetail.name?.charAt(0).toUpperCase() || '?'}
+                    {displayName?.charAt(0).toUpperCase() || '?'}
                   </div>
                 </div>
                 
                 <div className="flex-1">
                   <div className="flex items-center">
                     <h3 className="font-bold text-lg">
-                      {userDetail.name}
+                      {displayName}
                     </h3>
-                    <UserTag role={userDetail.role} />
+                    <UserTag role={userRole} />
                   </div>
                   
                   {conversation.propertyId && conversation.propertyTitle && <div className="flex items-center text-sm text-[#0892D0] cursor-pointer hover:underline mb-1" onClick={e => handlePropertyClick(e, conversation.propertyId)}>
