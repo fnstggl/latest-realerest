@@ -8,7 +8,7 @@ interface UserTagProps {
   role: UserRole;
 }
 
-const UserTag: React.FC<UserTagProps> = ({ role }) => {
+export const UserTag: React.FC<UserTagProps> = ({ role }) => {
   let bgColor = '';
   let textColor = '';
   
