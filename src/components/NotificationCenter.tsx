@@ -21,14 +21,20 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [lastNotifiedId, setLastNotifiedId] = useState<string | null>(null);
 
   // Show a toast for new notifications (but not when popover is open)
   useEffect(() => {
-    // Show toast for the most recent unread notification when it appears
+    // Only show toast for new notifications that we haven't shown before
     const getLatestUnread = () => {
       const unreadNotifications = notifications.filter(n => !n.read);
       if (unreadNotifications.length > 0) {
-        return unreadNotifications[0]; // Latest is at the top
+        const latest = unreadNotifications[0]; // Latest is at the top
+        // Only show if we haven't shown this notification before
+        if (latest.id !== lastNotifiedId) {
+          setLastNotifiedId(latest.id);
+          return latest;
+        }
       }
       return null;
     };
@@ -41,7 +47,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
         duration: 5000,
       });
     }
-  }, [notifications, isOpen]);
+  }, [notifications, isOpen, lastNotifiedId]);
 
   // Safer function to mark all as read with error handling
   const handleMarkAllAsRead = useCallback(() => {
