@@ -5,7 +5,6 @@ import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { AuthProvider } from '@/context/AuthContext'
 import { NotificationProvider } from '@/context/NotificationContext'
@@ -32,6 +31,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <App />
               <SonnerToaster 
                 position="bottom-right"
+                expand={false}
+                visibleToasts={1}
                 closeButton
                 toastOptions={{
                   duration: 5000,

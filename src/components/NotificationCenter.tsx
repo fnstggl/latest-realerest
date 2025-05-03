@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +22,8 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const latestNotificationRef = useRef<string | null>(null);
+  // Add a flag to prevent toast stacking
+  const toastLockRef = useRef(false);
 
   // Show a toast for new notifications (but not when popover is open)
   useEffect(() => {
@@ -34,15 +37,23 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ showIndicator =
     };
 
     const latestUnread = getLatestUnread();
-    if (latestUnread && !isOpen && latestUnread.id !== latestNotificationRef.current) {
+    if (latestUnread && !isOpen && latestUnread.id !== latestNotificationRef.current && !toastLockRef.current) {
       // Only show toast if notification popup is not open and we haven't shown this notification before
+      // and no other toast is currently active
       latestNotificationRef.current = latestUnread.id;
+      toastLockRef.current = true;
       
       const toastType = latestUnread.type === 'info' ? 'info' : 
                          latestUnread.type === 'error' ? 'error' : 'success';
       
       toast[toastType](latestUnread.title, {
-        description: latestUnread.message
+        description: latestUnread.message,
+        // Release lock after toast is dismissed
+        onDismiss: () => {
+          setTimeout(() => {
+            toastLockRef.current = false;
+          }, 300);
+        }
       });
     }
   }, [notifications, isOpen]);

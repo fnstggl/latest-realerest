@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '../integrations/supabase/client';
 import { useAuth } from './AuthContext';
 
@@ -42,6 +42,8 @@ export const useNotifications = () => useContext(NotificationContext);
 export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { user } = useAuth();
+  // Add a ref to track the latest notification added to prevent duplicates
+  const lastAddedNotificationRef = useRef<string>('');
 
   // Fetch notifications when user changes
   useEffect(() => {
@@ -93,6 +95,11 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
           filter: `user_id=eq.${user.id}`
         }, 
         (payload) => {
+          // Check if we've already processed this notification
+          if (payload.new.id === lastAddedNotificationRef.current) {
+            return;
+          }
+          
           const newNotification: Notification = {
             id: payload.new.id,
             title: payload.new.title,
@@ -184,6 +191,9 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
       }
 
       if (data && data.length > 0) {
+        // Store the latest notification ID to prevent duplicates
+        lastAddedNotificationRef.current = data[0].id;
+
         const newNotification: Notification = {
           id: data[0].id,
           title: data[0].title,

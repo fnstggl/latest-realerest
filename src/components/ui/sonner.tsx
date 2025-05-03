@@ -26,12 +26,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
           closeButton: "rounded-full p-1 hover:bg-gray-100"
         },
         duration: 5000,
-        icons: {
-          success: () => <span role="img" aria-label="celebration" className="text-2xl mr-3">🎉</span>,
-          error: () => <span role="img" aria-label="error" className="text-2xl mr-3">🛑</span>,
-          info: () => <span role="img" aria-label="info" className="text-2xl mr-3">ℹ️</span>,
-        }
       }}
+      // Prevent stacking/duplicate toasts
+      expand={false}
+      position="bottom-right"
+      visibleToasts={1}
       {...props}
     />
   );

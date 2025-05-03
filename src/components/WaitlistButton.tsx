@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,8 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const { addNotification } = useNotifications();
+  // Add a ref to track if we've already shown a toast for this session
+  const toastShownRef = useRef(false);
 
   React.useEffect(() => {
     if (user) {
@@ -52,6 +54,9 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   }, [user]);
 
   const handleJoinWaitlist = useCallback(async () => {
+    // Reset toast shown ref when actually attempting to join waitlist
+    toastShownRef.current = false;
+    
     if (!user) {
       navigate("/signin", {
         state: {
@@ -129,9 +134,13 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         refreshProperty();
       }
       
-      toast.success("Waitlist Request Submitted", {
-        description: `You've successfully joined the waitlist for a house in ${propertyTitle}`
-      });
+      // Only show toast if we haven't shown one yet
+      if (!toastShownRef.current) {
+        toast.success("Waitlist Request Submitted", {
+          description: `You've successfully joined the waitlist for ${propertyTitle}`
+        });
+        toastShownRef.current = true;
+      }
     } catch (error) {
       console.error("Error joining waitlist:", error);
       toast.error("Error Joining Waitlist.", {
