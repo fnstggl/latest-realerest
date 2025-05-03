@@ -130,7 +130,7 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-5 md:order-1 bg-white/80 border border-white/40 shadow-md p-8 rounded-xl">
                 <div className="text-lg space-y-6">
-                  <p>"We knew there had to be a better way—something faster, simpler, and actually made for people like us."</p>
+                  <p>&quot;We knew home prices had got out of hand. That's why we built a platform to make finding a home you can actually afford easy.&quot;</p>
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="bg-black text-white">RE</AvatarFallback>
