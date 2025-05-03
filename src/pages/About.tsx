@@ -47,7 +47,7 @@ const About: React.FC = () => {
               <div className="col-span-12 md:col-span-5">
                 <h2 className="text-6xl md:text-7xl font-bold tracking-tighter mb-4 font-playfair">OUR STORY</h2>
               </div>
-              <div className="col-span-12 md:col-span-7 bg-white/80 border border-white/40 shadow-md p-8 rounded-xl space-y-6">
+              <div className="col-span-12 md:col-span-7 border border-white/40 shadow-md p-8 rounded-xl space-y-6 bg-transparent">
                 <p className="text-lg">We built Realer Estate to make housing feel possible again. Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking. We know how frustrating the process of buying and selling your house can feel can be to buy a house, so at Realer Estate... we're doing things differently.</p>
                 <p className="text-lg">We're here for the buyers who've been priced out, the ones who refresh Zillow every night hoping something new pops up. We're here for the people trying to get their families into something stable, something real. And we're here for sellers too — the ones ready to move on, without the wait.</p>
               </div>
@@ -130,7 +130,7 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-5 md:order-1 bg-white/80 border border-white/40 shadow-md p-8 rounded-xl">
                 <div className="text-lg space-y-6">
-                  <p>&quot;We knew home prices had got out of hand. That's why we built a platform to make finding a home you can actually afford easy.&quot;</p>
+                  <p>"We knew there had to be a better way—something faster, simpler, and actually made for people like us."</p>
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="bg-black text-white">RE</AvatarFallback>
