@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -28,8 +29,33 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const latestNotificationRef = useRef<string | null>(null);
   // Add a flag to prevent toast stacking
   const toastLockRef = useRef(false);
-  // Add storage for shown notification IDs to prevent showing the same one multiple times
+  // Add storage for shown notification IDs to prevent showing the same one multiple times across sessions
   const shownNotificationIdsRef = useRef<Set<string>>(new Set());
+  
+  // Persist shown notifications in session storage
+  useEffect(() => {
+    // Load previously shown notifications from session storage
+    try {
+      const storedIds = sessionStorage.getItem('shown_notifications');
+      if (storedIds) {
+        shownNotificationIdsRef.current = new Set(JSON.parse(storedIds));
+      }
+    } catch (error) {
+      console.error('Error loading shown notifications from session storage:', error);
+    }
+    
+    // Save to session storage when component unmounts
+    return () => {
+      try {
+        sessionStorage.setItem(
+          'shown_notifications', 
+          JSON.stringify([...shownNotificationIdsRef.current])
+        );
+      } catch (error) {
+        console.error('Error saving shown notifications to session storage:', error);
+      }
+    };
+  }, []);
 
   // Show a toast for new notifications (but not when popover is open)
   useEffect(() => {
@@ -72,8 +98,13 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
           }, 300);
         }
       });
+      
+      // Automatically mark waitlist notifications as read once shown
+      if (latestUnread.type === 'new_listing') {
+        markAsRead(latestUnread.id);
+      }
     }
-  }, [notifications, isOpen]);
+  }, [notifications, isOpen, markAsRead]);
 
   // Safer function to mark all as read with error handling
   const handleMarkAllAsRead = useCallback(() => {
