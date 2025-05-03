@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -30,6 +31,30 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const toastLockRef = useRef(false);
   // Add storage for shown notification IDs to prevent showing the same one multiple times
   const shownNotificationIdsRef = useRef<Set<string>>(new Set());
+  // Add a ref to track the initial mount
+  const isInitialMountRef = useRef(true);
+
+  // On component mount, load the previously shown notification IDs from localStorage
+  useEffect(() => {
+    try {
+      const storedIds = localStorage.getItem('shownNotificationIds');
+      if (storedIds) {
+        const parsedIds = JSON.parse(storedIds);
+        if (Array.isArray(parsedIds)) {
+          shownNotificationIdsRef.current = new Set(parsedIds);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load shown notification IDs:', err);
+    }
+
+    // Clear the initial mount flag after a short delay to allow the component to fully render
+    const timer = setTimeout(() => {
+      isInitialMountRef.current = false;
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Show a toast for new notifications (but not when popover is open)
   useEffect(() => {
@@ -43,6 +68,15 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     };
     
     const latestUnread = getLatestUnread();
+    
+    // Skip toast notification on initial mount or when there's no unread notification
+    if (isInitialMountRef.current || !latestUnread) {
+      return;
+    }
+    
+    // Special handling for waitlist notifications to prevent repeats
+    const isWaitlistNotification = latestUnread.type === 'new_listing' || 
+      (latestUnread.properties && latestUnread.properties.propertyId);
     
     if (latestUnread && 
         !isOpen && 
@@ -59,6 +93,14 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
       
       // Add this notification ID to our set of shown notifications
       shownNotificationIdsRef.current.add(latestUnread.id);
+      
+      // Save to localStorage to persist across page refreshes/navigations
+      try {
+        localStorage.setItem('shownNotificationIds', 
+          JSON.stringify([...shownNotificationIdsRef.current]));
+      } catch (err) {
+        console.error('Failed to save shown notification IDs:', err);
+      }
       
       const toastType = latestUnread.type === 'info' ? 'info' : 
                        latestUnread.type === 'error' ? 'error' : 'success';
