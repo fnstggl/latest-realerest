@@ -8,7 +8,7 @@ import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import UserTag from '@/components/UserTag';
+import UserTag, { UserRole } from '@/components/UserTag';
 
 interface MessageListProps {
   conversations: Conversation[];
@@ -21,7 +21,7 @@ const MessageList: React.FC<MessageListProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [userRoles, setUserRoles] = useState<Record<string, 'seller' | 'buyer' | 'wholesaler'>>({});
+  const [userRoles, setUserRoles] = useState<Record<string, UserRole>>({});
 
   // Fetch user roles for all users in conversations
   useEffect(() => {
@@ -41,9 +41,15 @@ const MessageList: React.FC<MessageListProps> = ({
           return;
         }
         
-        const rolesMap: Record<string, 'seller' | 'buyer' | 'wholesaler'> = {};
+        const rolesMap: Record<string, UserRole> = {};
         data.forEach(profile => {
-          rolesMap[profile.id] = profile.account_type || 'buyer';
+          // Ensure we only assign valid role types
+          const roleType = profile.account_type === 'seller' || 
+                         profile.account_type === 'buyer' || 
+                         profile.account_type === 'wholesaler' 
+                         ? profile.account_type as UserRole 
+                         : 'buyer';
+          rolesMap[profile.id] = roleType;
         });
         
         setUserRoles(rolesMap);
@@ -98,7 +104,13 @@ const MessageList: React.FC<MessageListProps> = ({
   return <div className="divide-y divide-gray-200">
       {conversations.map(conversation => {
       const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
-      const userRole = userRoles[conversation.otherUserId] || 'buyer';
+      // Ensure we only use valid role types
+      const userRole: UserRole = 
+        userRoles[conversation.otherUserId] === 'seller' || 
+        userRoles[conversation.otherUserId] === 'wholesaler' ||
+        userRoles[conversation.otherUserId] === 'buyer'
+          ? userRoles[conversation.otherUserId]
+          : 'buyer';
       
       return <div key={conversation.id} className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''} rounded-lg my-2 mx-1`} onClick={() => handleConversationClick(conversation)}>
             <div className="flex items-start">

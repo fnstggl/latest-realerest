@@ -17,16 +17,10 @@ const Messages: React.FC = () => {
     refreshConversations();
   }, [refreshConversations]);
 
-  // Log conversations for debugging
-  useEffect(() => {
-    console.log("Current conversations:", conversations);
-  }, [conversations]);
-
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
       <Navbar />
 
-      {/* Increased top margin from mt-4 sm:mt-6 to mt-16 sm:mt-20 to clear navbar */}
       <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12 mt-16 sm:mt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

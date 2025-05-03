@@ -2,7 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 
-type UserRole = 'seller' | 'buyer' | 'wholesaler';
+export type UserRole = 'seller' | 'buyer' | 'wholesaler';
 
 interface UserTagProps {
   role: UserRole;

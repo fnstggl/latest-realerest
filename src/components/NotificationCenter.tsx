@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { useNotifications } from '@/context/NotificationContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+
 interface NotificationCenterProps {
   showIndicator?: boolean;
 }
+
 const NotificationCenter: React.FC<NotificationCenterProps> = ({
   showIndicator = true
 }) => {
@@ -21,9 +23,13 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  
+  // Track notifications we've already shown toasts for
   const latestNotificationRef = useRef<string | null>(null);
   // Add a flag to prevent toast stacking
   const toastLockRef = useRef(false);
+  // Add storage for shown notification IDs to prevent showing the same one multiple times
+  const shownNotificationIdsRef = useRef<Set<string>>(new Set());
 
   // Show a toast for new notifications (but not when popover is open)
   useEffect(() => {
@@ -35,13 +41,28 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
       }
       return null;
     };
+    
     const latestUnread = getLatestUnread();
-    if (latestUnread && !isOpen && latestUnread.id !== latestNotificationRef.current && !toastLockRef.current) {
-      // Only show toast if notification popup is not open and we haven't shown this notification before
-      // and no other toast is currently active
+    
+    if (latestUnread && 
+        !isOpen && 
+        latestUnread.id !== latestNotificationRef.current && 
+        !toastLockRef.current && 
+        !shownNotificationIdsRef.current.has(latestUnread.id)) {
+      
+      // Only show toast if notification popup is not open, 
+      // we haven't shown this notification before,
+      // and no other toast is currently active,
+      // and this specific notification ID hasn't been shown before
       latestNotificationRef.current = latestUnread.id;
       toastLockRef.current = true;
-      const toastType = latestUnread.type === 'info' ? 'info' : latestUnread.type === 'error' ? 'error' : 'success';
+      
+      // Add this notification ID to our set of shown notifications
+      shownNotificationIdsRef.current.add(latestUnread.id);
+      
+      const toastType = latestUnread.type === 'info' ? 'info' : 
+                       latestUnread.type === 'error' ? 'error' : 'success';
+                       
       toast[toastType](latestUnread.title, {
         description: latestUnread.message,
         // Release lock after toast is dismissed
@@ -74,6 +95,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
       return () => clearTimeout(timer);
     }
   }, [isOpen, notifications.length]);
+  
   const handleOpenChange = useCallback((open: boolean) => {
     setIsOpen(open);
 
@@ -109,19 +131,28 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
       navigate(`/property/${notification.properties.propertyId}`);
     }
   };
-  return <Popover open={isOpen} onOpenChange={setIsOpen}>
+
+  return (
+    <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative hover:bg-transparent" // Remove hover background
-      >
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="relative hover:bg-transparent" 
+        >
           <Bell size={20} className="text-black" />
-          {unreadCount > 0 && showIndicator && <span className="absolute -top-1 -right-1 flex items-center justify-center">
+          {unreadCount > 0 && showIndicator && (
+            <span className="absolute -top-1 -right-1 flex items-center justify-center">
               <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#0892D0] via-[#54C5F8] to-[#0892D0] animate-spin"></span>
               <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-medium text-black">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
-            </span>}
+            </span>
+          )}
         </Button>
       </PopoverTrigger>
+      
+      
       <PopoverContent className="w-80 p-0 border border-gray-200 shadow-md rounded-lg bg-white/95 backdrop-blur-sm" align="end">
         <div className="border-b border-gray-200 p-4">
           <div className="flex justify-between items-center">
@@ -170,6 +201,8 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
             </div>}
         </div>
       </PopoverContent>
-    </Popover>;
+    </Popover>
+  );
 };
+
 export default NotificationCenter;
