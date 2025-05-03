@@ -85,7 +85,7 @@ const MessageList: React.FC<MessageListProps> = ({
                 addSuffix: true
               })}
                 </p>
-                {isUnread && <div className="bg-[#0892D0] px-2 py-1 text-xs font-bold rounded mt-1 inline-block text-white">
+                {isUnread && <div className="px-2 py-1 text-xs font-bold rounded mt-1 inline-block text-white bg-rose-600">
                     NEW
                   </div>}
               </div>
