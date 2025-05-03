@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import PropertyCard from '@/components/PropertyCard';
@@ -12,7 +12,25 @@ const FeaturedProperties: React.FC = () => {
   const { listings, loading, error } = useListings(6);
 
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <section className="py-16 relative overflow-hidden perspective-container">
+        <div className="container px-4 lg:px-8 mx-auto relative z-10">
+          <div className="flex items-center mb-8">
+            <h2 className="text-2xl sm:text-4xl font-editorial font-bold italic text-foreground tracking-wide">
+              Featured Homes
+            </h2>
+          </div>
+          
+          <p className="text-base sm:text-xl text-foreground mb-8 max-w-3xl">
+            Real estate for <span className="font-editorial italic">real people</span>. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
+          </p>
+          
+          <div className="flex justify-center items-center min-h-[300px]">
+            <LoadingSpinner />
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (

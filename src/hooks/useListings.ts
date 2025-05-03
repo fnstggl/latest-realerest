@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Listing {
@@ -105,6 +105,11 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
       setLoading(false);
     }
   };
+
+  // Auto-fetch listings when the hook is initialized or when limit/searchQuery change
+  useEffect(() => {
+    fetchListings();
+  }, [limit, searchQuery]);
 
   return { 
     listings, 
