@@ -21,11 +21,11 @@ const MessageList: React.FC<MessageListProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [userRoles, setUserRoles] = useState<Record<string, UserRole>>({});
+  const [userDetails, setUserDetails] = useState<Record<string, { name: string; role: UserRole }>>({});
 
-  // Fetch user roles for all users in conversations
+  // Fetch user names and roles for all users in conversations
   useEffect(() => {
-    const fetchUserRoles = async () => {
+    const fetchUserDetails = async () => {
       if (conversations.length === 0) return;
       
       const userIds = conversations.map(conv => conv.otherUserId);
@@ -33,15 +33,15 @@ const MessageList: React.FC<MessageListProps> = ({
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('id, account_type')
+          .select('id, name, email, account_type')
           .in('id', userIds);
           
         if (error) {
-          console.error('Error fetching user roles:', error);
+          console.error('Error fetching user details:', error);
           return;
         }
         
-        const rolesMap: Record<string, UserRole> = {};
+        const detailsMap: Record<string, { name: string; role: UserRole }> = {};
         data.forEach(profile => {
           // Ensure we only assign valid role types
           const roleType = profile.account_type === 'seller' || 
@@ -49,16 +49,23 @@ const MessageList: React.FC<MessageListProps> = ({
                          profile.account_type === 'wholesaler' 
                          ? profile.account_type as UserRole 
                          : 'buyer';
-          rolesMap[profile.id] = roleType;
+                         
+          // Use name if available, otherwise use email as fallback
+          const displayName = profile.name || profile.email || "Unknown User";
+          
+          detailsMap[profile.id] = {
+            name: displayName,
+            role: roleType
+          };
         });
         
-        setUserRoles(rolesMap);
+        setUserDetails(detailsMap);
       } catch (err) {
-        console.error('Error processing user roles:', err);
+        console.error('Error processing user details:', err);
       }
     };
     
-    fetchUserRoles();
+    fetchUserDetails();
   }, [conversations]);
 
   const handleConversationClick = (conversation: Conversation) => {
@@ -106,13 +113,7 @@ const MessageList: React.FC<MessageListProps> = ({
   return <div className="divide-y divide-gray-200">
       {conversations.map(conversation => {
       const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
-      // Ensure we only use valid role types
-      const userRole: UserRole = 
-        userRoles[conversation.otherUserId] === 'seller' || 
-        userRoles[conversation.otherUserId] === 'wholesaler' ||
-        userRoles[conversation.otherUserId] === 'buyer'
-          ? userRoles[conversation.otherUserId]
-          : 'buyer';
+      const userDetail = userDetails[conversation.otherUserId] || { name: conversation.otherUserName || 'Unknown User', role: 'buyer' };
       
       return <div 
               key={conversation.id} 
@@ -122,16 +123,16 @@ const MessageList: React.FC<MessageListProps> = ({
             <div className="flex items-start">
               <div className="mr-3 flex flex-col items-center">
                 <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">
-                  {conversation.otherUserName?.charAt(0).toUpperCase() || '?'}
+                  {userDetail.name?.charAt(0).toUpperCase() || '?'}
                 </div>
               </div>
               
               <div className="flex-1">
                 <div className="flex items-center">
                   <h3 className="font-bold text-lg">
-                    {conversation.otherUserName || 'Unknown User'}
+                    {userDetail.name}
                   </h3>
-                  <UserTag role={userRole} />
+                  <UserTag role={userDetail.role} />
                 </div>
                 
                 {conversation.propertyId && conversation.propertyTitle && <div className="flex items-center text-sm text-[#0892D0] cursor-pointer hover:underline mb-1" onClick={e => handlePropertyClick(e, conversation.propertyId)}>

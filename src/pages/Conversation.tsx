@@ -54,12 +54,13 @@ const Conversation: React.FC = () => {
         // Get other user's profile info
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('name, account_type')
+          .select('name, email, account_type')
           .eq('id', otherUserId)
           .single();
           
         if (!profileError && profileData) {
-          setOtherUserName(profileData.name || 'Unknown User');
+          // Use name if available, otherwise use email as fallback
+          setOtherUserName(profileData.name || profileData.email || 'Unknown User');
           
           // Ensure we only use valid role types
           const roleType = 
