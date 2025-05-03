@@ -164,6 +164,11 @@ const Conversation: React.FC = () => {
     }
   }, [conversationId, user?.id]);
   
+  // Adapter function to match the MessageInput component's expected signature
+  const handleSendMessage = async (message: string): Promise<void> => {
+    await sendMessage(message);
+  };
+  
   const groupMessages = (messages: Message[]) => {
     // Group messages by date
     const messagesByDate: Record<string, Message[]> = {};
@@ -238,7 +243,7 @@ const Conversation: React.FC = () => {
             )}
             
             <MessageInput 
-              onSendMessage={sendMessage}
+              onSendMessage={handleSendMessage}
               disabled={loading || sending}
               sending={sending}
             />

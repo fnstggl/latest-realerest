@@ -62,6 +62,8 @@ const MessageList: React.FC<MessageListProps> = ({
   }, [conversations]);
 
   const handleConversationClick = (conversation: Conversation) => {
+    // Navigate to the conversation detail page
+    console.log("Navigating to conversation:", conversation.id);
     navigate(`/messages/${conversation.id}`);
   };
   
@@ -112,7 +114,11 @@ const MessageList: React.FC<MessageListProps> = ({
           ? userRoles[conversation.otherUserId]
           : 'buyer';
       
-      return <div key={conversation.id} className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''} rounded-lg my-2 mx-1`} onClick={() => handleConversationClick(conversation)}>
+      return <div 
+              key={conversation.id} 
+              className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${isUnread ? 'bg-blue-50' : ''} rounded-lg my-2 mx-1`} 
+              onClick={() => handleConversationClick(conversation)}
+            >
             <div className="flex items-start">
               <div className="mr-3 flex flex-col items-center">
                 <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -29,6 +30,21 @@ export interface Message {
   isMine?: boolean;
   relatedOfferId?: string;
   propertyId?: string;
+}
+
+// Type definition to properly parse message data from Supabase
+interface MessageData {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  content: string;
+  created_at: string;
+  is_read: boolean;
+  related_offer_id: string;
+  property_id?: string; // Make this optional since it might not exist
+  property_offers?: {
+    property_id: string;
+  };
 }
 
 export const useMessages = () => {
@@ -155,7 +171,7 @@ export const useMessages = () => {
           let propertyImage = undefined;
           
           // Check if the message has property_id directly
-          if (messageData?.property_id) {
+          if (messageData && 'property_id' in messageData && messageData.property_id) {
             propertyId = messageData.property_id;
           }
           // If not, check if it has a related offer
@@ -243,12 +259,14 @@ export const useMessages = () => {
       }
       
       // Process messages to include property IDs
-      const processedMessages = await Promise.all(data.map(async (message) => {
+      const processedMessages = await Promise.all(data.map(async (message: MessageData) => {
         let propertyId = undefined;
         
-        if (message.property_id) {
+        // Check if property_id exists directly on the message
+        if ('property_id' in message && message.property_id) {
           propertyId = message.property_id;
         }
+        // If not, check if it has a related offer
         else if (message.related_offer_id) {
           const { data: offerData } = await supabase
             .from('property_offers')
