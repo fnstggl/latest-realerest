@@ -136,8 +136,8 @@ const About: React.FC = () => {
                       <AvatarFallback className="bg-black text-white">RE</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-bold">Realer Estate</p>
-                      <p className="text-sm">Founders</p>
+                      <p className="font-bold">- Beckett & Derrick</p>
+                      <p className="text-sm">Realer Estate Founders</p>
                     </div>
                   </div>
                 </div>
