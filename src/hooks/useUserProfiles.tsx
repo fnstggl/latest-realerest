@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { UserRole } from '@/components/UserTag';
 
 export interface UserProfile {
   id: string;
@@ -11,6 +10,8 @@ export interface UserProfile {
   role: UserRole;
   avatarUrl?: string;
 }
+
+export type UserRole = 'seller' | 'buyer' | 'wholesaler';
 
 // Create a cache to store user profiles to avoid repeated fetches
 const profileCache: Record<string, UserProfile> = {};
@@ -42,22 +43,28 @@ export const useUserProfiles = () => {
         console.error(`[useUserProfiles] Error fetching profile for ${userId}:`, profileError);
       }
 
-      // If we have profile data and it's valid
-      if (profileData && (profileData.name || profileData.email)) {
+      // If we have profile data
+      if (profileData) {
         // Validate role to ensure it's a valid UserRole type
         const validRoles: UserRole[] = ['buyer', 'seller', 'wholesaler'];
         const role: UserRole = validRoles.includes(profileData.account_type as UserRole) 
           ? profileData.account_type as UserRole
           : 'buyer';
+        
+        // IMPORTANT FIX: Use name if it exists, don't fallback to email when name exists
+        // Only fallback to email if name is null or an empty string
+        const displayName = profileData.name && profileData.name.trim() !== '' 
+          ? profileData.name 
+          : (profileData.email || 'Unknown User');
 
         const userProfile: UserProfile = {
           id: userId,
-          name: profileData.name || profileData.email || 'Unknown User',
+          name: displayName,
           email: profileData.email || '',
           role: role
         };
 
-        console.log(`[useUserProfiles] Successfully fetched profile from profiles table for ${userId}:`, userProfile);
+        console.log(`[useUserProfiles] Successfully fetched profile for ${userId}:`, userProfile);
         
         // Cache the profile
         profileCache[userId] = userProfile;
@@ -65,7 +72,7 @@ export const useUserProfiles = () => {
         return userProfile;
       }
 
-      // If profiles table didn't have what we need, try to get email from auth.users via RPC
+      // If profiles table didn't have what we need, try to get email via RPC function as fallback
       const { data: emailData, error: emailError } = await supabase.rpc('get_user_email', {
         user_id_param: userId
       });
@@ -77,7 +84,7 @@ export const useUserProfiles = () => {
       if (emailData) {
         const userProfile: UserProfile = {
           id: userId,
-          name: emailData,
+          name: emailData, // This is the email, but it's better than nothing
           email: emailData,
           role: 'buyer' // Default role when we only have email
         };

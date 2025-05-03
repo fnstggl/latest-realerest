@@ -12,7 +12,7 @@ import MessageInput from '@/components/conversation/MessageInput';
 import { Message } from '@/hooks/useMessages';
 import { motion } from 'framer-motion';
 import UserTag from '@/components/UserTag';
-import { useUserProfiles } from '@/hooks/useUserProfiles';
+import { useUserProfiles, UserProfile, UserRole } from '@/hooks/useUserProfiles';
 
 const Conversation: React.FC = () => {
   const { id: conversationId } = useParams<{ id: string }>();
@@ -25,10 +25,7 @@ const Conversation: React.FC = () => {
   const [sending, setSending] = useState(false);
   const { markMessagesAsRead, fetchMessages } = useMessages();
   const { getUserProfile } = useUserProfiles();
-  const [otherUserProfile, setOtherUserProfile] = useState<{name: string; role: 'seller' | 'buyer' | 'wholesaler'}>({
-    name: 'Loading...',
-    role: 'buyer'
-  });
+  const [otherUserProfile, setOtherUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     if (!conversationId) {
@@ -64,14 +61,13 @@ const Conversation: React.FC = () => {
           // Use our centralized profile fetching system
           const profile = await getUserProfile(otherUserId);
           console.log(`[Conversation] User profile retrieved:`, profile);
-          setOtherUserProfile({
-            name: profile.name,
-            role: profile.role
-          });
+          setOtherUserProfile(profile);
         } catch (error) {
           console.error('[Conversation] Error getting user profile:', error);
           setOtherUserProfile({
+            id: otherUserId,
             name: "Unknown User",
+            email: "",
             role: "buyer"
           });
         }
@@ -199,6 +195,10 @@ const Conversation: React.FC = () => {
   
   const groupedMessages = groupMessages(messages);
 
+  // Default to placeholder values when profile isn't available
+  const displayName = otherUserProfile?.name || "Loading...";
+  const userRole = otherUserProfile?.role || "buyer";
+
   return (
     <div className="min-h-screen bg-[#FCFBF8] flex flex-col">
       <Navbar />
@@ -220,8 +220,8 @@ const Conversation: React.FC = () => {
               <ArrowLeft />
             </Button>
             <div className="flex items-center">
-              <h1 className="font-bold text-xl sm:text-2xl">{otherUserProfile.name}</h1>
-              <UserTag role={otherUserProfile.role} />
+              <h1 className="font-bold text-xl sm:text-2xl">{displayName}</h1>
+              <UserTag role={userRole} />
             </div>
           </div>
           

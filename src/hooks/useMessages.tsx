@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -76,8 +75,8 @@ export const useMessages = () => {
       
       console.log(`[getUserDisplayName] Profile data for ${userId}:`, profileData);
       
-      // If we found a valid profile with a name
-      if (profileData && profileData.name) {
+      // If we found a valid profile
+      if (profileData) {
         const validRoles = ['seller', 'buyer', 'wholesaler'];
         let role: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
         
@@ -86,21 +85,15 @@ export const useMessages = () => {
           role = profileData.account_type as 'seller' | 'buyer' | 'wholesaler';
         }
         
-        console.log(`[getUserDisplayName] SUCCESS using name from profile for ${userId}: name="${profileData.name}", role="${role}"`);
-        return { name: profileData.name, role };
-      }
-      
-      // If we found a profile with no name but with email
-      if (profileData && profileData.email) {
-        const validRoles = ['seller', 'buyer', 'wholesaler'];
-        let role: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
-        
-        if (profileData.account_type && validRoles.includes(profileData.account_type)) {
-          role = profileData.account_type as 'seller' | 'buyer' | 'wholesaler';
+        // IMPORTANT FIX: Prioritize name from database if it exists
+        // Only use email as a fallback if name doesn't exist or is empty
+        if (profileData.name && profileData.name.trim() !== '') {
+          console.log(`[getUserDisplayName] SUCCESS using name from profile for ${userId}: name="${profileData.name}", role="${role}"`);
+          return { name: profileData.name, role };
+        } else if (profileData.email) {
+          console.log(`[getUserDisplayName] Using email from profile for ${userId}: email="${profileData.email}", role="${role}"`);
+          return { name: profileData.email, role };
         }
-        
-        console.log(`[getUserDisplayName] Using email from profile for ${userId}: email="${profileData.email}", role="${role}"`);
-        return { name: profileData.email, role };
       }
       
       // Second attempt: Get email via RPC function as fallback

@@ -7,7 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { useUserProfiles } from '@/hooks/useUserProfiles';
+import { useUserProfiles, UserProfile } from '@/hooks/useUserProfiles';
 import UserTag from '@/components/UserTag';
 
 interface MessageListProps {
@@ -22,7 +22,7 @@ const MessageList: React.FC<MessageListProps> = ({
   const navigate = useNavigate();
   const { user } = useAuth();
   const { getUserProfiles } = useUserProfiles();
-  const [userProfilesMap, setUserProfilesMap] = useState<Record<string, any>>({});
+  const [userProfilesMap, setUserProfilesMap] = useState<Record<string, UserProfile>>({});
   
   useEffect(() => {
     const loadUserProfiles = async () => {
@@ -88,9 +88,14 @@ const MessageList: React.FC<MessageListProps> = ({
       {conversations.map(conversation => {
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
+        // Use the profile from our profiles map if available, otherwise fallback to conversation data
         const userProfile = userProfilesMap[conversation.otherUserId];
-        const displayName = userProfile?.name || conversation.otherUserName || "Unknown User";
-        const userRole = userProfile?.role || conversation.otherUserRole || "buyer";
+        
+        // Ensure we have a proper display name
+        const displayName = userProfile ? userProfile.name : (conversation.otherUserName || "Unknown User");
+        
+        // Get the role, with fallback
+        const userRole = userProfile ? userProfile.role : (conversation.otherUserRole || "buyer");
         
         return <div 
                 key={conversation.id} 

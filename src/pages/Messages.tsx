@@ -19,9 +19,10 @@ const Messages: React.FC = () => {
     console.log("Messages page - refreshing conversations");
     refreshConversations();
     
-    // Clear the profile cache to ensure we get fresh data
-    clearProfileCache();
-  }, [refreshConversations, clearProfileCache]);
+    // Don't clear the profile cache on every render, that causes race conditions
+    // Only clear it when explicitly needed, like when a profile is updated
+    // clearProfileCache();
+  }, [refreshConversations]);
 
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
