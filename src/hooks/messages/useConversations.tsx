@@ -38,6 +38,7 @@ export const useConversations = () => {
       
       console.log('Conversations found:', conversationData.length);
       
+      // Process conversations with improved profile fetching
       const processedConversations = await Promise.all(
         conversationData.map(async (conversation) => {
           // Determine the other user's ID
@@ -51,44 +52,62 @@ export const useConversations = () => {
           let otherUserName = "Unknown User";
           let otherUserRole = "buyer";
           
+          // IMPROVED: Direct, reliable profile data fetch
           if (otherUserId) {
-            // Direct query to profiles table with a single call
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('name, email, account_type')
-              .eq('id', otherUserId)
-              .maybeSingle();
-            
-            console.log('Profile data for user:', profileData);
-            
-            if (profileData) {
-              // Set name with clear priority: name first, then email, then default
-              otherUserName = profileData.name || profileData.email || "Unknown User";
+            try {
+              // Fetch profile with retry mechanism
+              const fetchProfile = async (retries = 2) => {
+                const { data, error } = await supabase
+                  .from('profiles')
+                  .select('name, email, account_type')
+                  .eq('id', otherUserId)
+                  .maybeSingle();
+                
+                if (error) {
+                  console.error(`Profile fetch error (attempt ${3-retries})`, error);
+                  if (retries > 0) return fetchProfile(retries - 1);
+                  return null;
+                }
+                return data;
+              };
               
-              // Explicitly validate the account_type before using it
-              if (profileData.account_type === 'seller' || 
-                  profileData.account_type === 'buyer' || 
-                  profileData.account_type === 'wholesaler') {
-                otherUserRole = profileData.account_type;
+              const profileData = await fetchProfile();
+              
+              if (profileData) {
+                // Name priority: profile name > profile email > fallback to email lookup
+                otherUserName = profileData.name && profileData.name.trim() !== '' 
+                  ? profileData.name.trim() 
+                  : (profileData.email && profileData.email.trim() !== '' 
+                    ? profileData.email.trim() 
+                    : "Unknown User");
+                
+                // Explicitly validate account_type before using it
+                if (['seller', 'buyer', 'wholesaler'].includes(profileData.account_type)) {
+                  otherUserRole = profileData.account_type;
+                  console.log(`User ${otherUserId} role set to: ${otherUserRole}`);
+                } else {
+                  console.warn(`Invalid account_type "${profileData.account_type}" for user ${otherUserId}, using default`);
+                }
+              } else {
+                // Fallback to direct email lookup
+                const { data: userData } = await supabase.rpc('get_user_email', {
+                  user_id_param: otherUserId
+                });
+                
+                if (userData) {
+                  otherUserName = userData;
+                  console.log(`Fallback to email for ${otherUserId}: ${userData}`);
+                }
               }
-              
-              console.log(`User ${otherUserId} has role: ${otherUserRole}`);
-            } else {
-              // Backup plan: get email directly if profile fetch fails
-              const { data: userData } = await supabase.rpc('get_user_email', {
-                user_id_param: otherUserId
-              });
-              
-              if (userData) {
-                otherUserName = userData;
-              }
+            } catch (err) {
+              console.error(`Error processing user ${otherUserId}:`, err);
             }
           }
             
           // Get the latest message in a separate query
           const { data: messageData } = await supabase
             .from('messages')
-            .select('*, property_offers(property_id)')
+            .select('id, content, created_at, is_read, sender_id, related_offer_id, property_id, conversation_id')
             .eq('conversation_id', conversation.id)
             .order('created_at', { ascending: false })
             .limit(1)
@@ -100,37 +119,43 @@ export const useConversations = () => {
           let propertyImage = undefined;
           
           if (messageData) {
-            // Try to get property_id from message directly
-            if (messageData.property_id) {
-              propertyId = messageData.property_id;
-            }
-            // Or from related offer
-            else if (messageData.related_offer_id) {
-              const { data: offerData } = await supabase
-                .from('property_offers')
-                .select('property_id')
-                .eq('id', messageData.related_offer_id)
-                .maybeSingle();
-                
-              if (offerData?.property_id) {
-                propertyId = offerData.property_id;
+            propertyId = messageData.property_id;
+            
+            // If we have a propertyId from message but no related_offer_id, try to fetch property details
+            if (!propertyId && messageData.related_offer_id) {
+              try {
+                const { data: offerData } = await supabase
+                  .from('property_offers')
+                  .select('property_id')
+                  .eq('id', messageData.related_offer_id)
+                  .maybeSingle();
+                  
+                if (offerData?.property_id) {
+                  propertyId = offerData.property_id;
+                }
+              } catch (err) {
+                console.error('Error fetching offer data:', err);
               }
             }
           }
           
           // If we found a property ID, get its details
           if (propertyId) {
-            const { data: propertyData } = await supabase
-              .from('property_listings')
-              .select('title, images')
-              .eq('id', propertyId)
-              .maybeSingle();
-              
-            if (propertyData) {
-              propertyTitle = propertyData.title;
-              if (propertyData.images && propertyData.images.length > 0) {
-                propertyImage = propertyData.images[0];
+            try {
+              const { data: propertyData } = await supabase
+                .from('property_listings')
+                .select('title, images')
+                .eq('id', propertyId)
+                .maybeSingle();
+                
+              if (propertyData) {
+                propertyTitle = propertyData.title;
+                if (propertyData.images && propertyData.images.length > 0) {
+                  propertyImage = propertyData.images[0];
+                }
               }
+            } catch (err) {
+              console.error('Error fetching property data:', err);
             }
           }
           

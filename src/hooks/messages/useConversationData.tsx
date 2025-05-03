@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { Message } from '@/types/messages';
 import { UserRole } from '@/components/UserTag';
-import { getUserDisplayName, getUserRole } from '@/utils/userUtils';
 
 interface UseConversationDataProps {
   conversationId: string | undefined;
@@ -45,11 +44,12 @@ export const useConversationData = ({
       setLoading(true);
 
       try {
+        // Fetch conversation data
         const { data: convoData, error: convoError } = await supabase
           .from('conversations')
           .select('participant1, participant2')
           .eq('id', conversationId)
-          .single();
+          .maybeSingle();
 
         if (convoError || !convoData) {
           console.error('Error fetching conversation:', convoError);
@@ -57,6 +57,7 @@ export const useConversationData = ({
           return;
         }
 
+        // Determine other user ID
         const otherUserId =
           convoData.participant1 === user?.id
             ? convoData.participant2
@@ -64,62 +65,88 @@ export const useConversationData = ({
         
         console.log('Fetching profile for user ID:', otherUserId);
 
-        // First, try to get the user's profile from the profiles table
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('name, email, account_type')
-          .eq('id', otherUserId)
-          .maybeSingle(); // Using maybeSingle instead of single to prevent errors
-
-        if (profileError) {
-          console.error('Error fetching user profile:', profileError);
-        }
-
-        // Handle profile data if available
-        if (profileData) {
-          console.log('Profile data retrieved:', profileData);
-          
-          // Set the user name, prioritizing name over email
-          if (profileData.name && profileData.name.trim() !== '') {
-            setOtherUserName(profileData.name);
-          } else if (profileData.email && profileData.email.trim() !== '') {
-            setOtherUserName(profileData.email);
-          } else {
-            // If both name and email are empty in the profile, we'll get the email using RPC
-            const { data: userData } = await supabase.rpc('get_user_email', {
-              user_id_param: otherUserId
+        // COMPLETELY NEW APPROACH: Robust profile fetching with retry mechanism
+        const fetchUserProfile = async (userId: string, retryCount = 2): Promise<{name?: string, email?: string, accountType?: string}> => {
+          try {
+            // Try to get profile from profiles table
+            const { data, error } = await supabase
+              .from('profiles')
+              .select('name, email, account_type')
+              .eq('id', userId)
+              .maybeSingle();
+              
+            if (error) throw error;
+            
+            if (data) {
+              console.log('Found profile data:', data);
+              return {
+                name: data.name,
+                email: data.email,
+                accountType: data.account_type
+              };
+            }
+            
+            // If no profile found and we have retries left
+            if (retryCount > 0) {
+              console.log(`No profile found, retrying (${retryCount} attempts left)`);
+              // Wait before retry to allow for any race conditions
+              await new Promise(resolve => setTimeout(resolve, 300));
+              return fetchUserProfile(userId, retryCount - 1);
+            }
+            
+            // Last resort - get email through RPC
+            console.log('Falling back to RPC email lookup');
+            const { data: emailData } = await supabase.rpc('get_user_email', {
+              user_id_param: userId
             });
-            setOtherUserName(userData || 'Unknown User');
+            
+            return { email: emailData };
+          } catch (err) {
+            console.error('Error fetching user profile:', err);
+            
+            // If we have retries left, try again
+            if (retryCount > 0) {
+              console.log(`Error occurred, retrying (${retryCount} attempts left)`);
+              await new Promise(resolve => setTimeout(resolve, 500));
+              return fetchUserProfile(userId, retryCount - 1);
+            }
+            
+            return {};
           }
-
-          // Set user role, with validation to ensure it's a valid role type
-          if (profileData.account_type === 'seller' || 
-              profileData.account_type === 'buyer' || 
-              profileData.account_type === 'wholesaler') {
-            setOtherUserRole(profileData.account_type as UserRole);
-          } else {
-            console.warn(`Invalid account_type "${profileData.account_type}", defaulting to "buyer"`);
-            setOtherUserRole('buyer');
-          }
+        };
+        
+        // Execute the fetch with retries
+        const userProfile = await fetchUserProfile(otherUserId);
+        
+        // Set user name with clear priority order
+        if (userProfile.name && userProfile.name.trim() !== '') {
+          setOtherUserName(userProfile.name);
+          console.log('Using profile name:', userProfile.name);
+        } else if (userProfile.email && userProfile.email.trim() !== '') {
+          setOtherUserName(userProfile.email);
+          console.log('Using email as name:', userProfile.email);
         } else {
-          // Fallback if no profile data found
-          console.log('No profile data found, using fallback method');
-          
-          // Get user email through RPC call
-          const { data: userData } = await supabase.rpc('get_user_email', {
-            user_id_param: otherUserId
-          });
-          
-          setOtherUserName(userData || 'Unknown User');
-          setOtherUserRole('buyer'); // Default role when no profile data is available
-          
-          console.log('Fallback name set to:', userData || 'Unknown User');
+          setOtherUserName('Unknown User');
+          console.log('No user info found, using default name');
+        }
+        
+        // Set role with validation
+        if (userProfile.accountType === 'seller' || 
+            userProfile.accountType === 'buyer' || 
+            userProfile.accountType === 'wholesaler') {
+          setOtherUserRole(userProfile.accountType as UserRole);
+          console.log('User role set to:', userProfile.accountType);
+        } else {
+          setOtherUserRole('buyer');
+          console.log('Invalid or missing role, using default buyer role');
         }
 
+        // Fetch messages if we have a conversation ID
         if (conversationId && fetchMessages) {
           const messagesData = await fetchMessages(conversationId);
           setMessages(messagesData);
 
+          // Mark messages as read if needed
           if (markMessagesAsRead) {
             markMessagesAsRead(conversationId);
           }
@@ -133,6 +160,7 @@ export const useConversationData = ({
 
     fetchConversationData();
 
+    // Set up real-time subscription for new messages
     const messagesSubscription = supabase
       .channel(`messages:${conversationId}`)
       .on(
@@ -156,6 +184,7 @@ export const useConversationData = ({
 
           setMessages((prevMessages) => [...prevMessages, newMessage]);
 
+          // Mark messages as read if they're not from the current user
           if (
             payload.new.sender_id !== user?.id &&
             markMessagesAsRead &&

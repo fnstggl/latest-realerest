@@ -27,14 +27,14 @@ const Messages: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center justify-between mb-4 sm:mb-8">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Messages</h1>
-              <p className="text-sm sm:text-base md:text-lg">Connect with buyers and sellers</p>
+              <p className="text-sm sm:text-base text-gray-600">Connect with buyers and sellers</p>
             </div>
           </div>
 
-          <div className="bg-white/90 border border-gray-200 rounded-xl shadow-sm">
+          <div className="bg-white/90 border border-gray-100 rounded-xl shadow-sm">
             <div className="border-b border-gray-200 p-3 sm:p-4 rounded-t-xl">
               <h2 className="text-lg sm:text-xl font-bold">Conversations</h2>
             </div>

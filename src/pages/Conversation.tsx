@@ -51,7 +51,7 @@ const Conversation: React.FC = () => {
             otherUserRole={otherUserRole} 
           />
           
-          <div className="flex-1 bg-white shadow-sm rounded-t-lg border border-gray-200 overflow-hidden flex flex-col">
+          <div className="flex-1 bg-white shadow-sm rounded-lg border border-gray-100 overflow-hidden flex flex-col">
             <MessageContainer
               loading={loading}
               messages={messages}
