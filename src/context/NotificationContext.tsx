@@ -162,8 +162,7 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
     }
   };
 
-  // Add a new notification - modified to prevent duplicates
-  // We're not showing toasts here anymore, just creating DB records
+  // Add a new notification
   const addNotification = async (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     if (!user?.id) return;
 

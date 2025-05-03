@@ -33,7 +33,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { addNotification } = useNotifications();
 
   React.useEffect(() => {
@@ -53,9 +52,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
   }, [user]);
 
   const handleJoinWaitlist = useCallback(async () => {
-    // Prevent multiple submissions
-    if (isSubmitting || loading) return;
-    
     if (!user) {
       navigate("/signin", {
         state: {
@@ -64,15 +60,12 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       });
       return;
     }
-
     if (!name.trim()) {
       toast.error("Please provide your name");
       return;
     }
-
     try {
       setLoading(true);
-      setIsSubmitting(true);
 
       const { data, error } = await supabase.from("waitlist_requests").insert({
         property_id: propertyId,
@@ -85,7 +78,6 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
       
       if (error) {
         if (error.code === "23505") {
-          // Silently handle duplicate entries - just close the dialog and refresh
           onOpenChange(false);
           if (refreshProperty) {
             refreshProperty();
@@ -130,28 +122,19 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         });
       }
       
-      // Success case - first close the dialog to prevent multiple re-renders
       onOpenChange(false);
-      
-      // Then refresh if needed
       if (refreshProperty) {
         refreshProperty();
       }
       
-      // Finally show a toast after dialog is closed and everything is done
       toast.success("Successfully joined waitlist!");
-      
     } catch (error) {
       console.error("Error joining waitlist:", error);
       toast.error("Failed to join waitlist. Please try again.");
     } finally {
       setLoading(false);
-      // Reset submission state after a short delay to prevent immediate resubmission
-      setTimeout(() => {
-        setIsSubmitting(false);
-      }, 500);
     }
-  }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange, refreshProperty, addNotification, isSubmitting, loading]);
+  }, [user, name, email, phone, propertyId, propertyTitle, navigate, onOpenChange, refreshProperty, addNotification]);
 
   const handleButtonClick = () => {
     if (!user) {
@@ -258,7 +241,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
               </Button>
               <Button 
                 onClick={handleJoinWaitlist} 
-                disabled={loading || isSubmitting} 
+                disabled={loading} 
                 className="bg-black hover:bg-black text-white font-bold"
               >
                 {loading ? "Submitting..." : "Submit Request"}
