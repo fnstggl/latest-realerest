@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -11,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
 import RewardBadge from './RewardBadge';
+import { useMessages } from '@/hooks/useMessages';
 
 interface PropertyHeaderProps {
   title: string;
@@ -55,6 +55,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const { user } = useAuth();
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
+  const { getOrCreateConversation } = useMessages();
 
   // Check if reward is valid (greater than or equal to 3000)
   const hasValidReward = reward !== undefined && reward !== null && reward >= 3000;
@@ -220,6 +221,28 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     navigate('/dashboard', { state: { activeTab: 'rewards' } });
   };
 
+  // New function to handle messaging the seller directly
+  const handleMessageSellerDirectly = async () => {
+    if (!userId) return;
+    
+    try {
+      // Get or create a conversation with the seller
+      const conversationId = await getOrCreateConversation(userId);
+      
+      if (conversationId) {
+        // Navigate directly to the conversation with the seller
+        navigate(`/messages/${conversationId}`);
+      } else {
+        // Fallback to the general messages page
+        navigate('/messages');
+        toast.error("Couldn't connect with seller");
+      }
+    } catch (err) {
+      console.error("Failed to navigate to seller conversation:", err);
+      navigate('/messages');
+    }
+  };
+
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
       return (
@@ -299,14 +322,17 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
             <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
           </div>
           
-          <Link to={`/messages?seller=${userId}`} className="block w-full">
-            <Button variant="outline" className="w-full relative group">
-              <MessageSquare className="mr-2" />
-              <span className="relative z-10">
-                Message {sellerName || 'Seller'} Directly
-              </span>
-            </Button>
-          </Link>
+          {/* Updated to use the direct message handler instead of a Link */}
+          <Button 
+            variant="outline" 
+            className="w-full relative group"
+            onClick={handleMessageSellerDirectly}
+          >
+            <MessageSquare className="mr-2" />
+            <span className="relative z-10">
+              Message {sellerName || 'Seller'} Directly
+            </span>
+          </Button>
           
           {hasValidReward && !hasClaimedReward && user && (
             <Button 
