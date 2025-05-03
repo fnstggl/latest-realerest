@@ -14,12 +14,12 @@ const UserTag: React.FC<UserTagProps> = ({ role }) => {
   
   switch (role) {
     case 'seller':
-      bgColor = '#FEE2E2'; // Light red
-      textColor = '#9B1C1C'; // Dark red
+      bgColor = '#FDE1D3'; // Light red
+      textColor = '#ea384c'; // Dark red
       break;
     case 'wholesaler':
-      bgColor = '#FFF9C4'; // Light yellow
-      textColor = '#997A00'; // Dark yellow
+      bgColor = '#FEF7CD'; // Light yellow
+      textColor = '#F97316'; // Dark yellow
       break;
     case 'buyer':
       bgColor = '#F2FCE2'; // Light green - keeping current green

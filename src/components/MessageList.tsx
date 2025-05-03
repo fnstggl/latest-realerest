@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Conversation } from '@/types/messages';
@@ -7,8 +7,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import UserTag, { UserRole } from '@/components/UserTag';
+import UserTag from '@/components/UserTag';
+import { UserRole } from '@/components/UserTag';
 
 interface MessageListProps {
   conversations: Conversation[];
@@ -21,75 +21,6 @@ const MessageList: React.FC<MessageListProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [userDetails, setUserDetails] = useState<Record<string, { name: string; role: UserRole }>>({});
-
-  // Fetch user names and roles for all users in conversations
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      if (conversations.length === 0) return;
-      
-      // Filter out any undefined or null otherUserIds before creating the Set
-      const validUserIds = conversations
-        .map(conv => conv.otherUserId)
-        .filter((id): id is string => !!id);
-      
-      if (validUserIds.length === 0) {
-        console.log('No valid user IDs found in conversations');
-        return;
-      }
-      
-      // Create a Set from the filtered array to get unique IDs
-      const userIds = [...new Set(validUserIds)];
-      
-      console.log('Fetching profiles for user IDs:', userIds);
-      
-      try {
-        // Fetch profiles for all users at once
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('id, name, email, account_type')
-          .in('id', userIds);
-          
-        if (error) {
-          console.error('Error fetching user details:', error);
-          return;
-        }
-        
-        console.log('Profiles data received:', data);
-        
-        // Initialize the details map
-        const detailsMap: Record<string, { name: string; role: UserRole }> = {};
-        
-        // Process all user profiles
-        if (data) {
-          data.forEach(profile => {
-            // Validate account_type before using it as role
-            let roleType: UserRole = 'buyer';
-            if (profile.account_type === 'seller' || 
-                profile.account_type === 'wholesaler' || 
-                profile.account_type === 'buyer') {
-              roleType = profile.account_type as UserRole;
-            }
-            
-            // Prioritize name in profile over email
-            const displayName = profile.name || profile.email || 'Unknown User';
-            
-            detailsMap[profile.id] = {
-              name: displayName,
-              role: roleType
-            };
-          });
-        }
-        
-        console.log('User details map created:', detailsMap);
-        setUserDetails(detailsMap);
-      } catch (err) {
-        console.error('Error processing user details:', err);
-      }
-    };
-    
-    fetchUserDetails();
-  }, [conversations]);
 
   const handleConversationClick = (conversation: Conversation) => {
     navigate(`/messages/${conversation.id}`);
@@ -140,19 +71,9 @@ const MessageList: React.FC<MessageListProps> = ({
         
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
-        // Determine the user details to display
-        let displayName = 'Unknown User';
-        let userRole: UserRole = 'buyer';
-        
-        if (conversation.otherUserId && userDetails[conversation.otherUserId]) {
-          // If we have the user details in our state, use them
-          displayName = userDetails[conversation.otherUserId].name;
-          userRole = userDetails[conversation.otherUserId].role;
-        } else if (conversation.otherUserName) {
-          // Fallback to the name provided in the conversation
-          displayName = conversation.otherUserName;
-          userRole = conversation.otherUserRole || 'buyer';
-        }
+        // Get user display info from conversation object directly
+        const displayName = conversation.otherUserName || 'Unknown User';
+        const userRole: UserRole = conversation.otherUserRole || 'buyer';
                 
         return <div 
                 key={conversation.id} 

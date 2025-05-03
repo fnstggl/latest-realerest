@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { Conversation } from '@/types/messages';
-import { getUserDisplayName } from '@/utils/userUtils';
 
 export const useConversations = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
