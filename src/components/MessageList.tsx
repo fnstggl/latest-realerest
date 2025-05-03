@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -27,8 +28,10 @@ const MessageList: React.FC<MessageListProps> = ({
     const fetchUserDetails = async () => {
       if (conversations.length === 0) return;
       
-      // Get unique user IDs from all conversations
-      const userIds = [...new Set(conversations.map(conv => conv.otherUserId).filter(Boolean))];
+      // Get unique user IDs from all conversations, filtering out undefined or null values
+      const userIds = [...new Set(conversations
+        .map(conv => conv.otherUserId)
+        .filter(Boolean))];
       
       if (userIds.length === 0) {
         console.error('No valid user IDs found in conversations');
@@ -126,15 +129,16 @@ const MessageList: React.FC<MessageListProps> = ({
       {conversations.map(conversation => {
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
-        // Ensure otherUserId exists before trying to access userDetails
+        // Make sure otherUserId exists and is valid before trying to access userDetails
         if (!conversation.otherUserId) {
           console.warn('Conversation missing otherUserId:', conversation.id);
         }
         
-        // Get user details from our state, with better logging and fallbacks
+        // First check if we have the user in our userDetails state
         const userDetail = conversation.otherUserId && userDetails[conversation.otherUserId] 
           ? userDetails[conversation.otherUserId] 
           : { 
+              // If not in userDetails, use conversation information directly if available
               name: conversation.otherUserName || 'Unknown User', 
               role: conversation.otherUserRole || 'buyer' 
             };

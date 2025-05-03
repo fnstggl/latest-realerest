@@ -50,30 +50,29 @@ export const useProperties = (): UsePropertiesResult => {
       } else {
         if (data) {
           const propertiesWithDetails = data.map(property => {
-            const propertyWithDetails = {
+            return {
               id: property.id,
               title: property.title,
-              description: property.description,
-              location: property.location || property.full_address,
-              price: property.price || property.listing_price,
-              bedrooms: property.bedrooms || property.beds,
-              bathrooms: property.bathrooms || property.baths,
-              images: property.images,
+              description: property.description || '',
+              location: property.location || property.full_address || '',
+              price: property.price || 0,
+              bedrooms: property.beds || 0,
+              bathrooms: property.baths || 0,
+              images: property.images || [],
               created_at: property.created_at,
               user_id: property.user_id,
-              status: property.status || 'active',
-              type: property.type || 'house',
-              amenities: property.amenities || [],
-              offer_type: property.offer_type || 'sale',
-              square_meters: property.square_meters || 0,
-              year_built: property.year_built || 0,
-              lot_size: property.lot_size || 0,
-              parking: property.parking || '',
-              bounty: 0,
-            };
-            return propertyWithDetails;
+              status: 'active',
+              type: 'house',
+              amenities: [],
+              offer_type: 'sale',
+              square_meters: property.sqft || 0,
+              year_built: 0,
+              lot_size: 0,
+              parking: '',
+              bounty: property.reward || 0,
+            } as Property;
           });
-          setProperties(propertiesWithDetails as Property[]);
+          setProperties(propertiesWithDetails);
         }
       }
     } catch (err: any) {

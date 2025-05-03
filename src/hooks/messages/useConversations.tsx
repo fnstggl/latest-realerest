@@ -69,13 +69,14 @@ export const useConversations = () => {
             otherUserName = profileData.name || profileData.email || "Unknown User";
             
             // Ensure account_type is valid, default to 'buyer' if not
-            otherUserRole = (profileData.account_type === 'seller' || 
-                          profileData.account_type === 'buyer' || 
-                          profileData.account_type === 'wholesaler') 
-                          ? profileData.account_type as 'seller' | 'buyer' | 'wholesaler' 
-                          : 'buyer';
-                          
-            console.log(`User ${otherUserId} has role: ${otherUserRole}`);
+            if (profileData.account_type === 'seller' || 
+                profileData.account_type === 'buyer' || 
+                profileData.account_type === 'wholesaler') {
+              otherUserRole = profileData.account_type as 'seller' | 'buyer' | 'wholesaler';
+              console.log(`User ${otherUserId} has role: ${otherUserRole}`);
+            } else {
+              console.log(`User ${otherUserId} has invalid role: ${profileData.account_type}, using default 'buyer'`);
+            }
           } else {
             // Fallback to RPC for email
             const { data: userData } = await supabase.rpc('get_user_email', {

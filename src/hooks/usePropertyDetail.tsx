@@ -42,15 +42,15 @@ export const usePropertyDetail = (propertyId: string) => {
           title: data?.title || 'Unknown',
           description: data?.description || 'No description provided',
           location: data?.location || data?.full_address || 'Unknown',
-          price: data?.price || data?.listing_price || 0,
+          price: data?.price || 0,
           images: data?.images || [],
-          bedrooms: data?.bedrooms || data?.beds || 0,
-          bathrooms: data?.bathrooms || data?.baths || 0,
-          square_feet: data?.square_feet || data?.square_meters || 0,
-          amenities: data?.amenities || [],
-          year_built: data?.year_built || 'Unknown',
-          lot_size: data?.lot_size || 'Unknown',
-          parking: data?.parking || 'Unknown',
+          bedrooms: data?.beds || 0,
+          bathrooms: data?.baths || 0,
+          square_feet: data?.sqft || 0,
+          amenities: [],
+          year_built: 'Unknown',
+          lot_size: 'Unknown',
+          parking: 'Unknown',
         };
 
         setProperty(propertyDetails);
