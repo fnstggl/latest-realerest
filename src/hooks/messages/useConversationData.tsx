@@ -1,8 +1,10 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { Message } from '@/types/messages';
 import { UserRole } from '@/components/UserTag';
+import { getUserDisplayName, getUserRole } from '@/utils/userUtils';
 
 interface UseConversationDataProps {
   conversationId: string | undefined;
@@ -59,33 +61,59 @@ export const useConversationData = ({
           convoData.participant1 === user?.id
             ? convoData.participant2
             : convoData.participant1;
+        
+        console.log('Fetching profile for user ID:', otherUserId);
 
-        // Attempt to get the user's name and role from the profiles table
+        // First, try to get the user's profile from the profiles table
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('name, email, account_type')
           .eq('id', otherUserId)
-          .single();
+          .maybeSingle(); // Using maybeSingle instead of single to prevent errors
 
+        if (profileError) {
+          console.error('Error fetching user profile:', profileError);
+        }
+
+        // Handle profile data if available
         if (profileData) {
-          setOtherUserName(profileData.name || profileData.email || 'Unknown User');
+          console.log('Profile data retrieved:', profileData);
+          
+          // Set the user name, prioritizing name over email
+          if (profileData.name && profileData.name.trim() !== '') {
+            setOtherUserName(profileData.name);
+          } else if (profileData.email && profileData.email.trim() !== '') {
+            setOtherUserName(profileData.email);
+          } else {
+            // If both name and email are empty in the profile, we'll get the email using RPC
+            const { data: userData } = await supabase.rpc('get_user_email', {
+              user_id_param: otherUserId
+            });
+            setOtherUserName(userData || 'Unknown User');
+          }
 
-          const roleType =
-            ['seller', 'buyer', 'wholesaler'].includes(profileData.account_type)
-              ? (profileData.account_type as UserRole)
-              : 'buyer';
-
-          setOtherUserRole(roleType);
+          // Set user role, with validation to ensure it's a valid role type
+          if (profileData.account_type === 'seller' || 
+              profileData.account_type === 'buyer' || 
+              profileData.account_type === 'wholesaler') {
+            setOtherUserRole(profileData.account_type as UserRole);
+          } else {
+            console.warn(`Invalid account_type "${profileData.account_type}", defaulting to "buyer"`);
+            setOtherUserRole('buyer');
+          }
         } else {
-          // Fallback logic only if profile fetch completely fails
-          console.warn('Profile fetch failed, using fallback');
-
+          // Fallback if no profile data found
+          console.log('No profile data found, using fallback method');
+          
+          // Get user email through RPC call
           const { data: userData } = await supabase.rpc('get_user_email', {
             user_id_param: otherUserId
           });
-
+          
           setOtherUserName(userData || 'Unknown User');
-          setOtherUserRole('buyer'); // Conservative default
+          setOtherUserRole('buyer'); // Default role when no profile data is available
+          
+          console.log('Fallback name set to:', userData || 'Unknown User');
         }
 
         if (conversationId && fetchMessages) {
