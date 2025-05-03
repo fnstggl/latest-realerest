@@ -27,14 +27,14 @@ const About: React.FC = () => {
               <div>
                 <h1 className="text-7xl md:text-8xl font-bold font-playfair tracking-tighter mb-6 leading-none lg:text-8xl">
                   REAL<br />ESTATE<br />
-                  <span className="relative text-8xl">
+                  <span className="relative font-normal text-8xl">
                     <span className="absolute inset-x-0 bottom-2 h-3 bg-black/10"></span>
                     REIMAGINED
                   </span>
                 </h1>
               </div>
               <div className="space-y-6 text-lg">
-                <p className="text-xl md:text-2xl font-medium">We were two students in NYC trying to figure out how anyone was supposed to buy a home.</p>
+                <p className="text-xl md:text-2xl font-playfair font-bold">We were two students in NYC trying to figure out how anyone was supposed to buy a home.</p>
                 <p>Everywhere we looked, it felt impossible. Prices were too high, listings were outdated or gone, and everything moved fast — unless you had cash, connections, or perfect timing, you were out of luck.</p>
                 <p>So we created Realer Estate. <span className="font-bold">Real homes. Realistic prices.</span></p>
               </div>
