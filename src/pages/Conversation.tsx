@@ -1,224 +1,71 @@
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar';
-import MessageGroup from '@/components/conversation/MessageGroup';
 import MessageInput from '@/components/conversation/MessageInput';
-import { Message } from '@/hooks/useMessages';
 import { motion } from 'framer-motion';
-import UserTag from '@/components/UserTag';
-import { useUserProfiles, UserProfile } from '@/hooks/useUserProfiles';
+import { Message, useMessages } from '@/hooks/useMessages';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ConversationHeader from '@/components/conversation/ConversationHeader';
+import ConversationContent from '@/components/conversation/ConversationContent';
+import { useConversationData } from '@/hooks/useConversationData';
+import { useConversationSubscription } from '@/hooks/useConversationSubscription';
+import { groupMessagesByDate } from '@/utils/messageUtils';
 
 const Conversation: React.FC = () => {
   const { id: conversationId } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [otherUserId, setOtherUserId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sending, setSending] = useState(false);
-  const { markMessagesAsRead, fetchMessages } = useMessages();
-  const { getUserProfile } = useUserProfiles();
-  const [otherUserProfile, setOtherUserProfile] = useState<UserProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
-
-  useEffect(() => {
-    if (!conversationId) {
-      navigate('/messages');
-      return;
-    }
-    
-    const fetchConversationData = async () => {
-      setLoading(true);
-      
-      try {
-        console.log(`[Conversation] Starting data fetch for conversation: ${conversationId}`);
-        
-        // First, get conversation participants
-        const { data: convoData, error: convoError } = await supabase
-          .from('conversations')
-          .select('participant1, participant2')
-          .eq('id', conversationId)
-          .single();
-          
-        if (convoError || !convoData) {
-          console.error('[Conversation] Error fetching conversation:', convoError);
-          navigate('/messages');
-          return;
-        }
-        
-        // Find the other user's ID
-        const otherUserId = convoData.participant1 === user?.id ? convoData.participant2 : convoData.participant1;
-        setOtherUserId(otherUserId);
-        console.log('[Conversation] Identified other user ID in conversation:', otherUserId);
-        
-        // Fetch user profile and messages in parallel
-        const [messagesData] = await Promise.all([
-          // Get messages
-          (async () => {
-            if (conversationId && fetchMessages) {
-              try {
-                const data = await fetchMessages(conversationId);
-                console.log(`[Conversation] Fetched ${data.length} messages`);
-                setMessages(data);
-                
-                // Mark messages as read
-                if (conversationId && markMessagesAsRead) {
-                  markMessagesAsRead(conversationId);
-                }
-                return data;
-              } catch (error) {
-                console.error('[Conversation] Error fetching messages:', error);
-                return [];
-              }
-            }
-            return [];
-          })(),
-        ]);
-        
-        // Fetch user profile separately to avoid race conditions
-        setProfileLoading(true);
-        try {
-          const profile = await getUserProfile(otherUserId);
-          console.log(`[Conversation] User profile retrieved:`, profile);
-          
-          if (profile) {
-            setOtherUserProfile(profile);
-          } else {
-            throw new Error("Failed to fetch profile");
-          }
-        } catch (error) {
-          console.error('[Conversation] Error getting user profile:', error);
-          // Create fallback profile
-          setOtherUserProfile({
-            id: otherUserId,
-            name: "Unknown User",
-            email: "",
-            role: "buyer",
-            _source: "error-fallback"
-          });
-        } finally {
-          setProfileLoading(false);
-        }
-      } catch (error) {
-        console.error('[Conversation] Error in conversation data fetching:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchConversationData();
-    
-    // Set up subscription for new messages
-    const messagesSubscription = supabase
-      .channel(`messages:${conversationId}`)
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
-        },
-        (payload) => {
-          const newMessage = {
-            id: payload.new.id,
-            content: payload.new.content,
-            senderId: payload.new.sender_id,
-            conversationId: payload.new.conversation_id,
-            timestamp: payload.new.created_at,
-            isRead: payload.new.is_read,
-            isMine: payload.new.sender_id === user?.id,
-          };
-          
-          setMessages(prevMessages => [...prevMessages, newMessage]);
-          
-          // Mark received message as read immediately
-          if (payload.new.sender_id !== user?.id && conversationId && markMessagesAsRead) {
-            markMessagesAsRead(conversationId);
-          }
-        }
-      )
-      .subscribe();
-      
-    return () => {
-      supabase.removeChannel(messagesSubscription);
-    };
-  }, [conversationId, user?.id, navigate, markMessagesAsRead, fetchMessages, getUserProfile]);
   
-  // Scroll to bottom when new messages arrive
-  useEffect(() => {
-    scrollToBottom();
+  // Add state for messages to handle subscription updates
+  const [localMessages, setLocalMessages] = useState<Message[]>([]);
+  const { markMessagesAsRead } = useMessages();
+  
+  // Redirect if no conversation ID or user
+  if (!conversationId || !user) {
+    navigate('/messages');
+    return null;
+  }
+  
+  // Load conversation data
+  const { 
+    messages, 
+    loading, 
+    sending,
+    otherUserId,
+    otherUserProfile,
+    profileLoading,
+    sendMessage
+  } = useConversationData(conversationId, user?.id);
+  
+  // Update local messages when conversation data changes
+  React.useEffect(() => {
+    if (messages.length > 0) {
+      setLocalMessages(messages);
+    }
   }, [messages]);
   
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  // Set up subscription to new messages
+  useConversationSubscription({
+    conversationId,
+    userId: user?.id,
+    setMessages: setLocalMessages,
+    markMessagesAsRead
+  });
   
-  const sendMessage = useCallback(async (content: string) => {
-    if (!content.trim() || !conversationId || !user?.id) return false;
-    
-    try {
-      setSending(true);
-      
-      const { error } = await supabase
-        .from('messages')
-        .insert({
-          conversation_id: conversationId,
-          sender_id: user.id,
-          content: content.trim(),
-          is_read: false
-        });
-        
-      if (error) {
-        console.error('Error sending message:', error);
-        return false;
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Error in send message:', error);
-      return false;
-    } finally {
-      setSending(false);
-    }
-  }, [conversationId, user?.id]);
+  // Group messages by date using the local messages that include subscription updates
+  const groupedMessages = groupMessagesByDate(localMessages);
+  
+  // Determine loading states and display values
+  const isLoading = loading || profileLoading;
+  const displayName = otherUserProfile?.name || "Loading...";
+  const userRole = otherUserProfile?.role || "buyer";
   
   // Adapter function to match the MessageInput component's expected signature
   const handleSendMessage = async (message: string): Promise<void> => {
     await sendMessage(message);
   };
-  
-  const groupMessages = (messages: Message[]) => {
-    // Group messages by date
-    const messagesByDate: Record<string, Message[]> = {};
-    
-    messages.forEach(message => {
-      const date = new Date(message.timestamp).toLocaleDateString();
-      if (!messagesByDate[date]) {
-        messagesByDate[date] = [];
-      }
-      messagesByDate[date].push(message);
-    });
-    
-    return Object.entries(messagesByDate).map(([date, messages]) => ({
-      date,
-      messages
-    }));
-  };
-  
-  const groupedMessages = groupMessages(messages);
-
-  // Get display values with fallbacks
-  const isLoading = loading || profileLoading;
-  const displayName = otherUserProfile?.name || "Loading...";
-  const userRole = otherUserProfile?.role || "buyer";
 
   return (
     <div className="min-h-screen bg-[#FCFBF8] flex flex-col">
@@ -231,43 +78,19 @@ const Conversation: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="flex-1 flex flex-col"
         >
-          <div className="flex items-center gap-3 mb-4 sm:mb-6">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate('/messages')}
-              className="hover:bg-gray-200 text-gray-800"
-            >
-              <ArrowLeft />
-            </Button>
-            <div className="flex items-center">
-              <h1 className="font-bold text-xl sm:text-2xl">{displayName}</h1>
-              <UserTag role={userRole} />
-            </div>
-          </div>
+          <ConversationHeader 
+            displayName={displayName}
+            userRole={userRole} 
+            isLoading={isLoading}
+          />
           
           <div className="flex-1 bg-white shadow-sm rounded-t-lg border border-gray-200 overflow-hidden flex flex-col">
-            {isLoading ? (
-              <LoadingSpinner className="flex-1" />
-            ) : (
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.length === 0 ? (
-                  <div className="h-full flex items-center justify-center text-gray-500">
-                    <p>No messages yet. Start a conversation!</p>
-                  </div>
-                ) : (
-                  groupedMessages.map((group, i) => (
-                    <MessageGroup 
-                      key={i}
-                      date={group.date}
-                      messages={group.messages}
-                      currentUserId={user?.id}
-                    />
-                  ))
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            )}
+            <ConversationContent
+              isLoading={isLoading}
+              messages={localMessages}
+              currentUserId={user?.id}
+              groupedMessages={groupedMessages}
+            />
             
             <MessageInput 
               onSendMessage={handleSendMessage}
