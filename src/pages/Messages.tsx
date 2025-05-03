@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import { useMessages } from '@/hooks/useMessages';
 import { motion } from 'framer-motion';
 import MessageList from '@/components/MessageList';
+import { useUserProfiles } from '@/hooks/useUserProfiles';
 
 const Messages: React.FC = () => {
   const {
@@ -11,11 +12,16 @@ const Messages: React.FC = () => {
     loading,
     refreshConversations
   } = useMessages();
+  
+  const { clearProfileCache } = useUserProfiles();
 
   useEffect(() => {
     console.log("Messages page - refreshing conversations");
     refreshConversations();
-  }, [refreshConversations]);
+    
+    // Clear the profile cache to ensure we get fresh data
+    clearProfileCache();
+  }, [refreshConversations, clearProfileCache]);
 
   return (
     <div className="min-h-screen bg-[#FCFBF8]">

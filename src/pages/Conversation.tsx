@@ -11,19 +11,24 @@ import MessageGroup from '@/components/conversation/MessageGroup';
 import MessageInput from '@/components/conversation/MessageInput';
 import { Message } from '@/hooks/useMessages';
 import { motion } from 'framer-motion';
-import UserTag, { UserRole } from '@/components/UserTag';
+import UserTag from '@/components/UserTag';
+import { useUserProfiles } from '@/hooks/useUserProfiles';
 
 const Conversation: React.FC = () => {
   const { id: conversationId } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [otherUserName, setOtherUserName] = useState<string>('');
-  const [otherUserRole, setOtherUserRole] = useState<UserRole>('buyer');
+  const [otherUserId, setOtherUserId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const { markMessagesAsRead, fetchMessages, getUserDisplayName } = useMessages();
+  const { markMessagesAsRead, fetchMessages } = useMessages();
+  const { getUserProfile } = useUserProfiles();
+  const [otherUserProfile, setOtherUserProfile] = useState<{name: string; role: 'seller' | 'buyer' | 'wholesaler'}>({
+    name: 'Loading...',
+    role: 'buyer'
+  });
 
   useEffect(() => {
     if (!conversationId) {
@@ -52,39 +57,23 @@ const Conversation: React.FC = () => {
         
         // Find the other user's ID
         const otherUserId = convoData.participant1 === user?.id ? convoData.participant2 : convoData.participant1;
+        setOtherUserId(otherUserId);
         console.log('[Conversation] Identified other user ID in conversation:', otherUserId);
         
-        // Use the improved getUserDisplayName function with better error handling
-        if (getUserDisplayName) {
-          try {
-            const userInfo = await getUserDisplayName(otherUserId);
-            console.log(`[Conversation] User info response:`, userInfo);
-            
-            // Validate name and use a fallback if needed
-            const displayName = userInfo.name || "Unknown User";
-            
-            // Validate role to ensure it's a valid UserRole type
-            const validRoles: UserRole[] = ['buyer', 'seller', 'wholesaler'];
-            let safeRole: UserRole = 'buyer';
-            
-            if (userInfo.role && validRoles.includes(userInfo.role as UserRole)) {
-              safeRole = userInfo.role as UserRole;
-            }
-            
-            // Set state with the validated information
-            setOtherUserName(displayName);
-            setOtherUserRole(safeRole);
-            
-            console.log(`[Conversation] Set validated user information: name="${displayName}", role="${safeRole}"`);
-          } catch (error) {
-            console.error('[Conversation] Error getting user display info:', error);
-            setOtherUserName("Unknown User");
-            setOtherUserRole("buyer");
-          }
-        } else {
-          console.error('[Conversation] getUserDisplayName function not available');
-          setOtherUserName("Unknown User");
-          setOtherUserRole("buyer");
+        try {
+          // Use our centralized profile fetching system
+          const profile = await getUserProfile(otherUserId);
+          console.log(`[Conversation] User profile retrieved:`, profile);
+          setOtherUserProfile({
+            name: profile.name,
+            role: profile.role
+          });
+        } catch (error) {
+          console.error('[Conversation] Error getting user profile:', error);
+          setOtherUserProfile({
+            name: "Unknown User",
+            role: "buyer"
+          });
         }
         
         // Get messages using our hook
@@ -145,7 +134,7 @@ const Conversation: React.FC = () => {
     return () => {
       supabase.removeChannel(messagesSubscription);
     };
-  }, [conversationId, user?.id, navigate, markMessagesAsRead, fetchMessages, getUserDisplayName]);
+  }, [conversationId, user?.id, navigate, markMessagesAsRead, fetchMessages, getUserProfile]);
   
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -231,8 +220,8 @@ const Conversation: React.FC = () => {
               <ArrowLeft />
             </Button>
             <div className="flex items-center">
-              <h1 className="font-bold text-xl sm:text-2xl">{otherUserName}</h1>
-              <UserTag role={otherUserRole} />
+              <h1 className="font-bold text-xl sm:text-2xl">{otherUserProfile.name}</h1>
+              <UserTag role={otherUserProfile.role} />
             </div>
           </div>
           

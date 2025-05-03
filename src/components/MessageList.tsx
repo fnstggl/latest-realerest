@@ -7,18 +7,12 @@ import { formatDistanceToNow } from 'date-fns';
 import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import UserTag, { UserRole } from '@/components/UserTag';
-import { useMessages } from '@/hooks/useMessages';
+import { useUserProfiles } from '@/hooks/useUserProfiles';
+import UserTag from '@/components/UserTag';
 
 interface MessageListProps {
   conversations: Conversation[];
   loading: boolean;
-}
-
-interface UserDetail {
-  name: string;
-  role: UserRole;
 }
 
 const MessageList: React.FC<MessageListProps> = ({
@@ -27,61 +21,28 @@ const MessageList: React.FC<MessageListProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [userDetails, setUserDetails] = useState<Record<string, UserDetail>>({});
-  const { getUserDisplayName } = useMessages();
-
-  // Improved user profile fetching with better error handling and logging
+  const { getUserProfiles } = useUserProfiles();
+  const [userProfilesMap, setUserProfilesMap] = useState<Record<string, any>>({});
+  
   useEffect(() => {
-    const fetchUserDetails = async () => {
-      if (!conversations.length || !getUserDisplayName) {
-        console.log('[MessageList] No conversations or getUserDisplayName function unavailable');
-        return;
-      }
+    const loadUserProfiles = async () => {
+      if (!conversations.length) return;
       
       // Get unique user IDs from all conversations
       const userIds = [...new Set(conversations.map(conv => conv.otherUserId))];
+      console.log('[MessageList] Fetching user profiles for:', userIds);
       
       try {
-        console.log('[MessageList] Fetching profiles for user IDs:', userIds);
-        
-        const detailsMap: Record<string, UserDetail> = {};
-        
-        for (const userId of userIds) {
-          try {
-            const userInfo = await getUserDisplayName(userId);
-            
-            // Validate and normalize the role to ensure it's a valid UserRole
-            const validRoles: UserRole[] = ['buyer', 'seller', 'wholesaler'];
-            let safeRole: UserRole = 'buyer';
-            
-            if (userInfo.role && validRoles.includes(userInfo.role as UserRole)) {
-              safeRole = userInfo.role as UserRole;
-            }
-            
-            detailsMap[userId] = {
-              name: userInfo.name || 'Unknown User',
-              role: safeRole
-            };
-            
-            console.log(`[MessageList] Mapped user ${userId}: name="${userInfo.name}", role="${safeRole}"`);
-          } catch (err) {
-            console.error(`[MessageList] Error getting user details for ${userId}:`, err);
-            detailsMap[userId] = {
-              name: 'Unknown User',
-              role: 'buyer'
-            };
-          }
-        }
-        
-        console.log('[MessageList] Completed user details mapping:', detailsMap);
-        setUserDetails(detailsMap);
+        const profiles = await getUserProfiles(userIds);
+        console.log('[MessageList] Fetched user profiles:', profiles);
+        setUserProfilesMap(profiles);
       } catch (err) {
-        console.error('[MessageList] Error processing user details:', err);
+        console.error('[MessageList] Error fetching user profiles:', err);
       }
     };
     
-    fetchUserDetails();
-  }, [conversations, getUserDisplayName]);
+    loadUserProfiles();
+  }, [conversations, getUserProfiles]);
 
   const handleConversationClick = (conversation: Conversation) => {
     navigate(`/messages/${conversation.id}`);
@@ -127,19 +88,9 @@ const MessageList: React.FC<MessageListProps> = ({
       {conversations.map(conversation => {
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
-        // Improved user detail handling with better fallbacks
-        const userDetail = userDetails[conversation.otherUserId];
-        const displayName = (userDetail?.name || conversation.otherUserName || 'Unknown User');
-        
-        // Ensure we have a valid role that matches UserRole type
-        let userRole: UserRole = 'buyer';
-        if (userDetail?.role) {
-          userRole = userDetail.role;
-        } else if (conversation.otherUserRole && ['buyer', 'seller', 'wholesaler'].includes(conversation.otherUserRole)) {
-          userRole = conversation.otherUserRole as UserRole;
-        }
-        
-        console.log(`[MessageList] Rendering conversation with ${conversation.otherUserId}: name="${displayName}", role="${userRole}"`);
+        const userProfile = userProfilesMap[conversation.otherUserId];
+        const displayName = userProfile?.name || conversation.otherUserName || "Unknown User";
+        const userRole = userProfile?.role || conversation.otherUserRole || "buyer";
         
         return <div 
                 key={conversation.id} 
