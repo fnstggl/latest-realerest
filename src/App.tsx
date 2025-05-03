@@ -1,7 +1,5 @@
-
 import { Suspense, lazy } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -64,8 +62,12 @@ const LoadingFallback = () => <LoadingSpinner fullScreen />;
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
+      <Toaster 
+        position="bottom-right"
+        expand={false}
+        visibleToasts={1}
+        closeButton
+      />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<Index />} />

@@ -134,7 +134,7 @@ const WaitlistButton: React.FC<WaitlistButtonProps> = ({
         refreshProperty();
       }
       
-      // Only show toast if we haven't shown one yet
+      // Only show success toast if we haven't shown one yet
       if (!toastShownRef.current) {
         toast.success("Waitlist Request Submitted", {
           description: `You've successfully joined the waitlist for ${propertyTitle}`

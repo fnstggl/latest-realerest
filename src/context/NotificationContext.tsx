@@ -44,6 +44,8 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
   const { user } = useAuth();
   // Add a ref to track the latest notification added to prevent duplicates
   const lastAddedNotificationRef = useRef<string>('');
+  // Add a ref to track notification toasts to prevent duplicates
+  const notificationToastsRef = useRef<Set<string>>(new Set());
 
   // Fetch notifications when user changes
   useEffect(() => {
@@ -172,6 +174,18 @@ export const NotificationProvider: React.FC<{children: React.ReactNode}> = ({ ch
   // Add a new notification
   const addNotification = async (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     if (!user?.id) return;
+
+    // Check if we've already processed a similar notification recently
+    const notificationKey = `${notification.title}-${notification.message}`;
+    if (notificationToastsRef.current.has(notificationKey)) {
+      return;
+    }
+    
+    // Add to tracking set and remove after a delay
+    notificationToastsRef.current.add(notificationKey);
+    setTimeout(() => {
+      notificationToastsRef.current.delete(notificationKey);
+    }, 5000);
 
     try {
       const { data, error } = await supabase
