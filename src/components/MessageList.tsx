@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Conversation } from '@/hooks/useMessages';
@@ -7,43 +7,23 @@ import { formatDistanceToNow } from 'date-fns';
 import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { useUserProfiles, UserProfile } from '@/hooks/useUserProfiles';
+import { UserProfile } from '@/hooks/useUserProfiles';
 import UserTag from '@/components/UserTag';
 
 interface MessageListProps {
   conversations: Conversation[];
   loading: boolean;
+  userProfilesMap: Record<string, UserProfile>;
 }
 
 const MessageList: React.FC<MessageListProps> = ({
   conversations,
-  loading
+  loading,
+  userProfilesMap
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { getUserProfiles } = useUserProfiles();
-  const [userProfilesMap, setUserProfilesMap] = useState<Record<string, UserProfile>>({});
   
-  useEffect(() => {
-    const loadUserProfiles = async () => {
-      if (!conversations.length) return;
-      
-      // Get unique user IDs from all conversations
-      const userIds = [...new Set(conversations.map(conv => conv.otherUserId))];
-      console.log('[MessageList] Fetching user profiles for:', userIds);
-      
-      try {
-        const profiles = await getUserProfiles(userIds);
-        console.log('[MessageList] Fetched user profiles:', profiles);
-        setUserProfilesMap(profiles);
-      } catch (err) {
-        console.error('[MessageList] Error fetching user profiles:', err);
-      }
-    };
-    
-    loadUserProfiles();
-  }, [conversations, getUserProfiles]);
-
   const handleConversationClick = (conversation: Conversation) => {
     navigate(`/messages/${conversation.id}`);
   };
@@ -88,14 +68,17 @@ const MessageList: React.FC<MessageListProps> = ({
       {conversations.map(conversation => {
         const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
         
-        // Use the profile from our profiles map if available, otherwise fallback to conversation data
+        // CRITICAL FIX: Use the profile from our profiles map if available, with proper fallbacks
         const userProfile = userProfilesMap[conversation.otherUserId];
         
-        // Ensure we have a proper display name
-        const displayName = userProfile ? userProfile.name : (conversation.otherUserName || "Unknown User");
+        // Determine display name with proper priority:
+        // 1. Use profile name from userProfilesMap if available
+        // 2. Fall back to conversation.otherUserName
+        // 3. Last resort: "Unknown User"
+        const displayName = userProfile?.name || conversation.otherUserName || "Unknown User";
         
-        // Get the role, with fallback
-        const userRole = userProfile ? userProfile.role : (conversation.otherUserRole || "buyer");
+        // Get the role, with proper fallback
+        const userRole = userProfile?.role || conversation.otherUserRole || "buyer";
         
         return <div 
                 key={conversation.id} 
@@ -105,7 +88,7 @@ const MessageList: React.FC<MessageListProps> = ({
               <div className="flex items-start">
                 <div className="mr-3 flex flex-col items-center">
                   <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">
-                    {displayName?.charAt(0).toUpperCase() || '?'}
+                    {displayName.charAt(0).toUpperCase() || '?'}
                   </div>
                 </div>
                 

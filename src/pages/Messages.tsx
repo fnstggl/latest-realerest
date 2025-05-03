@@ -1,28 +1,67 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { useMessages } from '@/hooks/useMessages';
 import { motion } from 'framer-motion';
 import MessageList from '@/components/MessageList';
 import { useUserProfiles } from '@/hooks/useUserProfiles';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const Messages: React.FC = () => {
   const {
     conversations,
-    loading,
+    loading: messagesLoading,
     refreshConversations
   } = useMessages();
   
-  const { clearProfileCache } = useUserProfiles();
+  const { 
+    getUserProfiles, 
+    loading: profilesLoading 
+  } = useUserProfiles();
+  
+  const [userProfilesMap, setUserProfilesMap] = useState<Record<string, any>>({});
+  const [profilesLoaded, setProfilesLoaded] = useState<boolean>(false);
 
+  // Load conversations when component mounts
   useEffect(() => {
-    console.log("Messages page - refreshing conversations");
+    console.log("[Messages] Component mounted - refreshing conversations");
     refreshConversations();
-    
-    // Don't clear the profile cache on every render, that causes race conditions
-    // Only clear it when explicitly needed, like when a profile is updated
-    // clearProfileCache();
   }, [refreshConversations]);
+
+  // Load user profiles for all conversations
+  useEffect(() => {
+    const loadUserProfiles = async () => {
+      if (!conversations.length) {
+        setProfilesLoaded(true);
+        return;
+      }
+      
+      // Extract all unique user IDs from the conversations
+      const userIds = [...new Set(conversations.map(conv => conv.otherUserId))];
+      
+      if (userIds.length === 0) {
+        setProfilesLoaded(true);
+        return;
+      }
+      
+      console.log('[Messages] Fetching profiles for conversations:', userIds);
+      
+      try {
+        const profiles = await getUserProfiles(userIds);
+        console.log('[Messages] Profiles loaded successfully:', profiles);
+        setUserProfilesMap(profiles);
+      } catch (err) {
+        console.error('[Messages] Error loading user profiles:', err);
+      } finally {
+        setProfilesLoaded(true);
+      }
+    };
+    
+    loadUserProfiles();
+  }, [conversations, getUserProfiles]);
+
+  // Determine if we're still loading data
+  const isLoading = messagesLoading || !profilesLoaded;
 
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
@@ -46,14 +85,14 @@ const Messages: React.FC = () => {
               <h2 className="text-lg sm:text-xl font-bold">Conversations</h2>
             </div>
 
-            {loading ? (
-              <div className="min-h-[300px] flex items-center justify-center p-4 sm:p-8">
-                <div className="loading-container">
-                  <div className="pulsing-circle" />
-                </div>
-              </div>
+            {isLoading ? (
+              <LoadingSpinner className="min-h-[300px]" />
             ) : (
-              <MessageList conversations={conversations} loading={false} />
+              <MessageList 
+                conversations={conversations} 
+                userProfilesMap={userProfilesMap} 
+                loading={false} 
+              />
             )}
           </div>
         </motion.div>

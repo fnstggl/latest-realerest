@@ -12,7 +12,8 @@ import MessageInput from '@/components/conversation/MessageInput';
 import { Message } from '@/hooks/useMessages';
 import { motion } from 'framer-motion';
 import UserTag from '@/components/UserTag';
-import { useUserProfiles, UserProfile, UserRole } from '@/hooks/useUserProfiles';
+import { useUserProfiles, UserProfile } from '@/hooks/useUserProfiles';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const Conversation: React.FC = () => {
   const { id: conversationId } = useParams<{ id: string }>();
@@ -26,6 +27,7 @@ const Conversation: React.FC = () => {
   const { markMessagesAsRead, fetchMessages } = useMessages();
   const { getUserProfile } = useUserProfiles();
   const [otherUserProfile, setOtherUserProfile] = useState<UserProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
 
   useEffect(() => {
     if (!conversationId) {
@@ -57,35 +59,53 @@ const Conversation: React.FC = () => {
         setOtherUserId(otherUserId);
         console.log('[Conversation] Identified other user ID in conversation:', otherUserId);
         
+        // Fetch user profile and messages in parallel
+        const [messagesData] = await Promise.all([
+          // Get messages
+          (async () => {
+            if (conversationId && fetchMessages) {
+              try {
+                const data = await fetchMessages(conversationId);
+                console.log(`[Conversation] Fetched ${data.length} messages`);
+                setMessages(data);
+                
+                // Mark messages as read
+                if (conversationId && markMessagesAsRead) {
+                  markMessagesAsRead(conversationId);
+                }
+                return data;
+              } catch (error) {
+                console.error('[Conversation] Error fetching messages:', error);
+                return [];
+              }
+            }
+            return [];
+          })(),
+        ]);
+        
+        // Fetch user profile separately to avoid race conditions
+        setProfileLoading(true);
         try {
-          // Use our centralized profile fetching system
           const profile = await getUserProfile(otherUserId);
           console.log(`[Conversation] User profile retrieved:`, profile);
-          setOtherUserProfile(profile);
+          
+          if (profile) {
+            setOtherUserProfile(profile);
+          } else {
+            throw new Error("Failed to fetch profile");
+          }
         } catch (error) {
           console.error('[Conversation] Error getting user profile:', error);
+          // Create fallback profile
           setOtherUserProfile({
             id: otherUserId,
             name: "Unknown User",
             email: "",
-            role: "buyer"
+            role: "buyer",
+            _source: "error-fallback"
           });
-        }
-        
-        // Get messages using our hook
-        if (conversationId && fetchMessages) {
-          try {
-            const messagesData = await fetchMessages(conversationId);
-            console.log(`[Conversation] Fetched ${messagesData.length} messages`);
-            setMessages(messagesData);
-            
-            // Mark messages as read
-            if (conversationId && markMessagesAsRead) {
-              markMessagesAsRead(conversationId);
-            }
-          } catch (error) {
-            console.error('[Conversation] Error fetching messages:', error);
-          }
+        } finally {
+          setProfileLoading(false);
         }
       } catch (error) {
         console.error('[Conversation] Error in conversation data fetching:', error);
@@ -195,7 +215,8 @@ const Conversation: React.FC = () => {
   
   const groupedMessages = groupMessages(messages);
 
-  // Default to placeholder values when profile isn't available
+  // Get display values with fallbacks
+  const isLoading = loading || profileLoading;
   const displayName = otherUserProfile?.name || "Loading...";
   const userRole = otherUserProfile?.role || "buyer";
 
@@ -226,12 +247,8 @@ const Conversation: React.FC = () => {
           </div>
           
           <div className="flex-1 bg-white shadow-sm rounded-t-lg border border-gray-200 overflow-hidden flex flex-col">
-            {loading ? (
-              <div className="flex-1 flex items-center justify-center p-8">
-                <div className="loading-container">
-                  <div className="pulsing-circle" />
-                </div>
-              </div>
+            {isLoading ? (
+              <LoadingSpinner className="flex-1" />
             ) : (
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 ? (
@@ -254,7 +271,7 @@ const Conversation: React.FC = () => {
             
             <MessageInput 
               onSendMessage={handleSendMessage}
-              disabled={loading || sending}
+              disabled={isLoading || sending}
               sending={sending}
             />
           </div>
