@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMessages } from '@/hooks/useMessages';
@@ -23,7 +22,7 @@ const Conversation: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const { markMessagesAsRead, fetchMessages } = useMessages();
+  const { markMessagesAsRead, fetchMessages, getUserDisplayName } = useMessages();
 
   useEffect(() => {
     if (!conversationId) {
@@ -43,55 +42,28 @@ const Conversation: React.FC = () => {
           .single();
           
         if (convoError || !convoData) {
-          console.error('Error fetching conversation:', convoError);
+          console.error('[Conversation] Error fetching conversation:', convoError);
           navigate('/messages');
           return;
         }
         
         // Find the other user's ID
         const otherUserId = convoData.participant1 === user?.id ? convoData.participant2 : convoData.participant1;
-        console.log('Other user ID in conversation:', otherUserId);
+        console.log('[Conversation] Other user ID in conversation:', otherUserId);
         
-        // Get other user's profile with improved profile data fetching
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('name, email, account_type')
-          .eq('id', otherUserId)
-          .maybeSingle();
+        // Use the improved getUserDisplayName function from our hook
+        if (getUserDisplayName) {
+          const userInfo = await getUserDisplayName(otherUserId);
+          console.log(`[Conversation] User info from getUserDisplayName:`, userInfo);
           
-        console.log('Fetched profile data for Conversation page:', profileData, 'Error:', profileError);
-        
-        let userName = 'Unknown User';
-        let userRole: UserRole = 'buyer';
-        
-        if (!profileError && profileData) {
-          // Profile exists, use data from there
-          userName = profileData.name || profileData.email || 'Unknown User';
+          // Set state with the gathered information
+          setOtherUserName(userInfo.name);
+          setOtherUserRole(userInfo.role);
           
-          // Validate the role type
-          const validRoles: UserRole[] = ['seller', 'buyer', 'wholesaler'];
-          userRole = validRoles.includes(profileData.account_type as UserRole)
-            ? profileData.account_type as UserRole
-            : 'buyer';
-            
-          console.log(`Set user information from profile: name=${userName}, role=${userRole}`);
+          console.log(`[Conversation] Set user information from profile: name=${userInfo.name}, role=${userInfo.role}`);
         } else {
-          // Profile not found or error, fallback to getting email via RPC function
-          console.log('Profile fetch failed, falling back to RPC for user:', otherUserId);
-          
-          const { data: emailData, error: emailError } = await supabase.rpc('get_user_email', {
-            user_id_param: otherUserId
-          });
-          
-          if (!emailError && emailData) {
-            userName = emailData;
-            console.log(`Set user name from RPC: ${userName}`);
-          }
+          console.error('[Conversation] getUserDisplayName function not available');
         }
-        
-        // Set state with the gathered information
-        setOtherUserName(userName);
-        setOtherUserRole(userRole);
         
         // Get messages using our hook
         if (conversationId && fetchMessages) {
@@ -104,7 +76,7 @@ const Conversation: React.FC = () => {
           }
         }
       } catch (error) {
-        console.error('Error in conversation data fetching:', error);
+        console.error('[Conversation] Error in conversation data fetching:', error);
       } finally {
         setLoading(false);
       }
@@ -146,7 +118,7 @@ const Conversation: React.FC = () => {
     return () => {
       supabase.removeChannel(messagesSubscription);
     };
-  }, [conversationId, user?.id, navigate, markMessagesAsRead, fetchMessages]);
+  }, [conversationId, user?.id, navigate, markMessagesAsRead, fetchMessages, getUserDisplayName]);
   
   // Scroll to bottom when new messages arrive
   useEffect(() => {

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -52,60 +53,63 @@ export const useMessages = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const { user } = useAuth();
 
-  // Improved user profile fetching with better error handling and debugging
+  // Improved user profile fetching with enhanced debugging and reliability
   const getUserDisplayName = useCallback(async (userId: string): Promise<{name: string; role: 'seller' | 'buyer' | 'wholesaler'}> => {
     try {
-      console.log(`Fetching user profile for ID: ${userId}`);
+      console.log(`[useMessages] Fetching user profile for ID: ${userId}`);
       
-      // First try to get the profile directly from profiles table
+      // First try to get the profile directly from profiles table with improved error logging
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('name, email, account_type')
         .eq('id', userId)
-        .maybeSingle();
+        .maybeSingle(); // Use maybeSingle instead of single to avoid errors when no profile is found
       
       if (profileError) {
-        console.error(`Error fetching profile for ${userId}:`, profileError);
+        console.error(`[useMessages] Error fetching profile for ${userId}:`, profileError);
       }
       
-      // If we found a valid profile with name and account_type
+      console.log(`[useMessages] Profile data for ${userId}:`, profileData);
+      
+      // If we found a valid profile
       if (profileData) {
         const validRoles = ['seller', 'buyer', 'wholesaler'];
         const role = validRoles.includes(profileData.account_type) 
           ? (profileData.account_type as 'seller' | 'buyer' | 'wholesaler')
           : 'buyer';
           
-        // Use name if available (even if empty string), otherwise use email
+        // First try to use name from profile
         if (profileData.name) {
-          console.log(`Found profile with name for ${userId}:`, profileData.name, 'role:', role);
+          console.log(`[useMessages] Using profile name for ${userId}:`, profileData.name, 'role:', role);
           return { name: profileData.name, role };
         }
         
+        // If no name but email exists, use that
         if (profileData.email) {
-          console.log(`No name in profile for ${userId}, using email:`, profileData.email, 'role:', role);
+          console.log(`[useMessages] No name in profile for ${userId}, using email:`, profileData.email, 'role:', role);
           return { name: profileData.email, role };
         }
       }
       
-      // If no profile name/email, get the email as fallback
+      // If no valid profile data, get the email as fallback
       const { data: userData, error: userError } = await supabase.rpc('get_user_email', {
         user_id_param: userId
       });
       
       if (userError) {
-        console.error(`Error getting email for ${userId}:`, userError);
+        console.error(`[useMessages] Error getting email for ${userId}:`, userError);
         return { name: "Unknown User", role: 'buyer' };
       }
       
       if (userData) {
-        console.log(`Retrieved email for ${userId} via RPC:`, userData);
+        console.log(`[useMessages] Retrieved email for ${userId} via RPC:`, userData);
         return { name: userData, role: 'buyer' };
       }
       
-      console.warn(`Could not find any identifying information for user ${userId}`);
+      console.warn(`[useMessages] Could not find any identifying information for user ${userId}`);
       return { name: "Unknown User", role: 'buyer' };
     } catch (error) {
-      console.error(`Error getting user display name for ${userId}:`, error);
+      console.error(`[useMessages] Error getting user display name for ${userId}:`, error);
       return { name: "Unknown User", role: 'buyer' };
     }
   }, []);
