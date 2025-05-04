@@ -89,28 +89,36 @@
   transition: transform 0.3s ease, opacity 0.3s ease !important;
 }
 
-/* Change input focus ring from orange to black */
+/* Remove black outline for inputs and use more subtle focus styling */
 input:focus-visible, 
 textarea:focus-visible,
 select:focus-visible {
-  outline-color: rgba(0, 0, 0, 0.2) !important;
-  border-color: black !important;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) !important;
+  outline: none !important;
+  border-color: rgba(156, 163, 175, 0.2) !important;
+  box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.1) !important;
 }
 
-/* Override any orange outline/border in inputs across the site */
+/* Override any outline/border in inputs across the site */
 .focus-visible\:ring-2:focus-visible,
 .focus-visible\:ring-\[\#000000e6\]:focus-visible {
-  --tw-ring-color: rgba(0, 0, 0, 0.2) !important;
-  border-color: black !important;
+  --tw-ring-color: rgba(156, 163, 175, 0.1) !important;
+  border-color: rgba(156, 163, 175, 0.2) !important;
 }
 
-/* Override specific to signup/signin and other forms with orange borders */
+/* Override specific to search inputs */
 input[type="text"]:focus, 
 input[type="email"]:focus, 
 input[type="password"]:focus,
 input[type="tel"]:focus {
-  border-color: #000000 !important;
-  outline-color: #000000 !important;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) !important;
+  border-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Specific style for search input focus */
+.glass-input:focus {
+  outline: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.8) !important;
 }
