@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import PropertyCard from '@/components/PropertyCard';
@@ -221,40 +222,45 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   const itemsPerRow = getItemsPerRow();
   
-  // For non-authenticated users, blur the last complete row
-  const shouldBlurItems = !isAuthenticated && listings.length > itemsPerRow;
+  // For non-authenticated users, determine what to show
+  const shouldProcessForNonAuth = !isAuthenticated && listings.length > itemsPerRow;
   
-  // Calculate the indexes for the last complete row
-  const calculateLastFullRowIndexes = () => {
-    if (!shouldBlurItems) return { start: listings.length, end: listings.length };
-    
-    const totalItems = listings.length;
-    const remainder = totalItems % itemsPerRow;
-    
-    // If the last row is already full, blur it
-    if (remainder === 0) {
+  // Calculate the last full row information
+  const getLastFullRowInfo = () => {
+    if (!shouldProcessForNonAuth) {
       return {
-        start: totalItems - itemsPerRow,
-        end: totalItems
+        blurStartIndex: listings.length,
+        blurEndIndex: listings.length,
+        displayCount: listings.length,
+        rowPosition: 0
       };
     }
     
-    // Otherwise blur the last complete row (row before the incomplete one)
+    const totalItems = listings.length;
+    const remainder = totalItems % itemsPerRow;
+    const lastFullRowStart = remainder === 0 
+      ? totalItems - itemsPerRow 
+      : totalItems - remainder - itemsPerRow;
+    
     return {
-      start: totalItems - remainder - itemsPerRow,
-      end: totalItems - remainder
+      blurStartIndex: lastFullRowStart,
+      blurEndIndex: lastFullRowStart + itemsPerRow,
+      // For non-auth users, only show up to the last full row (hide incomplete row)
+      displayCount: remainder === 0 ? totalItems : totalItems - remainder,
+      // Calculate the row position for the button (corresponds to the last full row)
+      rowPosition: Math.floor(lastFullRowStart / itemsPerRow)
     };
   };
   
-  const { start: blurStartIndex, end: blurEndIndex } = calculateLastFullRowIndexes();
+  const { blurStartIndex, blurEndIndex, displayCount, rowPosition } = getLastFullRowInfo();
 
   return (
     <div ref={resultsContainerRef} className="relative flex-1">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {listings.map((property, index) => (
+        {listings.slice(0, displayCount).map((property, index) => (
           <div 
             key={property.id}
-            className={`relative ${index >= blurStartIndex && index < blurEndIndex && shouldBlurItems ? 'blur-sm' : ''}`}
+            className={`relative ${index >= blurStartIndex && index < blurEndIndex ? 'blur-sm' : ''}`}
           >
             <PropertyCard
               id={property.id}
@@ -273,11 +279,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         ))}
       </div>
       
-      {shouldBlurItems && (
+      {shouldProcessForNonAuth && (
         <div 
           className="absolute flex items-center justify-center"
           style={{
-            top: `calc(${Math.floor(blurStartIndex / itemsPerRow)} * (240px + 1.5rem + 240px))`, // Approximate position calculation
+            // Position the button over the middle of the last full row
+            // Each property card has a height of about 500px (image + content)
+            top: `${rowPosition * 500 + 250}px`, // Middle of the row
             left: '50%',
             transform: 'translateX(-50%)',
             width: 'fit-content',
