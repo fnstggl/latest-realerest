@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Loader2, Wand2 } from "lucide-react";
@@ -73,50 +72,143 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
         .replace(/\s+/g, ' ')
         .trim();
 
-      const addressPattern = /(?:^|\s)(\d+\s+[A-Za-z0-9\s.,'-]+(?:,\s*[A-Za-z\s]+,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Za-z\s]+,\s*[A-Z]{2}|,\s*[A-Z]{2}\s*\d{5}))/i;
-      const addressMatch = normalizedText.match(addressPattern);
+      // Improved address extraction patterns for better matching
+      const addressPatterns = [
+        // Standard address format with street, city, state, zip
+        /(?:^|\s)(\d+\s+[A-Za-z0-9\s.,'-]+(?:,\s*[A-Za-z\s]+,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Za-z\s]+,\s*[A-Z]{2}|,\s*[A-Z]{2}\s*\d{5}))/i,
+        // Looking for specific address mentions
+        /(?:Address|Property|Located at|Home at)[:;]?\s+(\d+[^,]+,\s*[^,]+(?:,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Z]{2}))/i,
+        // Street number and name pattern
+        /\b(\d+\s+[A-Za-z0-9\s.'-]+(Road|Rd|Street|St|Avenue|Ave|Lane|Ln|Drive|Dr|Court|Ct|Boulevard|Blvd|Highway|Hwy|Place|Pl|Way|Terrace|Ter|Circle|Cir))/i
+      ];
 
-      if (addressMatch) {
-        const fullAddressText = addressMatch[1].trim();
-        const addressParts = fullAddressText.split(',').map(part => part.trim());
-
-        if (addressParts.length >= 1) {
-          form.setValue('address', addressParts[0]);
-          extracted.address = true;
-
+      let addressFound = false;
+      for (const pattern of addressPatterns) {
+        const addressMatch = normalizedText.match(pattern);
+        if (addressMatch) {
+          addressFound = true;
+          const fullAddressText = addressMatch[1].trim();
+          
+          // Try to extract street address first
+          const streetMatch = fullAddressText.match(/^\d+[^,]+/);
+          if (streetMatch) {
+            form.setValue('address', streetMatch[0].trim());
+            extracted.address = true;
+          }
+          
+          const addressParts = fullAddressText.split(',').map(part => part.trim());
+          
           if (addressParts.length >= 2) {
+            // If address wasn't extracted yet but we have parts
+            if (!extracted.address && addressParts[0]) {
+              form.setValue('address', addressParts[0]);
+              extracted.address = true;
+            }
+            
+            // Extract city, state, zip from the address parts
             const lastPart = addressParts[addressParts.length - 1];
-            const stateZipPattern = /([A-Z]{2})\s*(\d{5})/i;
+            const stateZipPattern = /([A-Z]{2})\s*(\d{5})?/i;
             const stateZipMatch = lastPart.match(stateZipPattern);
-
+            
             if (stateZipMatch) {
               form.setValue('state', stateZipMatch[1].toUpperCase());
-              form.setValue('zipCode', stateZipMatch[2]);
               extracted.state = true;
-              extracted.zip = true;
-
+              
+              if (stateZipMatch[2]) {
+                form.setValue('zipCode', stateZipMatch[2]);
+                extracted.zip = true;
+              }
+              
+              // City is usually the part before state/zip
               if (addressParts.length >= 3) {
                 form.setValue('city', addressParts[addressParts.length - 2]);
                 extracted.city = true;
+              } else if (addressParts.length === 2) {
+                // Try to extract city from the same part as state/zip
+                const cityMatch = lastPart.match(/([^,]+),\s*[A-Z]{2}/i);
+                if (cityMatch) {
+                  form.setValue('city', cityMatch[1].trim());
+                  extracted.city = true;
+                }
               }
             } else {
+              // If no state/zip pattern, try just state pattern
               const statePattern = /\b([A-Z]{2})\b/i;
               const stateMatch = lastPart.match(statePattern);
-
+              
               if (stateMatch) {
                 form.setValue('state', stateMatch[1].toUpperCase());
                 extracted.state = true;
-
+                
                 if (addressParts.length >= 3) {
-                  const cityCandidate = addressParts[addressParts.length - 2];
-                  form.setValue('city', cityCandidate);
+                  form.setValue('city', addressParts[addressParts.length - 2]);
                   extracted.city = true;
                 }
-              } else if (addressParts.length === 2) {
-                form.setValue('city', addressParts[1]);
+              } else if (addressParts.length >= 2) {
+                // If no state pattern but we have multiple parts, assume the second-to-last is the city
+                form.setValue('city', addressParts[addressParts.length - 2]);
                 extracted.city = true;
               }
             }
+          }
+          
+          break;
+        }
+      }
+      
+      // Standalone city detection if not found in address
+      if (!extracted.city) {
+        const cityPatterns = [
+          /\b(?:in|at|near|city\s+of)\s+([A-Za-z\s.']+?)[,\s]/i,
+          /\bCity[:;]?\s+([A-Za-z\s.']+)/i
+        ];
+        
+        for (const pattern of cityPatterns) {
+          const cityMatch = normalizedText.match(pattern);
+          if (cityMatch) {
+            form.setValue('city', cityMatch[1].trim());
+            extracted.city = true;
+            break;
+          }
+        }
+      }
+      
+      // Standalone state detection if not found in address
+      if (!extracted.state) {
+        const statePatterns = [
+          /\b(?:state\s+of|in)\s+([A-Z]{2})\b/i,
+          /\bState[:;]?\s+([A-Z]{2})\b/i,
+          /\bin\s+([A-Za-z\s]+?)[,\s]/i
+        ];
+        
+        for (const pattern of statePatterns) {
+          const stateMatch = normalizedText.match(pattern);
+          if (stateMatch) {
+            const potentialState = stateMatch[1].trim().toUpperCase();
+            if (potentialState.length === 2 || usStates.includes(potentialState)) {
+              form.setValue('state', potentialState.substring(0, 2));
+              extracted.state = true;
+              break;
+            }
+          }
+        }
+      }
+      
+      // Standalone ZIP code detection if not found in address
+      if (!extracted.zip) {
+        const zipPatterns = [
+          /\b(ZIP|postal\s+code)[:;]?\s+(\d{5})/i,
+          /\b(\d{5}[-\s]?\d{0,4})\b/
+        ];
+        
+        for (const pattern of zipPatterns) {
+          const zipMatch = normalizedText.match(pattern);
+          if (zipMatch) {
+            // Extract the first 5 digits as ZIP code
+            const zip = zipMatch[pattern.toString().includes("ZIP") ? 2 : 1].substring(0, 5);
+            form.setValue('zipCode', zip);
+            extracted.zip = true;
+            break;
           }
         }
       }
@@ -297,11 +389,14 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
         form.setValue('description', description);
       }
 
-      const missingFields = Object.entries(extracted).filter(([_, value]) => !value);
-
+      // Enhanced address extraction with Cohere API
+      const missingFields = Object.entries(extracted).filter(([field, value]) => 
+        !value && ['address', 'city', 'state', 'zip'].includes(field)
+      );
+      
       if (missingFields.length > 0 && apiKey) {
-        console.log("Using Cohere API to extract missing fields:", missingFields.map(([field]) => field).join(", "));
-
+        console.log("Using Cohere API to extract missing address fields:", missingFields.map(([field]) => field).join(", "));
+        
         try {
           const response = await fetch('https://api.cohere.ai/v1/generate', {
             method: 'POST',
@@ -311,25 +406,35 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
             },
             body: JSON.stringify({
               model: 'command-light',
-              prompt: `Extract ONLY the following missing information from this real estate listing text: ${missingFields.map(([field]) => field).join(", ")}. Format as JSON with ONLY these fields.\n\nText: ${normalizedText}\n\nJSON:`,
+              prompt: `You are a real estate data extraction expert. Extract ONLY the following address information from this real estate listing text: ${missingFields.map(([field]) => field).join(", ")}. Format as JSON with ONLY these fields. Be as accurate as possible.
+              
+Example: For "123 Main St, Springfield, IL 62701", you would return {"address":"123 Main St", "city":"Springfield", "state":"IL", "zip":"62701"}
+
+For partial data like "property in Chicago area", you might return {"city":"Chicago", "state":"IL"}
+
+Text: ${normalizedText}
+
+Return JSON with ONLY the requested fields:`,
               max_tokens: 150,
-              temperature: 0.1
+              temperature: 0.1,
+              stop_sequences: ["}"],
             })
           });
 
           if (response.ok) {
             const data = await response.json();
             const generatedText = data.generations[0].text;
-
+            
             try {
-              const startIdx = generatedText.indexOf('{');
-              const endIdx = generatedText.lastIndexOf('}') + 1;
-
+              let jsonText = generatedText + "}";  // Add closing brace if not present
+              const startIdx = jsonText.indexOf('{');
+              const endIdx = jsonText.lastIndexOf('}') + 1;
+              
               if (startIdx >= 0 && endIdx > startIdx) {
-                const jsonStr = generatedText.substring(startIdx, endIdx);
+                const jsonStr = jsonText.substring(startIdx, endIdx);
                 const extractedData = JSON.parse(jsonStr);
-                console.log("Extracted data from Cohere:", extractedData);
-
+                console.log("Extracted address data from Cohere:", extractedData);
+                
                 if (!extracted.address && extractedData.address) {
                   form.setValue('address', extractedData.address);
                 }
@@ -337,45 +442,18 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
                   form.setValue('city', extractedData.city);
                 }
                 if (!extracted.state && extractedData.state) {
-                  form.setValue('state', extractedData.state);
+                  form.setValue('state', extractedData.state.toUpperCase().substring(0, 2));
                 }
                 if (!extracted.zip && extractedData.zip) {
                   form.setValue('zipCode', extractedData.zip);
                 }
-                if (!extracted.beds && extractedData.beds) {
-                  form.setValue('beds', String(extractedData.beds));
-                }
-                if (!extracted.baths && extractedData.baths) {
-                  form.setValue('baths', String(extractedData.baths));
-                }
-                if (!extracted.sqft && extractedData.sqft) {
-                  form.setValue('sqft', String(extractedData.sqft).replace(/,/g, ''));
-                }
-                if (!extracted.propertyType && extractedData.propertyType) {
-                  form.setValue('propertyType', extractedData.propertyType);
-                }
-                if (!extracted.price && extractedData.price) {
-                  const price = String(extractedData.price).replace(/[$,]/g, '');
-                  form.setValue('price', price);
-
-                  if (!extracted.marketPrice) {
-                    const marketPrice = Math.round(parseFloat(price) * 1.1);
-                    form.setValue('marketPrice', String(marketPrice));
-                  }
-                }
-                if (!extracted.arv && extractedData.arv) {
-                  form.setValue('afterRepairValue', String(extractedData.arv).replace(/[$,]/g, ''));
-                }
-                if (!extracted.rehab && extractedData.rehab) {
-                  form.setValue('estimatedRehab', String(extractedData.rehab).replace(/[$,]/g, ''));
-                }
               }
             } catch (e) {
-              console.error("Error parsing Cohere response:", e);
+              console.error("Error parsing Cohere address response:", e);
             }
           }
         } catch (cohereError) {
-          console.log("Error using Cohere API:", cohereError);
+          console.log("Error using Cohere API for address extraction:", cohereError);
         }
       }
 
@@ -403,6 +481,9 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
       setIsProcessing(false);
     }
   };
+
+  // Helper definition for US states
+  const usStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
 
   return (
     <div className="mb-12">

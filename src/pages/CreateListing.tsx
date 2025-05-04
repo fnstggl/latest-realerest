@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -218,7 +219,7 @@ const CreateListing: React.FC = () => {
       // Log the user ID being used for debugging
       console.log("Inserting listing with user_id:", user.id, "Type:", typeof user.id);
 
-      // Insert listing into Supabase with explicit type handling
+      // FIXED: Changed 'bounty' to 'reward' in the insert statement to match the database column name
       const { data, error } = await supabase.from('property_listings').insert({
         title: title,
         price: price,
@@ -231,7 +232,7 @@ const CreateListing: React.FC = () => {
         sqft: parseInt(values.sqft),
         images: finalImages,
         user_id: user.id,
-        bounty: values.bounty ? Number(values.bounty) : null
+        reward: values.bounty ? Number(values.bounty) : null  // Changed from bounty to reward
       }).select();
       
       if (error) {
