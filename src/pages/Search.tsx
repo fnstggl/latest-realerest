@@ -3,17 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import SearchHeader from '@/components/search/SearchHeader';
-import SearchFilters from '@/components/search/SearchFilters';
 import SearchResults from '@/components/search/SearchResults';
 import SearchFooter from '@/components/search/SearchFooter';
 import LocationAlertForm from '@/components/LocationAlertForm';
+import HorizontalFilters from '@/components/search/HorizontalFilters';
 
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
   const [isGridView, setIsGridView] = useState(true);
   const [sortOption, setSortOption] = useState("recommended");
-  const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
   const { isAuthenticated } = useAuth();
   
   // Filter states
@@ -36,11 +35,11 @@ const Search: React.FC = () => {
     setLocation(filters.location || '');
     setMinPrice(filters.minPrice || 0);
     setMaxPrice(filters.maxPrice || 10000000);
-    setMinBeds(filters.minBeds || 0);
-    setMinBaths(filters.minBaths || 0);
+    setMinBeds(filters.bedrooms === 'any' ? 0 : parseInt(filters.bedrooms) || 0);
+    setMinBaths(filters.bathrooms === 'any' ? 0 : parseInt(filters.bathrooms) || 0);
     setPropertyType(filters.propertyType || '');
     setNearbyOnly(filters.nearbyOnly || false);
-    setBelowMarket(filters.belowMarket || false);
+    setBelowMarket(filters.belowMarket > 0);
     setIncludeRental(filters.includeRental || true);
     setWithPhotosOnly(filters.withPhotosOnly || false);
   };
@@ -54,27 +53,23 @@ const Search: React.FC = () => {
       <SearchHeader />
       
       <div className="container px-4 lg:px-8 mx-auto py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <SearchFilters
-            onFilterChange={handleFilterChange}
-            isFiltersCollapsed={isFiltersCollapsed}
-            setIsFiltersCollapsed={setIsFiltersCollapsed}
-          />
-          
-          <SearchResults
-            location={location}
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            minBeds={minBeds}
-            minBaths={minBaths}
-            propertyType={propertyType}
-            nearbyOnly={nearbyOnly}
-            belowMarket={belowMarket}
-            sort={sortOption}
-            includeRental={includeRental}
-            withPhotosOnly={withPhotosOnly}
-          />
-        </div>
+        {/* Horizontal filters component */}
+        <HorizontalFilters onFilterChange={handleFilterChange} />
+        
+        {/* Search results */}
+        <SearchResults
+          location={location}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          minBeds={minBeds}
+          minBaths={minBaths}
+          propertyType={propertyType}
+          nearbyOnly={nearbyOnly}
+          belowMarket={belowMarket}
+          sort={sortOption}
+          includeRental={includeRental}
+          withPhotosOnly={withPhotosOnly}
+        />
       </div>
       
       <div className="w-full">
