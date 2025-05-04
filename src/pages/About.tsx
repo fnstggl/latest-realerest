@@ -126,7 +126,7 @@ const About: React.FC = () => {
                 <div className="aspect-square overflow-hidden">
                   <img src="/lovable-uploads/b82e0252-0b3e-4142-bbe9-1f4da2824ab9.png" alt="Classic apartment buildings" className="w-full h-full object-cover grayscale" />
                 </div>
-                <p className="text-sm mt-2 italic">Properties with potential</p>
+                
               </div>
               <div className="col-span-12 md:col-span-7 order-2">
                 <div className="flex items-center mb-6 justify-end">
