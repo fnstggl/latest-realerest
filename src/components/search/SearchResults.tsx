@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import PropertyCard from '@/components/PropertyCard';
@@ -126,7 +125,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       return (
         <div className="flex-1 relative">
           {/* Container for skeleton cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array(skeletonCount).fill(0).map((_, i) => (
               <div key={i} className="relative">
                 <div className="border border-white/30 shadow-lg overflow-hidden rounded-xl">
@@ -152,9 +151,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             ))}
           </div>
           
-          {/* Sign in button positioned in the center */}
-          <div className="absolute left-0 right-0 bottom-0 flex justify-center items-center">
-            <Link to="/signin">
+          {/* Improved positioning for the sign in button - absolute position over the skeleton cards */}
+          <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+            <Link to="/signin" className="pointer-events-auto">
               <Button 
                 variant="gradient" 
                 className="text-black bg-white hover:bg-white relative overflow-hidden px-8 py-2 rounded-xl z-10"
