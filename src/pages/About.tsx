@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -7,19 +6,20 @@ import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { UserTag } from '@/components/UserTag';
-
 const About: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-[#FCFBF8] text-black">
+  return <div className="min-h-screen bg-[#FCFBF8] text-black">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8 md:py-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-7xl mx-auto"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.5
+      }} className="max-w-7xl mx-auto">
           {/* Hero Section */}
           <div className="mb-24 md:mb-32 relative">
             <div className="grid grid-cols-12 gap-8">
@@ -37,11 +37,7 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-6 md:pl-12 relative">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img 
-                    src="/lovable-uploads/f217c927-8ac0-4efe-b6d7-18447accdf40.png" 
-                    alt="New York City skyline" 
-                    className="w-full h-full object-cover grayscale"
-                  />
+                  <img src="/lovable-uploads/f217c927-8ac0-4efe-b6d7-18447accdf40.png" alt="New York City skyline" className="w-full h-full object-cover grayscale" />
                 </div>
                 <p className="text-sm mt-2 italic text-right">Where it all began</p>
               </div>
@@ -53,11 +49,7 @@ const About: React.FC = () => {
             <div className="grid grid-cols-12 gap-8 items-center">
               <div className="col-span-12 md:col-span-4 md:order-2">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img 
-                    src="/lovable-uploads/ae9b8849-2f3b-4a70-a520-d02738b34efd.png" 
-                    alt="Modern home exterior" 
-                    className="w-full h-full object-cover grayscale"
-                  />
+                  <img src="/lovable-uploads/ae9b8849-2f3b-4a70-a520-d02738b34efd.png" alt="Modern home exterior" className="w-full h-full object-cover grayscale" />
                 </div>
               </div>
               <div className="col-span-12 md:col-span-8 md:order-1">
@@ -82,11 +74,7 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-5">
                 <div className="aspect-[4/3] overflow-hidden mb-6">
-                  <img 
-                    src="/lovable-uploads/3055a39f-8a3b-40bb-bc84-1682c72cefeb.png" 
-                    alt="Aerial view of neighborhood" 
-                    className="w-full h-full object-cover grayscale"
-                  />
+                  <img src="/lovable-uploads/3055a39f-8a3b-40bb-bc84-1682c72cefeb.png" alt="Aerial view of neighborhood" className="w-full h-full object-cover grayscale" />
                 </div>
               </div>
             </div>
@@ -95,11 +83,11 @@ const About: React.FC = () => {
                 <div className="text-6xl font-bold mb-4 font-playfair italic">01</div>
                 <p className="text-lg">We work <span className="font-playfair italic">directly</span> with motivated sellers who are looking to sell their homes below market value to sell them faster.</p>
               </div>
-              <div className="border border-black p-6 mt-8 md:mt-16 relative">
+              <div className="border border-black p-6 mt-8 md:mt-16 relative my-0">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">02</div>
                 <p className="text-lg">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.</p>
               </div>
-              <div className="border border-black p-6 mt-4 md:mt-8 relative">
+              <div className="border border-black p-6 mt-4 md:mt-8 relative my-0">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">03</div>
                 <p className="text-lg">Due to the high demand for below-market properties, listings on our platform <span className="font-playfair italic">may not stay available</span> for long.</p>
               </div>
@@ -116,27 +104,18 @@ const About: React.FC = () => {
                 </div>
                 <div className="border border-black p-8 backdrop-blur-sm">
                   <ul className="space-y-6">
-                    {["Buy a home faster than you can say \"sold\"", 
-                      "Save your cash for the home, not the agent.", 
-                      "Know you're paying a fair price—always.", 
-                      "No fees. No middlemen. Just the keys."].map((item, index) => (
-                        <li key={index} className="flex items-start">
+                    {["Buy a home faster than you can say \"sold\"", "Save your cash for the home, not the agent.", "Know you're paying a fair price—always.", "No fees. No middlemen. Just the keys."].map((item, index) => <li key={index} className="flex items-start">
                           <span className="inline-flex items-center justify-center text-white bg-black w-8 h-8 rounded-full mr-4 flex-shrink-0 font-bold">
                             {index + 1}
                           </span>
                           <span className="text-lg md:text-xl font-medium">{item}</span>
-                        </li>
-                    ))}
+                        </li>)}
                   </ul>
                 </div>
               </div>
               <div className="col-span-12 md:col-span-5 order-1 md:order-2">
                 <div className="aspect-square overflow-hidden">
-                  <img 
-                    src="/lovable-uploads/8fa9a7ae-6846-47b2-89cd-edcf73e2f353.png" 
-                    alt="Modern home exterior" 
-                    className="w-full h-full object-cover grayscale"
-                  />
+                  <img src="/lovable-uploads/8fa9a7ae-6846-47b2-89cd-edcf73e2f353.png" alt="Modern home exterior" className="w-full h-full object-cover grayscale" />
                 </div>
                 <p className="text-sm mt-2 italic text-right">Finding your dream home</p>
               </div>
@@ -145,11 +124,7 @@ const About: React.FC = () => {
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-12 md:col-span-5 order-1">
                 <div className="aspect-square overflow-hidden">
-                  <img 
-                    src="/lovable-uploads/c4bb3420-aeba-472f-bb6a-26ee1f4edf2c.png" 
-                    alt="Classic apartment buildings" 
-                    className="w-full h-full object-cover grayscale"
-                  />
+                  <img src="/lovable-uploads/c4bb3420-aeba-472f-bb6a-26ee1f4edf2c.png" alt="Classic apartment buildings" className="w-full h-full object-cover grayscale" />
                 </div>
                 <p className="text-sm mt-2 italic">Properties with potential</p>
               </div>
@@ -160,17 +135,12 @@ const About: React.FC = () => {
                 </div>
                 <div className="border border-black p-8 backdrop-blur-sm">
                   <ul className="space-y-6">
-                    {["List your home in 1 minute, sell it in 2.", 
-                      "Zero fees, zero commissions, forever.", 
-                      "Sell your home, skip the headache.", 
-                      "Get a great offer on your home... today."].map((item, index) => (
-                        <li key={index} className="flex items-start">
+                    {["List your home in 1 minute, sell it in 2.", "Zero fees, zero commissions, forever.", "Sell your home, skip the headache.", "Get a great offer on your home... today."].map((item, index) => <li key={index} className="flex items-start">
                           <span className="inline-flex items-center justify-center text-white bg-black w-8 h-8 rounded-full mr-4 flex-shrink-0 font-bold">
                             {index + 1}
                           </span>
                           <span className="text-lg md:text-xl font-medium">{item}</span>
-                        </li>
-                    ))}
+                        </li>)}
                   </ul>
                 </div>
               </div>
@@ -205,11 +175,7 @@ const About: React.FC = () => {
                 </div>
                 <div className="mt-8">
                   <div className="aspect-[16/9] overflow-hidden">
-                    <img 
-                      src="/lovable-uploads/cc2dcd0d-d592-4b85-976c-d2e569ab22e8.png" 
-                      alt="City street view" 
-                      className="w-full h-full object-cover grayscale"
-                    />
+                    <img src="/lovable-uploads/cc2dcd0d-d592-4b85-976c-d2e569ab22e8.png" alt="City street view" className="w-full h-full object-cover grayscale" />
                   </div>
                 </div>
               </div>
@@ -219,11 +185,7 @@ const About: React.FC = () => {
           {/* Call to Action */}
           <div className="text-center mb-12 relative">
             <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-5">
-              <img 
-                src="/lovable-uploads/c4859284-6b6b-4692-90c2-acd37daaacaa.png"
-                alt="Background texture"
-                className="w-full h-full object-cover grayscale"
-              />
+              <img src="/lovable-uploads/c4859284-6b6b-4692-90c2-acd37daaacaa.png" alt="Background texture" className="w-full h-full object-cover grayscale" />
             </div>
             <h2 className="brutalist-text text-5xl md:text-7xl mb-8 tracking-tighter">
               <span className="block">WE DO REAL ESTATE</span> 
@@ -242,8 +204,6 @@ const About: React.FC = () => {
       </div>
       
       <SiteFooter />
-    </div>
-  );
+    </div>;
 };
-
 export default About;
