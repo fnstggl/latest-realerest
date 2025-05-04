@@ -3,6 +3,16 @@ import { useCallback, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 
+export interface Message {
+  id: string;
+  content: string;
+  senderId: string;
+  conversationId: string;
+  timestamp: string;
+  isRead: boolean;
+  isMine?: boolean;
+}
+
 export interface Conversation {
   id: string;
   otherUserId: string;
@@ -21,12 +31,18 @@ export interface Conversation {
   unreadCount: number;
   createdAt: string;
   updatedAt: string;
+  propertyId?: string;
+  propertyTitle?: string;
+  propertyImage?: string;
+  otherUserName?: string;
+  otherUserRole?: string;
 }
 
 export function useMessages() {
   const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
 
   const refreshConversations = useCallback(async () => {
     if (!user?.id) return;
@@ -50,6 +66,8 @@ export function useMessages() {
         return;
       }
       
+      let totalUnreadCount = 0;
+      
       const enrichedConversations = await Promise.all(
         conversationData.map(async (convo) => {
           // Determine the other user in the conversation
@@ -71,6 +89,10 @@ export function useMessages() {
             .eq('conversation_id', convo.id)
             .eq('sender_id', otherUserId)
             .eq('is_read', false);
+            
+          if (unreadCount) {
+            totalUnreadCount += unreadCount;
+          }
           
           // Get other user's profile
           const { data: otherUserProfile } = await supabase
@@ -83,6 +105,8 @@ export function useMessages() {
             id: convo.id,
             otherUserId,
             otherUserProfile,
+            otherUserName: otherUserProfile?.name || 'Unknown User',
+            otherUserRole: otherUserProfile?.account_type || 'buyer',
             lastMessage: lastMessageData || undefined,
             unreadCount: unreadCount || 0,
             createdAt: convo.created_at,
@@ -91,6 +115,7 @@ export function useMessages() {
         })
       );
       
+      setUnreadCount(totalUnreadCount);
       setConversations(enrichedConversations);
     } catch (err) {
       console.error('[useMessages] Error processing conversations:', err);
@@ -136,7 +161,7 @@ export function useMessages() {
     }
   }, [user?.id]);
 
-  // A separate function to get user display name (email or name)
+  // Get user display name (email or name)
   const getUserDisplayName = useCallback(async (userId: string): Promise<string> => {
     if (!userId) return 'Unknown User';
     
@@ -174,12 +199,68 @@ export function useMessages() {
       return 'Unknown User';
     }
   }, []);
+
+  // Fetch messages for a specific conversation
+  const fetchMessages = useCallback(async (conversationId: string): Promise<Message[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+      
+      if (error) {
+        console.error('[fetchMessages] Error:', error);
+        return [];
+      }
+      
+      return data.map(message => ({
+        id: message.id,
+        content: message.content,
+        senderId: message.sender_id,
+        conversationId: message.conversation_id,
+        timestamp: message.created_at,
+        isRead: message.is_read,
+        isMine: message.sender_id === user?.id
+      }));
+    } catch (err) {
+      console.error('[fetchMessages] Error:', err);
+      return [];
+    }
+  }, [user?.id]);
+
+  // Mark messages as read
+  const markMessagesAsRead = useCallback(async (conversationId: string) => {
+    if (!user?.id || !conversationId) return;
+    
+    try {
+      // Update messages where current user is NOT the sender (they received the messages)
+      const { error } = await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('conversation_id', conversationId)
+        .neq('sender_id', user.id)
+        .eq('is_read', false);
+      
+      if (error) {
+        console.error('[markMessagesAsRead] Error:', error);
+      }
+      
+      // Refresh conversations to update unread counts
+      await refreshConversations();
+    } catch (err) {
+      console.error('[markMessagesAsRead] Error:', err);
+    }
+  }, [user?.id, refreshConversations]);
   
   return {
     conversations,
     loading,
+    unreadCount,
     refreshConversations,
     getOrCreateConversation,
-    getUserDisplayName
+    getUserDisplayName,
+    fetchMessages,
+    markMessagesAsRead
   };
 }

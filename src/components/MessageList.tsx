@@ -36,6 +36,7 @@ const MessageList: React.FC<MessageListProps> = ({
   };
   
   const truncateMessage = (message: string, maxLength: number = 50) => {
+    if (!message) return "";
     if (message.length <= maxLength) return message;
     return message.substring(0, maxLength) + '...';
   };
@@ -69,8 +70,9 @@ const MessageList: React.FC<MessageListProps> = ({
   
   return <div className="divide-y divide-gray-200">
       {conversations.map(conversation => {
-        const isUnread = !conversation.latestMessage.isRead && 
-                         conversation.latestMessage.senderId !== user?.id;
+        const isUnread = conversation.lastMessage && 
+                      !conversation.lastMessage.is_read && 
+                      conversation.lastMessage.sender_id !== user?.id;
         
         // Get profile from our profiles map with proper debugging
         const otherUserId = conversation.otherUserId;
@@ -119,16 +121,18 @@ const MessageList: React.FC<MessageListProps> = ({
                     </div>}
                   
                   <p className={`text-sm ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
-                    {conversation.latestMessage.senderId === user?.id ? 'You: ' : ''}
-                    {truncateMessage(conversation.latestMessage.content)}
+                    {conversation.lastMessage ? (conversation.lastMessage.sender_id === user?.id ? 'You: ' : '') : ''}
+                    {truncateMessage(conversation.lastMessage?.content || 'Start a conversation...')}
                   </p>
                 </div>
                 
                 <div className="text-right flex flex-col items-end">
                   <p className="text-xs text-gray-500 mb-2">
-                    {formatDistanceToNow(new Date(conversation.latestMessage.timestamp), {
-                      addSuffix: true
-                    })}
+                    {conversation.lastMessage?.created_at 
+                      ? formatDistanceToNow(new Date(conversation.lastMessage.created_at), {
+                          addSuffix: true
+                        })
+                      : 'New conversation'}
                   </p>
                   
                   {isUnread && <div className="px-2 py-1 text-xs font-bold rounded mt-1 inline-block text-white bg-rose-600">
