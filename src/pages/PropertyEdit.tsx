@@ -319,10 +319,10 @@ const PropertyEdit: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
+        <div className="mt-50 mb-8">
           <Button 
-            variant="ghost" 
-            className="flex items-center text-black hover:text-[#0892D0] font-bold transition-colors"
+            variant="default" 
+            className="flex items-center text-white bg-black hover:bg-black/90 font-bold transition-colors rounded-lg mt-12"
             onClick={() => navigate(`/property/${id}`)}
           >
             <ArrowLeft size={18} className="mr-2" />
@@ -348,7 +348,7 @@ const PropertyEdit: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="location" className="font-bold">Display Location</Label>
+                <Label htmlFor="location" className="font-bold">City, State, Zip Code</Label>
                 <Input
                   id="location"
                   name="location"
