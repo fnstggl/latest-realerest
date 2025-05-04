@@ -34,7 +34,7 @@ interface Offer {
   offerAmount: number;
   isInterested: boolean;
   proofOfFundsUrl: string;
-  status: "pending" | "accepted" | "declined" | "countered";
+  status: "pending" | "accepted" | "declined" | "countered" | "withdrawn";
   createdAt: string;
   counterOffers: CounterOffer[];
 }
@@ -105,9 +105,9 @@ const OffersTab: React.FC = () => {
 
             if (buyerName === 'Unknown User') {
               const displayName = await getUserDisplayName(offer.user_id);
-              if (displayName && displayName !== 'Unknown User') {
+              if (displayName && typeof displayName === 'string' && displayName !== 'Unknown User') {
                 buyerName = displayName;
-                if (!buyerEmail && displayName.includes('@')) {
+                if (displayName.includes('@')) {
                   buyerEmail = displayName;
                 }
               }
@@ -135,7 +135,7 @@ const OffersTab: React.FC = () => {
             offerAmount: offer.offer_amount,
             isInterested: offer.is_interested,
             proofOfFundsUrl: offer.proof_of_funds_url || '',
-            status: offer.status as "pending" | "accepted" | "declined" | "countered",
+            status: offer.status as "pending" | "accepted" | "declined" | "countered" | "withdrawn",
             createdAt: offer.created_at,
             counterOffers: counterOffers || []
           };
@@ -529,6 +529,15 @@ const OffersTab: React.FC = () => {
                     <p className="text-red-800 font-bold">
                       <XCircle size={16} className="inline mr-2" />
                       You've declined this offer.
+                    </p>
+                  </div>
+                )}
+
+                {offer.status === "withdrawn" && (
+                  <div className="bg-gray-100 border border-gray-300 p-3 rounded-lg mt-4">
+                    <p className="text-gray-800 font-bold">
+                      <XCircle size={16} className="inline mr-2" />
+                      This offer has been withdrawn by the buyer.
                     </p>
                   </div>
                 )}

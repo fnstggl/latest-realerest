@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import UserTag from '@/components/UserTag';
-import { UserProfile, UserRole } from '@/hooks/useUserProfiles';
+import { UserRole } from '@/hooks/useUserProfiles';
 
 interface ConversationHeaderProps {
   displayName: string;

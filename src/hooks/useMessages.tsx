@@ -1,355 +1,101 @@
-import { useState, useEffect, useCallback } from 'react';
+
+import { useCallback, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
 
 export interface Conversation {
   id: string;
   otherUserId: string;
-  otherUserName: string;
-  otherUserRole?: 'seller' | 'buyer' | 'wholesaler';
-  latestMessage: {
+  otherUserProfile?: {
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    account_type?: string;
+  } | null;
+  lastMessage?: {
     content: string;
-    timestamp: string;
-    isRead: boolean;
-    senderId: string;
+    is_read: boolean;
+    sender_id: string;
+    created_at: string;
   };
-  propertyId?: string;
-  propertyTitle?: string;
-  propertyImage?: string;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Message {
-  id: string;
-  conversationId: string;
-  senderId: string;
-  content: string;
-  timestamp: string;
-  isRead: boolean;
-  isMine?: boolean;
-  relatedOfferId?: string;
-  propertyId?: string;
-}
-
-// Type definition to properly parse message data from Supabase
-interface MessageData {
-  id: string;
-  conversation_id: string;
-  sender_id: string;
-  content: string;
-  created_at: string;
-  is_read: boolean;
-  related_offer_id: string;
-  property_id?: string; // Make this optional since it might not exist
-  property_offers?: {
-    property_id: string;
-  };
-}
-
-export const useMessages = () => {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [unreadCount, setUnreadCount] = useState(0);
+export function useMessages() {
   const { user } = useAuth();
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Significantly improved user profile fetching with enhanced debugging and reliability
-  const getUserDisplayName = useCallback(async (userId: string): Promise<{name: string; role: 'seller' | 'buyer' | 'wholesaler'}> => {
-    try {
-      if (!userId) {
-        console.error('[getUserDisplayName] Called with invalid userId:', userId);
-        return { name: "Unknown User", role: 'buyer' };
-      }
-      
-      console.log(`[getUserDisplayName] START: Fetching user profile for ID: ${userId}`);
-      
-      // First attempt: Try to get profile from profiles table with detailed logging
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('name, email, account_type')
-        .eq('id', userId)
-        .maybeSingle();
-      
-      if (profileError) {
-        console.error(`[getUserDisplayName] Profile fetch error for ${userId}:`, profileError);
-      }
-      
-      console.log(`[getUserDisplayName] Profile data for ${userId}:`, profileData);
-      
-      // If we found a valid profile
-      if (profileData) {
-        const validRoles = ['seller', 'buyer', 'wholesaler'];
-        let role: 'seller' | 'buyer' | 'wholesaler' = 'buyer';
-        
-        // Validate and assign role from profile data
-        if (profileData.account_type && validRoles.includes(profileData.account_type)) {
-          role = profileData.account_type as 'seller' | 'buyer' | 'wholesaler';
-        }
-        
-        // IMPORTANT FIX: Prioritize name from database if it exists
-        // Only use email as a fallback if name doesn't exist or is empty
-        if (profileData.name && profileData.name.trim() !== '') {
-          console.log(`[getUserDisplayName] SUCCESS using name from profile for ${userId}: name="${profileData.name}", role="${role}"`);
-          return { name: profileData.name, role };
-        } else if (profileData.email) {
-          console.log(`[getUserDisplayName] Using email from profile for ${userId}: email="${profileData.email}", role="${role}"`);
-          return { name: profileData.email, role };
-        }
-      }
-      
-      // Second attempt: Get email via RPC function as fallback
-      console.log(`[getUserDisplayName] Falling back to RPC for ${userId}`);
-      const { data: emailData, error: userError } = await supabase.rpc('get_user_email', {
-        user_id_param: userId
-      });
-      
-      if (userError) {
-        console.error(`[getUserDisplayName] RPC error for ${userId}:`, userError);
-        return { name: "Unknown User", role: 'buyer' };
-      }
-      
-      if (emailData) {
-        console.log(`[getUserDisplayName] SUCCESS via RPC for ${userId}: email="${emailData}"`);
-        return { name: emailData, role: 'buyer' };
-      }
-      
-      console.warn(`[getUserDisplayName] FAILED - No identifying information found for user ${userId}`);
-      return { name: "Unknown User", role: 'buyer' };
-    } catch (error) {
-      console.error(`[getUserDisplayName] EXCEPTION for ${userId}:`, error);
-      return { name: "Unknown User", role: 'buyer' };
-    }
-  }, []);
-
-  const fetchConversations = useCallback(async () => {
+  const refreshConversations = useCallback(async () => {
     if (!user?.id) return;
     
     setLoading(true);
     try {
-      // Get all conversations for the current user
-      const { data: conversationData, error: conversationError } = await supabase
+      const { data: conversationData, error } = await supabase
         .from('conversations')
-        .select('id, participant1, participant2, updated_at')
+        .select('*')
         .or(`participant1.eq.${user.id},participant2.eq.${user.id}`)
         .order('updated_at', { ascending: false });
-        
-      if (conversationError) {
-        console.error('Error fetching conversations:', conversationError);
+      
+      if (error) {
+        console.error('[useMessages] Error fetching conversations:', error);
         return;
       }
       
-      if (!conversationData || conversationData.length === 0) {
+      if (!conversationData.length) {
         setConversations([]);
         setLoading(false);
         return;
       }
       
-      // Process each conversation to get other user details and latest message
-      const conversationsWithDetails = await Promise.all(
-        conversationData.map(async (conversation) => {
-          const otherUserId = conversation.participant1 === user.id 
-            ? conversation.participant2 
-            : conversation.participant1;
+      const enrichedConversations = await Promise.all(
+        conversationData.map(async (convo) => {
+          // Determine the other user in the conversation
+          const otherUserId = convo.participant1 === user.id ? convo.participant2 : convo.participant1;
           
-          // Get both name and account_type with improved error handling
-          const userInfo = await getUserDisplayName(otherUserId);
-            
-          // Get the latest message and check if it's related to a property
-          const { data: messageData } = await supabase
+          // Get the last message in the conversation
+          const { data: lastMessageData } = await supabase
             .from('messages')
-            .select('*, property_offers(property_id)')
-            .eq('conversation_id', conversation.id)
+            .select('content, is_read, sender_id, created_at')
+            .eq('conversation_id', convo.id)
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle();
-            
-          let propertyId = undefined;
-          let propertyTitle = undefined;
-          let propertyImage = undefined;
           
-          // Check if the message has property_id directly
-          if (messageData && 'property_id' in messageData && messageData.property_id) {
-            propertyId = messageData.property_id;
-          }
-          // If not, check if it has a related offer
-          else if (messageData?.related_offer_id) {
-            const { data: offerData } = await supabase
-              .from('property_offers')
-              .select('property_id')
-              .eq('id', messageData.related_offer_id)
-              .maybeSingle();
-              
-            if (offerData?.property_id) {
-              propertyId = offerData.property_id;
-            }
-          }
+          // Count unread messages
+          const { count: unreadCount } = await supabase
+            .from('messages')
+            .select('*', { count: 'exact', head: true })
+            .eq('conversation_id', convo.id)
+            .eq('sender_id', otherUserId)
+            .eq('is_read', false);
           
-          // If we have a property ID, get the property details
-          if (propertyId) {
-            const { data: propertyData } = await supabase
-              .from('property_listings')
-              .select('title, images')
-              .eq('id', propertyId)
-              .maybeSingle();
-              
-            if (propertyData) {
-              propertyTitle = propertyData.title;
-              if (propertyData.images && propertyData.images.length > 0) {
-                propertyImage = propertyData.images[0];
-              }
-            }
-          }
+          // Get other user's profile
+          const { data: otherUserProfile } = await supabase
+            .from('profiles')
+            .select('name, email, phone, account_type')
+            .eq('id', otherUserId)
+            .maybeSingle();
           
           return {
-            id: conversation.id,
+            id: convo.id,
             otherUserId,
-            otherUserName: userInfo.name,
-            otherUserRole: userInfo.role,
-            propertyId,
-            propertyTitle,
-            propertyImage,
-            latestMessage: messageData ? {
-              content: messageData.content,
-              timestamp: messageData.created_at,
-              isRead: messageData.is_read,
-              senderId: messageData.sender_id
-            } : {
-              content: 'No messages yet',
-              timestamp: conversation.updated_at,
-              isRead: true,
-              senderId: ''
-            }
+            otherUserProfile,
+            lastMessage: lastMessageData || undefined,
+            unreadCount: unreadCount || 0,
+            createdAt: convo.created_at,
+            updatedAt: convo.updated_at
           };
         })
       );
       
-      setConversations(conversationsWithDetails);
-      
-      const unread = conversationsWithDetails.reduce((count, conversation) => {
-        if (!conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user.id) {
-          return count + 1;
-        }
-        return count;
-      }, 0);
-      
-      setUnreadCount(unread);
-    } catch (error) {
-      console.error('Error processing conversations:', error);
+      setConversations(enrichedConversations);
+    } catch (err) {
+      console.error('[useMessages] Error processing conversations:', err);
     } finally {
       setLoading(false);
-    }
-  }, [user?.id, getUserDisplayName]);
-
-  const fetchMessages = useCallback(async (conversationId: string) => {
-    if (!user?.id) return [];
-    
-    try {
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*, property_offers!messages_related_offer_id_fkey(property_id)')
-        .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true });
-        
-      if (error) {
-        console.error('Error fetching messages:', error);
-        return [];
-      }
-      
-      // Process messages to include property IDs
-      const processedMessages = await Promise.all(data.map(async (message: MessageData) => {
-        let propertyId = undefined;
-        
-        // Check if property_id exists directly on the message
-        if ('property_id' in message && message.property_id) {
-          propertyId = message.property_id;
-        }
-        // If not, check if it has a related offer
-        else if (message.related_offer_id) {
-          const { data: offerData } = await supabase
-            .from('property_offers')
-            .select('property_id')
-            .eq('id', message.related_offer_id)
-            .maybeSingle();
-            
-          if (offerData) {
-            propertyId = offerData.property_id;
-          }
-        }
-        
-        return {
-          id: message.id,
-          conversationId: message.conversation_id,
-          senderId: message.sender_id,
-          content: message.content,
-          timestamp: message.created_at,
-          isRead: message.is_read,
-          isMine: message.sender_id === user?.id,
-          relatedOfferId: message.related_offer_id,
-          propertyId
-        };
-      }));
-      
-      return processedMessages;
-    } catch (error) {
-      console.error('Error processing messages:', error);
-      return [];
-    }
-  }, [user?.id]);
-
-  const markMessagesAsRead = useCallback(async (conversationId: string) => {
-    if (!user?.id) return;
-    
-    try {
-      await supabase
-        .from('messages')
-        .update({ is_read: true })
-        .eq('conversation_id', conversationId)
-        .neq('sender_id', user.id)
-        .eq('is_read', false);
-        
-      fetchConversations();
-    } catch (error) {
-      console.error('Error marking conversation as read:', error);
-    }
-  }, [user?.id, fetchConversations]);
-
-  const sendMessage = useCallback(async (
-    conversationId: string, 
-    content: string, 
-    relatedOfferId?: string
-  ) => {
-    if (!user?.id) return null;
-    
-    try {
-      const { data, error } = await supabase
-        .from('messages')
-        .insert({
-          conversation_id: conversationId,
-          sender_id: user.id,
-          content,
-          related_offer_id: relatedOfferId
-        })
-        .select()
-        .single();
-        
-      if (error) {
-        console.error('Error sending message:', error);
-        toast.error('Failed to send message');
-        return null;
-      }
-      
-      return {
-        id: data.id,
-        conversationId: data.conversation_id,
-        senderId: data.sender_id,
-        content: data.content,
-        timestamp: data.created_at,
-        isRead: data.is_read,
-        relatedOfferId: data.related_offer_id
-      };
-    } catch (error) {
-      console.error('Error processing message send:', error);
-      toast.error('Failed to send message');
-      return null;
     }
   }, [user?.id]);
 
@@ -357,139 +103,83 @@ export const useMessages = () => {
     if (!user?.id || !otherUserId) return null;
     
     try {
-      const { data: existingConversation, error: existingError } = await supabase
+      // Check if conversation already exists
+      const { data: existingConvo } = await supabase
         .from('conversations')
         .select('id')
         .or(`and(participant1.eq.${user.id},participant2.eq.${otherUserId}),and(participant1.eq.${otherUserId},participant2.eq.${user.id})`)
-        .limit(1)
         .maybeSingle();
-        
-      if (existingError) {
-        console.error('Error checking existing conversation:', existingError);
-        return null;
+      
+      if (existingConvo?.id) {
+        return existingConvo.id;
       }
       
-      if (existingConversation) {
-        return existingConversation.id;
-      }
-      
-      const { data: newConversation, error: newError } = await supabase
+      // Create a new conversation
+      const { data: newConvo, error: createError } = await supabase
         .from('conversations')
         .insert({
           participant1: user.id,
           participant2: otherUserId
         })
-        .select()
+        .select('id')
         .single();
         
-      if (newError) {
-        console.error('Error creating conversation:', newError);
-        toast.error('Failed to create conversation');
+      if (createError) {
+        console.error('[useMessages] Error creating conversation:', createError);
         return null;
       }
       
-      return newConversation.id;
-    } catch (error) {
-      console.error('Error getting/creating conversation:', error);
+      return newConvo?.id || null;
+    } catch (err) {
+      console.error('[useMessages] Error in getOrCreateConversation:', err);
       return null;
     }
   }, [user?.id]);
 
-  const markConversationAsRead = useCallback(async (conversationId: string) => {
-    if (!user?.id) return;
+  // A separate function to get user display name (email or name)
+  const getUserDisplayName = useCallback(async (userId: string): Promise<string> => {
+    if (!userId) return 'Unknown User';
     
     try {
-      await supabase
-        .from('messages')
-        .update({ is_read: true })
-        .eq('conversation_id', conversationId)
-        .neq('sender_id', user.id)
-        .eq('is_read', false);
-        
-      fetchConversations();
-    } catch (error) {
-      console.error('Error marking conversation as read:', error);
-    }
-  }, [user?.id, fetchConversations]);
-
-  useEffect(() => {
-    if (!user?.id) return;
-    
-    const messageSubscription = supabase
-      .channel('messages_changes')
-      .on('postgres_changes', 
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages'
-        },
-        (payload) => {
-          const message = payload.new as any;
-          if (message) {
-            fetchConversations();
-            
-            if (message.sender_id !== user.id) {
-              getUserDisplayName(message.sender_id)
-                .then(userInfo => {
-                  supabase
-                    .from('notifications')
-                    .insert({
-                      user_id: user.id,
-                      title: 'New Message',
-                      message: `${userInfo.name}: ${message.content}`,
-                      type: 'message',
-                      properties: {
-                        conversationId: message.conversation_id,
-                        senderId: message.sender_id
-                      }
-                    });
-                    
-                  toast('New Message', {
-                    description: `${userInfo.name}: ${message.content}`,
-                    action: {
-                      label: 'View',
-                      onClick: () => window.location.href = `/messages/${message.conversation_id}`
-                    }
-                  });
-                });
-            }
-          }
-        }
-      )
-      .subscribe();
+      // First try to get profile from profiles table
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('name, email')
+        .eq('id', userId)
+        .maybeSingle();
       
-    const conversationSubscription = supabase
-      .channel('conversations_changes')
-      .on('postgres_changes', 
-        {
-          event: '*',
-          schema: 'public',
-          table: 'conversations'
-        },
-        () => {
-          fetchConversations();
-        }
-      )
-      .subscribe();
-    
-    fetchConversations();
-    
-    return () => {
-      supabase.removeChannel(messageSubscription);
-      supabase.removeChannel(conversationSubscription);
-    };
-  }, [user?.id, fetchConversations, getUserDisplayName]);
-
+      if (profileData?.name) return profileData.name;
+      if (profileData?.email) return profileData.email;
+      
+      // If no profile or name/email is found, try using RPC to get email
+      console.log("[getUserDisplayName] Falling back to RPC for", userId);
+      const { data: emailData, error: emailError } = await supabase.rpc(
+        'get_user_email', 
+        { user_id_param: userId }
+      );
+      
+      if (emailError) {
+        console.error("[getUserDisplayName] RPC error:", emailError);
+        return 'Unknown User';
+      }
+      
+      if (emailData) {
+        console.log("[getUserDisplayName] SUCCESS via RPC for", userId + ":", { email: emailData });
+        return emailData;
+      }
+      
+      return 'Unknown User';
+    } catch (err) {
+      console.error("[getUserDisplayName] Error:", err);
+      return 'Unknown User';
+    }
+  }, []);
+  
   return {
     conversations,
     loading,
-    unreadCount,
-    fetchMessages,
-    sendMessage,
+    refreshConversations,
     getOrCreateConversation,
-    markConversationAsRead,
-    markMessagesAsRead,
-    refreshConversations: fetchConversations,
     getUserDisplayName
   };
-};
+}
