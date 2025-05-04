@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import PropertyCard from '@/components/PropertyCard';
@@ -153,7 +152,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           </div>
           
           {/* Sign in button positioned in the center */}
-          <div className="absolute left-0 right-0 bottom-0 flex justify-center items-center">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
             <Link to="/signin">
               <Button 
                 variant="gradient" 
@@ -161,7 +160,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               >
                 Sign in to view more properties
                 <span 
-                  className="absolute inset-0 transition-opacity duration-300 rounded-xl pointer-events-none"
+                  className="absolute inset-0 rounded-xl pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -214,7 +213,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   }
 
   // Determine the number of items per row based on screen width
-  // (This is an approximation that matches the grid layout)
   const getItemsPerRow = () => {
     if (window.innerWidth >= 1024) return 3; // lg: grid-cols-3
     if (window.innerWidth >= 768) return 2;  // md: grid-cols-2
@@ -222,13 +220,33 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   };
 
   const itemsPerRow = getItemsPerRow();
-  const shouldBlurLastRow = !isAuthenticated && listings.length > itemsPerRow;
   
-  // Calculate the start index for the blurred items
-  // We want to blur the last full row of items
-  const blurStartIndex = shouldBlurLastRow 
-    ? Math.max(0, listings.length - (listings.length % itemsPerRow || itemsPerRow))
-    : listings.length;
+  // For non-authenticated users, blur the last complete row
+  const shouldBlurItems = !isAuthenticated && listings.length > itemsPerRow;
+  
+  // Calculate the indexes for the last complete row
+  const calculateLastFullRowIndexes = () => {
+    if (!shouldBlurItems) return { start: listings.length, end: listings.length };
+    
+    const totalItems = listings.length;
+    const remainder = totalItems % itemsPerRow;
+    
+    // If the last row is already full, blur it
+    if (remainder === 0) {
+      return {
+        start: totalItems - itemsPerRow,
+        end: totalItems
+      };
+    }
+    
+    // Otherwise blur the last complete row (row before the incomplete one)
+    return {
+      start: totalItems - remainder - itemsPerRow,
+      end: totalItems - remainder
+    };
+  };
+  
+  const { start: blurStartIndex, end: blurEndIndex } = calculateLastFullRowIndexes();
 
   return (
     <div ref={resultsContainerRef} className="relative flex-1">
@@ -236,7 +254,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         {listings.map((property, index) => (
           <div 
             key={property.id}
-            className={`relative ${index >= blurStartIndex && shouldBlurLastRow ? 'blur-sm' : ''}`}
+            className={`relative ${index >= blurStartIndex && index < blurEndIndex && shouldBlurItems ? 'blur-sm' : ''}`}
           >
             <PropertyCard
               id={property.id}
@@ -255,8 +273,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         ))}
       </div>
       
-      {shouldBlurLastRow && (
-        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center" style={{ height: '150px' }}>
+      {shouldBlurItems && (
+        <div 
+          className="absolute flex items-center justify-center"
+          style={{
+            top: `calc(${Math.floor(blurStartIndex / itemsPerRow)} * (240px + 1.5rem + 240px))`, // Approximate position calculation
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'fit-content',
+            zIndex: 10
+          }}
+        >
           <Link to="/signin">
             <Button 
               variant="gradient" 
@@ -264,7 +291,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             >
               Sign in to view more properties
               <span 
-                className="absolute inset-0 transition-opacity duration-300 rounded-xl pointer-events-none"
+                className="absolute inset-0 rounded-xl pointer-events-none"
                 style={{
                   background: "transparent",
                   border: "2px solid transparent",
