@@ -219,7 +219,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     if (window.innerWidth >= 768) return 2;  // md: grid-cols-2
     return 1; // default for mobile: grid-cols-1
   };
-
+  
   const itemsPerRow = getItemsPerRow();
   
   // For non-authenticated users, determine what to show
@@ -242,6 +242,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       ? totalItems - itemsPerRow 
       : totalItems - remainder - itemsPerRow;
     
+    // For mobile view (1 item per row), we want to blur only the last item
+    if (itemsPerRow === 1) {
+      return {
+        blurStartIndex: totalItems - 1, // Last item for mobile
+        blurEndIndex: totalItems,
+        displayCount: totalItems,
+        rowPosition: totalItems - 1 // Position for the last row
+      };
+    }
+    
     return {
       blurStartIndex: lastFullRowStart,
       blurEndIndex: lastFullRowStart + itemsPerRow,
@@ -253,6 +263,30 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   };
   
   const { blurStartIndex, blurEndIndex, displayCount, rowPosition } = getLastFullRowInfo();
+
+  // Calculate button positioning based on device type
+  const getButtonPosition = () => {
+    // For mobile (1 item per row)
+    if (itemsPerRow === 1) {
+      return {
+        // For mobile, center the button on the last property card
+        top: `${rowPosition * 500 + 320}px`, // More centered on the property card for mobile
+        left: '50%',
+        transform: 'translateX(-50%)',
+      };
+    }
+    
+    // For desktop and tablet
+    return {
+      // Position the button over the middle of the last full row
+      // Adjusted to be more centered vertically for desktop view
+      top: `${rowPosition * 500 + 320}px`, // Increased from 250 to 320 to move down more
+      left: '50%',
+      transform: 'translateX(-50%)',
+    };
+  };
+  
+  const buttonPosition = getButtonPosition();
 
   return (
     <div ref={resultsContainerRef} className="relative flex-1">
@@ -283,11 +317,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         <div 
           className="absolute flex items-center justify-center"
           style={{
-            // Position the button over the middle of the last full row
-            // Each property card has a height of about 500px (image + content)
-            top: `${rowPosition * 500 + 250}px`, // Middle of the row
-            left: '50%',
-            transform: 'translateX(-50%)',
+            top: buttonPosition.top,
+            left: buttonPosition.left,
+            transform: buttonPosition.transform,
             width: 'fit-content',
             zIndex: 10
           }}
