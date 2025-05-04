@@ -10,23 +10,27 @@ import { ArrowLeft, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import ImageUploader from "@/components/create-listing/ImageUploader";
+import SEO from "@/components/SEO";
 
 interface Property {
   id: string;
   title: string;
   price: number;
-  marketPrice: number;
+  market_price: number;
   description?: string;
-  image: string;
   images?: string[];
   location: string;
   full_address?: string;
   beds: number;
   baths: number;
   sqft: number;
-  belowMarket: number;
-  afterRepairValue?: number;
-  estimatedRehab?: number;
+  after_repair_value?: number;
+  estimated_rehab?: number;
+  property_type?: string;
+  year_built?: number | null;
+  lot_size?: number | null;
+  parking?: string | null;
 }
 
 const PropertyEdit: React.FC = () => {
@@ -36,6 +40,9 @@ const PropertyEdit: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [property, setProperty] = useState<Property | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     title: "",
     price: "",
@@ -48,33 +55,78 @@ const PropertyEdit: React.FC = () => {
     description: "",
     afterRepairValue: "",
     estimatedRehab: "",
+    propertyType: "",
+    yearBuilt: "",
+    lotSize: "",
+    parking: "",
   });
+  const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProperty = async () => {
       setLoading(true);
+      
+      if (!id || !user) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const allListingsJSON = localStorage.getItem('propertyListings');
-        if (allListingsJSON) {
-          const allListings = JSON.parse(allListingsJSON);
-          const foundProperty = allListings.find((p: Property) => p.id === id);
+        // Fetch directly from Supabase
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('*')
+          .eq('id', id)
+          .eq('user_id', user.id)
+          .single();
+        
+        if (error) {
+          console.error("Error fetching property:", error);
+          toast.error("Failed to load property details");
+          setLoading(false);
+          return;
+        }
+        
+        if (data) {
+          setProperty({
+            id: data.id,
+            title: data.title,
+            price: data.price,
+            market_price: data.market_price,
+            location: data.location,
+            full_address: data.full_address || data.location,
+            beds: data.beds,
+            baths: data.baths,
+            sqft: data.sqft,
+            description: data.description || "",
+            images: data.images || [],
+            after_repair_value: data.after_repair_value || undefined,
+            estimated_rehab: data.estimated_rehab || undefined,
+            property_type: data.property_type || "House",
+            year_built: data.year_built || null,
+            lot_size: data.lot_size || null,
+            parking: data.parking || null
+          });
           
-          if (foundProperty) {
-            setProperty(foundProperty);
-            setFormData({
-              title: foundProperty.title,
-              price: foundProperty.price.toString(),
-              marketPrice: foundProperty.marketPrice.toString(),
-              location: foundProperty.location,
-              full_address: foundProperty.full_address || foundProperty.location,
-              beds: foundProperty.beds.toString(),
-              baths: foundProperty.baths.toString(),
-              sqft: foundProperty.sqft.toString(),
-              description: foundProperty.description || "",
-              afterRepairValue: foundProperty.afterRepairValue?.toString() || "",
-              estimatedRehab: foundProperty.estimatedRehab?.toString() || "",
-            });
-          }
+          setImages(data.images || []);
+          
+          setFormData({
+            title: data.title,
+            price: data.price.toString(),
+            marketPrice: data.market_price.toString(),
+            location: data.location,
+            full_address: data.full_address || data.location,
+            beds: data.beds.toString(),
+            baths: data.baths.toString(),
+            sqft: data.sqft.toString(),
+            description: data.description || "",
+            afterRepairValue: data.after_repair_value ? data.after_repair_value.toString() : "",
+            estimatedRehab: data.estimated_rehab ? data.estimated_rehab.toString() : "",
+            propertyType: data.property_type || "House",
+            yearBuilt: data.year_built ? data.year_built.toString() : "",
+            lotSize: data.lot_size ? data.lot_size.toString() : "",
+            parking: data.parking || ""
+          });
         }
       } catch (error) {
         console.error("Error fetching property:", error);
@@ -87,14 +139,76 @@ const PropertyEdit: React.FC = () => {
     if (id) {
       fetchProperty();
     }
-  }, [id]);
+  }, [id, user]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
+  };
+
+  const compressAndUploadImages = async () => {
+    if (imageFiles.length === 0) {
+      return images; // Return existing images if no new ones
+    }
+
+    try {
+      setIsProcessingImages(true);
+      // Import dynamically to avoid build issues
+      const imageCompression = await import('browser-image-compression');
+      
+      const options = {
+        maxSizeMB: 1, // Max file size in MB
+        maxWidthOrHeight: 1600,
+        useWebWorker: true
+      };
+      
+      let uploadedImageUrls = [...images]; // Start with existing images
+      const propertyStoragePath = `properties/${id}`;
+      
+      // Process each new image file
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i];
+        setUploadProgress(Math.round((i / imageFiles.length) * 40)); // First 40% for compression
+        
+        // Compress image
+        const compressedFile = await imageCompression.default(file, options);
+        
+        // Generate a unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `${propertyStoragePath}/${fileName}`;
+        
+        setUploadProgress(40 + Math.round((i / imageFiles.length) * 50)); // Next 50% for upload
+        
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from('property_images')
+          .upload(filePath, compressedFile);
+        
+        if (error) {
+          console.error("Error uploading image:", error);
+          continue;
+        }
+        
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from('property_images')
+          .getPublicUrl(filePath);
+          
+        uploadedImageUrls.push(urlData.publicUrl);
+      }
+      
+      setUploadProgress(100);
+      return uploadedImageUrls;
+    } catch (error) {
+      console.error("Error processing images:", error);
+      throw new Error("Failed to process images");
+    } finally {
+      setIsProcessingImages(false);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -105,41 +219,29 @@ const PropertyEdit: React.FC = () => {
       return;
     }
     
+    if (!property) {
+      toast.error("Property data not found");
+      return;
+    }
+    
     setSaving(true);
+    setUploadProgress(0);
     
     try {
-      const price = parseFloat(formData.price);
-      const marketPrice = parseFloat(formData.marketPrice) || price * 1.2;
-      const belowMarket = Math.round(((marketPrice - price) / marketPrice) * 100);
-      const afterRepairValue = parseFloat(formData.afterRepairValue) || marketPrice * 1.2;
-      const estimatedRehab = parseFloat(formData.estimatedRehab) || marketPrice * 0.1;
+      let finalImages = images;
       
-      const updatedProperty = {
-        ...property,
-        title: formData.title,
-        price: price,
-        marketPrice: marketPrice,
-        location: formData.location,
-        full_address: formData.full_address,
-        beds: parseInt(formData.beds) || 0,
-        baths: parseInt(formData.baths) || 0,
-        sqft: parseInt(formData.sqft) || 0,
-        belowMarket: belowMarket,
-        description: formData.description,
-        afterRepairValue: afterRepairValue,
-        estimatedRehab: estimatedRehab,
-      };
-      
-      const allListingsJSON = localStorage.getItem('propertyListings');
-      if (allListingsJSON) {
-        const allListings = JSON.parse(allListingsJSON);
-        const updatedListings = allListings.map((p: Property) => 
-          p.id === id ? updatedProperty : p
-        );
-        
-        localStorage.setItem("propertyListings", JSON.stringify(updatedListings));
+      // Process and upload new images if any
+      if (imageFiles.length > 0) {
+        finalImages = await compressAndUploadImages();
       }
       
+      // Prepare data for update
+      const price = parseFloat(formData.price);
+      const marketPrice = parseFloat(formData.marketPrice) || price * 1.2;
+      const afterRepairValue = formData.afterRepairValue ? parseFloat(formData.afterRepairValue) : marketPrice * 1.2;
+      const estimatedRehab = formData.estimatedRehab ? parseFloat(formData.estimatedRehab) : marketPrice * 0.1;
+      
+      // Update in Supabase
       const { error } = await supabase
         .from('property_listings')
         .update({
@@ -154,6 +256,11 @@ const PropertyEdit: React.FC = () => {
           description: formData.description,
           after_repair_value: afterRepairValue,
           estimated_rehab: estimatedRehab,
+          images: finalImages,
+          property_type: formData.propertyType,
+          year_built: formData.yearBuilt ? parseInt(formData.yearBuilt) : null,
+          lot_size: formData.lotSize ? parseInt(formData.lotSize) : null,
+          parking: formData.parking || null,
         })
         .eq('id', id);
         
@@ -200,6 +307,10 @@ const PropertyEdit: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title={`Edit ${property.title} | Realer Estate`}
+        description="Edit your property listing details"
+      />
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
@@ -253,6 +364,24 @@ const PropertyEdit: React.FC = () => {
                   className="mt-2 border-2 border-black"
                   required
                 />
+              </div>
+              
+              <div>
+                <Label htmlFor="propertyType" className="font-bold">Property Type</Label>
+                <select
+                  id="propertyType"
+                  name="propertyType"
+                  value={formData.propertyType}
+                  onChange={handleInputChange}
+                  className="mt-2 border-2 border-black w-full px-3 py-2 rounded-md"
+                >
+                  <option value="House">House</option>
+                  <option value="Condo">Condo</option>
+                  <option value="Townhouse">Townhouse</option>
+                  <option value="Multi-Family">Multi-Family</option>
+                  <option value="Land">Land</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
               
               <div>
@@ -317,6 +446,44 @@ const PropertyEdit: React.FC = () => {
               </div>
               
               <div>
+                <Label htmlFor="yearBuilt" className="font-bold">Year Built</Label>
+                <Input
+                  id="yearBuilt"
+                  name="yearBuilt"
+                  type="number"
+                  value={formData.yearBuilt}
+                  onChange={handleInputChange}
+                  className="mt-2 border-2 border-black"
+                  placeholder="e.g. 1998"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="lotSize" className="font-bold">Lot Size (sqft)</Label>
+                <Input
+                  id="lotSize"
+                  name="lotSize"
+                  type="number"
+                  value={formData.lotSize}
+                  onChange={handleInputChange}
+                  className="mt-2 border-2 border-black"
+                  placeholder="e.g. 5000"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="parking" className="font-bold">Parking</Label>
+                <Input
+                  id="parking"
+                  name="parking"
+                  value={formData.parking || ""}
+                  onChange={handleInputChange}
+                  className="mt-2 border-2 border-black"
+                  placeholder="e.g. 2-Car Garage"
+                />
+              </div>
+              
+              <div>
                 <Label htmlFor="afterRepairValue" className="font-bold">After Repair Value ($)</Label>
                 <Input
                   id="afterRepairValue"
@@ -349,6 +516,18 @@ const PropertyEdit: React.FC = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 className="mt-2 border-2 border-black h-32"
+              />
+            </div>
+
+            <div>
+              <ImageUploader
+                images={images}
+                setImages={setImages}
+                imageFiles={imageFiles}
+                setImageFiles={setImageFiles}
+                isSubmitting={saving}
+                uploadProgress={uploadProgress}
+                isProcessingImages={isProcessingImages}
               />
             </div>
             

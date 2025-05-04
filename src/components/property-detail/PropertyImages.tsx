@@ -16,20 +16,24 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
   const validImages = React.useMemo(() => {
     if (!images || images.length === 0) return [mainImage];
     // Filter out empty or invalid URLs and remove duplicates
-    return [...new Set([mainImage, ...images.filter(img => img && typeof img === 'string')])];
+    return [...new Set([mainImage, ...images.filter(img => img && typeof img === 'string' && img.trim() !== '')])];
   }, [mainImage, images]);
   
   return (
     <div>
       <div className="border border-white/40 shadow-lg p-2 rounded-xl mb-4 my-[35px]">
         <img 
-          src={activeImage || mainImage} 
+          src={activeImage || mainImage || '/placeholder.svg'} 
           alt="Property image" 
           className="w-full h-[400px] object-cover rounded-lg" 
           loading="lazy" 
           decoding="async"
           width="1280"
           height="720"
+          onError={(e) => {
+            // Fallback if image fails to load
+            (e.target as HTMLImageElement).src = "/placeholder.svg";
+          }}
         />
       </div>
       
