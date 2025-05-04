@@ -12,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import ImageUploader from "@/components/create-listing/ImageUploader";
 import SEO from "@/components/SEO";
+import PropertyImages from "@/components/property-detail/PropertyImages";
 
 interface Property {
   id: string;
@@ -27,9 +28,6 @@ interface Property {
   after_repair_value?: number;
   estimated_rehab?: number;
   property_type?: string;
-  year_built?: number | null;
-  lot_size?: number | null;
-  parking?: string | null;
   title: string;
 }
 
@@ -98,10 +96,7 @@ const PropertyEdit: React.FC = () => {
             images: data.images || [],
             after_repair_value: data.after_repair_value || undefined,
             estimated_rehab: data.estimated_rehab || undefined,
-            property_type: data.property_type || "House",
-            year_built: data.year_built || null,
-            lot_size: data.lot_size || null,
-            parking: data.parking || null
+            property_type: data.property_type || "House"
           });
           
           setImages(data.images || []);
@@ -220,10 +215,12 @@ const PropertyEdit: React.FC = () => {
     setUploadProgress(0);
     
     try {
+      console.log("Starting property update process");
       let finalImages = images;
       
       // Process and upload new images if any
       if (imageFiles.length > 0) {
+        console.log("Processing new images");
         finalImages = await compressAndUploadImages();
       }
       
@@ -233,8 +230,23 @@ const PropertyEdit: React.FC = () => {
       const afterRepairValue = formData.afterRepairValue ? parseFloat(formData.afterRepairValue) : marketPrice * 1.2;
       const estimatedRehab = formData.estimatedRehab ? parseFloat(formData.estimatedRehab) : marketPrice * 0.1;
       
+      console.log("Updating property with data:", {
+        price,
+        market_price: marketPrice,
+        location: formData.location,
+        full_address: formData.full_address,
+        beds: parseInt(formData.beds) || 0,
+        baths: parseInt(formData.baths) || 0,
+        sqft: parseInt(formData.sqft) || 0,
+        description: formData.description,
+        after_repair_value: afterRepairValue,
+        estimated_rehab: estimatedRehab,
+        images: finalImages,
+        property_type: formData.propertyType
+      });
+      
       // Update in Supabase
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('property_listings')
         .update({
           price: price,
@@ -250,10 +262,15 @@ const PropertyEdit: React.FC = () => {
           images: finalImages,
           property_type: formData.propertyType,
         })
-        .eq('id', id);
+        .eq('id', id)
+        .select();
         
-      if (error) throw error;
+      if (error) {
+        console.error("Error updating property:", error);
+        throw error;
+      }
       
+      console.log("Property updated successfully:", data);
       toast.success("Property updated successfully!");
       navigate(`/property/${id}`);
     } catch (error) {

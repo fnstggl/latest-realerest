@@ -62,7 +62,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
   
   return (
     <div>
-      <div className="border border-white/40 shadow-lg p-2 rounded-xl mb-4 my-[35px]">
+      <div className="border border-white/40 p-2 rounded-xl mb-4 my-[35px]">
         <img 
           src={activeImage || mainImage || '/placeholder.svg'} 
           alt="Property image" 
