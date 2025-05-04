@@ -15,7 +15,6 @@ import SEO from "@/components/SEO";
 
 interface Property {
   id: string;
-  title: string;
   price: number;
   market_price: number;
   description?: string;
@@ -31,6 +30,7 @@ interface Property {
   year_built?: number | null;
   lot_size?: number | null;
   parking?: string | null;
+  title: string;
 }
 
 const PropertyEdit: React.FC = () => {
@@ -44,7 +44,6 @@ const PropertyEdit: React.FC = () => {
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
-    title: "",
     price: "",
     marketPrice: "",
     location: "",
@@ -56,9 +55,6 @@ const PropertyEdit: React.FC = () => {
     afterRepairValue: "",
     estimatedRehab: "",
     propertyType: "",
-    yearBuilt: "",
-    lotSize: "",
-    parking: "",
   });
   const [images, setImages] = useState<string[]>([]);
 
@@ -111,7 +107,6 @@ const PropertyEdit: React.FC = () => {
           setImages(data.images || []);
           
           setFormData({
-            title: data.title,
             price: data.price.toString(),
             marketPrice: data.market_price.toString(),
             location: data.location,
@@ -122,10 +117,7 @@ const PropertyEdit: React.FC = () => {
             description: data.description || "",
             afterRepairValue: data.after_repair_value ? data.after_repair_value.toString() : "",
             estimatedRehab: data.estimated_rehab ? data.estimated_rehab.toString() : "",
-            propertyType: data.property_type || "House",
-            yearBuilt: data.year_built ? data.year_built.toString() : "",
-            lotSize: data.lot_size ? data.lot_size.toString() : "",
-            parking: data.parking || ""
+            propertyType: data.property_type || "House"
           });
         }
       } catch (error) {
@@ -245,7 +237,6 @@ const PropertyEdit: React.FC = () => {
       const { error } = await supabase
         .from('property_listings')
         .update({
-          title: formData.title,
           price: price,
           market_price: marketPrice,
           location: formData.location,
@@ -258,9 +249,6 @@ const PropertyEdit: React.FC = () => {
           estimated_rehab: estimatedRehab,
           images: finalImages,
           property_type: formData.propertyType,
-          year_built: formData.yearBuilt ? parseInt(formData.yearBuilt) : null,
-          lot_size: formData.lotSize ? parseInt(formData.lotSize) : null,
-          parking: formData.parking || null,
         })
         .eq('id', id);
         
@@ -306,7 +294,7 @@ const PropertyEdit: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FCFBF8]">
       <SEO
         title={`Edit ${property.title} | Realer Estate`}
         description="Edit your property listing details"
@@ -325,25 +313,13 @@ const PropertyEdit: React.FC = () => {
           </Button>
         </div>
         
-        <div className="border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 mb-12">
+        <div className="p-6 mb-12">
           <h1 className="text-3xl font-bold mb-6">Edit Property</h1>
           
           <form onSubmit={handleSave} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="title" className="font-bold">Property Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  className="mt-2 border-2 border-black"
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="full_address" className="font-bold">Full Address</Label>
+                <Label htmlFor="full_address" className="font-bold">Street Address</Label>
                 <Input
                   id="full_address"
                   name="full_address"
@@ -446,44 +422,6 @@ const PropertyEdit: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="yearBuilt" className="font-bold">Year Built</Label>
-                <Input
-                  id="yearBuilt"
-                  name="yearBuilt"
-                  type="number"
-                  value={formData.yearBuilt}
-                  onChange={handleInputChange}
-                  className="mt-2 border-2 border-black"
-                  placeholder="e.g. 1998"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="lotSize" className="font-bold">Lot Size (sqft)</Label>
-                <Input
-                  id="lotSize"
-                  name="lotSize"
-                  type="number"
-                  value={formData.lotSize}
-                  onChange={handleInputChange}
-                  className="mt-2 border-2 border-black"
-                  placeholder="e.g. 5000"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="parking" className="font-bold">Parking</Label>
-                <Input
-                  id="parking"
-                  name="parking"
-                  value={formData.parking || ""}
-                  onChange={handleInputChange}
-                  className="mt-2 border-2 border-black"
-                  placeholder="e.g. 2-Car Garage"
-                />
-              </div>
-              
-              <div>
                 <Label htmlFor="afterRepairValue" className="font-bold">After Repair Value ($)</Label>
                 <Input
                   id="afterRepairValue"
@@ -516,6 +454,15 @@ const PropertyEdit: React.FC = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 className="mt-2 border-2 border-black h-32"
+              />
+            </div>
+
+            <div>
+              <PropertyImages 
+                mainImage={images[0] || ""} 
+                images={images} 
+                onImagesChange={setImages}
+                editable={true}
               />
             </div>
 
