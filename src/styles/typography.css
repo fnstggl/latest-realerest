@@ -117,35 +117,4 @@
     mix-blend-mode: multiply;
     z-index: -1;
   }
-  
-  /* New brutalist typography styles */
-  .brutalist-heading {
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: -0.05em;
-    line-height: 0.9;
-  }
-  
-  .text-mask {
-    background-color: black;
-    color: white;
-    display: inline-block;
-    padding: 0 0.2em;
-  }
-  
-  .text-rotate-1 {
-    transform: rotate(1deg);
-    display: inline-block;
-  }
-  
-  .text-rotate-neg-1 {
-    transform: rotate(-1deg);
-    display: inline-block;
-  }
-  
-  .editorial-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 1rem;
-  }
 }
