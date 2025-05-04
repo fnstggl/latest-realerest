@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
                 <Button variant="translucent" className="w-full justify-center font-bold text-sm sm:text-base" onClick={handleSignIn}>
                   Log In
                 </Button>
-                <Button variant="translucent" className="w-full justify-center font-bold text-sm sm:text-base" onClick={handleSignUp}>
+                <Button variant="default" className="w-full justify-center font-bold text-sm sm:text-base" onClick={handleSignUp}>
                   Sign up
                 </Button>
               </>}
@@ -118,7 +118,7 @@ const Navbar: React.FC = () => {
                 Log In
               </Button>
 
-              <Button variant="translucent" className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 text-black h-7 sm:h-9" onClick={handleSignUp}>
+              <Button variant="default" className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 text-white bg-black hover:bg-black/90 h-7 sm:h-9" onClick={handleSignUp}>
                 Sign up
               </Button>
             </>}
