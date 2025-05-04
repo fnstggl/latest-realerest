@@ -7,27 +7,35 @@ import SiteFooter from '@/components/sections/SiteFooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { UserTag } from '@/components/UserTag';
 import SEO from '@/components/SEO';
+
 const About: React.FC = () => {
   return <div className="min-h-screen bg-[#FCFBF8] text-black">
-      <SEO title="About Realer Estate | Our Mission & Story" description="Realer Estate is revolutionizing how people buy and sell homes. Learn about our mission to make housing accessible again with below-market properties." canonical="/about" schema={{
-      "@context": "https://schema.org",
-      "@type": "AboutPage",
-      "name": "About Realer Estate",
-      "description": "Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking.",
-      "url": window.location.origin + "/about",
-      "mainEntity": {
-        "@type": "Organization",
-        "name": "Realer Estate",
-        "url": window.location.origin,
-        "logo": `${window.location.origin}/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png`,
-        "description": "Realer Estate helps connect buyers with below-market properties and sellers who want to sell quickly without fees.",
-        "founders": [{
-          "@type": "Person",
-          "name": "Beckett & Derrick",
-          "jobTitle": "Founders"
-        }]
-      }
-    }} />
+      <SEO
+        title="About Realer Estate | Our Mission & Story"
+        description="Realer Estate is revolutionizing how people buy and sell homes. Learn about our mission to make housing accessible again with below-market properties."
+        canonical="/about"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "About Realer Estate",
+          "description": "Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking.",
+          "url": window.location.origin + "/about",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Realer Estate",
+            "url": window.location.origin,
+            "logo": `${window.location.origin}/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png`,
+            "description": "Realer Estate helps connect buyers with below-market properties and sellers who want to sell quickly without fees.",
+            "founders": [
+              {
+                "@type": "Person",
+                "name": "Beckett & Derrick",
+                "jobTitle": "Founders"
+              }
+            ]
+          }
+        }}
+      />
       <Navbar />
       
       

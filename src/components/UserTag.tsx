@@ -1,14 +1,19 @@
+
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+
 export type UserRole = 'seller' | 'buyer' | 'wholesaler';
+
 interface UserTagProps {
   role: UserRole;
 }
+
 export const UserTag: React.FC<UserTagProps> = ({
   role
 }) => {
   let bgColor = '';
   let textColor = '';
+  
   switch (role) {
     case 'seller':
       bgColor = '#F9E0E0'; // Light red
@@ -24,9 +29,17 @@ export const UserTag: React.FC<UserTagProps> = ({
       break;
     default:
       bgColor = '#F5F5F5'; // Light gray
-      textColor = '#6B7280';
-    // Dark gray
+      textColor = '#6B7280'; // Dark gray
   }
-  return;
+  
+  return (
+    <Badge 
+      style={{ backgroundColor: bgColor, color: textColor }}
+      className="font-medium border-0"
+    >
+      {role.charAt(0).toUpperCase() + role.slice(1)}
+    </Badge>
+  );
 };
+
 export default UserTag;
