@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import { useMessages } from '@/hooks/useMessages';
 import { motion } from 'framer-motion';
 import MessageList from '@/components/MessageList';
-import { useUserProfiles } from '@/hooks/useUserProfiles';
+import { useUserProfiles, UserProfile } from '@/hooks/useUserProfiles';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const Messages: React.FC = () => {
@@ -19,7 +19,7 @@ const Messages: React.FC = () => {
     loading: profilesLoading 
   } = useUserProfiles();
   
-  const [userProfilesMap, setUserProfilesMap] = useState<Record<string, any>>({});
+  const [userProfilesMap, setUserProfilesMap] = useState<Record<string, UserProfile>>({});
   const [profilesLoaded, setProfilesLoaded] = useState<boolean>(false);
 
   // Load conversations when component mounts

@@ -74,24 +74,28 @@ export const useConversationData = (
         // Fetch user profile separately to avoid race conditions
         setProfileLoading(true);
         try {
-          const profile = await getUserProfile(otherUserId);
-          console.log(`[Conversation] User profile retrieved:`, profile);
-          
-          if (profile) {
-            setOtherUserProfile(profile);
-          } else {
-            throw new Error("Failed to fetch profile");
+          if (otherUserId) {
+            const profile = await getUserProfile(otherUserId);
+            console.log(`[Conversation] User profile retrieved:`, profile);
+            
+            if (profile) {
+              setOtherUserProfile(profile);
+            } else {
+              throw new Error("Failed to fetch profile");
+            }
           }
         } catch (error) {
           console.error('[Conversation] Error getting user profile:', error);
-          // Create fallback profile
-          setOtherUserProfile({
-            id: otherUserId,
-            name: "Unknown User",
-            email: "",
-            role: "buyer",
-            _source: "fallback"
-          });
+          // Create fallback profile if needed
+          if (otherUserId) {
+            setOtherUserProfile({
+              id: otherUserId,
+              name: "Unknown User",
+              email: "",
+              role: "buyer",
+              _source: "fallback"
+            });
+          }
         } finally {
           setProfileLoading(false);
         }

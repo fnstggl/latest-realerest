@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
@@ -12,6 +12,7 @@ import ConversationContent from '@/components/conversation/ConversationContent';
 import { useConversationData } from '@/hooks/useConversationData';
 import { useConversationSubscription } from '@/hooks/useConversationSubscription';
 import { groupMessagesByDate } from '@/utils/messageUtils';
+import { UserProfile } from '@/hooks/useUserProfiles';
 
 const Conversation: React.FC = () => {
   const { id: conversationId } = useParams<{ id: string }>();
@@ -40,9 +41,10 @@ const Conversation: React.FC = () => {
   } = useConversationData(conversationId, user?.id);
   
   // Update local messages when conversation data changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (messages.length > 0) {
       setLocalMessages(messages);
+      console.log('[Conversation] Updated local messages:', messages);
     }
   }, [messages]);
   
@@ -61,6 +63,15 @@ const Conversation: React.FC = () => {
   const isLoading = loading || profileLoading;
   const displayName = otherUserProfile?.name || "Loading...";
   const userRole = otherUserProfile?.role || "buyer";
+  
+  // Debug information
+  console.log('[Conversation] Current state:', {
+    otherUserProfile,
+    displayName,
+    userRole,
+    isLoading,
+    messagesCount: localMessages.length
+  });
   
   // Adapter function to match the MessageInput component's expected signature
   const handleSendMessage = async (message: string): Promise<void> => {

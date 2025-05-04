@@ -64,21 +64,33 @@ const MessageList: React.FC<MessageListProps> = ({
       </div>;
   }
   
+  // Debug output for profilesMap
+  console.log('[MessageList] ProfilesMap received:', userProfilesMap);
+  
   return <div className="divide-y divide-gray-200">
       {conversations.map(conversation => {
-        const isUnread = !conversation.latestMessage.isRead && conversation.latestMessage.senderId !== user?.id;
+        const isUnread = !conversation.latestMessage.isRead && 
+                         conversation.latestMessage.senderId !== user?.id;
         
-        // CRITICAL FIX: Use the profile from our profiles map if available, with proper fallbacks
-        const userProfile = userProfilesMap[conversation.otherUserId];
+        // Get profile from our profiles map with proper debugging
+        const otherUserId = conversation.otherUserId;
+        const userProfile = userProfilesMap[otherUserId];
+        
+        console.log(`[MessageList] Getting profile for ${otherUserId}:`, 
+                    userProfile || 'Not found in map');
         
         // Determine display name with proper priority:
         // 1. Use profile name from userProfilesMap if available
         // 2. Fall back to conversation.otherUserName
         // 3. Last resort: "Unknown User"
-        const displayName = userProfile?.name || conversation.otherUserName || "Unknown User";
+        const displayName = userProfile?.name || 
+                            conversation.otherUserName || 
+                            "Unknown User";
         
         // Get the role, with proper fallback
-        const userRole = userProfile?.role || conversation.otherUserRole || "buyer";
+        const userRole = userProfile?.role || 
+                         conversation.otherUserRole || 
+                         "buyer";
         
         return <div 
                 key={conversation.id} 

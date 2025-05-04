@@ -110,7 +110,7 @@ export const useUserProfiles = () => {
             name: profileData.email,
             email: profileData.email,
             role,
-            _source: 'db-email'
+            _source: 'db'
           };
 
           console.log(`[useUserProfiles] Using email as name for ${userId}:`, userProfile);
@@ -262,7 +262,7 @@ export const useUserProfiles = () => {
                 name: dbProfile.email,
                 email: dbProfile.email,
                 role,
-                _source: 'db-email'
+                _source: 'db'
               };
             }
             // Shouldn't happen but just in case
@@ -272,7 +272,7 @@ export const useUserProfiles = () => {
                 name: 'User',
                 email: '',
                 role,
-                _source: 'db-fallback'
+                _source: 'fallback'
               };
             }
             
