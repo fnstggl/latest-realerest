@@ -126,7 +126,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       return (
         <div className="flex-1 relative">
           {/* Container for skeleton cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array(skeletonCount).fill(0).map((_, i) => (
               <div key={i} className="relative">
                 <div className="border border-white/30 shadow-lg overflow-hidden rounded-xl">
@@ -153,7 +153,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           </div>
           
           {/* Sign in button positioned in the center */}
-          <div className="absolute left-0 right-0 bottom-0 flex justify-center items-center">
+          <div className="absolute left-0 right-0 top-1/2 flex justify-center items-center transform -translate-y-1/2">
             <Link to="/signin">
               <Button 
                 variant="gradient" 
@@ -161,7 +161,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               >
                 Sign in to view more properties
                 <span 
-                  className="absolute inset-0 transition-opacity duration-300 rounded-xl pointer-events-none"
+                  className="absolute inset-0 rounded-xl pointer-events-none"
                   style={{
                     background: "transparent",
                     border: "2px solid transparent",
@@ -225,10 +225,39 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   const shouldBlurLastRow = !isAuthenticated && listings.length > itemsPerRow;
   
   // Calculate the start index for the blurred items
-  // We want to blur the last full row of items
+  // We want to blur the last full or partial row of items
+  const remainingInLastRow = listings.length % itemsPerRow;
   const blurStartIndex = shouldBlurLastRow 
-    ? Math.max(0, listings.length - (listings.length % itemsPerRow || itemsPerRow))
+    ? Math.max(0, listings.length - remainingInLastRow || itemsPerRow)
     : listings.length;
+    
+  // Calculate how many skeleton cards to add to fill the last row
+  const skeletonsNeeded = remainingInLastRow === 0 ? 0 : itemsPerRow - remainingInLastRow;
+  
+  // Create a function to render a skeleton card
+  const renderSkeletonCard = (key: number) => (
+    <div key={`skeleton-${key}`} className="relative blur-sm">
+      <div className="border border-white/30 shadow-lg overflow-hidden rounded-xl">
+        <Skeleton className="h-[240px] w-full rounded-t-xl" />
+        <div className="p-6 flex-1 flex flex-col bg-white/90 rounded-b-xl">
+          <Skeleton className="h-6 w-3/4 mb-3" />
+          <Skeleton className="h-5 w-1/3 mb-1" />
+          <Skeleton className="h-6 w-1/2 mb-4" />
+          <Skeleton className="h-5 w-2/3 mb-4" />
+          <div className="border-t border-white/20 pt-4 mt-auto">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-8 w-12" />
+                <Skeleton className="h-8 w-12" />
+                <Skeleton className="h-8 w-16" />
+              </div>
+              <Skeleton className="h-10 w-10 rounded-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div ref={resultsContainerRef} className="relative flex-1">
@@ -253,10 +282,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             />
           </div>
         ))}
+        
+        {/* Add skeleton cards to fill out the last row if needed */}
+        {shouldBlurLastRow && skeletonsNeeded > 0 && 
+          Array(skeletonsNeeded).fill(0).map((_, i) => renderSkeletonCard(i))
+        }
       </div>
       
       {shouldBlurLastRow && (
-        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center" style={{ height: '150px' }}>
+        <div className="absolute bottom-1/3 left-0 right-0 flex items-center justify-center z-10">
           <Link to="/signin">
             <Button 
               variant="gradient" 
@@ -264,7 +298,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             >
               Sign in to view more properties
               <span 
-                className="absolute inset-0 transition-opacity duration-300 rounded-xl pointer-events-none"
+                className="absolute inset-0 rounded-xl pointer-events-none"
                 style={{
                   background: "transparent",
                   border: "2px solid transparent",
