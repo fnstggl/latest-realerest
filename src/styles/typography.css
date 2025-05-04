@@ -132,6 +132,26 @@
     display: inline-block;
   }
   
+  /* Negative text effects - inspired by the attached images */
+  .negative-text-effect {
+    color: #FCFBF8;
+    -webkit-text-stroke: 1px #000;
+    font-weight: 900;
+    display: inline-block;
+    position: relative;
+  }
+
+  .negative-text-gradient {
+    background-image: url('/lovable-uploads/bc531d0c-ccfd-4f4a-b0d0-b6402833856c.png');
+    background-size: cover;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1px #000;
+    font-weight: 900;
+    display: inline-block;
+  }
+  
   .negative-text {
     color: transparent;
     -webkit-text-stroke: 1px #000;
@@ -143,8 +163,8 @@
     -webkit-background-clip: text;
     color: transparent;
     background-color: #000;
-    -webkit-text-fill-color: #fff;
-    text-fill-color: #fff;
+    -webkit-text-fill-color: #FCFBF8;
+    text-fill-color: #FCFBF8;
     -webkit-text-stroke: 1px #000;
     mix-blend-mode: exclusion;
   }
@@ -196,7 +216,6 @@
   }
   
   .tilted-container {
-    transform: rotate(2deg);
     margin: 2rem 0;
   }
 }
