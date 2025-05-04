@@ -24,6 +24,7 @@ const SEO: React.FC<SEOProps> = ({
   const siteUrl = window.location.origin || 'https://donedealfinal.lovable.app';
   const url = canonical ? `${siteUrl}${canonical}` : window.location.href || siteUrl;
   const fullImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
+  const favicon = '/lovable-uploads/44490515-f297-40ac-a263-afe8590da99f.png';
   
   return (
     <Helmet>
@@ -31,6 +32,7 @@ const SEO: React.FC<SEOProps> = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={url} />
+      <link rel="icon" type="image/png" href={favicon} />
       
       {/* Open Graph */}
       <meta property="og:title" content={title} />
