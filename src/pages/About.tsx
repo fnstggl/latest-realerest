@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -7,7 +6,6 @@ import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { UserTag } from '@/components/UserTag';
-
 const About: React.FC = () => {
   return <div className="min-h-screen bg-[#FCFBF8] text-black">
       <Navbar />
@@ -39,7 +37,7 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-6 md:pl-12 relative">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img src="/lovable-uploads/4b977fed-5785-41f3-aa3b-dd408eb81af3.png" alt="New York City skyline" className="w-full h-full object-cover grayscale" />
+                  <img src="/lovable-uploads/f217c927-8ac0-4efe-b6d7-18447accdf40.png" alt="New York City skyline" className="w-full h-full object-cover grayscale" />
                 </div>
                 <p className="text-sm mt-2 italic text-right">Where it all began</p>
               </div>
@@ -87,11 +85,11 @@ const About: React.FC = () => {
               </div>
               <div className="border border-black p-6 mt-8 md:mt-16 relative my-0">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">02</div>
-                <p className="text-lg">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.</p>
+                <p className="text-lg my-0">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.</p>
               </div>
               <div className="border border-black p-6 mt-4 md:mt-8 relative my-0">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">03</div>
-                <p className="text-lg">Due to the high demand for below-market properties, listings on our platform <span className="font-playfair italic">may not stay available</span> for long.</p>
+                <p className="text-lg my-0">Due to the high demand for below-market properties, listings on our platform <span className="font-playfair italic">may not stay available</span> for long.</p>
               </div>
             </div>
           </div>
@@ -126,7 +124,7 @@ const About: React.FC = () => {
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-12 md:col-span-5 order-1">
                 <div className="aspect-square overflow-hidden">
-                  <img src="/lovable-uploads/b82e0252-0b3e-4142-bbe9-1f4da2824ab9.png" alt="Classic apartment buildings" className="w-full h-full object-cover grayscale" />
+                  <img src="/lovable-uploads/c4bb3420-aeba-472f-bb6a-26ee1f4edf2c.png" alt="Classic apartment buildings" className="w-full h-full object-cover grayscale" />
                 </div>
                 <p className="text-sm mt-2 italic">Properties with potential</p>
               </div>
@@ -208,5 +206,4 @@ const About: React.FC = () => {
       <SiteFooter />
     </div>;
 };
-
 export default About;
