@@ -136,14 +136,14 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                         type="single" 
                         value={filters.minPrice.toString()}
                         onValueChange={(value) => value && handleFilterChange("minPrice", parseInt(value))}
-                        className="flex flex-wrap gap-2 justify-start"
+                        className="flex p-1 rounded-full bg-gray-100 w-full"
                       >
                         <ToggleGroupItem 
                           value="0"
-                          className={`px-3 py-1 rounded-full ${
+                          className={`rounded-full flex-1 text-center py-2 ${
                             filters.minPrice === 0 
                               ? "bg-black text-white" 
-                              : "bg-gray-100 hover:bg-gray-200"
+                              : "hover:bg-gray-200"
                           }`}
                         >
                           Any
@@ -152,10 +152,10 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                           <ToggleGroupItem 
                             key={price} 
                             value={price.toString()}
-                            className={`px-3 py-1 rounded-full ${
+                            className={`rounded-full flex-1 text-center py-2 ${
                               filters.minPrice === price 
                                 ? "bg-black text-white" 
-                                : "bg-gray-100 hover:bg-gray-200"
+                                : "hover:bg-gray-200"
                             }`}
                           >
                             ${(price/1000).toFixed(0)}k
@@ -170,14 +170,14 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                         type="single" 
                         value={filters.maxPrice.toString()}
                         onValueChange={(value) => value && handleFilterChange("maxPrice", parseInt(value))}
-                        className="flex flex-wrap gap-2 justify-start"
+                        className="flex p-1 rounded-full bg-gray-100 w-full"
                       >
                         <ToggleGroupItem 
                           value="2000001"
-                          className={`px-3 py-1 rounded-full ${
+                          className={`rounded-full flex-1 text-center py-2 ${
                             filters.maxPrice === 2000001 
                               ? "bg-black text-white" 
-                              : "bg-gray-100 hover:bg-gray-200"
+                              : "hover:bg-gray-200"
                           }`}
                         >
                           Any
@@ -186,10 +186,10 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                           <ToggleGroupItem 
                             key={price} 
                             value={price.toString()}
-                            className={`px-3 py-1 rounded-full ${
+                            className={`rounded-full flex-1 text-center py-2 ${
                               filters.maxPrice === price 
                                 ? "bg-black text-white" 
-                                : "bg-gray-100 hover:bg-gray-200"
+                                : "hover:bg-gray-200"
                             }`}
                           >
                             ${price >= 1000000 ? (price/1000000).toFixed(1) + 'M' : (price/1000).toFixed(0) + 'k'}
@@ -286,14 +286,14 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                     type="single" 
                     value={filters.belowMarket.toString()}
                     onValueChange={(value) => value && handleFilterChange("belowMarket", parseInt(value))}
-                    className="flex flex-wrap gap-2 justify-center"
+                    className="flex p-1 rounded-full bg-gray-100 w-full"
                   >
                     <ToggleGroupItem 
                       value="0"
-                      className={`px-4 py-2 rounded-full ${
+                      className={`rounded-full flex-1 text-center py-2 ${
                         filters.belowMarket === 0 
                           ? "bg-black text-white" 
-                          : "bg-gray-100 hover:bg-gray-200"
+                          : "hover:bg-gray-200"
                       }`}
                     >
                       Any
@@ -302,10 +302,10 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                       <ToggleGroupItem 
                         key={percentage} 
                         value={percentage.toString()}
-                        className={`px-4 py-2 rounded-full ${
+                        className={`rounded-full flex-1 text-center py-2 ${
                           filters.belowMarket === percentage 
                             ? "bg-black text-white" 
-                            : "bg-gray-100 hover:bg-gray-200"
+                            : "hover:bg-gray-200"
                         }`}
                       >
                         {percentage}%
