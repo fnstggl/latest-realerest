@@ -60,8 +60,8 @@ const About: React.FC = () => {
               <div className="col-span-12 md:col-span-6 md:pl-12 relative">
                 <div className="aspect-[3/4] overflow-hidden">
                   <img 
-                    src="/lovable-uploads/4b977fed-5785-41f3-aa3b-dd408eb81af3.png" 
-                    alt="New York City skyline" 
+                    src="/lovable-uploads/d02ec260-e51f-47be-bbc4-9a50902a8bcc.png" 
+                    alt="New York City street view with Chrysler Building" 
                     className="w-full h-full object-cover grayscale" 
                     loading="eager" 
                   />
@@ -86,7 +86,6 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-8 md:order-1">
                 <div className="flex items-start mb-8">
-                  <span className="text-8xl font-playfair italic font-bold tracking-tighter mr-4 opacity-20">01</span>
                   <h2 className="brutalist-text text-6xl md:text-7xl tracking-tighter mt-4">OUR STORY</h2>
                 </div>
                 <div className="text-lg md:text-xl space-y-8 md:pl-24">
@@ -152,8 +151,8 @@ const About: React.FC = () => {
               <div className="col-span-12 md:col-span-5 order-1 md:order-2">
                 <div className="aspect-square overflow-hidden">
                   <img 
-                    src="/lovable-uploads/8fa9a7ae-6846-47b2-89cd-edcf73e2f353.png" 
-                    alt="Modern home exterior" 
+                    src="/lovable-uploads/6a2955a0-db15-4579-b968-268a78f37c02.png" 
+                    alt="Aerial view of classic neighborhood" 
                     className="w-full h-full object-cover grayscale" 
                     loading="lazy" 
                   />
