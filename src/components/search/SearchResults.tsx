@@ -268,11 +268,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     // For mobile (1 item per row)
     if (itemsPerRow === 1) {
       return {
-        // For mobile, center the button on the last property card
-        // Adjusted positioning to be more centered vertically on mobile
-        top: `${rowPosition * 500 + 370}px`, // Increased from 320px to 370px to move down more on mobile
+        // Use position: 'absolute', bottom: 0 on the container and relative positioning here
+        // This will ensure the button stays attached to the blurred card
+        position: 'relative' as const,
+        top: 'auto' as const,
         left: '50%',
-        transform: 'translateX(-50%)',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 50,
       };
     }
     
@@ -312,39 +314,77 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       </div>
       
       {shouldProcessForNonAuth && (
-        <div 
-          className="absolute flex items-center justify-center"
-          style={{
-            top: buttonPosition.top,
-            left: buttonPosition.left,
-            transform: buttonPosition.transform,
-            width: 'fit-content',
-            zIndex: 10
-          }}
-        >
-          <Link to="/signin">
-            <Button 
-              variant="gradient" 
-              className="text-black bg-white hover:bg-white relative overflow-hidden px-8 py-2 rounded-xl z-10"
+        itemsPerRow === 1 ? (
+          // Mobile layout: position the button within the blurred card
+          <div className="relative">
+            {/* Create an element for the button that's positioned over the last card */}
+            <div 
+              className="absolute left-0 right-0 flex justify-center items-center"
+              style={{
+                bottom: '50%', // Position in the middle of the card vertically
+                zIndex: 20,
+              }}
             >
-              Sign in to view more properties
-              <span 
-                className="absolute inset-0 rounded-xl pointer-events-none"
-                style={{
-                  background: "transparent",
-                  border: "2px solid transparent",
-                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                  backgroundOrigin: "border-box",
-                  backgroundClip: "border-box",
-                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude",
-                  boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-                }}
-              ></span>
-            </Button>
-          </Link>
-        </div>
+              <Link to="/signin">
+                <Button 
+                  variant="gradient" 
+                  className="text-black bg-white hover:bg-white relative overflow-hidden px-8 py-2 rounded-xl z-10"
+                >
+                  Sign in to view more properties
+                  <span 
+                    className="absolute inset-0 rounded-xl pointer-events-none"
+                    style={{
+                      background: "transparent",
+                      border: "2px solid transparent",
+                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                      backgroundOrigin: "border-box",
+                      backgroundClip: "border-box",
+                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                      WebkitMaskComposite: "xor",
+                      maskComposite: "exclude",
+                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+                    }}
+                  ></span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          // Desktop layout: use the pixel-based positioning (unchanged)
+          <div 
+            className="absolute flex items-center justify-center"
+            style={{
+              top: buttonPosition.top,
+              left: buttonPosition.left,
+              transform: buttonPosition.transform,
+              width: 'fit-content',
+              zIndex: 10
+            }}
+          >
+            <Link to="/signin">
+              <Button 
+                variant="gradient" 
+                className="text-black bg-white hover:bg-white relative overflow-hidden px-8 py-2 rounded-xl z-10"
+              >
+                Sign in to view more properties
+                <span 
+                  className="absolute inset-0 rounded-xl pointer-events-none"
+                  style={{
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "border-box",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
+                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+                  }}
+                ></span>
+              </Button>
+            </Link>
+          </div>
+        )
       )}
     </div>
   );
