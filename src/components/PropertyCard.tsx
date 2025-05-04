@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
@@ -134,6 +133,25 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 ></span>
               </div>
             </div>
+          </div>
+        </div>
+        {/* Invisible structured data for search engines */}
+        <div style={{ display: 'none' }} aria-hidden="true">
+          <div itemScope itemType="https://schema.org/Residence">
+            <meta itemProp="name" content={address || (location ? location.split(',')[0] : 'Property Listing')} />
+            <meta itemProp="numberOfRooms" content={beds.toString()} />
+            <meta itemProp="floorSize" content={sqft.toString()} />
+            <meta itemProp="numberOfBathroomsTotal" content={baths.toString()} />
+            <div itemProp="address" itemScope itemType="https://schema.org/PostalAddress">
+              <meta itemProp="addressLocality" content={city} />
+              <meta itemProp="addressRegion" content={stateZip} />
+            </div>
+            <div itemProp="offers" itemScope itemType="https://schema.org/Offer">
+              <meta itemProp="price" content={price.toString()} />
+              <meta itemProp="priceCurrency" content="USD" />
+            </div>
+            <meta itemProp="url" content={`${window.location.origin}/property/${id}`} />
+            <meta itemProp="image" content={validImage} />
           </div>
         </div>
       </div>

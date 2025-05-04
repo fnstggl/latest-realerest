@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -6,6 +7,7 @@ import SearchResults from '@/components/search/SearchResults';
 import SearchFooter from '@/components/search/SearchFooter';
 import LocationAlertForm from '@/components/LocationAlertForm';
 import HorizontalFilters from '@/components/search/HorizontalFilters';
+import SEO from '@/components/SEO';
 
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -68,6 +70,26 @@ const Search: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FCFBF8] pt-24">
+      <SEO
+        title={location ? `Properties in ${location} | Realer Estate` : "Search Properties | Realer Estate"}
+        description={`Find below-market real estate deals ${location ? `in ${location}` : 'in your area'}. Browse homes, apartments, and investment properties with significant discounts.`}
+        canonical="/search"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": location ? `Properties in ${location}` : "Search Properties",
+          "description": `Find below-market real estate deals ${location ? `in ${location}` : 'in your area'}`,
+          "url": window.location.origin + `/search${location ? `?q=${encodeURIComponent(location)}` : ''}`,
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": `${window.location.origin}/search?q={search_term_string}`
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }}
+      />
       <SearchHeader />
       
       <div className="container px-4 lg:px-8 mx-auto py-8">

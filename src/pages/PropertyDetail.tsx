@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -19,6 +20,7 @@ import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import RewardBadge from '@/components/property-detail/RewardBadge';
 import { formatCurrency } from '@/lib/utils';
+import SEO from '@/components/SEO';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -41,7 +43,7 @@ const PropertyDetail: React.FC = () => {
     shouldShowSellerInfo,
     refreshProperty
   } = usePropertyDetail(id);
-  
+
   useEffect(() => {
     if (id) {
       window.scrollTo(0, 0);
@@ -121,6 +123,44 @@ const PropertyDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
+      {property && (
+        <SEO
+          title={`${property.title} | Realer Estate`}
+          description={property.description ? 
+            (property.description.length > 155 ? 
+              `${property.description.substring(0, 152)}...` : property.description) : 
+            `${property.beds} bed, ${property.baths} bath, ${property.sqft} sqft property in ${property.location}. Below market price: ${formatCurrency(property.price)}`}
+          image={property.images && property.images.length > 0 ? property.images[0] : '/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png'}
+          canonical={`/property/${property.id}`}
+          type="article"
+          schema={{
+            "@context": "https://schema.org",
+            "@type": "RealEstateListing",
+            "name": property.title,
+            "description": property.description,
+            "url": window.location.href,
+            "datePosted": property.created_at,
+            "image": property.images && property.images.length > 0 ? property.images[0] : undefined,
+            "numberOfRooms": property.beds,
+            "numberOfBathroomsTotal": property.baths,
+            "floorSize": {
+              "@type": "QuantitativeValue",
+              "value": property.sqft,
+              "unitCode": "FTK"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": property.location,
+              "addressCountry": "US"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": property.price,
+              "priceCurrency": "USD"
+            }
+          }}
+        />
+      )}
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

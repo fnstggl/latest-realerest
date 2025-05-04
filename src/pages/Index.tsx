@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
@@ -5,10 +6,30 @@ import FeaturedProperties from '@/components/sections/FeaturedProperties';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import CTASection from '@/components/sections/CTASection';
 import SiteFooter from '@/components/sections/SiteFooter';
+import SEO from '@/components/SEO';
 
 const Index: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FCFBF8] overflow-x-hidden relative perspective-container">
+      <SEO
+        title="Realer Estate – Below Market Real Estate Deals & Investment Opportunities"
+        description="Find your dream home at below market value. Realer Estate connects you with motivated sellers offering properties at significant discounts without agent fees."
+        canonical="/"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Realer Estate",
+          "url": window.location.origin,
+          "logo": `${window.location.origin}/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png`,
+          "sameAs": [],
+          "description": "Find below market real estate deals & investment opportunities at Realer Estate. Get motivated sellers and off-market properties.",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "US"
+          }
+        }}
+      />
+      
       {/* Visually hidden, but SEO-visible h1 (for accessibility and SEO) */}
       <h1 className="sr-only" tabIndex={-1}>
         Realer Estate – Below Market Real Estate Deals & Investment Opportunities

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -10,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from 'react-helmet-async';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SEO from '@/components/SEO';
 
 interface BlogPostData {
   id: string;
@@ -92,51 +92,37 @@ const BlogPost: React.FC = () => {
       <Navbar />
       
       {blogPost && (
-        <Helmet>
-          <title>{blogPost.title} | Realer Estate Blog</title>
-          <meta name="description" content={blogPost.content.substring(0, 155)} />
-          <meta property="og:title" content={blogPost.title} />
-          <meta property="og:description" content={blogPost.content.substring(0, 155)} />
-          <meta property="og:image" content={blogPost.image} />
-          <meta property="og:type" content="article" />
-          <link rel="canonical" href={window.location.href} />
-          <meta name="author" content={blogPost.author} />
-          <meta name="twitter:title" content={blogPost.title} />
-          <meta name="twitter:description" content={blogPost.content.substring(0, 155)} />
-          <meta name="twitter:image" content={blogPost.image} />
-          
-          {/* Location-specific metadata */}
-          {blogPost.location && (
-            <>
-              <meta name="keywords" content={`real estate, property, ${blogPost.location}, homes for sale, affordable homes, investment properties`} />
-              <meta property="og:locality" content={blogPost.location} />
-            </>
-          )}
-          
-          {/* Article-specific structured data */}
-          <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "BlogPosting",
-              "headline": blogPost.title,
-              "image": blogPost.image,
-              "datePublished": blogPost.created_at,
-              "author": {
-                "@type": "Person",
-                "name": blogPost.author
-              },
-              "publisher": {
-                "@type": "Organization",
-                "name": "Realer Estate",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png"
-                }
-              },
-              "description": blogPost.excerpt || blogPost.content.substring(0, 155)
-            })}
-          </script>
-        </Helmet>
+        <SEO
+          title={`${blogPost.title} | Realer Estate Blog`}
+          description={blogPost.excerpt || blogPost.content.substring(0, 155)}
+          canonical={`/blog/${id}`}
+          image={blogPost.image}
+          type="article"
+          schema={{
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": blogPost.title,
+            "image": blogPost.image,
+            "datePublished": blogPost.created_at,
+            "author": {
+              "@type": "Person",
+              "name": blogPost.author
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Realer Estate",
+              "logo": {
+                "@type": "ImageObject",
+                "url": `${window.location.origin}/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png`
+              }
+            },
+            "description": blogPost.excerpt || blogPost.content.substring(0, 155),
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": window.location.href
+            }
+          }}
+        />
       )}
       
       <div className="container mx-auto px-4 py-16 max-w-4xl">
