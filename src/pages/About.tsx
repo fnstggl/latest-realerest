@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -7,7 +6,6 @@ import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { UserTag } from '@/components/UserTag';
-
 const About: React.FC = () => {
   return <div className="min-h-screen bg-[#FCFBF8] text-black">
       <Navbar />
@@ -28,8 +26,8 @@ const About: React.FC = () => {
               <div className="col-span-12 md:col-span-6">
                 <h1 className="brutalist-text text-[14vw] md:text-[8vw] leading-none mb-6 relative z-10 tracking-tighter">
                   <span className="block">REAL</span>
-                  <span className="block relative md:ml-12">ESTATE</span>
-                  <span className="block relative ml-8">REIMAGINED</span>
+                  <span className="block relative md:ml-12 mx-0">ESTATE</span>
+                  <span className="block relative ml-8 mx-0">REIMAGINED</span>
                 </h1>
                 <div className="mt-6 md:mt-12 relative">
                   <p className="text-xl md:text-2xl font-playfair italic ml-4 border-l-4 border-black pl-6 tracking-wide">
@@ -208,5 +206,4 @@ const About: React.FC = () => {
       <SiteFooter />
     </div>;
 };
-
 export default About;
