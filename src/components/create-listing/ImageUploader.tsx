@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, X } from 'lucide-react';
@@ -16,7 +17,7 @@ interface ImageUploaderProps {
 // Maximum image size in bytes (3MB)
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 // Maximum number of images allowed
-const MAX_IMAGES = 10; // Changed from 5 to 10
+const MAX_IMAGES = 10;
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
   images,
@@ -28,6 +29,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   isProcessingImages
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isValidating, setIsValidating] = useState(false);
 
   const handleImageUpload = () => {
     if (fileInputRef.current) {
@@ -35,21 +37,23 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  // Optimized image handling with better validation and processing
+  // Optimized image handling with better validation and preview generation
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-
-    // Check if adding these files would exceed the limit
-    if (images.length + files.length > MAX_IMAGES) {
-      toast.warning(`Maximum ${MAX_IMAGES} images allowed.`);
-    }
-
-    const newImageFiles: File[] = [];
-    // Limit to MAX_IMAGES images maximum
-    const filesToProcess = Math.min(MAX_IMAGES - images.length, files.length);
+    
+    setIsValidating(true);
 
     try {
+      // Check if adding these files would exceed the limit
+      if (images.length + files.length > MAX_IMAGES) {
+        toast.warning(`Maximum ${MAX_IMAGES} images allowed. Only adding the first ${MAX_IMAGES - images.length}.`);
+      }
+
+      const newImageFiles: File[] = [];
+      // Limit to MAX_IMAGES images maximum
+      const filesToProcess = Math.min(MAX_IMAGES - images.length, files.length);
+
       for (let i = 0; i < filesToProcess; i++) {
         const file = files[i];
         
@@ -61,8 +65,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         
         // Check file size
         if (file.size > MAX_IMAGE_SIZE) {
-          toast.warning(`Image "${file.name}" exceeds ${MAX_IMAGE_SIZE/1024/1024}MB limit and was skipped.`);
-          continue;
+          toast.warning(`Image "${file.name}" exceeds ${MAX_IMAGE_SIZE/1024/1024}MB limit. Compressing...`);
         }
         
         newImageFiles.push(file);
@@ -72,19 +75,19 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         setImages(prev => [...prev, imageUrl]);
       }
 
-      setImageFiles(prev => [...prev, ...newImageFiles]);
-      
       if (newImageFiles.length > 0) {
-        toast.success(`${newImageFiles.length} image(s) added.`);
+        setImageFiles(prev => [...prev, ...newImageFiles]);
+        toast.success(`${newImageFiles.length} image(s) added. They'll be optimized during upload.`);
       }
     } catch (error) {
       console.error("Error processing images:", error);
       toast.error("Error processing images. Please try again.");
     } finally {
-      // Reset the file input
+      // Reset the file input and validation state
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+      setIsValidating(false);
     }
   };
 
@@ -102,7 +105,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     <div className="p-6 rounded-xl border border-black/10 bg-white">
       <h2 className="text-xl font-bold mb-4">Property Images</h2>
       <p className="text-sm text-gray-600 mb-4">
-        Recommended: Add up to {MAX_IMAGES} images (less than {MAX_IMAGE_SIZE/1024/1024}MB each) for faster upload times.
+        Recommended: Add up to {MAX_IMAGES} images (less than {MAX_IMAGE_SIZE/1024/1024}MB each). 
+        Images will be automatically optimized to save storage and improve loading times.
       </p>
       <div className="mb-6">
         <input
@@ -112,15 +116,19 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           onChange={handleFileChange}
           multiple
           accept="image/*"
-          disabled={isSubmitting || isProcessingImages || images.length >= MAX_IMAGES}
+          disabled={isSubmitting || isProcessingImages || isValidating || images.length >= MAX_IMAGES}
         />
         <button 
           type="button" 
           className="h-32 w-full bg-white text-black relative rounded-xl flex flex-col items-center justify-center gap-2 transition-all disabled:opacity-50"
           onClick={handleImageUpload}
-          disabled={isSubmitting || isProcessingImages || images.length >= MAX_IMAGES}
+          disabled={isSubmitting || isProcessingImages || isValidating || images.length >= MAX_IMAGES}
         >
-          {isProcessingImages ? (
+          {isValidating ? (
+            <>
+              <span className="font-bold">Validating images...</span>
+            </>
+          ) : isProcessingImages ? (
             <>
               <span className="font-bold">Processing images...</span>
             </>
@@ -152,6 +160,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 src={img} 
                 alt={`Property ${index + 1}`} 
                 className="h-32 w-full object-cover" 
+                loading="lazy"
+                decoding="async"
               />
               <button 
                 type="button" 
@@ -173,6 +183,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             className="bg-black h-2.5 rounded-full transition-all duration-300" 
             style={{ width: `${uploadProgress}%` }}
           ></div>
+          <p className="text-xs text-gray-500 mt-1">
+            {uploadProgress < 30 ? "Compressing images..." : 
+             uploadProgress < 80 ? "Uploading images..." : 
+             "Finalizing..."}
+          </p>
         </div>
       )}
     </div>

@@ -4,12 +4,15 @@ import { Link } from "react-router-dom";
 import { Building2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { deletePropertyImages } from "@/components/create-listing/UploadService";
+
 interface Property {
   id: string;
   title: string;
   price: number;
   marketPrice: number;
   image?: string;
+  images?: string[];
   location: string;
   beds: number;
   baths: number;
@@ -17,6 +20,7 @@ interface Property {
   belowMarket: number;
   waitlistCount?: number;
 }
+
 interface PropertiesTabProps {
   myProperties: Property[];
   setMyProperties: React.Dispatch<React.SetStateAction<Property[]>>;
@@ -27,6 +31,7 @@ interface PropertiesTabProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   user: any;
 }
+
 const PropertiesTab: React.FC<PropertiesTabProps> = ({
   myProperties,
   setMyProperties,
@@ -39,23 +44,52 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
 }) => {
   const handleUnlistProperty = async (propertyId: string) => {
     if (!user) return;
+    
     try {
-      const {
-        error
-      } = await supabase.from('property_listings').delete().eq('id', propertyId).eq('user_id', user.id);
+      // Find the property to get its images before deletion
+      const property = myProperties.find(p => p.id === propertyId);
+      const propertyImages = property?.images || [];
+      
+      // First delete from database
+      const { error } = await supabase
+        .from('property_listings')
+        .delete()
+        .eq('id', propertyId)
+        .eq('user_id', user.id);
+        
       if (error) {
         console.error("Error deleting property:", error);
         toast.error("Failed to unlist property");
         return;
       }
+      
+      // Update local state
       const updatedProperties = myProperties.filter(property => property.id !== propertyId);
       setMyProperties(updatedProperties);
-      toast.success("Property unlisted successfully");
+      
+      // After database deletion succeeds, clean up storage
+      // We do this after database deletion to ensure we don't have orphaned records
+      if (propertyImages.length > 0) {
+        toast.loading("Cleaning up property images...", { id: "cleanup-toast" });
+        
+        const cleanupResult = await deletePropertyImages(propertyId, propertyImages);
+        
+        if (cleanupResult) {
+          toast.dismiss("cleanup-toast");
+          toast.success("Property unlisted successfully and images cleaned up");
+        } else {
+          toast.dismiss("cleanup-toast");
+          toast.success("Property unlisted successfully, but some images couldn't be cleaned up");
+        }
+      } else {
+        toast.success("Property unlisted successfully");
+      }
     } catch (error) {
       console.error("Exception unlisting property:", error);
       toast.error("Failed to unlist property");
     }
   };
+
   return <>
       {isLoading ? <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
           <p className="mb-6">Loading your properties...</p>

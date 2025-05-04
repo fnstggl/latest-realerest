@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -154,7 +153,7 @@ const CreateListing: React.FC = () => {
     setUploadProgress(0);
   };
 
-  // Update onSubmit to include bounty
+  // Update onSubmit to include property ID in upload for better tracking
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error("You must be logged in to create a listing");
@@ -177,14 +176,19 @@ const CreateListing: React.FC = () => {
       }
       console.log('Creating listing for user:', user.id);
 
+      // Create a temporary ID for the listing that we'll use for image organization
+      // Later we'll update this with the actual listing ID
+      const tempPropertyId = uuidv4();
+
       // Show progress update
-      toast.loading("Uploading images...", {
+      toast.loading("Uploading and optimizing images...", {
         id: loadingToastId
       });
       setUploadProgress(10);
 
-      // Upload images to Supabase storage using the service
-      const uploadedImageUrls = await uploadImagesToSupabase(imageFiles, progress => {
+      // Upload images to Supabase storage using the enhanced service
+      // We pass the tempPropertyId for better organization in storage
+      const uploadedImageUrls = await uploadImagesToSupabase(imageFiles, tempPropertyId, progress => {
         setUploadProgress(progress);
       });
 
@@ -229,6 +233,7 @@ const CreateListing: React.FC = () => {
         user_id: user.id,
         bounty: values.bounty ? Number(values.bounty) : null
       }).select();
+      
       if (error) {
         console.error("Supabase error:", error);
         throw error;
