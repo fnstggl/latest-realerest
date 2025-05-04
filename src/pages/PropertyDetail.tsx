@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -19,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import RewardBadge from '@/components/property-detail/RewardBadge';
+import { formatCurrency } from '@/lib/utils';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -236,21 +236,15 @@ const PropertyDetail: React.FC = () => {
             
             {property?.after_repair_value !== undefined && property?.estimated_rehab !== undefined && (
               <div className="grid grid-cols-2 gap-4">
-                <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
+                <div className="bg-white border border-gray-200 p-3 rounded-lg">
                   <div className="text-lg font-bold text-black">
-                    {Number(property?.after_repair_value).toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD'
-                    })}
+                    {formatCurrency(property?.after_repair_value)}
                   </div>
                   <div className="text-xs">After Repair Value</div>
                 </div>
-                <div className="glass backdrop-blur-lg border border-white/40 p-3 rounded-lg layer-2">
+                <div className="bg-white border border-gray-200 p-3 rounded-lg">
                   <div className="text-lg font-bold text-black">
-                    {Number(property?.estimated_rehab).toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: 'USD'
-                    })}
+                    {formatCurrency(property?.estimated_rehab)}
                   </div>
                   <div className="text-xs">Est. Rehab Cost</div>
                 </div>

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { formatCurrency } from '@/lib/utils';
 
 interface PropertyDetailsProps {
   afterRepairValue?: number;
@@ -61,11 +62,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
           <div>
             <div className="text-sm text-gray-500">After Repair Value (ARV)</div>
             <div className="font-medium text-green-600">
-              {afterRepairValue.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                maximumFractionDigits: 0
-              })}
+              {formatCurrency(afterRepairValue)}
             </div>
           </div>
         )}
@@ -74,11 +71,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
           <div>
             <div className="text-sm text-gray-500">Estimated Rehab</div>
             <div className="font-medium">
-              {estimatedRehab.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                maximumFractionDigits: 0
-              })}
+              {formatCurrency(estimatedRehab)}
             </div>
           </div>
         )}
