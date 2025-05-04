@@ -81,11 +81,11 @@ const About: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
               <div className="border border-black p-6 relative">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">01</div>
-                <p className="text-lg">We work <span className="font-playfair italic">directly</span> with motivated sellers who are looking to sell their homes below market value to sell them faster.</p>
+                <p className="text-lg my-0">We work <span className="font-playfair italic">directly</span> with motivated sellers who are looking to sell their homes below market value to sell them faster.</p>
               </div>
               <div className="border border-black p-6 mt-8 md:mt-16 relative my-0">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">02</div>
-                <p className="text-lg">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.</p>
+                <p className="text-lg my-0">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.</p>
               </div>
               <div className="border border-black p-6 mt-4 md:mt-8 relative my-0">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">03</div>
