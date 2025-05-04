@@ -55,25 +55,27 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
           query = query.lte('price', filters.maxPrice);
         }
         
-        // Handle beds and baths filtering with proper numeric conversion
-        if (filters.minBeds > 0) {
-          query = query.gte('beds', filters.minBeds);
+        // Handle beds and baths filtering properly
+        if (filters.minBeds > 0 || (filters.bedrooms && filters.bedrooms !== 'any')) {
+          const bedsValue = filters.minBeds > 0 ? filters.minBeds : parseInt(filters.bedrooms);
+          if (!isNaN(bedsValue) && bedsValue > 0) {
+            query = query.gte('beds', bedsValue);
+          }
         }
         
-        if (filters.minBaths > 0) {
-          query = query.gte('baths', filters.minBaths);
+        if (filters.minBaths > 0 || (filters.bathrooms && filters.bathrooms !== 'any')) {
+          const bathsValue = filters.minBaths > 0 ? filters.minBaths : parseInt(filters.bathrooms);
+          if (!isNaN(bathsValue) && bathsValue > 0) {
+            query = query.gte('baths', bathsValue);
+          }
         }
         
         if (filters.propertyType && filters.propertyType !== '' && filters.propertyType !== 'any') {
           query = query.eq('property_type', filters.propertyType);
         }
         
-        // Below market filter
-        if (filters.belowMarket && filters.belowMarket > 0) {
-          // This is an approximation - we'd ideally calculate this in the database
-          // For now, we'll filter on the client side after fetching the data
-          // We'll skip this filter in the query for now
-        }
+        // We'll handle belowMarket filtering after fetching the data
+        // since it requires a calculation between price and market_price
       }
       
       // Apply limit if provided
@@ -104,7 +106,7 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
           reward: item.reward ? Number(item.reward) : undefined
         }));
         
-        // Apply below market filter client-side if needed
+        // Apply belowMarket filter as a minimum percentage threshold
         if (filters?.belowMarket && filters.belowMarket > 0) {
           transformedData = transformedData.filter(
             item => item.belowMarket >= filters.belowMarket

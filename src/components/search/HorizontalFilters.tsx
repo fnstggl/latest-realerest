@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronDown, DollarSign, Home, Bed, Bath } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
@@ -55,7 +54,7 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
   };
 
   const priceOptions = [0, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 200000, 300000, 400000, 500000, 750000, 1000000, 1500000, 2000000];
-  const belowMarketOptions = [0, ...Array.from({ length: 20 }, (_, i) => (i + 1) * 5)];
+  const belowMarketOptions = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
   const bedroomOptions = ["any", "1", "2", "3", "4", "5", "5+"];
   const bathroomOptions = ["any", "1", "2", "3", "4", "5+"];
   const propertyTypeOptions = ["any", "house", "apartment", "condo", "duplex"];
@@ -121,7 +120,7 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                   >
                     <span className="flex items-center gap-2">
                       <DollarSign className="h-5 w-5" />
-                      Below Market
+                      Minimum % Below Market
                     </span>
                   </TabsTrigger>
                 </TabsList>
@@ -130,43 +129,73 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
               <TabsContent value="price" className="p-4">
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Price Range</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-6">
                     <div>
-                      <Select 
-                        value={filters.minPrice.toString()} 
-                        onValueChange={value => handleFilterChange("minPrice", parseInt(value))}
+                      <h3 className="text-md font-medium mb-2">Min Price</h3>
+                      <ToggleGroup 
+                        type="single" 
+                        value={filters.minPrice.toString()}
+                        onValueChange={(value) => value && handleFilterChange("minPrice", parseInt(value))}
+                        className="flex flex-wrap gap-2 justify-start"
                       >
-                        <SelectTrigger className="neo-input">
-                          <SelectValue placeholder="Min Price" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="0">Any</SelectItem>
-                          {priceOptions.slice(1).map(price => (
-                            <SelectItem key={price} value={price.toString()}>
-                              ${price.toLocaleString()}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        <ToggleGroupItem 
+                          value="0"
+                          className={`px-3 py-1 rounded-full ${
+                            filters.minPrice === 0 
+                              ? "bg-black text-white" 
+                              : "bg-gray-100 hover:bg-gray-200"
+                          }`}
+                        >
+                          Any
+                        </ToggleGroupItem>
+                        {[50000, 100000, 200000, 300000, 500000, 750000, 1000000].map(price => (
+                          <ToggleGroupItem 
+                            key={price} 
+                            value={price.toString()}
+                            className={`px-3 py-1 rounded-full ${
+                              filters.minPrice === price 
+                                ? "bg-black text-white" 
+                                : "bg-gray-100 hover:bg-gray-200"
+                            }`}
+                          >
+                            ${(price/1000).toFixed(0)}k
+                          </ToggleGroupItem>
+                        ))}
+                      </ToggleGroup>
                     </div>
+                    
                     <div>
-                      <Select 
-                        value={filters.maxPrice.toString()} 
-                        onValueChange={value => handleFilterChange("maxPrice", parseInt(value))}
+                      <h3 className="text-md font-medium mb-2">Max Price</h3>
+                      <ToggleGroup 
+                        type="single" 
+                        value={filters.maxPrice.toString()}
+                        onValueChange={(value) => value && handleFilterChange("maxPrice", parseInt(value))}
+                        className="flex flex-wrap gap-2 justify-start"
                       >
-                        <SelectTrigger className="neo-input">
-                          <SelectValue placeholder="Max Price" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="2000001">Any</SelectItem>
-                          {priceOptions.map(price => (
-                            <SelectItem key={price} value={price.toString()}>
-                              ${price.toLocaleString()}
-                            </SelectItem>
-                          ))}
-                          <SelectItem value="2000001">$2,000,000+</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <ToggleGroupItem 
+                          value="2000001"
+                          className={`px-3 py-1 rounded-full ${
+                            filters.maxPrice === 2000001 
+                              ? "bg-black text-white" 
+                              : "bg-gray-100 hover:bg-gray-200"
+                          }`}
+                        >
+                          Any
+                        </ToggleGroupItem>
+                        {[100000, 200000, 300000, 500000, 750000, 1000000, 1500000, 2000000].map(price => (
+                          <ToggleGroupItem 
+                            key={price} 
+                            value={price.toString()}
+                            className={`px-3 py-1 rounded-full ${
+                              filters.maxPrice === price 
+                                ? "bg-black text-white" 
+                                : "bg-gray-100 hover:bg-gray-200"
+                            }`}
+                          >
+                            ${price >= 1000000 ? (price/1000000).toFixed(1) + 'M' : (price/1000).toFixed(0) + 'k'}
+                          </ToggleGroupItem>
+                        ))}
+                      </ToggleGroup>
                     </div>
                   </div>
                 </div>
@@ -186,8 +215,10 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                         <ToggleGroupItem 
                           key={value} 
                           value={value}
-                          className={`rounded-full flex-1 text-center py-2 data-[state=on]:bg-white data-[state=on]:shadow-sm ${
-                            filters.bedrooms === value ? "data-[state=on]:font-medium" : ""
+                          className={`rounded-full flex-1 text-center py-2 ${
+                            filters.bedrooms === value 
+                              ? "bg-black text-white" 
+                              : "hover:bg-gray-200"
                           }`}
                         >
                           {value === "any" ? "Any" : value}
@@ -208,8 +239,10 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                         <ToggleGroupItem 
                           key={value} 
                           value={value}
-                          className={`rounded-full flex-1 text-center py-2 data-[state=on]:bg-white data-[state=on]:shadow-sm ${
-                            filters.bathrooms === value ? "data-[state=on]:font-medium" : ""
+                          className={`rounded-full flex-1 text-center py-2 ${
+                            filters.bathrooms === value 
+                              ? "bg-black text-white" 
+                              : "hover:bg-gray-200"
                           }`}
                         >
                           {value === "any" ? "Any" : value}
@@ -227,16 +260,16 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                     type="single" 
                     value={filters.propertyType}
                     onValueChange={(value) => value && handleFilterChange("propertyType", value)}
-                    className="flex flex-wrap gap-2"
+                    className="flex justify-between p-1 rounded-full bg-gray-100 w-full"
                   >
                     {propertyTypeOptions.map(type => (
                       <ToggleGroupItem 
                         key={type} 
                         value={type}
-                        className={`px-4 py-2 rounded-full border ${
+                        className={`rounded-full flex-1 text-center py-2 ${
                           filters.propertyType === type 
-                            ? "bg-black text-white border-black" 
-                            : "bg-white border-gray-200"
+                            ? "bg-black text-white" 
+                            : "hover:bg-gray-200"
                         }`}
                       >
                         {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -248,22 +281,37 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
 
               <TabsContent value="below-market" className="p-4">
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Below Market Value</h3>
-                  <Select 
-                    value={filters.belowMarket.toString()} 
-                    onValueChange={value => handleFilterChange("belowMarket", parseInt(value))}
+                  <h3 className="text-lg font-semibold mb-3">Minimum % Below Market</h3>
+                  <ToggleGroup 
+                    type="single" 
+                    value={filters.belowMarket.toString()}
+                    onValueChange={(value) => value && handleFilterChange("belowMarket", parseInt(value))}
+                    className="flex flex-wrap gap-2 justify-center"
                   >
-                    <SelectTrigger className="neo-input">
-                      <SelectValue placeholder="Select discount" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {belowMarketOptions.map(percentage => (
-                        <SelectItem key={percentage} value={percentage.toString()}>
-                          {percentage === 0 ? 'Any' : `${percentage}% below market`}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <ToggleGroupItem 
+                      value="0"
+                      className={`px-4 py-2 rounded-full ${
+                        filters.belowMarket === 0 
+                          ? "bg-black text-white" 
+                          : "bg-gray-100 hover:bg-gray-200"
+                      }`}
+                    >
+                      Any
+                    </ToggleGroupItem>
+                    {belowMarketOptions.slice(1).map(percentage => (
+                      <ToggleGroupItem 
+                        key={percentage} 
+                        value={percentage.toString()}
+                        className={`px-4 py-2 rounded-full ${
+                          filters.belowMarket === percentage 
+                            ? "bg-black text-white" 
+                            : "bg-gray-100 hover:bg-gray-200"
+                        }`}
+                      >
+                        {percentage}%
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
                 </div>
               </TabsContent>
             </Tabs>

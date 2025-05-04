@@ -22,7 +22,7 @@ const Search: React.FC = () => {
   const [minBaths, setMinBaths] = useState(0);
   const [propertyType, setPropertyType] = useState('');
   const [nearbyOnly, setNearbyOnly] = useState(false);
-  const [belowMarket, setBelowMarket] = useState(false);
+  const [belowMarket, setBelowMarket] = useState(0);
   const [includeRental, setIncludeRental] = useState(true);
   const [withPhotosOnly, setWithPhotosOnly] = useState(false);
 
@@ -40,15 +40,24 @@ const Search: React.FC = () => {
     setMaxPrice(filters.maxPrice ?? 10000000);
     
     // Handle beds and baths properly
-    setMinBeds(filters.bedrooms === 'any' ? 0 : parseInt(filters.bedrooms) || 0);
-    setMinBaths(filters.bathrooms === 'any' ? 0 : parseInt(filters.bathrooms) || 0);
+    if (filters.bedrooms && filters.bedrooms !== 'any') {
+      setMinBeds(parseInt(filters.bedrooms) || 0);
+    } else {
+      setMinBeds(0);
+    }
+    
+    if (filters.bathrooms && filters.bathrooms !== 'any') {
+      setMinBaths(parseInt(filters.bathrooms) || 0);
+    } else {
+      setMinBaths(0);
+    }
     
     // Handle property type
-    setPropertyType(filters.propertyType || '');
+    setPropertyType(filters.propertyType === 'any' ? '' : filters.propertyType || '');
     
     // Other filters
     setNearbyOnly(filters.nearbyOnly || false);
-    setBelowMarket(filters.belowMarket > 0);
+    setBelowMarket(filters.belowMarket || 0);
     setIncludeRental(filters.includeRental !== false); // Default to true
     setWithPhotosOnly(filters.withPhotosOnly || false);
   };
