@@ -89,10 +89,8 @@ const MessageList: React.FC<MessageListProps> = ({
                             conversation.otherUserName || 
                             "Unknown User";
         
-        // Get the role, with proper fallback
-        const userRole = userProfile?.role || 
-                         conversation.otherUserRole || 
-                         "buyer";
+        // Get the role, ensuring it's a valid UserRole type
+        const userRole = (userProfile?.role || conversation.otherUserRole || "buyer") as "buyer" | "seller" | "wholesaler";
         
         return <div 
                 key={conversation.id} 

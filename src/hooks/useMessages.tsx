@@ -2,6 +2,7 @@
 import { useCallback, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { UserRole } from '@/components/UserTag';
 
 export interface Message {
   id: string;
@@ -35,7 +36,7 @@ export interface Conversation {
   propertyTitle?: string;
   propertyImage?: string;
   otherUserName?: string;
-  otherUserRole?: string;
+  otherUserRole?: UserRole;
 }
 
 export function useMessages() {
@@ -94,19 +95,35 @@ export function useMessages() {
             totalUnreadCount += unreadCount;
           }
           
-          // Get other user's profile
-          const { data: otherUserProfile } = await supabase
+          // Get other user's profile with better error handling
+          const { data: otherUserProfile, error: profileError } = await supabase
             .from('profiles')
             .select('name, email, phone, account_type')
             .eq('id', otherUserId)
             .maybeSingle();
           
+          if (profileError) {
+            console.error('[useMessages] Error fetching profile:', profileError);
+          }
+          
+          // Properly handle role type
+          let userRole: UserRole = 'buyer';
+          if (otherUserProfile?.account_type && 
+              ['buyer', 'seller', 'wholesaler'].includes(otherUserProfile.account_type)) {
+            userRole = otherUserProfile.account_type as UserRole;
+          }
+          
+          // Ensure we have a name, using fallbacks as needed
+          const userName = otherUserProfile?.name || 
+                         otherUserProfile?.email || 
+                         await getUserDisplayName(otherUserId);
+          
           return {
             id: convo.id,
             otherUserId,
             otherUserProfile,
-            otherUserName: otherUserProfile?.name || 'Unknown User',
-            otherUserRole: otherUserProfile?.account_type || 'buyer',
+            otherUserName: userName,
+            otherUserRole: userRole,
             lastMessage: lastMessageData || undefined,
             unreadCount: unreadCount || 0,
             createdAt: convo.created_at,
@@ -167,12 +184,17 @@ export function useMessages() {
     
     try {
       // First try to get profile from profiles table
-      const { data: profileData } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('name, email')
         .eq('id', userId)
         .maybeSingle();
       
+      if (profileError) {
+        console.error('[getUserDisplayName] Profile error:', profileError);
+      }
+      
+      // Use name if available, fall back to email
       if (profileData?.name) return profileData.name;
       if (profileData?.email) return profileData.email;
       

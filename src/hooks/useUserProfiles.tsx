@@ -1,8 +1,8 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
+import { UserRole } from '@/components/UserTag';
 
 export interface UserProfile {
   id: string;
@@ -13,8 +13,6 @@ export interface UserProfile {
   // Track data source and loading state for debugging
   _source?: 'cache' | 'db' | 'rpc' | 'fallback';
 }
-
-export type UserRole = 'seller' | 'buyer' | 'wholesaler';
 
 // Create a cache to store user profiles with timestamp to manage invalidation
 interface CachedProfile extends UserProfile {
