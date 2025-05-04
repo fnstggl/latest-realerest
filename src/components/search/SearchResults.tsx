@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import PropertyCard from '@/components/PropertyCard';
@@ -270,17 +269,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     if (itemsPerRow === 1) {
       return {
         // For mobile, center the button on the last property card
-        top: `${rowPosition * 500 + 320}px`, // More centered on the property card for mobile
+        // Adjusted positioning to be more centered vertically on mobile
+        top: `${rowPosition * 500 + 370}px`, // Increased from 320px to 370px to move down more on mobile
         left: '50%',
         transform: 'translateX(-50%)',
       };
     }
     
-    // For desktop and tablet
+    // For desktop and tablet - keep exactly the same as before
     return {
-      // Position the button over the middle of the last full row
-      // Adjusted to be more centered vertically for desktop view
-      top: `${rowPosition * 500 + 320}px`, // Increased from 250 to 320 to move down more
+      top: `${rowPosition * 500 + 320}px`,
       left: '50%',
       transform: 'translateX(-50%)',
     };
