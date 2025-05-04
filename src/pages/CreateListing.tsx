@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -69,7 +68,7 @@ const CreateListing: React.FC = () => {
       comparableAddress1: "",
       comparableAddress2: "",
       comparableAddress3: "",
-      reward: "",
+      bounty: "",
     }
   });
 
@@ -219,7 +218,7 @@ const CreateListing: React.FC = () => {
       // Log the user ID being used for debugging
       console.log("Inserting listing with user_id:", user.id, "Type:", typeof user.id);
 
-      // FIXED: Changed 'bounty' to 'reward' in the insert statement to match the database column name
+      // Fixed: Using 'reward' instead of 'bounty' to match database column name
       const { data, error } = await supabase.from('property_listings').insert({
         title: title,
         price: price,
@@ -232,7 +231,7 @@ const CreateListing: React.FC = () => {
         sqft: parseInt(values.sqft),
         images: finalImages,
         user_id: user.id,
-        reward: values.bounty ? Number(values.bounty) : null  // Changed from bounty to reward
+        reward: values.bounty ? Number(values.bounty) : null  // Using the correct 'reward' field name
       }).select();
       
       if (error) {
@@ -288,6 +287,7 @@ const CreateListing: React.FC = () => {
     }
   };
 
+  
   // If page is not fully loaded, show a more pleasant loading state
   if (!isPageLoaded) {
     return <div className="min-h-screen bg-[#FCFBF8]">
