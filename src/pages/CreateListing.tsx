@@ -68,7 +68,7 @@ const CreateListing: React.FC = () => {
       comparableAddress1: "",
       comparableAddress2: "",
       comparableAddress3: "",
-      bounty: "",
+      reward: "",
     }
   });
 
