@@ -117,4 +117,86 @@
     mix-blend-mode: multiply;
     z-index: -1;
   }
+  
+  /* Brutalist typography styles */
+  .brutalist-text {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+  
+  .rotated-text {
+    transform: rotate(-5deg);
+    display: inline-block;
+  }
+  
+  .negative-text {
+    color: transparent;
+    -webkit-text-stroke: 1px #000;
+    mix-blend-mode: difference;
+  }
+  
+  .clipped-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-color: #000;
+    -webkit-text-fill-color: #fff;
+    text-fill-color: #fff;
+    -webkit-text-stroke: 1px #000;
+    mix-blend-mode: exclusion;
+  }
+  
+  .text-disrupted {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .text-disrupted::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    height: 2px;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+  }
+  
+  .brutalist-layout-item {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .editorial-number {
+    font-size: 10rem;
+    font-weight: 900;
+    line-height: 0.8;
+    opacity: 0.08;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+  
+  .text-mask {
+    mix-blend-mode: difference;
+    filter: invert(1);
+  }
+  
+  .editorial-callout {
+    border-left: 4px solid #000;
+    padding-left: 1rem;
+    margin: 2rem 0;
+    font-size: 1.2rem;
+    font-style: italic;
+  }
+  
+  .tilted-container {
+    transform: rotate(2deg);
+    margin: 2rem 0;
+  }
 }
