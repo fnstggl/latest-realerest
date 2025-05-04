@@ -83,7 +83,6 @@
     font-family: 'Playfair Display', serif;
     font-weight: 700;
     font-style: italic;
-    /* Removed transition property to make the change immediate */
   }
   
   /* Editorial text overlay style for headers */
@@ -132,65 +131,6 @@
     display: inline-block;
   }
   
-  /* Negative text effects - inspired by the attached images */
-  .negative-text-effect {
-    color: #FCFBF8;
-    -webkit-text-stroke: 1px #000;
-    font-weight: 900;
-    display: inline-block;
-    position: relative;
-  }
-
-  .negative-text-gradient {
-    background-image: url('/lovable-uploads/bc531d0c-ccfd-4f4a-b0d0-b6402833856c.png');
-    background-size: cover;
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    -webkit-text-stroke: 1px #000;
-    font-weight: 900;
-    display: inline-block;
-  }
-  
-  .negative-text {
-    color: transparent;
-    -webkit-text-stroke: 1px #000;
-    mix-blend-mode: difference;
-  }
-  
-  .clipped-text {
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    background-color: #000;
-    -webkit-text-fill-color: #FCFBF8;
-    text-fill-color: #FCFBF8;
-    -webkit-text-stroke: 1px #000;
-    mix-blend-mode: exclusion;
-  }
-  
-  .text-disrupted {
-    display: inline-block;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .text-disrupted::after {
-    content: '';
-    position: absolute;
-    background: #fff;
-    height: 2px;
-    width: 100%;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-  }
-  
-  .brutalist-layout-item {
-    position: relative;
-    z-index: 1;
-  }
-  
   .editorial-number {
     font-size: 10rem;
     font-weight: 900;
@@ -200,11 +140,6 @@
     top: 0;
     left: 0;
     z-index: 0;
-  }
-  
-  .text-mask {
-    mix-blend-mode: difference;
-    filter: invert(1);
   }
   
   .editorial-callout {
@@ -217,5 +152,52 @@
   
   .tilted-container {
     margin: 2rem 0;
+  }
+  
+  /* Editorial Magazine Typography Styles */
+  .editorial-heading {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+  
+  .editorial-subheading {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.9em;
+  }
+  
+  .editorial-caption {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: 400;
+    font-size: 0.8em;
+    letter-spacing: 0.01em;
+    font-style: italic;
+    color: #666;
+  }
+  
+  .editorial-quote {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.4;
+    font-size: 1.5em;
+    position: relative;
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .editorial-quote::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: black;
   }
 }
