@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -5,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { UserTag } from '@/components/UserTag';
 import SEO from '@/components/SEO';
+
 const About: React.FC = () => {
   return <div className="min-h-screen bg-[#FCFBF8] text-black">
       <SEO title="About Realer Estate | Our Mission & Story" description="Realer Estate is revolutionizing how people buy and sell homes. Learn about our mission to make housing accessible again with below-market properties." canonical="/about" schema={{
@@ -47,8 +48,8 @@ const About: React.FC = () => {
               <div className="col-span-12 md:col-span-6">
                 <h1 className="brutalist-text text-[14vw] md:text-[8vw] leading-none mb-6 relative z-10 tracking-tighter">
                   <span className="block">REAL</span>
-                  <span className="block relative md:ml-12 mx-0">ESTATE</span>
-                  <span className="block relative ml-8 mx-0">REIMAGINED</span>
+                  <span className="block relative">ESTATE</span>
+                  <span className="block relative">REIMAGINED</span>
                 </h1>
                 <div className="mt-6 md:mt-12 relative">
                   <p className="text-xl md:text-2xl font-playfair italic ml-4 border-l-4 border-black pl-6 tracking-wide">
@@ -58,7 +59,12 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-6 md:pl-12 relative">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img src="/lovable-uploads/4b977fed-5785-41f3-aa3b-dd408eb81af3.png" alt="New York City skyline" className="w-full h-full object-cover grayscale" />
+                  <img 
+                    src="/lovable-uploads/4b977fed-5785-41f3-aa3b-dd408eb81af3.png" 
+                    alt="New York City skyline" 
+                    className="w-full h-full object-cover grayscale" 
+                    loading="eager" 
+                  />
                 </div>
                 <p className="text-sm mt-2 italic text-right">Where it all began</p>
               </div>
@@ -70,7 +76,12 @@ const About: React.FC = () => {
             <div className="grid grid-cols-12 gap-8 items-center">
               <div className="col-span-12 md:col-span-4 md:order-2">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img src="/lovable-uploads/ae9b8849-2f3b-4a70-a520-d02738b34efd.png" alt="Modern home exterior" className="w-full h-full object-cover grayscale" />
+                  <img 
+                    src="/lovable-uploads/ae9b8849-2f3b-4a70-a520-d02738b34efd.png" 
+                    alt="Modern home exterior" 
+                    className="w-full h-full object-cover grayscale" 
+                    loading="lazy" 
+                  />
                 </div>
               </div>
               <div className="col-span-12 md:col-span-8 md:order-1">
@@ -95,20 +106,25 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-5">
                 <div className="aspect-[4/3] overflow-hidden mb-6">
-                  <img src="/lovable-uploads/3055a39f-8a3b-40bb-bc84-1682c72cefeb.png" alt="Aerial view of neighborhood" className="w-full h-full object-cover grayscale" />
+                  <img 
+                    src="/lovable-uploads/3055a39f-8a3b-40bb-bc84-1682c72cefeb.png" 
+                    alt="Aerial view of neighborhood" 
+                    className="w-full h-full object-cover grayscale" 
+                    loading="lazy" 
+                  />
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-              <div className="border border-black p-6 relative">
+              <div className="border border-black p-6 relative h-full">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">01</div>
                 <p className="text-lg my-0">We work <span className="font-playfair italic">directly</span> with motivated sellers who are looking to sell their homes below market value to sell them faster.</p>
               </div>
-              <div className="border border-black p-6 mt-8 md:mt-16 relative my-0">
+              <div className="border border-black p-6 relative h-full">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">02</div>
                 <p className="text-lg my-0">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.</p>
               </div>
-              <div className="border border-black p-6 mt-4 md:mt-8 relative my-0">
+              <div className="border border-black p-6 relative h-full">
                 <div className="text-6xl font-bold mb-4 font-playfair italic">03</div>
                 <p className="text-lg">Due to the high demand for below-market properties, listings on our platform <span className="font-playfair italic">may not stay available</span> for long.</p>
               </div>
@@ -121,7 +137,6 @@ const About: React.FC = () => {
               <div className="col-span-12 md:col-span-7 order-2 md:order-1">
                 <div className="flex items-center mb-6">
                   <h2 className="brutalist-text text-5xl md:text-6xl mr-4 tracking-tighter">FOR <span className="font-playfair italic font-bold">BUYERS</span></h2>
-                  <UserTag role="buyer" />
                 </div>
                 <div className="border border-black p-8 backdrop-blur-sm">
                   <ul className="space-y-6">
@@ -136,7 +151,12 @@ const About: React.FC = () => {
               </div>
               <div className="col-span-12 md:col-span-5 order-1 md:order-2">
                 <div className="aspect-square overflow-hidden">
-                  <img src="/lovable-uploads/8fa9a7ae-6846-47b2-89cd-edcf73e2f353.png" alt="Modern home exterior" className="w-full h-full object-cover grayscale" />
+                  <img 
+                    src="/lovable-uploads/8fa9a7ae-6846-47b2-89cd-edcf73e2f353.png" 
+                    alt="Modern home exterior" 
+                    className="w-full h-full object-cover grayscale" 
+                    loading="lazy" 
+                  />
                 </div>
                 <p className="text-sm mt-2 italic text-right">Finding your dream home</p>
               </div>
@@ -145,13 +165,17 @@ const About: React.FC = () => {
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-12 md:col-span-5 order-1">
                 <div className="aspect-square overflow-hidden">
-                  <img src="/lovable-uploads/b82e0252-0b3e-4142-bbe9-1f4da2824ab9.png" alt="Classic apartment buildings" className="w-full h-full object-cover grayscale" />
+                  <img 
+                    src="/lovable-uploads/b82e0252-0b3e-4142-bbe9-1f4da2824ab9.png" 
+                    alt="Classic apartment buildings" 
+                    className="w-full h-full object-cover grayscale" 
+                    loading="lazy" 
+                  />
                 </div>
                 
               </div>
               <div className="col-span-12 md:col-span-7 order-2">
                 <div className="flex items-center mb-6 justify-end">
-                  <UserTag role="seller" />
                   <h2 className="brutalist-text text-5xl md:text-6xl ml-4 tracking-tighter">FOR <span className="font-playfair italic font-bold">SELLERS</span></h2>
                 </div>
                 <div className="border border-black p-8 backdrop-blur-sm">
@@ -174,14 +198,13 @@ const About: React.FC = () => {
               <div className="col-span-12 md:col-span-7 md:order-2">
                 <h2 className="brutalist-text text-7xl md:text-9xl leading-none mb-8 tracking-tighter">
                   OUR<br />
-                  <span className="font-playfair italic font-bold relative -ml-4">MISSION</span>
+                  <span className="font-playfair italic font-bold">MISSION</span>
                 </h2>
                 <div className="text-lg md:text-xl space-y-4 md:ml-24">
                   <p>Realer Estate is about revolutionizing the real estate market to make it work for <span className="font-playfair italic font-bold">people</span> again. You shouldn't have to fight this hard for something so basic.</p>
                 </div>
               </div>
               <div className="col-span-12 md:col-span-5 md:order-1 border border-black p-8 relative">
-                <div className="absolute -top-4 -left-4 w-12 h-12 bg-black"></div>
                 <div className="text-lg md:text-xl space-y-6 relative z-10">
                   <p className="font-playfair text-2xl md:text-3xl italic">"We knew there had to be a better way—something faster, simpler, and actually made for people like us."</p>
                   <div className="flex items-center space-x-3">
@@ -194,11 +217,6 @@ const About: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="mt-8">
-                  <div className="aspect-[16/9] overflow-hidden">
-                    <img src="/lovable-uploads/cc2dcd0d-d592-4b85-976c-d2e569ab22e8.png" alt="City street view" className="w-full h-full object-cover grayscale" />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -206,7 +224,12 @@ const About: React.FC = () => {
           {/* Call to Action */}
           <div className="text-center mb-12 relative">
             <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-5">
-              <img src="/lovable-uploads/c4859284-6b6b-4692-90c2-acd37daaacaa.png" alt="Background texture" className="w-full h-full object-cover grayscale" />
+              <img 
+                src="/lovable-uploads/c4859284-6b6b-4692-90c2-acd37daaacaa.png" 
+                alt="Background texture" 
+                className="w-full h-full object-cover grayscale" 
+                loading="lazy" 
+              />
             </div>
             <h2 className="brutalist-text text-5xl md:text-7xl mb-8 tracking-tighter">
               <span className="block">WE DO REAL ESTATE</span> 

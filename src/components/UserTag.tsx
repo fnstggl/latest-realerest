@@ -11,6 +11,8 @@ interface UserTagProps {
 export const UserTag: React.FC<UserTagProps> = ({
   role
 }) => {
+  // Component is still exported but won't be visible in the About page
+  // The logic is kept in case it's used elsewhere in the application
   let bgColor = '';
   let textColor = '';
   
