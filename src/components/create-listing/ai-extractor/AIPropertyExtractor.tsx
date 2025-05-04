@@ -24,7 +24,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({ form }) => {
 
   useEffect(() => {
     fetchCohereApiKey();
-  }, []);
+  }, [fetchCohereApiKey]);
 
   return (
     <AIExtractorWrapper>
