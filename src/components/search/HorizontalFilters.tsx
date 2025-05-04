@@ -5,6 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronDown, DollarSign, Home, Bed, Bath } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface FilterState {
   propertyType: string;
@@ -175,34 +176,46 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold mb-3">Bedrooms</h3>
-                    <div className="flex flex-wrap gap-2">
+                    <ToggleGroup 
+                      type="single" 
+                      value={filters.bedrooms}
+                      onValueChange={(value) => value && handleFilterChange("bedrooms", value)}
+                      className="flex justify-between p-1 rounded-full bg-gray-100 w-full"
+                    >
                       {bedroomOptions.map(value => (
-                        <Button 
+                        <ToggleGroupItem 
                           key={value} 
-                          variant={filters.bedrooms === value ? "default" : "outline"} 
-                          onClick={() => handleFilterChange("bedrooms", value)}
-                          className="px-4 py-2 rounded-full"
+                          value={value}
+                          className={`rounded-full flex-1 text-center py-2 data-[state=on]:bg-white data-[state=on]:shadow-sm ${
+                            filters.bedrooms === value ? "data-[state=on]:font-medium" : ""
+                          }`}
                         >
                           {value === "any" ? "Any" : value}
-                        </Button>
+                        </ToggleGroupItem>
                       ))}
-                    </div>
+                    </ToggleGroup>
                   </div>
                   
                   <div>
                     <h3 className="text-lg font-semibold mb-3">Bathrooms</h3>
-                    <div className="flex flex-wrap gap-2">
+                    <ToggleGroup 
+                      type="single" 
+                      value={filters.bathrooms}
+                      onValueChange={(value) => value && handleFilterChange("bathrooms", value)}
+                      className="flex justify-between p-1 rounded-full bg-gray-100 w-full"
+                    >
                       {bathroomOptions.map(value => (
-                        <Button 
+                        <ToggleGroupItem 
                           key={value} 
-                          variant={filters.bathrooms === value ? "default" : "outline"} 
-                          onClick={() => handleFilterChange("bathrooms", value)}
-                          className="px-4 py-2 rounded-full"
+                          value={value}
+                          className={`rounded-full flex-1 text-center py-2 data-[state=on]:bg-white data-[state=on]:shadow-sm ${
+                            filters.bathrooms === value ? "data-[state=on]:font-medium" : ""
+                          }`}
                         >
                           {value === "any" ? "Any" : value}
-                        </Button>
+                        </ToggleGroupItem>
                       ))}
-                    </div>
+                    </ToggleGroup>
                   </div>
                 </div>
               </TabsContent>
@@ -210,18 +223,26 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
               <TabsContent value="type" className="p-4">
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Property Type</h3>
-                  <div className="flex flex-wrap gap-2">
+                  <ToggleGroup 
+                    type="single" 
+                    value={filters.propertyType}
+                    onValueChange={(value) => value && handleFilterChange("propertyType", value)}
+                    className="flex flex-wrap gap-2"
+                  >
                     {propertyTypeOptions.map(type => (
-                      <Button 
+                      <ToggleGroupItem 
                         key={type} 
-                        variant={filters.propertyType === type ? "default" : "outline"} 
-                        onClick={() => handleFilterChange("propertyType", type)}
-                        className="px-4 py-2 rounded-full"
+                        value={type}
+                        className={`px-4 py-2 rounded-full border ${
+                          filters.propertyType === type 
+                            ? "bg-black text-white border-black" 
+                            : "bg-white border-gray-200"
+                        }`}
                       >
                         {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </Button>
+                      </ToggleGroupItem>
                     ))}
-                  </div>
+                  </ToggleGroup>
                 </div>
               </TabsContent>
 

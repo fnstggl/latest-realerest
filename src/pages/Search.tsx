@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -32,15 +31,25 @@ const Search: React.FC = () => {
   }, [searchQuery]);
 
   const handleFilterChange = (filters: any) => {
-    setLocation(filters.location || '');
-    setMinPrice(filters.minPrice || 0);
-    setMaxPrice(filters.maxPrice || 10000000);
+    // Handle location separately to avoid overwriting search query
+    if (filters.location) {
+      setLocation(filters.location);
+    }
+    
+    setMinPrice(filters.minPrice ?? 0);
+    setMaxPrice(filters.maxPrice ?? 10000000);
+    
+    // Handle beds and baths properly
     setMinBeds(filters.bedrooms === 'any' ? 0 : parseInt(filters.bedrooms) || 0);
     setMinBaths(filters.bathrooms === 'any' ? 0 : parseInt(filters.bathrooms) || 0);
+    
+    // Handle property type
     setPropertyType(filters.propertyType || '');
+    
+    // Other filters
     setNearbyOnly(filters.nearbyOnly || false);
     setBelowMarket(filters.belowMarket > 0);
-    setIncludeRental(filters.includeRental || true);
+    setIncludeRental(filters.includeRental !== false); // Default to true
     setWithPhotosOnly(filters.withPhotosOnly || false);
   };
 
