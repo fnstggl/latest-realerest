@@ -9,6 +9,8 @@ const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 const TARGET_COMPRESSED_SIZE = 500 * 1024;
 // Maximum dimensions for full-size images
 const MAX_IMAGE_WIDTH = 1600;
+// JPEG quality setting (0.75 = 75% quality, good balance between size and quality)
+const JPEG_QUALITY = 0.75;
 
 // Use a smaller default image size for faster loading
 const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
@@ -24,6 +26,8 @@ async function compressImage(file: File): Promise<File> {
       maxWidthOrHeight: MAX_IMAGE_WIDTH,
       useWebWorker: true,
       fileType: file.type,
+      initialQuality: JPEG_QUALITY,
+      alwaysKeepResolution: false,
       onProgress: undefined
     };
     
@@ -100,20 +104,46 @@ export const uploadImagesToSupabase = async (
           const fileName = `${i + batchIndex}-${Date.now().toString().slice(-6)}.${fileExt}`;
           const filePath = `${folderName}/${fileName}`;
           
-          // Add metadata for better tracking
+          // Extract image dimensions if possible
+          let width = 0;
+          let height = 0;
+          
+          try {
+            const img = document.createElement('img');
+            const loaded = new Promise<void>((resolve, reject) => {
+              img.onload = () => {
+                width = img.naturalWidth;
+                height = img.naturalHeight;
+                resolve();
+              };
+              img.onerror = reject;
+            });
+            
+            img.src = URL.createObjectURL(file);
+            await Promise.race([
+              loaded,
+              new Promise<void>(resolve => setTimeout(resolve, 1000)) // Timeout after 1s
+            ]);
+          } catch (e) {
+            console.log('Could not extract image dimensions:', e);
+          }
+          
+          // Add metadata for better tracking and caching
           const metadata = {
             originalName: file.name,
             contentType: file.type,
             size: file.size,
+            width: width || undefined,
+            height: height || undefined,
             uploadedAt: new Date().toISOString(),
             propertyId: propertyId || null
           };
           
-          // Upload to Supabase with metadata
+          // Upload to Supabase with better caching directives
           const { data, error } = await supabase.storage
             .from('property_images')
             .upload(filePath, file, {
-              cacheControl: '3600',
+              cacheControl: '31536000', // 1 year cache for immutable assets
               upsert: false,
               contentType: file.type,
               duplex: 'half',
@@ -125,10 +155,15 @@ export const uploadImagesToSupabase = async (
             return null;
           }
           
-          // Get public URL with better caching
+          // Get public URL with query string to aid in different size rendering
           const { data: { publicUrl } } = supabase.storage
             .from('property_images')
             .getPublicUrl(filePath);
+          
+          // Append width and height as query params if available
+          const finalUrl = width && height 
+            ? `${publicUrl}?w=${width}&h=${height}` 
+            : publicUrl;
           
           // Update progress within batch
           if (onProgress) {
@@ -136,7 +171,7 @@ export const uploadImagesToSupabase = async (
             onProgress(Math.min(80, progressStart + (batchIndex / batch.length) * progressIncrement));
           }
             
-          return publicUrl;
+          return finalUrl;
         } catch (err) {
           console.error('Error processing file:', err);
           return null;

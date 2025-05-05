@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bed, Bath, Square, ArrowRight, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import RewardBadge from '@/components/property-detail/RewardBadge';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 
 interface PropertyCardProps {
   id: string;
@@ -41,12 +43,22 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   const city = locationParts[0]?.trim() || 'Unknown';
   const stateZip = locationParts[1]?.trim() || '';
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.onerror = null;
-    e.currentTarget.src = '/placeholder.svg';
+  // Extract dimensions if present in the URL
+  const extractDimensions = (url: string) => {
+    try {
+      const parsedUrl = new URL(url);
+      const width = parsedUrl.searchParams.get('w');
+      const height = parsedUrl.searchParams.get('h');
+      return { 
+        width: width ? parseInt(width) : 400, 
+        height: height ? parseInt(height) : 240 
+      };
+    } catch (e) {
+      return { width: 400, height: 240 };
+    }
   };
 
-  console.log(`PropertyCard ${id}: belowMarket=${belowMarket}, rewardAmount=${rewardAmount}`);
+  const imageDimensions = extractDimensions(validImage);
 
   return (
     <Link 
@@ -55,15 +67,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
     >
       <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col rounded-xl">
         <div className="relative rounded-t-xl">
-          <img 
+          <OptimizedImage 
             src={validImage} 
             alt={location || 'Property'} 
             className="h-[240px] w-full object-cover rounded-t-xl"
-            onError={handleImageError} 
-            loading="lazy" 
-            decoding="async"
-            width="400"
-            height="240"
+            width={imageDimensions.width}
+            height={imageDimensions.height}
+            sizes="(max-width: 768px) 100vw, 33vw"
           />
           
           <div className="absolute top-4 left-0 right-0 px-4 flex justify-between items-start">

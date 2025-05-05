@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, X } from 'lucide-react';
 import { toast } from "sonner";
+import OptimizedImage from '@/components/ui/OptimizedImage';
 
 interface ImageUploaderProps {
   images: string[];
@@ -156,12 +157,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {images.map((img, index) => (
             <div key={index} className="relative border border-black/10 rounded-xl overflow-hidden group">
-              <img 
+              <OptimizedImage 
                 src={img} 
                 alt={`Property ${index + 1}`} 
                 className="h-32 w-full object-cover" 
-                loading="lazy"
-                decoding="async"
+                width={200}
+                height={150}
+                sizes="(max-width: 768px) 50vw, 25vw"
               />
               <button 
                 type="button" 
