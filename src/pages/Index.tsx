@@ -50,7 +50,8 @@ const Index: React.FC = () => {
         <main aria-label="Homepage Main Content" className="w-full">
           <HeroSection />
           <FeaturedProperties />
-          <TestimonialsSection />
+          {/* Testimonials section temporarily hidden but kept in the codebase */}
+          {/* <TestimonialsSection /> */}
           <CTASection />
           <SiteFooter />
         </main>
