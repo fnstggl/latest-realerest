@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -262,11 +261,6 @@ const PropertyDetail: React.FC = () => {
               <div className="glass-card backdrop-blur-lg border border-white/40 p-4 rounded-xl">
                 <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
                 <p>You now have access to view the full property details and contact the seller directly.</p>
-              </div>
-            ) : waitlistStatus === 'pending' ? (
-              <div className="bg-white border border-gray-200 p-4 rounded-xl">
-                <div className="font-bold text-black mb-2">Waitlist Request Pending</div>
-                <p>You've joined the waitlist for this property. The seller will review your request soon.</p>
               </div>
             ) : null}
             
