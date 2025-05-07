@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -57,6 +56,9 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
   const { getOrCreateConversation } = useMessages();
+  
+  // Add state for showing address
+  const [showAddress, setShowAddress] = useState(false);
 
   // Check if reward is valid (greater than or equal to 3000)
   const hasValidReward = reward !== undefined && reward !== null && reward >= 3000;
@@ -244,20 +246,33 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     }
   };
 
+  // Updated function to handle how we render the location
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
+      // For the full address case, we need to implement masking/unmasking
+      const addressParts = fullAddress.split(',');
+      const streetAddress = addressParts[0].trim();
+      const restOfAddress = addressParts.length > 1 ? addressParts.slice(1).join(',').trim() : '';
+      
       return (
         <span className="font-medium text-sm sm:text-base break-words">
-          {fullAddress}{location ? `, ${location}` : ''}
+          {showAddress ? streetAddress : (
+            <span 
+              className="cursor-pointer text-black font-bold hover:underline"
+              onClick={() => setShowAddress(!showAddress)}
+            >
+              Click to View Full Address
+            </span>
+          )}
+          {restOfAddress ? `, ${restOfAddress}` : ''}
+          {location && !fullAddress.includes(location) ? `, ${location}` : ''}
         </span>
       );
     }
+    
     return (
       <span className="font-medium text-sm sm:text-base">
-        <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
-          Join Waitlist For Address
-        </span>
-        {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
+        {location}
       </span>
     );
   };
