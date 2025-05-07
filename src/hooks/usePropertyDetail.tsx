@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 type PropertyDetailType = {
   id: string;
@@ -32,7 +31,7 @@ type PropertyDetailType = {
   created_at?: string;
 };
 
-export const usePropertyDetail = (propertyId: string | undefined) => {
+const usePropertyDetail = (propertyId?: string) => {
   const [property, setProperty] = useState<PropertyDetailType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -42,7 +41,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
   const [isApproved, setIsApproved] = useState(false);
   const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
 
-  const fetchPropertyDetails = async () => {
+  const fetchPropertyData = async () => {
     setIsLoading(true);
     setError(null);
 
@@ -57,133 +56,114 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
         .select('*')
         .eq('id', propertyId)
         .single();
-      
+
       if (propertyError) {
+        setError(propertyError);
         console.error("Error fetching property:", propertyError);
-        setError(new Error("Failed to load property details"));
-        toast.error("Failed to load property details");
         return;
       }
 
-      // Format property data
-      const formattedProperty: PropertyDetailType = {
-        id: propertyData.id,
-        title: propertyData.title,
-        location: propertyData.location,
-        full_address: propertyData.full_address,
-        price: Number(propertyData.price),
-        market_price: Number(propertyData.market_price),
-        below_market: Math.round(((Number(propertyData.market_price) - Number(propertyData.price)) / Number(propertyData.market_price)) * 100),
-        beds: propertyData.beds || 0,
-        baths: propertyData.baths || 0,
-        sqft: propertyData.sqft || 0,
-        images: propertyData.images || [],
-        description: propertyData.description || "",
-        comparable_addresses: propertyData.comparable_addresses || [],
-        seller_id: propertyData.user_id,
-        user_id: propertyData.user_id,
-        created_at: propertyData.created_at,
-        seller_name: "",  // Will be updated by fetchSellerInfo
-        seller_email: "", // Will be updated by fetchSellerInfo
-        seller_phone: "", // Will be updated by fetchSellerInfo
-        after_repair_value: Number(propertyData.after_repair_value) || 0,
-        estimated_rehab: Number(propertyData.estimated_rehab) || 0,
-        reward: propertyData.reward !== null ? Number(propertyData.reward) : null,
-        year_built: propertyData.year_built || null,
-        lot_size: propertyData.lot_size || null,
-        parking: propertyData.parking || null,
-        property_type: propertyData.property_type || "House"
-      };
+      if (propertyData) {
+        const price = Number(propertyData.price);
+        const marketPrice = Number(propertyData.market_price);
+        const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
+        
+        // Handle null or undefined reward properly
+        const rewardAmount = propertyData.reward ? Number(propertyData.reward) : null;
 
-      setProperty(formattedProperty);
+        const mappedProperty: PropertyDetailType = {
+          id: propertyData.id,
+          title: propertyData.title,
+          price: Number(propertyData.price),
+          market_price: Number(propertyData.market_price),
+          location: propertyData.location,
+          full_address: propertyData.full_address || '',
+          description: propertyData.description || '',
+          beds: propertyData.beds,
+          baths: propertyData.baths,
+          sqft: propertyData.sqft,
+          images: propertyData.images || [],
+          user_id: propertyData.user_id,
+          below_market: parseFloat(belowMarket),
+          seller_name: '',
+          seller_email: '',
+          seller_phone: '',
+          seller_id: propertyData.user_id,
+          reward: rewardAmount,
+          after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
+          estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
+          property_type: propertyData.property_type,
+          year_built: propertyData.year_built || null,
+          lot_size: propertyData.lot_size || null,
+          parking: propertyData.parking || null,
+          comparable_addresses: propertyData.comparable_addresses,
+          created_at: propertyData.created_at
+        };
 
-      // Fetch seller info if available
-      if (propertyData.user_id) {
-        await fetchSellerInfo(propertyData.user_id);
+        setProperty(mappedProperty);
+
+        const { data: sellerData, error: sellerError } = await supabase
+          .from('profiles')
+          .select('name, phone, email, id')
+          .eq('id', propertyData.user_id)
+          .single();
+
+        if (sellerError) {
+          console.error("Error fetching seller info:", sellerError);
+        } else if (sellerData) {
+          setSellerInfo({
+            name: sellerData.name || null,
+            phone: sellerData.phone || null,
+            email: sellerData.email || null
+          });
+
+          setProperty(prev => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              seller_name: sellerData.name || '',
+              seller_email: sellerData.email || '',
+              seller_phone: sellerData.phone || '',
+            };
+          });
+        }
+
+        const { data: authData } = await supabase.auth.getUser();
+        const currentUser = authData?.user;
+        const isCurrentUserOwner = currentUser?.id === propertyData.user_id;
+        setIsOwner(isCurrentUserOwner);
+
+        if (currentUser?.id && currentUser?.id !== propertyData.user_id) {
+          const { data: waitlistData, error: waitlistError } = await supabase
+            .from('waitlist_requests')
+            .select('status')
+            .eq('property_id', propertyId)
+            .eq('user_id', currentUser.id)
+            .single();
+
+          if (waitlistError && !waitlistError.message.includes('No rows found')) {
+            console.error("Error fetching waitlist status:", waitlistError);
+          } else if (waitlistData) {
+            setWaitlistStatus(waitlistData.status || null);
+            setIsApproved(waitlistData.status === 'approved');
+          } else {
+            setWaitlistStatus(null);
+          }
+        } else {
+          setWaitlistStatus(null);
+          setIsApproved(isCurrentUserOwner);
+        }
       }
-
-      // Check waitlist status if current user is not the owner
-      const currentUser = (await supabase.auth.getUser()).data?.user;
-      
-      if (currentUser?.id && currentUser.id !== propertyData.user_id) {
-        await checkWaitlistStatus(propertyId, currentUser.id);
-      } else if (currentUser?.id === propertyData.user_id) {
-        // User is owner
-        setIsOwner(true);
-        setShouldShowSellerInfo(true);
-      }
-    } catch (error) {
-      console.error("Error fetching property details:", error);
-      setError(new Error("Failed to load property details"));
+    } catch (err: any) {
+      setError(err);
+      console.error("Unexpected error:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fetchSellerInfo = async (userId: string) => {
-    try {
-      const { data: sellerData, error: sellerError } = await supabase
-        .from('profiles')
-        .select('name, phone, email, id')
-        .eq('id', userId)
-        .single();
-
-      if (sellerError) {
-        console.error("Error fetching seller info:", sellerError);
-      } else if (sellerData) {
-        setSellerInfo({
-          name: sellerData.name || null,
-          phone: sellerData.phone || null,
-          email: sellerData.email || null
-        });
-
-        // Update seller info in property data
-        setProperty(prev => {
-          if (!prev) return null;
-          return {
-            ...prev,
-            seller_name: sellerData.name || '',
-            seller_email: sellerData.email || '',
-            seller_phone: sellerData.phone || '',
-          };
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching seller info:", error);
-    }
-  };
-
-  const checkWaitlistStatus = async (propId: string, userId: string) => {
-    try {
-      const { data: waitlistData, error: waitlistError } = await supabase
-        .from('waitlist_requests')
-        .select('status')
-        .eq('property_id', propId)
-        .eq('user_id', userId)
-        .maybeSingle();
-      
-      if (waitlistError) {
-        console.error("Error checking waitlist status:", waitlistError);
-        return;
-      }
-      
-      if (waitlistData) {
-        const status = waitlistData.status || 'pending';
-        setWaitlistStatus(status);
-        
-        // Set isApproved to true if status is accepted
-        if (status === 'accepted') {
-          setIsApproved(true);
-          setShouldShowSellerInfo(true);
-        }
-      }
-    } catch (error) {
-      console.error("Error checking waitlist status:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchPropertyDetails();
+    fetchPropertyData();
   }, [propertyId]);
 
   useEffect(() => {
@@ -199,6 +179,8 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     isOwner,
     isApproved,
     shouldShowSellerInfo,
-    refreshProperty: fetchPropertyDetails
+    refreshProperty: fetchPropertyData
   };
 };
+
+export { usePropertyDetail };

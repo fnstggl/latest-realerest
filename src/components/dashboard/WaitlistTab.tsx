@@ -1,3 +1,4 @@
+
 import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ClipboardCheck, Check, X, MessageCircle } from "lucide-react";
@@ -89,11 +90,9 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
       // Create notification for the waitlist requester (buyer)
       await supabase.from("notifications").insert({
         user_id: requesterUserId,
-        title: newStatus === "accepted" 
-          ? "Waitlist Request Accepted" 
-          : "Waitlist Request Declined",
+        title: `Waitlist Request ${newStatus === "accepted" ? "Accepted" : "Declined"}`,
         message: newStatus === "accepted" 
-          ? `Your request to join the waitlist for ${propertyTitle} has been accepted! You now have full access to property details.` 
+          ? `Your request to join the waitlist for ${propertyTitle} has been accepted!` 
           : `Your request to join the waitlist for ${propertyTitle} has been declined.`,
         type: newStatus === "accepted" ? "success" : "info",
         properties: {

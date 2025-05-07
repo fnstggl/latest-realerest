@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -23,7 +24,6 @@ export interface WaitlistUser {
   email: string;
   phone: string;
   propertyId: string;
-  user_id: string;
   property?: {
     title: string;
   };
@@ -75,7 +75,7 @@ export const useProperties = (userId: string | undefined) => {
           sqft: prop.sqft || 0,
           belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100),
           waitlistCount: 0,
-          reward: Number(prop.reward || 0) // Map reward field
+          reward: Number(prop.bounty || 0) // Map bounty to reward
         }));
         
         setMyProperties(formattedProperties);
@@ -179,7 +179,6 @@ export const useProperties = (userId: string | undefined) => {
           email: req.email,
           phone: req.phone || '',
           propertyId: req.property_id,
-          user_id: req.user_id, // Include user_id field
           property: matchedProperty ? { title: matchedProperty.title } : undefined,
           status: req.status as "pending" | "accepted" | "declined",
           createdAt: req.created_at // Include created_at for sorting
