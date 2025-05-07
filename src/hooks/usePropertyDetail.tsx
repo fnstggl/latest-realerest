@@ -1,5 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 type PropertyDetailType = {
   id: string;
@@ -58,7 +60,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
       
       if (propertyError) {
         console.error("Error fetching property:", propertyError);
-        setError("Failed to load property details");
+        setError(new Error("Failed to load property details"));
         toast.error("Failed to load property details");
         return;
       }
@@ -109,7 +111,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
       }
     } catch (error) {
       console.error("Error fetching property details:", error);
-      setError("Failed to load property details");
+      setError(new Error("Failed to load property details"));
     } finally {
       setIsLoading(false);
     }
@@ -162,11 +164,13 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
       }
       
       if (waitlistData) {
-        setWaitlistStatus(waitlistData.status || 'pending');
+        const status = waitlistData.status || 'pending';
+        setWaitlistStatus(status);
         
         // Set isApproved to true if status is accepted
-        if (waitlistData.status === 'accepted') {
+        if (status === 'accepted') {
           setIsApproved(true);
+          setShouldShowSellerInfo(true);
         }
       }
     } catch (error) {
@@ -194,5 +198,3 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     refreshProperty: fetchPropertyDetails
   };
 };
-
-export { usePropertyDetail };

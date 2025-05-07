@@ -13,7 +13,7 @@ import { useToast } from "@/components/ui/use-toast"
 const Search = () => {
   const [results, setResults] = useState<Property[]>([]);
   const [filteredResults, setFilteredResults] = useState<Property[]>([]);
-  const [isLoading, setIsLoading] useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
