@@ -1,122 +1,134 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import Navbar from '@/components/Navbar';
+import SiteFooter from '@/components/sections/SiteFooter';
+import PropertyCard from '@/components/PropertyCard';
+import SearchBar from '@/components/SearchBar';
+import { Property } from '@/hooks/useProperties';
+import { supabase } from '@/integrations/supabase/client';
+import { useDebounce } from '@/hooks/useDebounce';
+import { Skeleton } from "@/components/ui/skeleton"
+import { useToast } from "@/components/ui/use-toast"
 
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import SearchHeader from '@/components/search/SearchHeader';
-import SearchResults from '@/components/search/SearchResults';
-import SearchFooter from '@/components/search/SearchFooter';
-import LocationAlertForm from '@/components/LocationAlertForm';
-import HorizontalFilters from '@/components/search/HorizontalFilters';
-import SEO from '@/components/SEO';
+const Search = () => {
+  const [results, setResults] = useState<Property[]>([]);
+  const [filteredResults, setFilteredResults] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('term') || '');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const navigate = useNavigate();
+  const { toast } = useToast()
 
-const Search: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get('q') || '';
-  const [isGridView, setIsGridView] = useState(true);
-  const [sortOption, setSortOption] = useState("recommended");
-  const { isAuthenticated } = useAuth();
-  
-  // Filter states
-  const [location, setLocation] = useState(searchQuery);
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(10000000);
-  const [minBeds, setMinBeds] = useState(0);
-  const [minBaths, setMinBaths] = useState(0);
-  const [propertyType, setPropertyType] = useState('');
-  const [nearbyOnly, setNearbyOnly] = useState(false);
-  const [belowMarket, setBelowMarket] = useState(0);
-  const [includeRental, setIncludeRental] = useState(true);
-  const [withPhotosOnly, setWithPhotosOnly] = useState(false);
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setSearchParams({ term });
+  };
+
+  const fetchProperties = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      let query = supabase
+        .from('property_listings')
+        .select('*');
+        
+      if (debouncedSearchTerm) {
+        query = query.ilike('title', `%${debouncedSearchTerm}%`);
+      }
+      
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching properties:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load properties. Please try again.",
+        })
+      }
+
+      if (data) {
+        const formattedProperties = data.map(prop => ({
+          id: prop.id,
+          title: prop.title,
+          price: Number(prop.price),
+          marketPrice: Number(prop.market_price),
+          image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://placehold.co/600x400?text=Property+Image",
+          location: prop.location,
+          beds: prop.beds || 0,
+          baths: prop.baths || 0,
+          sqft: prop.sqft || 0,
+          belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100),
+          waitlistCount: 0,
+          reward: Number(prop.reward || 0)
+        }));
+        setResults(formattedProperties);
+      }
+    } catch (error) {
+      console.error("Exception fetching properties:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load properties. Please refresh and try again.",
+      })
+    } finally {
+      setIsLoading(false);
+    }
+  }, [debouncedSearchTerm, toast]);
 
   useEffect(() => {
-    setLocation(searchQuery);
-  }, [searchQuery]);
+    fetchProperties();
+  }, [fetchProperties]);
 
-  const handleFilterChange = (filters: any) => {
-    // Handle location separately to avoid overwriting search query
-    if (filters.location) {
-      setLocation(filters.location);
-    }
-    
-    setMinPrice(filters.minPrice ?? 0);
-    setMaxPrice(filters.maxPrice ?? 10000000);
-    
-    // Handle beds and baths properly
-    if (filters.bedrooms && filters.bedrooms !== 'any') {
-      setMinBeds(parseInt(filters.bedrooms) || 0);
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      const filtered = results.filter(property =>
+        property.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        property.location.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      );
+      setFilteredResults(filtered);
     } else {
-      setMinBeds(0);
+      setFilteredResults(results);
     }
-    
-    if (filters.bathrooms && filters.bathrooms !== 'any') {
-      setMinBaths(parseInt(filters.bathrooms) || 0);
-    } else {
-      setMinBaths(0);
-    }
-    
-    // Handle property type
-    setPropertyType(filters.propertyType === 'any' ? '' : filters.propertyType || '');
-    
-    // Other filters
-    setNearbyOnly(filters.nearbyOnly || false);
-    setBelowMarket(filters.belowMarket || 0);
-    setIncludeRental(filters.includeRental !== false); // Default to true
-    setWithPhotosOnly(filters.withPhotosOnly || false);
-  };
+  }, [results, debouncedSearchTerm]);
 
-  const handleSortChange = (option: string) => {
-    setSortOption(option);
-  };
+  // Fix TypeScript boolean vs number type
+  const isFilteredResults: boolean = filteredResults.length > 0;
 
   return (
-    <div className="min-h-screen bg-[#FCFBF8] pt-24">
-      <SEO
-        title={location ? `Properties in ${location} | Realer Estate` : "Search Properties | Realer Estate"}
-        description={`Find below-market real estate deals ${location ? `in ${location}` : 'in your area'}. Browse homes, apartments, and investment properties with significant discounts.`}
-        canonical="/search"
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "WebPage",
-          "name": location ? `Properties in ${location}` : "Search Properties",
-          "description": `Find below-market real estate deals ${location ? `in ${location}` : 'in your area'}`,
-          "url": window.location.origin + `/search${location ? `?q=${encodeURIComponent(location)}` : ''}`,
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": `${window.location.origin}/search?q={search_term_string}`
-            },
-            "query-input": "required name=search_term_string"
-          }
-        }}
-      />
-      <SearchHeader />
+    <div className="min-h-screen bg-[#F9F8F7] transition-all duration-300">
+      <Navbar />
       
-      <div className="container px-4 lg:px-8 mx-auto py-8">
-        {/* Horizontal filters component */}
-        <HorizontalFilters onFilterChange={handleFilterChange} />
-        
-        {/* Search results */}
-        <SearchResults
-          location={location}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          minBeds={minBeds}
-          minBaths={minBaths}
-          propertyType={propertyType}
-          nearbyOnly={nearbyOnly}
-          belowMarket={belowMarket}
-          sort={sortOption}
-          includeRental={includeRental}
-          withPhotosOnly={withPhotosOnly}
-        />
+      <div className="bg-white py-6 md:py-8 border-b border-gray-200">
+        <div className="container mx-auto px-4 lg:px-8">
+          <SearchBar onSearch={handleSearch} initialTerm={searchTerm} />
+        </div>
       </div>
       
-      <div className="w-full">
-        <LocationAlertForm />
+      <div className="container mx-auto px-4 lg:px-8 pb-12 mt-4">
+        {isFilteredResults ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredResults.map(property => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            {isLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="w-[80%] mx-auto h-5" />
+                <Skeleton className="w-[60%] mx-auto h-5" />
+                <Skeleton className="w-[40%] mx-auto h-5" />
+              </div>
+            ) : (
+              <>
+                <h2 className="text-2xl font-bold mb-4">No properties found</h2>
+                <p className="text-gray-600">Please try a different search term.</p>
+              </>
+            )}
+          </div>
+        )}
       </div>
       
-      <SearchFooter />
+      <SiteFooter />
     </div>
   );
 };

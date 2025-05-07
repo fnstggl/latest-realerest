@@ -92,7 +92,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
         user_id: requesterUserId,
         title: `Waitlist Request ${newStatus === "accepted" ? "Accepted" : "Declined"}`,
         message: newStatus === "accepted" 
-          ? `Your request to join the waitlist for ${propertyTitle} has been accepted!` 
+          ? `Your request to join the waitlist for ${propertyTitle} has been accepted! You now have full access to property details.` 
           : `Your request to join the waitlist for ${propertyTitle} has been declined.`,
         type: newStatus === "accepted" ? "success" : "info",
         properties: {
