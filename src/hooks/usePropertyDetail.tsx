@@ -66,7 +66,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
       }
 
       // Format property data
-      const formattedProperty = {
+      const formattedProperty: PropertyDetailType = {
         id: propertyData.id,
         title: propertyData.title,
         location: propertyData.location,
@@ -83,10 +83,12 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
         seller_id: propertyData.user_id,
         user_id: propertyData.user_id,
         created_at: propertyData.created_at,
-        updated_at: propertyData.updated_at,
+        seller_name: "",  // Will be updated by fetchSellerInfo
+        seller_email: "", // Will be updated by fetchSellerInfo
+        seller_phone: "", // Will be updated by fetchSellerInfo
         after_repair_value: Number(propertyData.after_repair_value) || 0,
         estimated_rehab: Number(propertyData.estimated_rehab) || 0,
-        reward: Number(propertyData.reward) || 0,
+        reward: propertyData.reward !== null ? Number(propertyData.reward) : null,
         year_built: propertyData.year_built || null,
         lot_size: propertyData.lot_size || null,
         parking: propertyData.parking || null,
@@ -108,6 +110,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
       } else if (currentUser?.id === propertyData.user_id) {
         // User is owner
         setIsOwner(true);
+        setShouldShowSellerInfo(true);
       }
     } catch (error) {
       console.error("Error fetching property details:", error);
@@ -134,6 +137,7 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
           email: sellerData.email || null
         });
 
+        // Update seller info in property data
         setProperty(prev => {
           if (!prev) return null;
           return {
