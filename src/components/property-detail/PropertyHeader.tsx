@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { MapPin, MessageSquare, Link as LinkIcon } from 'lucide-react';
+import { MapPin, MessageSquare } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import LikeButton from './LikeButton';
 import RewardToolTip from './RewardToolTip';
@@ -29,6 +29,7 @@ interface PropertyHeaderProps {
   propertyId?: string;
   reward?: number;
   sellerName?: string;
+  waitlistStatus?: string | null;
 }
 
 const PropertyHeader: React.FC<PropertyHeaderProps> = ({
@@ -46,7 +47,8 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
   userId,
   propertyId,
   reward,
-  sellerName = "Seller"
+  sellerName = "Seller",
+  waitlistStatus
 }) => {
   const [hasClaimedReward, setHasClaimedReward] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
@@ -220,7 +222,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     navigate('/dashboard', { state: { activeTab: 'rewards' } });
   };
 
-  // Function to handle messaging the seller directly
+  // New function to handle messaging the seller directly
   const handleMessageSellerDirectly = async () => {
     if (!userId) return;
     
@@ -251,18 +253,12 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       );
     }
     return (
-      <div className="font-medium text-sm sm:text-base flex items-center">
-        <button 
-          onClick={onShowAddressClick} 
-          className="flex items-center text-black font-bold hover:underline focus:outline-none gap-1"
-        >
-          <span>Click to view full address</span>
-          <LinkIcon size={14} className="ml-1" />
-        </button>
-        <span className="ml-1">
-          {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
+      <span className="font-medium text-sm sm:text-base">
+        <span className="cursor-pointer text-black font-bold hover:underline" onClick={onShowAddressClick}>
+          Join Waitlist For Address
         </span>
-      </div>
+        {location.includes(',') ? `, ${location.split(',').slice(1).join(',')}` : ''}
+      </span>
     );
   };
 
@@ -320,9 +316,14 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         </div>
       </div>
 
-      {/* Provide access to contact seller directly */}
-      {!isOwner && user && (
+      {waitlistStatus === 'pending' && (
         <div className="mt-4 space-y-3">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <p className="text-black font-medium">Waitlist Request Pending</p>
+            <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
+          </div>
+          
+          {/* Updated to use the direct message handler instead of a Link */}
           <Button 
             variant="outline" 
             className="w-full relative group"

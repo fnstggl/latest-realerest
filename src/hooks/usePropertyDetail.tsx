@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useDebounce } from './useDebounce';
 
 type PropertyDetailType = {
   id: string;
@@ -38,8 +37,10 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [sellerInfo, setSellerInfo] = useState<{ name: string | null; phone: string | null; email: string | null }>({ name: null, phone: null, email: null });
+  const [waitlistStatus, setWaitlistStatus] = useState<string | null>(null);
   const [isOwner, setIsOwner] = useState(false);
-  const [shouldShowAddress, setShouldShowAddress] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
+  const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
 
   const fetchPropertyDetails = async () => {
     setIsLoading(true);
@@ -101,13 +102,15 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
         await fetchSellerInfo(propertyData.user_id);
       }
 
-      // Check if current user is the owner
+      // Check waitlist status if current user is not the owner
       const currentUser = (await supabase.auth.getUser()).data?.user;
       
-      if (currentUser?.id === propertyData.user_id) {
+      if (currentUser?.id && currentUser.id !== propertyData.user_id) {
+        await checkWaitlistStatus(propertyId, currentUser.id);
+      } else if (currentUser?.id === propertyData.user_id) {
         // User is owner
         setIsOwner(true);
-        setShouldShowAddress(true);
+        setShouldShowSellerInfo(true);
       }
     } catch (error) {
       console.error("Error fetching property details:", error);
@@ -150,19 +153,52 @@ export const usePropertyDetail = (propertyId: string | undefined) => {
     }
   };
 
+  const checkWaitlistStatus = async (propId: string, userId: string) => {
+    try {
+      const { data: waitlistData, error: waitlistError } = await supabase
+        .from('waitlist_requests')
+        .select('status')
+        .eq('property_id', propId)
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (waitlistError) {
+        console.error("Error checking waitlist status:", waitlistError);
+        return;
+      }
+      
+      if (waitlistData) {
+        const status = waitlistData.status || 'pending';
+        setWaitlistStatus(status);
+        
+        // Set isApproved to true if status is accepted
+        if (status === 'accepted') {
+          setIsApproved(true);
+          setShouldShowSellerInfo(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking waitlist status:", error);
+    }
+  };
+
   useEffect(() => {
     fetchPropertyDetails();
   }, [propertyId]);
+
+  useEffect(() => {
+    setShouldShowSellerInfo(isOwner || isApproved);
+  }, [isOwner, isApproved]);
 
   return {
     property,
     isLoading,
     error,
     sellerInfo,
+    waitlistStatus,
     isOwner,
-    shouldShowSellerInfo: true, // Always show seller info to everyone
-    shouldShowAddress,
-    setShouldShowAddress,
+    isApproved,
+    shouldShowSellerInfo,
     refreshProperty: fetchPropertyDetails
   };
 };

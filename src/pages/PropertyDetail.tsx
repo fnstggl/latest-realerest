@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Cog, Home } from 'lucide-react';
+import WaitlistButton from '@/components/WaitlistButton';
 import { usePropertyDetail } from '@/hooks/usePropertyDetail';
 import PropertyImages from '@/components/property-detail/PropertyImages';
 import PropertyHeader from '@/components/property-detail/PropertyHeader';
@@ -23,6 +23,7 @@ import SEO from '@/components/SEO';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
   const [realOffers, setRealOffers] = useState<Array<{
     id: string;
     amount: number;
@@ -35,10 +36,10 @@ const PropertyDetail: React.FC = () => {
     isLoading,
     error,
     sellerInfo,
+    waitlistStatus,
     isOwner,
+    isApproved,
     shouldShowSellerInfo,
-    shouldShowAddress,
-    setShouldShowAddress,
     refreshProperty
   } = usePropertyDetail(id);
 
@@ -49,7 +50,7 @@ const PropertyDetail: React.FC = () => {
   }, []);
 
   const handleAddressClick = () => {
-    setShouldShowAddress(true);
+    setShowWaitlistDialog(true);
   };
 
   useEffect(() => {
@@ -175,7 +176,7 @@ const PropertyDetail: React.FC = () => {
           </div>
         )}
         
-        {!isOwner && property && (
+        {!isOwner && isApproved && property && (
           <OfferStatusBanner 
             propertyId={property.id} 
             sellerName={property.seller_name || 'Property Owner'} 
@@ -200,21 +201,33 @@ const PropertyDetail: React.FC = () => {
               sqft={property?.sqft} 
               location={property?.location} 
               fullAddress={property?.full_address} 
-              showFullAddress={shouldShowAddress || isOwner} 
+              showFullAddress={isOwner || isApproved} 
               onShowAddressClick={handleAddressClick}
               userId={property?.user_id}
               propertyId={property?.id}
               reward={property?.reward}
               sellerName={property?.seller_name}
+              waitlistStatus={waitlistStatus}
             />
 
-            {property && shouldShowSellerInfo && !isOwner && (
+            {!isOwner && !isApproved && waitlistStatus !== 'pending' && (
+              <WaitlistButton 
+                propertyId={property?.id || ''} 
+                propertyTitle={property?.title || ''} 
+                open={showWaitlistDialog} 
+                onOpenChange={setShowWaitlistDialog}
+                refreshProperty={refreshProperty}
+              />
+            )}
+
+            {property && shouldShowSellerInfo && (
               <SellerContactInfo 
                 name={property.seller_name} 
                 phone={property.seller_phone} 
                 email={property.seller_email}
                 showContact={true}
                 sellerId={property.seller_id}
+                waitlistStatus={waitlistStatus}
                 propertyId={property.id}
                 propertyTitle={property.title}
               />
@@ -244,6 +257,13 @@ const PropertyDetail: React.FC = () => {
               </Link>
             )}
             
+            {isApproved ? (
+              <div className="glass-card backdrop-blur-lg border border-white/40 p-4 rounded-xl">
+                <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
+                <p>You now have access to view the full property details and contact the seller directly.</p>
+              </div>
+            ) : null}
+            
             {realOffers.length > 0 && property && (
               <PropertyOffers propertyId={property.id} realOffers={realOffers} />
             )}
@@ -265,7 +285,7 @@ const PropertyDetail: React.FC = () => {
               </div>
             )}
             
-            {!isOwner && property && (
+            {isApproved && property && (
               <div className="mt-3">
                 <MakeOfferButton 
                   propertyId={property.id} 
