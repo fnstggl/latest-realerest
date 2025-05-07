@@ -103,15 +103,19 @@ export const useUserProfiles = () => {
         
         // If name is empty but email exists
         if (profileData.email) {
+          // Try to create a user-friendly name from the email
+          const emailName = profileData.email.split('@')[0];
+          const capitalizedName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+          
           const userProfile: UserProfile = {
             id: userId,
-            name: profileData.email,
+            name: capitalizedName || 'User',
             email: profileData.email,
             role,
             _source: 'db'
           };
 
-          console.log(`[useUserProfiles] Using email as name for ${userId}:`, userProfile);
+          console.log(`[useUserProfiles] Created name from email for ${userId}:`, userProfile);
           
           // Cache the profile with timestamp
           profileCache[userId] = { ...userProfile, timestamp: Date.now() };
@@ -131,15 +135,19 @@ export const useUserProfiles = () => {
       }
 
       if (emailData) {
+        // Create a user-friendly name from the email
+        const emailName = emailData.split('@')[0];
+        const capitalizedName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+        
         const userProfile: UserProfile = {
           id: userId,
-          name: emailData,
+          name: capitalizedName || 'User',
           email: emailData,
           role: 'buyer',
           _source: 'rpc'
         };
 
-        console.log(`[useUserProfiles] Fetched profile via RPC for ${userId}:`, userProfile);
+        console.log(`[useUserProfiles] Created profile with name from RPC email for ${userId}:`, userProfile);
         
         // Cache the profile with timestamp
         profileCache[userId] = { ...userProfile, timestamp: Date.now() };
