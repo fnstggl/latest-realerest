@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Upload, X } from 'lucide-react';
 import { toast } from "sonner";
@@ -19,6 +19,8 @@ interface ImageUploaderProps {
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 // Maximum number of images allowed
 const MAX_IMAGES = 10;
+// Supported image types
+const SUPPORTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/heif'];
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
   images,
@@ -31,10 +33,52 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [heicFiles, setHeicFiles] = useState<Record<string, boolean>>({});
+
+  // Clean up object URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      images.forEach(img => {
+        if (img.startsWith('blob:')) {
+          URL.revokeObjectURL(img);
+        }
+      });
+    };
+  }, [images]);
 
   const handleImageUpload = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  };
+
+  // Convert HEIC to JPEG for preview if possible
+  const createHeicPreview = async (file: File): Promise<string> => {
+    try {
+      // Try to dynamically import heic2any for conversion
+      const heic2any = await import('heic2any');
+      
+      // Convert HEIC to JPEG blob for preview
+      const jpegBlob = await heic2any.default({
+        blob: file,
+        toType: "image/jpeg",
+        quality: 0.8
+      });
+      
+      // Create a URL for the converted image
+      const imageUrl = URL.createObjectURL(jpegBlob instanceof Blob ? jpegBlob : jpegBlob[0]);
+      
+      // Mark this URL as being from a HEIC file
+      setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
+      
+      toast.success(`HEIC file "${file.name}" converted for preview.`);
+      return imageUrl;
+    } catch (error) {
+      console.error("HEIC preview conversion failed:", error);
+      // Fall back to regular object URL
+      const imageUrl = URL.createObjectURL(file);
+      setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
+      return imageUrl;
     }
   };
 
@@ -55,12 +99,20 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       // Limit to MAX_IMAGES images maximum
       const filesToProcess = Math.min(MAX_IMAGES - images.length, files.length);
 
+      // Process files one by one - with special handling for HEIC
       for (let i = 0; i < filesToProcess; i++) {
         const file = files[i];
         
-        // Verify file is an image
-        if (!file.type.startsWith('image/')) {
-          toast.error(`File "${file.name}" is not an image and was skipped.`);
+        // Check if file is a supported image type
+        const fileType = file.type.toLowerCase();
+        // Special handling for HEIC files which might have inconsistent MIME types
+        const isHeic = fileType === 'image/heic' || 
+                      fileType === 'image/heif' || 
+                      file.name.toLowerCase().endsWith('.heic') ||
+                      file.name.toLowerCase().endsWith('.heif');
+        
+        if (!SUPPORTED_IMAGE_TYPES.includes(fileType) && !isHeic) {
+          toast.error(`File "${file.name}" is not a supported image type and was skipped.`);
           continue;
         }
         
@@ -72,7 +124,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         newImageFiles.push(file);
         
         // Create a URL for the image preview (with memory management)
-        const imageUrl = URL.createObjectURL(file);
+        let imageUrl: string;
+        
+        // Special handling for HEIC files
+        if (isHeic) {
+          imageUrl = await createHeicPreview(file);
+        } else {
+          imageUrl = URL.createObjectURL(file);
+        }
+        
         setImages(prev => [...prev, imageUrl]);
       }
 
@@ -98,6 +158,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       URL.revokeObjectURL(images[index]);
     }
     
+    // Also remove from heicFiles tracking if it exists there
+    if (heicFiles[images[index]]) {
+      setHeicFiles(prev => {
+        const newHeicFiles = { ...prev };
+        delete newHeicFiles[images[index]];
+        return newHeicFiles;
+      });
+    }
+    
     setImages(prev => prev.filter((_, i) => i !== index));
     setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
@@ -116,7 +185,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           className="hidden"
           onChange={handleFileChange}
           multiple
-          accept="image/*"
+          accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,.heic,.heif"
           disabled={isSubmitting || isProcessingImages || isValidating || images.length >= MAX_IMAGES}
         />
         <button 
@@ -164,6 +233,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 width={200}
                 height={150}
                 sizes="(max-width: 768px) 50vw, 25vw"
+                data-heic={heicFiles[img] ? 'true' : 'false'}
               />
               <button 
                 type="button" 
