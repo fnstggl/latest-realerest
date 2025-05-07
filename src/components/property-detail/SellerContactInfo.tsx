@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Phone, Mail, User, MessageSquare, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -50,7 +49,18 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   }
   
   const isPending = waitlistStatus === 'pending';
-  const displayName = name || 'Unknown Seller';
+  
+  // Use a formatted display name - if name is provided and not an email address, use it
+  // Otherwise create a user-friendly name from the first part of the email
+  const isEmail = name?.includes('@');
+  let displayName = 'Unknown Seller';
+  
+  if (name && !isEmail) {
+    displayName = name;
+  } else if (email) {
+    const emailName = email.split('@')[0];
+    displayName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+  }
 
   // Handler for direct messaging seller
   const handleMessageSeller = async (event: React.MouseEvent) => {
