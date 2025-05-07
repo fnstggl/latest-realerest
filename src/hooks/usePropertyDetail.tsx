@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
+import { useUserProfiles } from './useUserProfiles';
 
 type PropertyDetailType = {
   id: string;
@@ -32,6 +34,8 @@ type PropertyDetailType = {
 };
 
 const usePropertyDetail = (propertyId?: string) => {
+  const { user } = useAuth();
+  const { getUserProfile } = useUserProfiles();
   const [property, setProperty] = useState<PropertyDetailType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -71,6 +75,31 @@ const usePropertyDetail = (propertyId?: string) => {
         // Handle null or undefined reward properly
         const rewardAmount = propertyData.reward ? Number(propertyData.reward) : null;
 
+        // Fetch seller profile using useUserProfiles hook
+        let sellerProfile = null;
+        try {
+          sellerProfile = await getUserProfile(propertyData.user_id);
+          console.log("Seller profile fetched:", sellerProfile);
+        } catch (profileError) {
+          console.error("Error fetching seller profile:", profileError);
+        }
+
+        // Create a user-friendly seller name
+        // Capitalize first letter and use name from profile or format email if name isn't available
+        let sellerName = 'Property Owner';
+        
+        if (sellerProfile) {
+          if (sellerProfile.name && !sellerProfile.name.includes('@')) {
+            sellerName = sellerProfile.name;
+          } else if (sellerProfile.email) {
+            // Create a readable name from the email (e.g., john.doe@example.com → John)
+            const emailName = sellerProfile.email.split('@')[0];
+            sellerName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+          }
+        }
+        
+        const sellerEmail = sellerProfile?.email || '';
+
         const mappedProperty: PropertyDetailType = {
           id: propertyData.id,
           title: propertyData.title,
@@ -85,8 +114,8 @@ const usePropertyDetail = (propertyId?: string) => {
           images: propertyData.images || [],
           user_id: propertyData.user_id,
           below_market: parseFloat(belowMarket),
-          seller_name: '',
-          seller_email: '',
+          seller_name: sellerName,
+          seller_email: sellerEmail,
           seller_phone: '',
           seller_id: propertyData.user_id,
           reward: rewardAmount,
@@ -111,8 +140,14 @@ const usePropertyDetail = (propertyId?: string) => {
         if (sellerError) {
           console.error("Error fetching seller info:", sellerError);
         } else if (sellerData) {
+          // Check if name is an actual name (not an email) and not empty
+          let name = sellerName;
+          if (sellerData.name && !sellerData.name.includes('@') && sellerData.name.trim() !== '') {
+            name = sellerData.name;
+          }
+          
           setSellerInfo({
-            name: sellerData.name || null,
+            name: name,
             phone: sellerData.phone || null,
             email: sellerData.email || null
           });
@@ -121,8 +156,8 @@ const usePropertyDetail = (propertyId?: string) => {
             if (!prev) return null;
             return {
               ...prev,
-              seller_name: sellerData.name || '',
-              seller_email: sellerData.email || '',
+              seller_name: name,
+              seller_email: sellerData.email || sellerEmail,
               seller_phone: sellerData.phone || '',
             };
           });
@@ -132,26 +167,11 @@ const usePropertyDetail = (propertyId?: string) => {
         const currentUser = authData?.user;
         const isCurrentUserOwner = currentUser?.id === propertyData.user_id;
         setIsOwner(isCurrentUserOwner);
-
-        if (currentUser?.id && currentUser?.id !== propertyData.user_id) {
-          const { data: waitlistData, error: waitlistError } = await supabase
-            .from('waitlist_requests')
-            .select('status')
-            .eq('property_id', propertyId)
-            .eq('user_id', currentUser.id)
-            .single();
-
-          if (waitlistError && !waitlistError.message.includes('No rows found')) {
-            console.error("Error fetching waitlist status:", waitlistError);
-          } else if (waitlistData) {
-            setWaitlistStatus(waitlistData.status || null);
-            setIsApproved(waitlistData.status === 'approved');
-          } else {
-            setWaitlistStatus(null);
-          }
-        } else {
-          setWaitlistStatus(null);
-          setIsApproved(isCurrentUserOwner);
+        
+        // Auto-approve all non-owner users - this is the key change
+        if (!isCurrentUserOwner) {
+          setIsApproved(true);
+          setWaitlistStatus('approved');
         }
       }
     } catch (err: any) {
