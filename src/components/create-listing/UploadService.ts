@@ -16,43 +16,115 @@ const JPEG_QUALITY = 0.75;
 const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
 
 /**
+ * Checks if a file is a HEIC/HEIF format
+ */
+function isHeicFile(file: File): boolean {
+  const fileType = file.type.toLowerCase();
+  const fileName = file.name.toLowerCase();
+  return fileType === 'image/heic' || 
+         fileType === 'image/heif' || 
+         fileName.endsWith('.heic') || 
+         fileName.endsWith('.heif');
+}
+
+/**
+ * Converts a HEIC/HEIF file to JPEG format
+ * This uses a dynamic import to avoid bloating the main bundle
+ */
+async function convertHeicToJpeg(file: File): Promise<File> {
+  try {
+    // Dynamically import heic2any library only when needed
+    const heic2any = await import('heic2any');
+    
+    console.log("Converting HEIC file to JPEG:", file.name);
+    
+    // Convert the HEIC file to JPEG blob
+    const jpegBlob = await heic2any.default({
+      blob: file,
+      toType: "image/jpeg",
+      quality: 0.85 // Slightly higher than our normal JPEG quality to preserve details
+    });
+    
+    // Handle both single blob and array of blobs return types
+    const resultBlob = Array.isArray(jpegBlob) ? jpegBlob[0] : jpegBlob;
+    
+    // Create a new File from the JPEG blob
+    const jpegFile = new File(
+      [resultBlob], 
+      file.name.replace(/\.(heic|heif)$/i, '.jpg'), 
+      { type: 'image/jpeg' }
+    );
+    
+    console.log("HEIC conversion complete:", 
+      `${(file.size / 1024).toFixed(2)}KB →`,
+      `${(jpegFile.size / 1024).toFixed(2)}KB`);
+    
+    return jpegFile;
+  } catch (error) {
+    console.error("Error converting HEIC to JPEG:", error);
+    // If conversion fails, throw an error to be handled by the caller
+    throw new Error(`Failed to convert HEIC image: ${file.name}`);
+  }
+}
+
+/**
  * Compresses an image file to reduce its size while maintaining quality
  */
 async function compressImage(file: File): Promise<File> {
   try {
-    // Options for image compression
-    const options = {
-      maxSizeMB: TARGET_COMPRESSED_SIZE / (1024 * 1024),
-      maxWidthOrHeight: MAX_IMAGE_WIDTH,
-      useWebWorker: true,
-      fileType: file.type,
-      initialQuality: JPEG_QUALITY,
-      alwaysKeepResolution: false,
-      onProgress: undefined
-    };
-    
-    // Skip compression for small enough files
-    if (file.size <= TARGET_COMPRESSED_SIZE) {
-      console.log("Image already small enough, skipping compression:", file.name);
-      return file;
+    // Check if this is a HEIC/HEIF file that needs conversion
+    if (isHeicFile(file)) {
+      try {
+        // Convert HEIC to JPEG first
+        const jpegFile = await convertHeicToJpeg(file);
+        // Then apply compression to the JPEG
+        return await compressStandardImage(jpegFile);
+      } catch (error) {
+        console.error("HEIC conversion error:", error);
+        throw error;
+      }
+    } else {
+      // For standard image formats, just compress
+      return await compressStandardImage(file);
     }
-    
-    // Compress the image
-    const compressedFile = await imageCompression(file, options);
-    console.log(
-      "Compression result:",
-      file.name,
-      `${(file.size / 1024).toFixed(2)}KB →`,
-      `${(compressedFile.size / 1024).toFixed(2)}KB`,
-      `(${Math.round((compressedFile.size / file.size) * 100)}%)`
-    );
-    
-    return compressedFile;
   } catch (error) {
-    console.error("Error compressing image:", error);
-    // Return original file if compression fails
+    console.error("Error in image processing pipeline:", error);
+    return file; // Return original as fallback
+  }
+}
+
+/**
+ * Standard compression for JPEG, PNG, etc.
+ */
+async function compressStandardImage(file: File): Promise<File> {
+  // Skip compression for small enough files
+  if (file.size <= TARGET_COMPRESSED_SIZE) {
+    console.log("Image already small enough, skipping compression:", file.name);
     return file;
   }
+  
+  // Options for image compression
+  const options = {
+    maxSizeMB: TARGET_COMPRESSED_SIZE / (1024 * 1024),
+    maxWidthOrHeight: MAX_IMAGE_WIDTH,
+    useWebWorker: true,
+    fileType: file.type,
+    initialQuality: JPEG_QUALITY,
+    alwaysKeepResolution: false,
+    onProgress: undefined
+  };
+  
+  // Compress the image
+  const compressedFile = await imageCompression(file, options);
+  console.log(
+    "Compression result:",
+    file.name,
+    `${(file.size / 1024).toFixed(2)}KB →`,
+    `${(compressedFile.size / 1024).toFixed(2)}KB`,
+    `(${Math.round((compressedFile.size / file.size) * 100)}%)`
+  );
+  
+  return compressedFile;
 }
 
 /**
@@ -100,7 +172,9 @@ export const uploadImagesToSupabase = async (
       const batchPromises = batch.map(async (file, batchIndex) => {
         try {
           // Create a unique but descriptive filename
-          const fileExt = file.name.split('.').pop();
+          const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
+                          file.type === 'image/png' ? 'png' :
+                          file.name.split('.').pop();
           const fileName = `${i + batchIndex}-${Date.now().toString().slice(-6)}.${fileExt}`;
           const filePath = `${folderName}/${fileName}`;
           
@@ -136,7 +210,8 @@ export const uploadImagesToSupabase = async (
             width: width || undefined,
             height: height || undefined,
             uploadedAt: new Date().toISOString(),
-            propertyId: propertyId || null
+            propertyId: propertyId || null,
+            wasHeic: isHeicFile(files[i + batchIndex]) ? true : undefined
           };
           
           // Upload to Supabase with better caching directives
