@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -9,7 +10,6 @@ import PropertyImages from '@/components/property-detail/PropertyImages';
 import PropertyHeader from '@/components/property-detail/PropertyHeader';
 import SellerContactInfo from '@/components/property-detail/SellerContactInfo';
 import PropertyDescription from '@/components/property-detail/PropertyDescription';
-import PropertyDetails from '@/components/property-detail/PropertyDetails';
 import PropertyOffers from '@/components/property-detail/PropertyOffers';
 import MakeOfferButton from '@/components/property-detail/MakeOfferButton';
 import OfferStatusBanner from '@/components/property-detail/OfferStatusBanner';
@@ -23,7 +23,6 @@ import SEO from '@/components/SEO';
 
 const PropertyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
   const [realOffers, setRealOffers] = useState<Array<{
     id: string;
     amount: number;
@@ -48,10 +47,6 @@ const PropertyDetail: React.FC = () => {
       window.scrollTo(0, 0);
     }
   }, []);
-
-  const handleAddressClick = () => {
-    setShowWaitlistDialog(true);
-  };
 
   useEffect(() => {
     if (!id) return;
@@ -117,8 +112,6 @@ const PropertyDetail: React.FC = () => {
       </div>
     );
   }
-
-  const showPropertyDetails = property?.after_repair_value !== undefined || property?.estimated_rehab !== undefined;
 
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
@@ -202,23 +195,13 @@ const PropertyDetail: React.FC = () => {
               location={property?.location} 
               fullAddress={property?.full_address} 
               showFullAddress={isOwner || isApproved} 
-              onShowAddressClick={handleAddressClick}
+              onShowAddressClick={() => {}}
               userId={property?.user_id}
               propertyId={property?.id}
               reward={property?.reward}
               sellerName={property?.seller_name}
               waitlistStatus={waitlistStatus}
             />
-
-            {!isOwner && !isApproved && waitlistStatus !== 'pending' && (
-              <WaitlistButton 
-                propertyId={property?.id || ''} 
-                propertyTitle={property?.title || ''} 
-                open={showWaitlistDialog} 
-                onOpenChange={setShowWaitlistDialog}
-                refreshProperty={refreshProperty}
-              />
-            )}
 
             {property && shouldShowSellerInfo && (
               <SellerContactInfo 
@@ -257,13 +240,6 @@ const PropertyDetail: React.FC = () => {
               </Link>
             )}
             
-            {isApproved ? (
-              <div className="glass-card backdrop-blur-lg border border-white/40 p-4 rounded-xl">
-                <div className="font-bold text-black mb-2">Your waitlist request has been approved!</div>
-                <p>You now have access to view the full property details and contact the seller directly.</p>
-              </div>
-            ) : null}
-            
             {realOffers.length > 0 && property && (
               <PropertyOffers propertyId={property.id} realOffers={realOffers} />
             )}
@@ -285,7 +261,7 @@ const PropertyDetail: React.FC = () => {
               </div>
             )}
             
-            {isApproved && property && (
+            {property && !isOwner && (
               <div className="mt-3">
                 <MakeOfferButton 
                   propertyId={property.id} 
@@ -309,24 +285,15 @@ const PropertyDetail: React.FC = () => {
             baths={property?.baths} 
             sqft={property?.sqft} 
             belowMarket={property?.below_market} 
-            comparables={shouldShowSellerInfo ? property?.comparable_addresses : undefined} 
+            comparables={shouldShowSellerInfo ? property?.comparable_addresses : undefined}
+            afterRepairValue={property?.after_repair_value}
+            estimatedRehab={property?.estimated_rehab}
+            propertyType={property?.property_type}
+            yearBuilt={property?.year_built}
+            lotSize={property?.lot_size}
+            parking={property?.parking}
           />
         </div>
-        
-        {showPropertyDetails && (
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <div>
-              <PropertyDetails 
-                afterRepairValue={property?.after_repair_value} 
-                estimatedRehab={property?.estimated_rehab} 
-                propertyType={property?.property_type}
-                yearBuilt={property?.year_built}
-                lotSize={property?.lot_size}
-                parking={property?.parking}
-              />
-            </div>
-          </div>
-        )}
       </div>
       
       <SiteFooter />
