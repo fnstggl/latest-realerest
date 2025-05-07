@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface MakeOfferButtonProps {
   propertyId: string;
@@ -32,6 +32,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   onOfferSubmitted,
 }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [offerAmount, setOfferAmount] = useState(currentPrice);
   const [isInterested, setIsInterested] = useState(true);
@@ -44,6 +45,12 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
   const [buyerProfile, setBuyerProfile] = useState<{ name?: string; email?: string } | null>(null);
 
   const handleMakeOffer = () => {
+    if (!user) {
+      // Redirect to sign in page if user is not logged in
+      navigate('/signin', { state: { returnPath: `/property/${propertyId}` } });
+      toast.error("Please sign in to make an offer");
+      return;
+    }
     setDialogOpen(true);
   };
 
@@ -338,4 +345,5 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
     </>
   );
 };
+
 export default MakeOfferButton;
