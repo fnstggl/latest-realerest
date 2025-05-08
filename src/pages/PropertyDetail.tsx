@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -292,6 +291,7 @@ const PropertyDetail: React.FC = () => {
             yearBuilt={property?.year_built}
             lotSize={property?.lot_size}
             parking={property?.parking}
+            additionalImages={property?.additional_images}
           />
         </div>
       </div>

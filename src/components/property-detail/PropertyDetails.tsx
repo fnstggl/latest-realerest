@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { formatCurrency } from '@/lib/utils';
+import { ExternalLink } from 'lucide-react';
 
 interface PropertyDetailsProps {
   afterRepairValue?: number;
@@ -9,6 +10,7 @@ interface PropertyDetailsProps {
   yearBuilt?: number | null;
   lotSize?: number | null;
   parking?: string | null;
+  additionalImages?: string | null;
 }
 
 const PropertyDetails: React.FC<PropertyDetailsProps> = ({
@@ -17,9 +19,10 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   propertyType,
   yearBuilt,
   lotSize,
-  parking
+  parking,
+  additionalImages
 }) => {
-  if (!afterRepairValue && !estimatedRehab && !propertyType && !yearBuilt && !lotSize && !parking) {
+  if (!afterRepairValue && !estimatedRehab && !propertyType && !yearBuilt && !lotSize && !parking && !additionalImages) {
     return null;
   }
 
@@ -64,6 +67,20 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
           </div>
         )}
       </div>
+      
+      {additionalImages && (
+        <div className="mt-6">
+          <a 
+            href={additionalImages}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50 transition-colors"
+          >
+            <ExternalLink size={18} className="mr-2" />
+            <span className="text-gray-800">View Additional Images</span>
+          </a>
+        </div>
+      )}
     </div>
   );
 };

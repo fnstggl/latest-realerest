@@ -29,6 +29,7 @@ interface Property {
   estimated_rehab?: number;
   property_type?: string;
   title: string;
+  additional_images?: string;
 }
 
 const PropertyEdit: React.FC = () => {
@@ -53,6 +54,7 @@ const PropertyEdit: React.FC = () => {
     afterRepairValue: "",
     estimatedRehab: "",
     propertyType: "",
+    additionalImages: "",
   });
   const [images, setImages] = useState<string[]>([]);
 
@@ -96,7 +98,8 @@ const PropertyEdit: React.FC = () => {
             images: data.images || [],
             after_repair_value: data.after_repair_value || undefined,
             estimated_rehab: data.estimated_rehab || undefined,
-            property_type: data.property_type || "House"
+            property_type: data.property_type || "House",
+            additional_images: data.additional_images || ""
           });
           
           setImages(data.images || []);
@@ -112,7 +115,8 @@ const PropertyEdit: React.FC = () => {
             description: data.description || "",
             afterRepairValue: data.after_repair_value ? data.after_repair_value.toString() : "",
             estimatedRehab: data.estimated_rehab ? data.estimated_rehab.toString() : "",
-            propertyType: data.property_type || "House"
+            propertyType: data.property_type || "House",
+            additionalImages: data.additional_images || ""
           });
         }
       } catch (error) {
@@ -242,7 +246,8 @@ const PropertyEdit: React.FC = () => {
         after_repair_value: afterRepairValue,
         estimated_rehab: estimatedRehab,
         images: finalImages,
-        property_type: formData.propertyType
+        property_type: formData.propertyType,
+        additional_images: formData.additionalImages
       });
       
       // Update in Supabase
@@ -261,6 +266,7 @@ const PropertyEdit: React.FC = () => {
           estimated_rehab: estimatedRehab,
           images: finalImages,
           property_type: formData.propertyType,
+          additional_images: formData.additionalImages,
         })
         .eq('id', id)
         .select();
@@ -459,6 +465,19 @@ const PropertyEdit: React.FC = () => {
                   value={formData.estimatedRehab}
                   onChange={handleInputChange}
                   className="mt-2 border-2 border-black"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="additionalImages" className="font-bold">Additional Images Link</Label>
+                <Input
+                  id="additionalImages"
+                  name="additionalImages"
+                  type="text"
+                  value={formData.additionalImages}
+                  onChange={handleInputChange}
+                  className="mt-2 border-2 border-black"
+                  placeholder="Paste a Google Drive or Dropbox link"
                 />
               </div>
             </div>

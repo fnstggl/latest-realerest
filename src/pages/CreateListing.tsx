@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -43,6 +44,7 @@ const CreateListing: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [additionalImagesLink, setAdditionalImagesLink] = useState('');
   const abortControllerRef = useRef<AbortController | null>(null);
   const {
     user,
@@ -231,7 +233,8 @@ const CreateListing: React.FC = () => {
         sqft: parseInt(values.sqft),
         images: finalImages,
         user_id: user.id,
-        reward: values.bounty ? Number(values.bounty) : null  // Using the correct 'reward' field name
+        reward: values.bounty ? Number(values.bounty) : null,  // Using the correct 'reward' field name
+        additional_images: additionalImagesLink || null
       }).select();
       
       if (error) {
@@ -352,7 +355,17 @@ const CreateListing: React.FC = () => {
                 </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>
-                  <ImageUploader images={images} setImages={setImages} imageFiles={imageFiles} setImageFiles={setImageFiles} isSubmitting={isSubmitting} uploadProgress={uploadProgress} isProcessingImages={isProcessingImages} />
+                  <ImageUploader 
+                    images={images} 
+                    setImages={setImages} 
+                    imageFiles={imageFiles} 
+                    setImageFiles={setImageFiles} 
+                    isSubmitting={isSubmitting} 
+                    uploadProgress={uploadProgress} 
+                    isProcessingImages={isProcessingImages}
+                    additionalImagesLink={additionalImagesLink}
+                    onAdditionalImagesLinkChange={setAdditionalImagesLink}
+                  />
                 </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Upload, X } from 'lucide-react';
 import { toast } from "sonner";
 import OptimizedImage from '@/components/ui/OptimizedImage';
+import { Input } from "@/components/ui/input";
+import { Label } from '@/components/ui/label';
 
 interface ImageUploaderProps {
   images: string[];
@@ -13,6 +15,8 @@ interface ImageUploaderProps {
   isSubmitting: boolean;
   uploadProgress: number;
   isProcessingImages: boolean;
+  additionalImagesLink?: string;
+  onAdditionalImagesLinkChange?: (link: string) => void;
 }
 
 // Maximum image size in bytes (3MB)
@@ -29,7 +33,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   setImageFiles,
   isSubmitting,
   uploadProgress,
-  isProcessingImages
+  isProcessingImages,
+  additionalImagesLink = '',
+  onAdditionalImagesLinkChange
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -245,6 +251,21 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               </button>
             </div>
           ))}
+        </div>
+      )}
+      
+      {/* Additional Images Link Input */}
+      {onAdditionalImagesLinkChange && (
+        <div className="mt-6">
+          <Label htmlFor="additional-images" className="font-bold">Add additional images</Label>
+          <Input 
+            id="additional-images"
+            type="text"
+            value={additionalImagesLink}
+            onChange={(e) => onAdditionalImagesLinkChange(e.target.value)}
+            placeholder="Paste a Google Drive or Dropbox link to upload more images"
+            className="mt-2 border-2 border-black/20"
+          />
         </div>
       )}
       

@@ -313,6 +313,7 @@ export type Database = {
       }
       property_listings: {
         Row: {
+          additional_images: string | null
           after_repair_value: number | null
           baths: number | null
           beds: number | null
@@ -334,6 +335,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          additional_images?: string | null
           after_repair_value?: number | null
           baths?: number | null
           beds?: number | null
@@ -355,6 +357,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          additional_images?: string | null
           after_repair_value?: number | null
           baths?: number | null
           beds?: number | null

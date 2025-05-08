@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { formatCurrency } from '@/lib/utils';
+import { ExternalLink } from 'lucide-react';
 
 interface PropertyDescriptionProps {
   description?: string;
@@ -15,6 +16,7 @@ interface PropertyDescriptionProps {
   yearBuilt?: number | null;
   lotSize?: number | null;
   parking?: string | null;
+  additionalImages?: string | null;
 }
 
 const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
@@ -29,7 +31,8 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
   propertyType,
   yearBuilt,
   lotSize,
-  parking
+  parking,
+  additionalImages
 }) => {
   const defaultDescription = `This beautiful property offers great value at ${belowMarket}% below market price. 
   With ${beds} bedrooms and ${baths} bathrooms across ${sqft.toLocaleString()} square feet, 
@@ -102,6 +105,23 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
               <li key={index} className="mb-1 break-words p-2 bg-white rounded-md">{address}</li>
             ))}
           </ul>
+        </div>
+      )}
+      
+      {additionalImages && (
+        <div className="mt-6 p-4 bg-white rounded-lg">
+          <h3 className="text-lg sm:text-xl font-bold mb-2 text-black inline-block px-3 py-1">Additional Images</h3>
+          <div className="mt-2">
+            <a 
+              href={additionalImages}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-100 transition-colors"
+            >
+              <ExternalLink size={18} className="mr-2" />
+              <span className="text-gray-800 hover:text-black">View Additional Images Gallery</span>
+            </a>
+          </div>
         </div>
       )}
     </div>
