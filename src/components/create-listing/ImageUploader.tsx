@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Upload, X } from 'lucide-react';
 import { toast } from "sonner";
 import OptimizedImage from '@/components/ui/OptimizedImage';
-import { Input } from "@/components/ui/input";
-import { Label } from '@/components/ui/label';
 
 interface ImageUploaderProps {
   images: string[];
@@ -15,8 +13,6 @@ interface ImageUploaderProps {
   isSubmitting: boolean;
   uploadProgress: number;
   isProcessingImages: boolean;
-  additionalImagesLink?: string;
-  onAdditionalImagesLinkChange?: (link: string) => void;
 }
 
 // Maximum image size in bytes (3MB)
@@ -33,9 +29,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   setImageFiles,
   isSubmitting,
   uploadProgress,
-  isProcessingImages,
-  additionalImagesLink = '',
-  onAdditionalImagesLinkChange
+  isProcessingImages
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -61,28 +55,18 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   // Convert HEIC to JPEG for preview if possible
   const createHeicPreview = async (file: File): Promise<string> => {
     try {
-      // Define the type for heic2any to help TypeScript
-      type HeicConverter = {
-        default: (options: {
-          blob: Blob,
-          toType?: string,
-          quality?: number
-        }) => Promise<Blob | Blob[]>;
-      }
-      
       // Try to dynamically import heic2any for conversion
-      const heicLib = await import('heic2any') as HeicConverter;
+      const heic2any = await import('heic2any');
       
       // Convert HEIC to JPEG blob for preview
-      const jpegBlob = await heicLib.default({
+      const jpegBlob = await heic2any.default({
         blob: file,
         toType: "image/jpeg",
         quality: 0.8
       });
       
       // Create a URL for the converted image
-      const resultBlob = Array.isArray(jpegBlob) ? jpegBlob[0] : jpegBlob;
-      const imageUrl = URL.createObjectURL(resultBlob);
+      const imageUrl = URL.createObjectURL(jpegBlob instanceof Blob ? jpegBlob : jpegBlob[0]);
       
       // Mark this URL as being from a HEIC file
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
@@ -261,21 +245,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               </button>
             </div>
           ))}
-        </div>
-      )}
-      
-      {/* Additional Images Link Input */}
-      {onAdditionalImagesLinkChange && (
-        <div className="mt-6">
-          <Label htmlFor="additional-images" className="font-bold">Additional images (Optional)</Label>
-          <Input 
-            id="additional-images"
-            type="text"
-            value={additionalImagesLink}
-            onChange={(e) => onAdditionalImagesLinkChange(e.target.value)}
-            placeholder="Paste a Google Drive or Dropbox link to upload more images"
-            className="mt-2 border-2 border-black/20"
-          />
         </div>
       )}
       
