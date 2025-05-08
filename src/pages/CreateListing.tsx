@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -18,6 +17,7 @@ import BountyInput from '@/components/create-listing/BountyInput';
 import { formSchema } from '@/components/create-listing/formSchema';
 import { uploadImagesToSupabase, createNotification } from '@/components/create-listing/UploadService';
 import AIPropertyExtractor from '@/components/create-listing/AIPropertyExtractor';
+import AdditionalImagesInput from '@/components/create-listing/AdditionalImagesInput';
 
 // Lazy load heavier components
 const PropertyTypeSection = lazy(() => import('@/components/create-listing/PropertyTypeSection'));
@@ -44,7 +44,6 @@ const CreateListing: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
-  const [additionalImagesLink, setAdditionalImagesLink] = useState('');
   const abortControllerRef = useRef<AbortController | null>(null);
   const {
     user,
@@ -71,6 +70,7 @@ const CreateListing: React.FC = () => {
       comparableAddress2: "",
       comparableAddress3: "",
       bounty: "",
+      additionalImagesLink: "",
     }
   });
 
@@ -155,7 +155,7 @@ const CreateListing: React.FC = () => {
     setUploadProgress(0);
   };
 
-  // Update onSubmit to include property ID in upload for better tracking
+  // Update onSubmit to include additionalImagesLink
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error("You must be logged in to create a listing");
@@ -233,8 +233,8 @@ const CreateListing: React.FC = () => {
         sqft: parseInt(values.sqft),
         images: finalImages,
         user_id: user.id,
-        reward: values.bounty ? Number(values.bounty) : null,  // Using the correct 'reward' field name
-        additional_images: additionalImagesLink || null
+        reward: values.bounty ? Number(values.bounty) : null,
+        additional_images_link: values.additionalImagesLink || null  // Add the additional images link
       }).select();
       
       if (error) {
@@ -325,7 +325,9 @@ const CreateListing: React.FC = () => {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 {/* Add the AI Property Extractor component at the top */}
-                <AIPropertyExtractor form={form} />
+                <Suspense fallback={<LoadingFallback />}>
+                  <AIPropertyExtractor form={form} />
+                </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>
                   <PropertyTypeSection form={form} />
@@ -355,17 +357,12 @@ const CreateListing: React.FC = () => {
                 </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>
-                  <ImageUploader 
-                    images={images} 
-                    setImages={setImages} 
-                    imageFiles={imageFiles} 
-                    setImageFiles={setImageFiles} 
-                    isSubmitting={isSubmitting} 
-                    uploadProgress={uploadProgress} 
-                    isProcessingImages={isProcessingImages}
-                    additionalImagesLink={additionalImagesLink}
-                    onAdditionalImagesLinkChange={setAdditionalImagesLink}
-                  />
+                  <ImageUploader images={images} setImages={setImages} imageFiles={imageFiles} setImageFiles={setImageFiles} isSubmitting={isSubmitting} uploadProgress={uploadProgress} isProcessingImages={isProcessingImages} />
+                </Suspense>
+                
+                {/* Add the AdditionalImagesInput component here */}
+                <Suspense fallback={<LoadingFallback />}>
+                  <AdditionalImagesInput form={form} />
                 </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>
