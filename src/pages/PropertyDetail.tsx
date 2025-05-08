@@ -291,7 +291,7 @@ const PropertyDetail: React.FC = () => {
             yearBuilt={property?.year_built}
             lotSize={property?.lot_size}
             parking={property?.parking}
-            additionalImages={property?.additional_images}
+            additionalImagesLink={property?.additional_images_link}
           />
         </div>
       </div>
