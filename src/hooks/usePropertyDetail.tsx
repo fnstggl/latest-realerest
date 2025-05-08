@@ -22,16 +22,16 @@ type PropertyDetailType = {
   seller_email: string;
   seller_phone: string;
   seller_id: string;
-  reward: number | null; // Ensure reward can be null
+  reward: number | null;
   after_repair_value?: number;
   estimated_rehab?: number;
   property_type?: string;
   year_built?: number | null;
   lot_size?: number | null;
   parking?: string | null;
-  additional_images?: string | null;
   comparable_addresses?: string[];
   created_at?: string;
+  additional_images_link?: string | null;
 };
 
 const usePropertyDetail = (propertyId?: string) => {
@@ -126,9 +126,9 @@ const usePropertyDetail = (propertyId?: string) => {
           year_built: propertyData.year_built || null,
           lot_size: propertyData.lot_size || null,
           parking: propertyData.parking || null,
-          additional_images: propertyData.additional_images || null,
           comparable_addresses: propertyData.comparable_addresses,
-          created_at: propertyData.created_at
+          created_at: propertyData.created_at,
+          additional_images_link: propertyData.additional_images_link || null
         };
 
         setProperty(mappedProperty);
