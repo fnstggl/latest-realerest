@@ -61,18 +61,28 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   // Convert HEIC to JPEG for preview if possible
   const createHeicPreview = async (file: File): Promise<string> => {
     try {
+      // Define the type for heic2any to help TypeScript
+      type HeicConverter = {
+        default: (options: {
+          blob: Blob,
+          toType?: string,
+          quality?: number
+        }) => Promise<Blob | Blob[]>;
+      }
+      
       // Try to dynamically import heic2any for conversion
-      const heic2any = await import('heic2any');
+      const heicLib = await import('heic2any') as HeicConverter;
       
       // Convert HEIC to JPEG blob for preview
-      const jpegBlob = await heic2any.default({
+      const jpegBlob = await heicLib.default({
         blob: file,
         toType: "image/jpeg",
         quality: 0.8
       });
       
       // Create a URL for the converted image
-      const imageUrl = URL.createObjectURL(jpegBlob instanceof Blob ? jpegBlob : jpegBlob[0]);
+      const resultBlob = Array.isArray(jpegBlob) ? jpegBlob[0] : jpegBlob;
+      const imageUrl = URL.createObjectURL(resultBlob);
       
       // Mark this URL as being from a HEIC file
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
@@ -257,7 +267,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       {/* Additional Images Link Input */}
       {onAdditionalImagesLinkChange && (
         <div className="mt-6">
-          <Label htmlFor="additional-images" className="font-bold">Add additional images</Label>
+          <Label htmlFor="additional-images" className="font-bold">Additional images (Optional)</Label>
           <Input 
             id="additional-images"
             type="text"

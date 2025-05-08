@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
 import imageCompression from 'browser-image-compression';
@@ -33,13 +32,22 @@ function isHeicFile(file: File): boolean {
  */
 async function convertHeicToJpeg(file: File): Promise<File> {
   try {
+    // Import heic2any type to avoid TypeScript errors while keeping dynamic import
+    type HeicConverter = {
+      default: (options: {
+        blob: Blob,
+        toType?: string,
+        quality?: number
+      }) => Promise<Blob | Blob[]>;
+    }
+    
     // Dynamically import heic2any library only when needed
-    const heic2any = await import('heic2any');
+    const heicLib = await import('heic2any') as HeicConverter;
     
     console.log("Converting HEIC file to JPEG:", file.name);
     
     // Convert the HEIC file to JPEG blob
-    const jpegBlob = await heic2any.default({
+    const jpegBlob = await heicLib.default({
       blob: file,
       toType: "image/jpeg",
       quality: 0.85 // Slightly higher than our normal JPEG quality to preserve details
