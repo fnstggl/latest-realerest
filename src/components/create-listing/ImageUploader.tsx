@@ -61,8 +61,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   // Convert HEIC to JPEG for preview if possible
   const createHeicPreview = async (file: File): Promise<string> => {
     try {
-      console.log("Starting HEIC conversion for file:", file.name);
-      
       // Define the type for heic2any to help TypeScript
       type HeicConverter = {
         default: (options: {
@@ -75,8 +73,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       // Try to dynamically import heic2any for conversion
       const heicLib = await import('heic2any') as HeicConverter;
       
-      console.log("heic2any library loaded successfully");
-      
       // Convert HEIC to JPEG blob for preview
       const jpegBlob = await heicLib.default({
         blob: file,
@@ -84,13 +80,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         quality: 0.8
       });
       
-      console.log("HEIC conversion completed");
-      
       // Create a URL for the converted image
       const resultBlob = Array.isArray(jpegBlob) ? jpegBlob[0] : jpegBlob;
       const imageUrl = URL.createObjectURL(resultBlob);
-      
-      console.log("Created blob URL for converted image:", imageUrl);
       
       // Mark this URL as being from a HEIC file
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
@@ -100,7 +92,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     } catch (error) {
       console.error("HEIC preview conversion failed:", error);
       // Fall back to regular object URL
-      console.log("Falling back to direct blob URL for HEIC file");
       const imageUrl = URL.createObjectURL(file);
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
       return imageUrl;
@@ -153,7 +144,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         
         // Special handling for HEIC files
         if (isHeic) {
-          console.log(`Processing HEIC file: ${file.name}, size: ${file.size / 1024}KB`);
           imageUrl = await createHeicPreview(file);
         } else {
           imageUrl = URL.createObjectURL(file);
