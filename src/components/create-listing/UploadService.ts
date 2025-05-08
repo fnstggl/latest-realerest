@@ -32,6 +32,8 @@ function isHeicFile(file: File): boolean {
  */
 async function convertHeicToJpeg(file: File): Promise<File> {
   try {
+    console.log("Starting HEIC to JPEG conversion for:", file.name);
+    
     // Import heic2any type to avoid TypeScript errors while keeping dynamic import
     type HeicConverter = {
       default: (options: {
@@ -44,7 +46,7 @@ async function convertHeicToJpeg(file: File): Promise<File> {
     // Dynamically import heic2any library only when needed
     const heicLib = await import('heic2any') as HeicConverter;
     
-    console.log("Converting HEIC file to JPEG:", file.name);
+    console.log("heic2any library loaded, converting file:", file.name);
     
     // Convert the HEIC file to JPEG blob
     const jpegBlob = await heicLib.default({
@@ -52,6 +54,8 @@ async function convertHeicToJpeg(file: File): Promise<File> {
       toType: "image/jpeg",
       quality: 0.85 // Slightly higher than our normal JPEG quality to preserve details
     });
+    
+    console.log("HEIC conversion completed successfully");
     
     // Handle both single blob and array of blobs return types
     const resultBlob = Array.isArray(jpegBlob) ? jpegBlob[0] : jpegBlob;
@@ -83,13 +87,17 @@ async function compressImage(file: File): Promise<File> {
     // Check if this is a HEIC/HEIF file that needs conversion
     if (isHeicFile(file)) {
       try {
+        console.log("Detected HEIC/HEIF file:", file.name, "- starting conversion process");
         // Convert HEIC to JPEG first
         const jpegFile = await convertHeicToJpeg(file);
         // Then apply compression to the JPEG
+        console.log("HEIC converted to JPEG, now compressing:", jpegFile.name);
         return await compressStandardImage(jpegFile);
       } catch (error) {
         console.error("HEIC conversion error:", error);
-        throw error;
+        // If conversion fails, try to process the file as-is
+        console.warn("Attempting to process HEIC file directly:", file.name);
+        return file; // Return original as fallback
       }
     } else {
       // For standard image formats, just compress
@@ -149,6 +157,8 @@ export const uploadImagesToSupabase = async (
   const folderName = propertyId ? `property-${propertyId}` : `listing-${uuidv4()}`;
   
   try {
+    console.log(`Starting upload process for ${files.length} files, folder: ${folderName}`);
+    
     // Process files in sequence with compression
     const compressedFiles: File[] = [];
     
@@ -158,13 +168,17 @@ export const uploadImagesToSupabase = async (
         onProgress(Math.min(30, (i / files.length) * 30));
       }
       
+      const file = files[i];
+      console.log(`Processing file ${i+1}/${files.length}: ${file.name} (${file.type}), size: ${(file.size/1024).toFixed(2)}KB`);
+      
       try {
-        const compressedFile = await compressImage(files[i]);
+        const compressedFile = await compressImage(file);
         compressedFiles.push(compressedFile);
+        console.log(`File ${i+1}/${files.length} processed successfully`);
       } catch (err) {
-        console.error("Error compressing file:", err);
+        console.error(`Error compressing file ${file.name}:`, err);
         // Use original file as fallback
-        compressedFiles.push(files[i]);
+        compressedFiles.push(file);
       }
     }
     
@@ -177,14 +191,35 @@ export const uploadImagesToSupabase = async (
       const batch = compressedFiles.slice(i, i + concurrencyLimit);
       const progressStart = 30 + (i / compressedFiles.length) * 50;
       
+      console.log(`Uploading batch ${Math.floor(i/concurrencyLimit) + 1}: ${batch.length} files`);
+      
       const batchPromises = batch.map(async (file, batchIndex) => {
         try {
           // Create a unique but descriptive filename
-          const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
-                          file.type === 'image/png' ? 'png' :
-                          file.name.split('.').pop();
+          const originalExt = file.name.split('.').pop()?.toLowerCase();
+          
+          // Ensure we're using the correct extension based on the file's actual type after possible conversion
+          let fileExt: string;
+          if (file.type === 'image/jpeg') {
+            fileExt = 'jpg';
+          } else if (file.type === 'image/png') {
+            fileExt = 'png';
+          } else if (file.type === 'image/webp') {
+            fileExt = 'webp'; 
+          } else if (file.type === 'image/gif') {
+            fileExt = 'gif';
+          } else if (isHeicFile(files[i + batchIndex]) && file.type !== 'image/jpeg') {
+            // If it was a HEIC file but wasn't converted to JPEG, use jpg as fallback
+            fileExt = 'jpg';
+          } else {
+            // Use the original extension or fallback to jpg
+            fileExt = originalExt || 'jpg';
+          }
+          
           const fileName = `${i + batchIndex}-${Date.now().toString().slice(-6)}.${fileExt}`;
           const filePath = `${folderName}/${fileName}`;
+          
+          console.log(`Uploading file: ${fileName}, type: ${file.type}, size: ${(file.size/1024).toFixed(2)}KB`);
           
           // Extract image dimensions if possible
           let width = 0;
@@ -248,6 +283,8 @@ export const uploadImagesToSupabase = async (
             ? `${publicUrl}?w=${width}&h=${height}` 
             : publicUrl;
           
+          console.log('File uploaded successfully:', finalUrl);
+          
           // Update progress within batch
           if (onProgress) {
             const progressIncrement = 50 / compressedFiles.length;
@@ -269,6 +306,8 @@ export const uploadImagesToSupabase = async (
     if (onProgress) {
       onProgress(95);
     }
+    
+    console.log(`Upload complete. ${results.length}/${files.length} files uploaded successfully.`);
     
     return results.length > 0 ? results : [DEFAULT_IMAGE];
     

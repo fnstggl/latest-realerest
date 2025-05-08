@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import OptimizedImage from '@/components/ui/OptimizedImage';
 
@@ -17,6 +17,17 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
   editable = false
 }) => {
   const [activeImage, setActiveImage] = useState(mainImage);
+  const [isHeicActive, setIsHeicActive] = useState(false);
+  
+  // Check if image is a HEIC/HEIF file
+  const isHeicImage = (url: string): boolean => {
+    return url.toLowerCase().includes('.heic') || url.toLowerCase().includes('.heif');
+  };
+
+  // Update HEIC status when active image changes
+  useEffect(() => {
+    setIsHeicActive(isHeicImage(activeImage));
+  }, [activeImage]);
   
   // Create a sanitized list of unique, valid images
   const validImages = React.useMemo(() => {
@@ -90,6 +101,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
           height={activeDimensions.height || 720}
           sizes="(max-width: 768px) 100vw, 50vw"
           priority={true}
+          data-heic={isHeicActive ? 'true' : 'false'}
         />
       </div>
       
@@ -97,6 +109,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
         <div className="grid grid-cols-4 gap-2">
           {validImages.map((img, index) => {
             const thumbDimensions = extractDimensions(img);
+            const isHeic = isHeicImage(img);
             
             return (
               <div 
@@ -111,6 +124,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
                   height={thumbDimensions.height || 100}
                   sizes="(max-width: 768px) 25vw, 10vw"
                   onClick={() => setActiveImage(img)}
+                  data-heic={isHeic ? 'true' : 'false'}
                 />
                 
                 {editable && (
