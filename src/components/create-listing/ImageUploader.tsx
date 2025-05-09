@@ -75,23 +75,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       return imageUrl;
     } catch (error) {
       console.error("HEIC preview conversion failed:", error);
-      toast.error(`Failed to convert HEIC file "${file.name}" for preview. Using basic preview instead.`);
-      
       // Fall back to regular object URL
       const imageUrl = URL.createObjectURL(file);
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
       return imageUrl;
     }
-  };
-
-  // Check if file is a HEIC/HEIF format
-  const isHeicFile = (file: File): boolean => {
-    const fileType = file.type.toLowerCase();
-    const fileName = file.name.toLowerCase();
-    return fileType === 'image/heic' || 
-          fileType === 'image/heif' || 
-          fileName.endsWith('.heic') || 
-          fileName.endsWith('.heif');
   };
 
   // Optimized image handling with better validation and preview generation
@@ -118,16 +106,19 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         // Check if file is a supported image type
         const fileType = file.type.toLowerCase();
         // Special handling for HEIC files which might have inconsistent MIME types
-        const fileIsHeic = isHeicFile(file);
+        const isHeic = fileType === 'image/heic' || 
+                      fileType === 'image/heif' || 
+                      file.name.toLowerCase().endsWith('.heic') ||
+                      file.name.toLowerCase().endsWith('.heif');
         
-        if (!SUPPORTED_IMAGE_TYPES.includes(fileType) && !fileIsHeic) {
+        if (!SUPPORTED_IMAGE_TYPES.includes(fileType) && !isHeic) {
           toast.error(`File "${file.name}" is not a supported image type and was skipped.`);
           continue;
         }
         
         // Check file size
         if (file.size > MAX_IMAGE_SIZE) {
-          toast.warning(`Image "${file.name}" exceeds ${MAX_IMAGE_SIZE/1024/1024}MB limit. Will be compressed during upload.`);
+          toast.warning(`Image "${file.name}" exceeds ${MAX_IMAGE_SIZE/1024/1024}MB limit. Compressing...`);
         }
         
         newImageFiles.push(file);
@@ -135,18 +126,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         // Create a URL for the image preview (with memory management)
         let imageUrl: string;
         
-        // Special handling for HEIC files - convert them for preview
-        if (fileIsHeic) {
-          toast.loading(`Converting HEIC file "${file.name}" for preview...`, { id: `heic-${i}` });
-          try {
-            imageUrl = await createHeicPreview(file);
-            toast.dismiss(`heic-${i}`);
-          } catch (conversionError) {
-            toast.dismiss(`heic-${i}`);
-            toast.error(`Failed to create preview for "${file.name}". It will still be uploaded and converted.`);
-            // Use placeholder for preview
-            imageUrl = '/placeholder.svg';
-          }
+        // Special handling for HEIC files
+        if (isHeic) {
+          imageUrl = await createHeicPreview(file);
         } else {
           imageUrl = URL.createObjectURL(file);
         }
@@ -224,7 +206,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             <>
               <Upload size={24} />
               <span className="font-bold">Click to Upload Images (max {MAX_IMAGES})</span>
-              <span className="text-xs">JPG, PNG, GIF, WEBP, HEIC supported</span>
               {images.length >= MAX_IMAGES && (
                 <span className="text-red-500 text-sm">Maximum images reached</span>
               )}
@@ -262,11 +243,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               >
                 <X size={16} />
               </button>
-              {heicFiles[img] && (
-                <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs py-1 px-2">
-                  HEIC
-                </div>
-              )}
             </div>
           ))}
         </div>

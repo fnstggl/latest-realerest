@@ -64,8 +64,6 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
   // Extract dimensions from URL if available
   const extractDimensions = (url: string) => {
     try {
-      if (!url) return { width: undefined, height: undefined };
-      
       const parsedUrl = new URL(url);
       const width = parsedUrl.searchParams.get('w');
       const height = parsedUrl.searchParams.get('h');
@@ -76,13 +74,6 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
     } catch (e) {
       return { width: undefined, height: undefined };
     }
-  };
-  
-  // Check if an image is likely a HEIC file based on URL or metadata
-  const isHeicImage = (url: string) => {
-    return url.toLowerCase().includes('.heic') || 
-           url.toLowerCase().includes('.heif') ||
-           url.includes('wasHeic=true');
   };
   
   // For main active image
@@ -99,7 +90,6 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
           height={activeDimensions.height || 720}
           sizes="(max-width: 768px) 100vw, 50vw"
           priority={true}
-          data-heic={isHeicImage(activeImage) ? 'true' : 'false'}
         />
       </div>
       
@@ -107,7 +97,6 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
         <div className="grid grid-cols-4 gap-2">
           {validImages.map((img, index) => {
             const thumbDimensions = extractDimensions(img);
-            const isHeic = isHeicImage(img);
             
             return (
               <div 
@@ -122,7 +111,6 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
                   height={thumbDimensions.height || 100}
                   sizes="(max-width: 768px) 25vw, 10vw"
                   onClick={() => setActiveImage(img)}
-                  data-heic={isHeic ? 'true' : 'false'}
                 />
                 
                 {editable && (
@@ -152,12 +140,6 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
                     >
                       <ChevronRight size={16} />
                     </button>
-                  </div>
-                )}
-                
-                {isHeic && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs py-1 px-2 text-center">
-                    HEIC
                   </div>
                 )}
               </div>
