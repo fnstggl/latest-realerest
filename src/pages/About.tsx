@@ -158,7 +158,7 @@ const About: React.FC = () => {
       }} variants={sectionVariant} className="mx-auto max-w-5xl mb-24 md:mb-32">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center">
-              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE ORIGIN</h2>
+              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">OUR BEGINNINGS</h2>
               <span className="text-3xl text-[#8E9196] ml-2">(1)</span>
             </div>
           </div>
@@ -196,7 +196,7 @@ const About: React.FC = () => {
       }} variants={sectionVariant} className="mx-auto max-w-5xl mb-24 md:mb-32">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center">
-              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE JOURNEY</h2>
+              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">OUR JOURNEY</h2>
               <span className="text-3xl text-[#8E9196] ml-2">(2)</span>
             </div>
           </div>
@@ -234,7 +234,7 @@ const About: React.FC = () => {
       }} variants={sectionVariant} className="mx-auto max-w-5xl mb-24 md:mb-32">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center">
-              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE VISION</h2>
+              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">OUR VISION</h2>
               <span className="text-3xl text-[#8E9196] ml-2">(3)</span>
             </div>
           </div>
