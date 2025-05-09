@@ -98,11 +98,11 @@ const About: React.FC = () => {
             </motion.div>
           </div>
           
-          {/* Main text mask title */}
+          {/* Main text mask title - removed the scale animation on initial load */}
           <div className="relative mb-4 md:mb-8 mx-auto">
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
               className="relative"
             >
@@ -115,7 +115,7 @@ const About: React.FC = () => {
                 <div 
                   className="text-mask-image"
                   style={{
-                    backgroundImage: `url('/lovable-uploads/27d0e41f-c46b-4d6c-952b-ffd41a842a5f.png')`,
+                    backgroundImage: `url('/lovable-uploads/d80301d4-9d46-4741-813b-2e886a13b8b3.png')`,
                     WebkitTextFillColor: 'transparent',
                     WebkitBackgroundClip: 'text',
                     backgroundClip: 'text',
@@ -132,15 +132,15 @@ const About: React.FC = () => {
             </motion.div>
           </div>
           
-          {/* Styled subtext */}
+          {/* Styled subtext - updated with bolder font and black asterisks */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}
             className="text-xl md:text-2xl text-[#1A1F2C] mb-12"
           >
-            <p className="font-light tracking-wide">
-              stop<span className="text-[#ea384c]">*</span>overpaying//for<span className="text-[#ea384c]">*</span>your<span className="text-[#ea384c]">*</span>home<span className="text-[#ea384c]">*</span>
+            <p className="font-bold tracking-wide">
+              stop<span className="text-black">*</span>overpaying//for<span className="text-black">*</span>your<span className="text-black">*</span>home<span className="text-black">*</span>
             </p>
           </motion.div>
         </div>
@@ -170,11 +170,9 @@ const About: React.FC = () => {
             />
             
             <div className="absolute inset-0 flex items-center z-20 px-8">
-              <Tilt>
-                <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
-                  TWO STUDENTS IN NYC<span className="text-[#ea384c]">*</span>
-                </h3>
-              </Tilt>
+              <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
+                TWO <span className="red-highlight-word">STUDENTS</span> IN NYC<span className="text-[#ea384c]">*</span>
+              </h3>
             </div>
           </div>
           
@@ -229,11 +227,9 @@ const About: React.FC = () => {
             />
             
             <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
-              <Tilt>
-                <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
-                  <span className="text-[#ea384c]">*</span>DOING THINGS DIFFERENTLY
-                </h3>
-              </Tilt>
+              <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
+                DOING THINGS <span className="red-highlight-word">DIFFERENTLY</span><span className="text-[#ea384c]">*</span>
+              </h3>
             </div>
           </div>
           
@@ -288,11 +284,9 @@ const About: React.FC = () => {
             />
             
             <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
-              <Tilt>
-                <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
-                  HOUSING FOR <span className="text-[#ea384c]">*</span>EVERYONE
-                </h3>
-              </Tilt>
+              <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
+                HOUSING FOR <span className="red-highlight-word">EVERYONE</span><span className="text-[#ea384c]">*</span>
+              </h3>
             </div>
           </div>
           
