@@ -8,6 +8,23 @@
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
 
+  /* Text mask container for About page */
+  .text-mask-container {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+  }
+
+  .text-mask-image {
+    position: relative;
+    display: inline-block;
+    background-size: cover;
+    background-position: center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
   /* Apple-style gradient glowing text */
   .apple-glow-text {
     background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);

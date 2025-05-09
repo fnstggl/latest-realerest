@@ -62,89 +62,146 @@ const About: React.FC = () => {
       
       <Navbar />
       
-      <div className="container mx-auto px-4 md:px-8 py-8 md:py-16">
-        {/* Header Section */}
-        <div className="max-w-[1400px] mx-auto mb-16 md:mb-32">
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="relative"
+      <div className="container mx-auto px-4 md:px-6 py-8 md:py-16">
+        {/* Header Section - Redesigned to match reference image */}
+        <div className="mx-auto mb-16 md:mb-24 text-center">
+          {/* Small category headers */}
+          <div className="flex justify-center items-center space-x-8 md:space-x-16 mb-4 md:mb-8">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-[#1A1F2C] tracking-wide"
+            >
+              <span className="text-lg md:text-xl font-bold">REAL HOMES</span>
+              <span className="text-gray-500 ml-2">(1)</span>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-[#1A1F2C] tracking-wide"
+            >
+              <span className="text-lg md:text-xl font-bold">REAL PEOPLE</span>
+              <span className="text-gray-500 ml-2">(2)</span>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="text-[#1A1F2C] tracking-wide"
+            >
+              <span className="text-lg md:text-xl font-bold">REALER ESTATE</span>
+              <span className="text-gray-500 ml-2">(3)</span>
+            </motion.div>
+          </div>
+          
+          {/* Main text mask title */}
+          <div className="relative mb-4 md:mb-8 mx-auto">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              <div className="text-mask-container">
+                <h1 className="text-7xl md:text-9xl lg:text-[12rem] leading-none font-black uppercase tracking-tighter mx-auto">
+                  <span className="text-[#ea384c] absolute -left-4 md:-left-8 top-0">*</span>
+                  REAL ESTATE DONE RIGHT
+                  <span className="text-[#ea384c] absolute -right-4 md:-right-8 top-0">*</span>
+                </h1>
+                <div 
+                  className="text-mask-image"
+                  style={{
+                    backgroundImage: `url('/lovable-uploads/27d0e41f-c46b-4d6c-952b-ffd41a842a5f.png')`,
+                    WebkitTextFillColor: 'transparent',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: 'transparent',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                >
+                  <h1 className="text-7xl md:text-9xl lg:text-[12rem] leading-none font-black uppercase tracking-tighter mx-auto">
+                    REAL ESTATE DONE RIGHT
+                  </h1>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          
+          {/* Styled subtext */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="text-xl md:text-2xl text-[#1A1F2C] mb-12"
           >
-            <div className="absolute -top-10 right-4 md:right-10 text-8xl md:text-9xl font-bold text-[#1A1F2C]/5">*</div>
-            
-            <h1 className="text-8xl md:text-[12rem] leading-none font-bold tracking-tighter text-[#1A1F2C]">
-              REALER<span className="block relative">ESTATE<span className="absolute -right-8 top-0 text-[#ea384c]">*</span></span>
-            </h1>
-            
-            <div className="mt-8 ml-1 md:mt-4 md:ml-2">
-              <p className="text-xl md:text-2xl text-[#8E9196] tracking-wide">
-                The anatomy of a rebuild in the real estate market.
-              </p>
-            </div>
+            <p className="font-light tracking-wide">
+              stop<span className="text-[#ea384c]">*</span>overpaying//for<span className="text-[#ea384c]">*</span>your<span className="text-[#ea384c]">*</span>home<span className="text-[#ea384c]">*</span>
+            </p>
           </motion.div>
         </div>
         
+        {/* Content sections - more centered and structurally aesthetic */}
         {/* THE ORIGIN Section */}
         <motion.section
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={sectionVariant}
-          className="mb-32 md:mb-48"
+          className="mx-auto max-w-5xl mb-24 md:mb-32"
         >
-          <div className="grid grid-cols-12 gap-6">
-            <div className="col-span-12 md:col-span-4 mb-6 md:mb-0">
-              <div className="flex items-center">
-                <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE ORIGIN</h2>
-                <span className="text-3xl text-[#8E9196] ml-2">(1)</span>
-              </div>
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center">
+              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE ORIGIN</h2>
+              <span className="text-3xl text-[#8E9196] ml-2">(1)</span>
             </div>
+          </div>
+          
+          <div className="relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#00000099] to-transparent z-10"></div>
+            <img 
+              src="/lovable-uploads/d02ec260-e51f-47be-bbc4-9a50902a8bcc.png" 
+              alt="New York City street view" 
+              className="w-full h-[300px] md:h-[450px] object-cover grayscale"
+            />
             
-            <div className="col-span-12 md:col-span-8">
-              <div className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#00000099] to-transparent z-10"></div>
-                <img 
-                  src="/lovable-uploads/d02ec260-e51f-47be-bbc4-9a50902a8bcc.png" 
-                  alt="New York City street view" 
-                  className="w-full h-[300px] md:h-[450px] object-cover grayscale"
-                />
-                
-                <div className="absolute inset-0 flex items-center z-20 px-8">
-                  <Tilt>
-                    <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
-                      TWO STUDENTS IN NYC<span className="text-[#ea384c]">*</span>
-                    </h3>
-                  </Tilt>
-                </div>
-              </div>
-              
-              <div className="mt-8 space-y-6 border-l-4 border-[#1A1F2C] pl-6 max-w-3xl text-[#1A1F2C]">
-                <motion.p 
-                  custom={0}
-                  variants={textRevealVariant}
-                  className="text-lg md:text-xl"
-                >
-                  We built <span className="font-playfair italic font-bold">Realer Estate</span> to make housing feel possible again. Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking.
-                </motion.p>
-                
-                <motion.p 
-                  custom={1}
-                  variants={textRevealVariant}
-                  className="text-lg md:text-xl font-playfair italic"
-                >
-                  "We were two students in NYC trying to figure out how anyone was supposed to buy a home."
-                </motion.p>
-                
-                <motion.p 
-                  custom={2}
-                  variants={textRevealVariant}
-                  className="text-lg md:text-xl"
-                >
-                  We're here for the buyers who've been priced out, the ones who refresh Zillow every night hoping something new pops up. We're here for the people trying to get their families into something stable, something <span className="font-playfair italic font-bold">real</span>.
-                </motion.p>
-              </div>
+            <div className="absolute inset-0 flex items-center z-20 px-8">
+              <Tilt>
+                <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
+                  TWO STUDENTS IN NYC<span className="text-[#ea384c]">*</span>
+                </h3>
+              </Tilt>
             </div>
+          </div>
+          
+          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-center text-[#1A1F2C]">
+            <motion.p 
+              custom={0}
+              variants={textRevealVariant}
+              className="text-lg md:text-xl"
+            >
+              We built <span className="font-playfair italic font-bold">Realer Estate</span> to make housing feel possible again. Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking.
+            </motion.p>
+            
+            <motion.p 
+              custom={1}
+              variants={textRevealVariant}
+              className="text-lg md:text-xl font-playfair italic"
+            >
+              "We were two students in NYC trying to figure out how anyone was supposed to buy a home."
+            </motion.p>
+            
+            <motion.p 
+              custom={2}
+              variants={textRevealVariant}
+              className="text-lg md:text-xl"
+            >
+              We're here for the buyers who've been priced out, the ones who refresh Zillow every night hoping something new pops up. We're here for the people trying to get their families into something stable, something <span className="font-playfair italic font-bold">real</span>.
+            </motion.p>
           </div>
         </motion.section>
         
@@ -154,60 +211,56 @@ const About: React.FC = () => {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={sectionVariant}
-          className="mb-32 md:mb-48"
+          className="mx-auto max-w-5xl mb-24 md:mb-32"
         >
-          <div className="grid grid-cols-12 gap-6">
-            <div className="col-span-12 md:col-span-4 mb-6 md:mb-0 md:order-2">
-              <div className="flex items-center justify-end">
-                <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE JOURNEY</h2>
-                <span className="text-3xl text-[#8E9196] ml-2">(2)</span>
-              </div>
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center">
+              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE JOURNEY</h2>
+              <span className="text-3xl text-[#8E9196] ml-2">(2)</span>
             </div>
+          </div>
+          
+          <div className="relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-l from-[#00000099] to-transparent z-10"></div>
+            <img 
+              src="/lovable-uploads/ae9b8849-2f3b-4a70-a520-d02738b34efd.png" 
+              alt="Modern home exterior" 
+              className="w-full h-[300px] md:h-[450px] object-cover grayscale"
+            />
             
-            <div className="col-span-12 md:col-span-8 md:order-1">
-              <div className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-l from-[#00000099] to-transparent z-10"></div>
-                <img 
-                  src="/lovable-uploads/ae9b8849-2f3b-4a70-a520-d02738b34efd.png" 
-                  alt="Modern home exterior" 
-                  className="w-full h-[300px] md:h-[450px] object-cover grayscale"
-                />
-                
-                <div className="absolute inset-0 flex items-center justify-end z-20 px-8">
-                  <Tilt>
-                    <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-right">
-                      <span className="text-[#ea384c]">*</span>DOING THINGS DIFFERENTLY
-                    </h3>
-                  </Tilt>
-                </div>
-              </div>
-              
-              <div className="mt-8 space-y-6 border-r-4 border-[#1A1F2C] pr-6 ml-auto max-w-3xl text-right text-[#1A1F2C]">
-                <motion.p 
-                  custom={0}
-                  variants={textRevealVariant}
-                  className="text-lg md:text-xl"
-                >
-                  We know how frustrating the process of buying and selling your house can feel, so at Realer Estate... we're doing things differently.
-                </motion.p>
-                
-                <motion.p 
-                  custom={1}
-                  variants={textRevealVariant}
-                  className="text-lg md:text-xl"
-                >
-                  By connecting motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.
-                </motion.p>
-                
-                <motion.p 
-                  custom={2}
-                  variants={textRevealVariant}
-                  className="text-lg md:text-xl font-playfair italic"
-                >
-                  "We knew there had to be a better way—something faster, simpler, and actually made for people like us."
-                </motion.p>
-              </div>
+            <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
+              <Tilt>
+                <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
+                  <span className="text-[#ea384c]">*</span>DOING THINGS DIFFERENTLY
+                </h3>
+              </Tilt>
             </div>
+          </div>
+          
+          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-center text-[#1A1F2C]">
+            <motion.p 
+              custom={0}
+              variants={textRevealVariant}
+              className="text-lg md:text-xl"
+            >
+              We know how frustrating the process of buying and selling your house can feel, so at Realer Estate... we're doing things differently.
+            </motion.p>
+            
+            <motion.p 
+              custom={1}
+              variants={textRevealVariant}
+              className="text-lg md:text-xl"
+            >
+              By connecting motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.
+            </motion.p>
+            
+            <motion.p 
+              custom={2}
+              variants={textRevealVariant}
+              className="text-lg md:text-xl font-playfair italic"
+            >
+              "We knew there had to be a better way—something faster, simpler, and actually made for people like us."
+            </motion.p>
           </div>
         </motion.section>
         
@@ -217,58 +270,54 @@ const About: React.FC = () => {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={sectionVariant}
-          className="mb-32 md:mb-48"
+          className="mx-auto max-w-5xl mb-24 md:mb-32"
         >
-          <div className="grid grid-cols-12 gap-6">
-            <div className="col-span-12 md:col-span-4 mb-6 md:mb-0">
-              <div className="flex items-center">
-                <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE VISION</h2>
-                <span className="text-3xl text-[#8E9196] ml-2">(3)</span>
-              </div>
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center">
+              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">THE VISION</h2>
+              <span className="text-3xl text-[#8E9196] ml-2">(3)</span>
             </div>
+          </div>
+          
+          <div className="relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#00000099] to-transparent z-10"></div>
+            <img 
+              src="/lovable-uploads/b82e0252-0b3e-4142-bbe9-1f4da2824ab9.png" 
+              alt="Classic apartment buildings" 
+              className="w-full h-[300px] md:h-[450px] object-cover grayscale"
+            />
             
-            <div className="col-span-12 md:col-span-8">
-              <div className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#00000099] to-transparent z-10"></div>
-                <img 
-                  src="/lovable-uploads/b82e0252-0b3e-4142-bbe9-1f4da2824ab9.png" 
-                  alt="Classic apartment buildings" 
-                  className="w-full h-[300px] md:h-[450px] object-cover grayscale"
-                />
-                
-                <div className="absolute inset-0 flex items-center z-20 px-8">
-                  <Tilt>
-                    <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
-                      HOUSING FOR <span className="text-[#ea384c]">*</span>EVERYONE
-                    </h3>
-                  </Tilt>
-                </div>
-              </div>
-              
-              <div className="mt-8 space-y-6 border-l-4 border-[#1A1F2C] pl-6 max-w-3xl text-[#1A1F2C]">
-                <motion.p 
-                  custom={0}
-                  variants={textRevealVariant}
-                  className="text-lg md:text-xl"
-                >
-                  Realer Estate is about revolutionizing the real estate market to make it work for <span className="font-playfair italic font-bold">people</span> again. You shouldn't have to fight this hard for something so basic.
-                </motion.p>
-                
-                <motion.div 
-                  custom={1}
-                  variants={textRevealVariant}
-                  className="flex items-center space-x-3 pt-4"
-                >
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-[#1A1F2C] text-white">RE</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-bold">- Beckett & Derrick</p>
-                    <p className="text-sm">Realer Estate Founders</p>
-                  </div>
-                </motion.div>
-              </div>
+            <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
+              <Tilt>
+                <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
+                  HOUSING FOR <span className="text-[#ea384c]">*</span>EVERYONE
+                </h3>
+              </Tilt>
             </div>
+          </div>
+          
+          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-center text-[#1A1F2C]">
+            <motion.p 
+              custom={0}
+              variants={textRevealVariant}
+              className="text-lg md:text-xl"
+            >
+              Realer Estate is about revolutionizing the real estate market to make it work for <span className="font-playfair italic font-bold">people</span> again. You shouldn't have to fight this hard for something so basic.
+            </motion.p>
+            
+            <motion.div 
+              custom={1}
+              variants={textRevealVariant}
+              className="flex items-center justify-center space-x-3 pt-4"
+            >
+              <Avatar className="h-12 w-12">
+                <AvatarFallback className="bg-[#1A1F2C] text-white">RE</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-bold">- Beckett & Derrick</p>
+                <p className="text-sm">Realer Estate Founders</p>
+              </div>
+            </motion.div>
           </div>
         </motion.section>
         
@@ -278,7 +327,7 @@ const About: React.FC = () => {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={sectionVariant}
-          className="mb-32 md:mb-48"
+          className="mx-auto max-w-5xl mb-24 md:mb-32"
         >
           <div className="text-center mb-16">
             <h2 className="text-6xl md:text-7xl font-bold text-[#1A1F2C]">HOW IT<span className="text-[#ea384c]">*</span>WORKS</h2>
