@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -25,6 +25,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 }) => {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [imageSrc, setImageSrc] = useState(src);
   
   // Check if the image is from an external source or local
   const isExternal = src.startsWith('http') || src.startsWith('//');
@@ -38,6 +39,20 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
                     src.toLowerCase().includes('.heif') ||
                     (src.startsWith('blob:') && rest['data-heic'] === 'true');
   
+  // Effect to handle HEIC files when src changes
+  useEffect(() => {
+    setImageSrc(src);
+    setHasError(false);
+    setIsLoading(true);
+    
+    // For blob URLs that are HEIC files, we need to ensure they render properly
+    if (isHeicFile && src.startsWith('blob:')) {
+      console.log('Processing HEIC file for display:', src);
+      // We already have a blob URL, but we need to ensure it's properly set
+      // The actual conversion should happen in the ImageUploader component
+    }
+  }, [src, isHeicFile]);
+
   return (
     <div className={`relative ${className}`} style={{ minHeight: "20px" }}>
       {isLoading && (
@@ -45,7 +60,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       )}
       
       <img
-        src={hasError ? '/placeholder.svg' : src}
+        src={hasError ? '/placeholder.svg' : imageSrc}
         alt={alt || ''}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         width={width}
@@ -56,8 +71,11 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         srcSet={defaultSrcSet}
         onLoad={() => setIsLoading(false)}
         onError={(e) => {
-          // Fallback if image fails to load
+          // Log details for debugging
           console.error(`Failed to load image: ${src}${isHeicFile ? ' (HEIC format)' : ''}`);
+          if (isHeicFile) {
+            console.warn("HEIC file handling error. Check conversion process.");
+          }
           setHasError(true);
           setIsLoading(false);
         }}

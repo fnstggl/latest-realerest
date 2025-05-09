@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
 import imageCompression from 'browser-image-compression';
@@ -75,8 +74,10 @@ async function compressImage(file: File): Promise<File> {
     // Check if this is a HEIC/HEIF file that needs conversion
     if (isHeicFile(file)) {
       try {
+        console.log("Processing HEIC file:", file.name);
         // Convert HEIC to JPEG first
         const jpegFile = await convertHeicToJpeg(file);
+        console.log("HEIC converted to JPEG, now compressing:", jpegFile.name);
         // Then apply compression to the JPEG
         return await compressStandardImage(jpegFile);
       } catch (error) {
