@@ -66,8 +66,8 @@ const About: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-0 py-8 md:py-16">
-        {/* Header Section */}
-        <div className="mx-auto mb-16 md:mb-24 mt-16"> {/* Increased top margin with mt-16 */}
+        {/* Header Section - Added 15px to bottom margin (mb-16 to mb-[calc(4rem+15px)] for desktop) */}
+        <div className="mx-auto mb-[calc(4rem+15px)] md:mb-[calc(6rem+15px)] mt-16">
           {/* Full-width header container with improved visibility */}
           <div className="relative overflow-visible">
             <motion.div 
@@ -76,23 +76,13 @@ const About: React.FC = () => {
               transition={{ duration: 0.8 }}
               className="w-full"
             >
-              <h1 className="full-width-header-spaced text-[#1A1F2C]">
-                DON'T OVERPAY
+              <h1 className="full-width-header-fitted text-[#1A1F2C]">
+                OWN IT. FOR LESS
               </h1>
             </motion.div>
           </div>
           
-          {/* Updated subtext with new styling */}
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-xl md:text-2xl text-[#1A1F2C] mb-12 text-center mt-8 px-4"
-          >
-            <p className="font-bold tracking-wide dream-home-text">
-              for your dream home
-            </p>
-          </motion.div>
+          {/* Removed subheader text */}
         </div>
         
         {/* Content sections - more centered and structurally aesthetic */}
