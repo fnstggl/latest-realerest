@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -7,6 +8,7 @@ import SiteFooter from '@/components/sections/SiteFooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SEO from '@/components/SEO';
 import { Tilt } from "@/components/ui/tilt";
+
 const About: React.FC = () => {
   // Animation variants for sections
   const sectionVariant = {
@@ -23,6 +25,7 @@ const About: React.FC = () => {
       }
     }
   };
+
   const textRevealVariant = {
     hidden: {
       opacity: 0,
@@ -38,6 +41,7 @@ const About: React.FC = () => {
       }
     })
   };
+
   return <div className="min-h-screen bg-[#FCFBF8] text-black overflow-hidden">
       <SEO title="About Realer Estate | Our Mission & Story" description="Realer Estate is revolutionizing how people buy and sell homes. Learn about our mission to make housing accessible again with below-market properties." canonical="/about" schema={{
       "@context": "https://schema.org",
@@ -61,91 +65,32 @@ const About: React.FC = () => {
       
       <Navbar />
       
-      <div className="container mx-auto px-4 md:px-6 py-8 md:py-16">
-        {/* Header Section - Redesigned to match reference image */}
-        <div className="mx-auto mb-16 md:mb-24 text-center">
-          {/* Small category headers */}
-          <div className="flex justify-center items-center space-x-8 md:space-x-16 mb-4 md:mb-8">
-            <motion.div initial={{
-            opacity: 0
-          }} animate={{
-            opacity: 1
-          }} transition={{
-            duration: 0.5,
-            delay: 0.2
-          }} className="text-[#1A1F2C] tracking-wide">
-              <span className="text-lg md:text-xl font-bold">REAL HOMES</span>
-              <span className="text-gray-500 ml-2">(1)</span>
-            </motion.div>
-            
-            <motion.div initial={{
-            opacity: 0
-          }} animate={{
-            opacity: 1
-          }} transition={{
-            duration: 0.5,
-            delay: 0.4
-          }} className="text-[#1A1F2C] tracking-wide">
-              <span className="text-lg md:text-xl font-bold">REAL PEOPLE</span>
-              <span className="text-gray-500 ml-2">(2)</span>
-            </motion.div>
-            
-            <motion.div initial={{
-            opacity: 0
-          }} animate={{
-            opacity: 1
-          }} transition={{
-            duration: 0.5,
-            delay: 0.6
-          }} className="text-[#1A1F2C] tracking-wide">
-              <span className="text-lg md:text-xl font-bold">REALER ESTATE</span>
-              <span className="text-gray-500 ml-2">(3)</span>
+      <div className="container mx-auto px-0 py-8 md:py-16">
+        {/* Header Section */}
+        <div className="mx-auto mb-16 md:mb-24 mt-16"> {/* Increased top margin with mt-16 */}
+          {/* Full-width header container with improved visibility */}
+          <div className="relative overflow-visible">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full"
+            >
+              <h1 className="full-width-header-spaced text-[#1A1F2C]">
+                DON'T OVERPAY
+              </h1>
             </motion.div>
           </div>
           
-          {/* Main text mask title - removed the scale animation on initial load */}
-          <div className="relative mb-4 md:mb-8 mx-auto">
-            <motion.div initial={{
-            opacity: 0
-          }} animate={{
-            opacity: 1
-          }} transition={{
-            duration: 0.8
-          }} className="relative">
-              <div className="text-mask-container">
-                <h1 className="text-7xl md:text-9xl lg:text-[12rem] leading-none font-black uppercase tracking-tighter mx-auto">
-                  <span className="text-[#ea384c] absolute -left-4 md:-left-8 top-0">*</span>
-                  REAL ESTATE DONE RIGHT
-                  <span className="text-[#ea384c] absolute -right-4 md:-right-8 top-0">*</span>
-                </h1>
-                <div className="text-mask-image" style={{
-                backgroundImage: `url('/lovable-uploads/d80301d4-9d46-4741-813b-2e886a13b8b3.png')`,
-                WebkitTextFillColor: 'transparent',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                color: 'transparent',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}>
-                  
-                </div>
-              </div>
-            </motion.div>
-          </div>
-          
-          {/* Styled subtext - updated with bolder font and black asterisks */}
-          <motion.div initial={{
-          y: 20,
-          opacity: 0
-        }} animate={{
-          y: 0,
-          opacity: 1
-        }} transition={{
-          duration: 0.6,
-          delay: 0.8
-        }} className="text-xl md:text-2xl text-[#1A1F2C] mb-12">
-            <p className="font-bold tracking-wide">
-              stop<span className="text-black">*</span>overpaying//for<span className="text-black">*</span>your<span className="text-black">*</span>home<span className="text-black">*</span>
+          {/* Updated subtext with new styling */}
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="text-xl md:text-2xl text-[#1A1F2C] mb-12 text-center mt-8 px-4"
+          >
+            <p className="font-bold tracking-wide dream-home-text">
+              for your dream home
             </p>
           </motion.div>
         </div>
