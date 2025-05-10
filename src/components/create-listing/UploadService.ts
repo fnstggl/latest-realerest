@@ -16,19 +16,27 @@ const JPEG_QUALITY = 0.75;
 const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
 
 /**
- * Checks if a file is a HEIC/HEIF format
+ * Enhanced check if a file is a HEIC/HEIF format using multiple detection methods
  */
 function isHeicFile(file: File): boolean {
+  // Check file type and name
   const fileType = file.type.toLowerCase();
   const fileName = file.name.toLowerCase();
-  return fileType === 'image/heic' || 
-         fileType === 'image/heif' || 
-         fileName.endsWith('.heic') || 
-         fileName.endsWith('.heif');
+  
+  // Multiple detection methods
+  return (
+    fileType === 'image/heic' || 
+    fileType === 'image/heif' || 
+    fileName.endsWith('.heic') || 
+    fileName.endsWith('.heif') ||
+    // Sometimes HEIC files get misclassified as octet-stream
+    (fileType === 'application/octet-stream' && 
+      (fileName.endsWith('.heic') || fileName.endsWith('.heif')))
+  );
 }
 
 /**
- * Converts a HEIC/HEIF file to JPEG format
+ * Converts a HEIC/HEIF file to JPEG format with enhanced reliability
  * This uses a dynamic import to avoid bloating the main bundle
  */
 async function convertHeicToJpeg(file: File): Promise<File> {
@@ -38,12 +46,36 @@ async function convertHeicToJpeg(file: File): Promise<File> {
     
     console.log("Converting HEIC file to JPEG:", file.name);
     
-    // Convert the HEIC file to JPEG blob
-    const jpegBlob = await heic2any.default({
-      blob: file,
-      toType: "image/jpeg",
-      quality: 0.85 // Slightly higher than our normal JPEG quality to preserve details
-    });
+    // Try multiple quality levels if needed
+    let jpegBlob;
+    const qualityLevels = [0.85, 0.75, 0.65];
+    let attempt = 0;
+    let error;
+    
+    while (attempt < qualityLevels.length && !jpegBlob) {
+      try {
+        // Convert with timeout
+        jpegBlob = await Promise.race([
+          heic2any.default({
+            blob: file,
+            toType: "image/jpeg",
+            quality: qualityLevels[attempt]
+          }),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("HEIC conversion timed out")), 30000)
+          )
+        ]);
+        break;
+      } catch (e) {
+        error = e;
+        attempt++;
+        console.log(`HEIC conversion attempt ${attempt} failed, trying with lower quality...`);
+      }
+    }
+    
+    if (!jpegBlob) {
+      throw error || new Error("Failed to convert HEIC file after multiple attempts");
+    }
     
     // Handle both single blob and array of blobs return types
     const resultBlob = Array.isArray(jpegBlob) ? jpegBlob[0] : jpegBlob;
@@ -143,6 +175,7 @@ export const uploadImagesToSupabase = async (
   try {
     // Process files in sequence with compression
     const compressedFiles: File[] = [];
+    const originalFileTypes: Record<number, boolean> = {};
     
     // Step 1: Compress all images
     for (let i = 0; i < files.length; i++) {
@@ -151,6 +184,10 @@ export const uploadImagesToSupabase = async (
       }
       
       try {
+        // Track if this was originally a HEIC file
+        const wasHeic = isHeicFile(files[i]);
+        originalFileTypes[i] = wasHeic;
+        
         const compressedFile = await compressImage(files[i]);
         compressedFiles.push(compressedFile);
       } catch (err) {
@@ -202,16 +239,19 @@ export const uploadImagesToSupabase = async (
             console.log('Could not extract image dimensions:', e);
           }
           
+          // Track if this was originally a HEIC file
+          const wasHeic = originalFileTypes[i + batchIndex] || false;
+          
           // Add metadata for better tracking and caching
           const metadata = {
-            originalName: file.name,
+            originalName: files[i + batchIndex].name,
             contentType: file.type,
             size: file.size,
             width: width || undefined,
             height: height || undefined,
             uploadedAt: new Date().toISOString(),
             propertyId: propertyId || null,
-            wasHeic: isHeicFile(files[i + batchIndex]) ? true : undefined
+            wasHeic: wasHeic
           };
           
           // Upload to Supabase with better caching directives
@@ -235,10 +275,15 @@ export const uploadImagesToSupabase = async (
             .from('property_images')
             .getPublicUrl(filePath);
           
-          // Append width and height as query params if available
-          const finalUrl = width && height 
-            ? `${publicUrl}?w=${width}&h=${height}` 
-            : publicUrl;
+          // Append width, height and heic flag as query params if available
+          let finalUrl = publicUrl;
+          const urlObj = new URL(publicUrl);
+          
+          if (width) urlObj.searchParams.append('w', width.toString());
+          if (height) urlObj.searchParams.append('h', height.toString());
+          if (wasHeic) urlObj.searchParams.append('heic', 'true');
+          
+          finalUrl = urlObj.toString();
           
           // Update progress within batch
           if (onProgress) {

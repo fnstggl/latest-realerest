@@ -33,15 +33,33 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const defaultSrcSet = isExternal ? undefined : 
     `${src} 640w, ${src} 750w, ${src} 828w, ${src} 1080w, ${src} 1200w`;
   
-  // Handle HEIC/HEIF files specifically
-  const isHeicFile = src.toLowerCase().includes('.heic') || 
-                    src.toLowerCase().includes('.heif') ||
-                    (src.startsWith('blob:') && rest['data-heic'] === 'true');
+  // Enhanced HEIC/HEIF detection with multiple checks
+  const isHeicFile = (
+    // Check file extension in URL
+    src.toLowerCase().includes('.heic') || 
+    src.toLowerCase().includes('.heif') ||
+    // Check for blob URLs with HEIC data attribute
+    (src.startsWith('blob:') && rest['data-heic'] === 'true') ||
+    // Check for query parameters that might indicate HEIC origin
+    (new URL(src, window.location.origin).searchParams.get('heic') === 'true') ||
+    // Check for custom attribute directly indicating HEIC
+    rest['data-format'] === 'heic'
+  );
+
+  // Special handling for HEIC-specific issues in Safari
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const needsSpecialHandling = isHeicFile && isSafari;
   
   return (
     <div className={`relative ${className}`} style={{ minHeight: "20px" }}>
       {isLoading && (
         <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
+      )}
+      
+      {isHeicFile && (
+        <div className="absolute top-1 right-1 bg-black/70 text-white text-xs px-2 py-1 rounded-full z-10">
+          HEIC
+        </div>
       )}
       
       <img
@@ -56,8 +74,18 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         srcSet={defaultSrcSet}
         onLoad={() => setIsLoading(false)}
         onError={(e) => {
-          // Fallback if image fails to load
-          console.error(`Failed to load image: ${src}${isHeicFile ? ' (HEIC format)' : ''}`);
+          // More detailed error logging for debugging
+          console.error(`Failed to load image: ${src}`, {
+            isHeicFile,
+            errorEvent: e,
+            imageProps: {
+              width,
+              height,
+              src,
+              dataHeic: rest['data-heic'],
+              dataFormat: rest['data-format']
+            }
+          });
           setHasError(true);
           setIsLoading(false);
         }}

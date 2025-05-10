@@ -34,6 +34,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [heicFiles, setHeicFiles] = useState<Record<string, boolean>>({});
+  const [conversionAttempts, setConversionAttempts] = useState<Record<string, number>>({});
 
   // Clean up object URLs when component unmounts
   useEffect(() => {
@@ -52,21 +53,73 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  // Convert HEIC to JPEG for preview if possible
-  const createHeicPreview = async (file: File): Promise<string> => {
+  // Enhanced HEIC detection with fallback checks
+  const isHeicOrHeifFile = (file: File): boolean => {
+    const fileType = file.type.toLowerCase();
+    const fileName = file.name.toLowerCase();
+    
+    return (
+      fileType === 'image/heic' || 
+      fileType === 'image/heif' || 
+      fileName.endsWith('.heic') || 
+      fileName.endsWith('.heif') ||
+      // Additional checks for miscategorized files
+      (fileType === 'application/octet-stream' && 
+        (fileName.endsWith('.heic') || fileName.endsWith('.heif')))
+    );
+  };
+
+  // Convert HEIC to JPEG for preview with improved reliability
+  const createHeicPreview = async (file: File, fileId: string): Promise<string> => {
     try {
       // Try to dynamically import heic2any for conversion
       const heic2any = await import('heic2any');
       
-      // Convert HEIC to JPEG blob for preview
-      const jpegBlob = await heic2any.default({
+      // Create a retry mechanism - start with attempt count
+      const attemptCount = conversionAttempts[fileId] || 0;
+      if (attemptCount >= 3) {
+        throw new Error("Maximum conversion attempts reached");
+      }
+      
+      setConversionAttempts(prev => ({...prev, [fileId]: attemptCount + 1}));
+      
+      // Get the first 4 bytes of the file to verify it's actually a HEIC
+      const fileHeader = await readFileHeader(file, 4);
+      const isValidHeic = isHeicHeader(fileHeader);
+      
+      if (!isValidHeic) {
+        console.warn("File claims to be HEIC but header validation failed:", file.name);
+        // Fall back to regular object URL but still mark as HEIC for special handling
+        const imageUrl = URL.createObjectURL(file);
+        setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
+        return imageUrl;
+      }
+      
+      // More robust conversion settings
+      const conversionOptions = {
         blob: file,
         toType: "image/jpeg",
-        quality: 0.8
-      });
+        quality: 0.8,
+        // Add conversion timeout
+        timeout: 30000
+      };
+      
+      // Convert HEIC to JPEG blob with timeout
+      const jpegBlob = await Promise.race([
+        heic2any.default(conversionOptions),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("HEIC conversion timed out")), 30000)
+        )
+      ]);
+      
+      // Ensure we got a valid result
+      if (!jpegBlob) {
+        throw new Error("HEIC conversion returned empty result");
+      }
       
       // Create a URL for the converted image
-      const imageUrl = URL.createObjectURL(jpegBlob instanceof Blob ? jpegBlob : jpegBlob[0]);
+      const resultBlob = Array.isArray(jpegBlob) ? jpegBlob[0] : jpegBlob;
+      const imageUrl = URL.createObjectURL(resultBlob);
       
       // Mark this URL as being from a HEIC file
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
@@ -75,11 +128,49 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       return imageUrl;
     } catch (error) {
       console.error("HEIC preview conversion failed:", error);
+      
       // Fall back to regular object URL
       const imageUrl = URL.createObjectURL(file);
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
+      
+      // Still mark it as HEIC so we know to convert it properly during upload
+      if ((error as Error).message !== "Maximum conversion attempts reached") {
+        toast.warning(`Preview conversion for "${file.name}" failed. It will be properly converted during upload.`);
+      }
+      
       return imageUrl;
     }
+  };
+  
+  // Helper to read file header bytes
+  const readFileHeader = async (file: File, bytesCount: number): Promise<Uint8Array> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = (e) => {
+        if (e.target?.result) {
+          const array = new Uint8Array(e.target.result as ArrayBuffer);
+          resolve(array.slice(0, bytesCount));
+        } else {
+          reject(new Error("Failed to read file header"));
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file.slice(0, bytesCount));
+    });
+  };
+  
+  // Check if byte array matches HEIC header format
+  const isHeicHeader = (bytes: Uint8Array): boolean => {
+    // Common HEIC file signatures
+    // This is a very basic check that could be expanded
+    if (bytes.length < 4) return false;
+    
+    // Check for ftyp header
+    if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+      return true;
+    }
+    
+    return false;
   };
 
   // Optimized image handling with better validation and preview generation
@@ -102,15 +193,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       // Process files one by one - with special handling for HEIC
       for (let i = 0; i < filesToProcess; i++) {
         const file = files[i];
+        const fileId = `${file.name}-${file.size}-${i}`;
         
-        // Check if file is a supported image type
+        // Enhanced HEIC detection
+        const isHeic = isHeicOrHeifFile(file);
+        
+        // Check if file is a supported image type (with better HEIC detection)
         const fileType = file.type.toLowerCase();
-        // Special handling for HEIC files which might have inconsistent MIME types
-        const isHeic = fileType === 'image/heic' || 
-                      fileType === 'image/heif' || 
-                      file.name.toLowerCase().endsWith('.heic') ||
-                      file.name.toLowerCase().endsWith('.heif');
-        
         if (!SUPPORTED_IMAGE_TYPES.includes(fileType) && !isHeic) {
           toast.error(`File "${file.name}" is not a supported image type and was skipped.`);
           continue;
@@ -128,7 +217,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         
         // Special handling for HEIC files
         if (isHeic) {
-          imageUrl = await createHeicPreview(file);
+          imageUrl = await createHeicPreview(file, fileId);
         } else {
           imageUrl = URL.createObjectURL(file);
         }
@@ -234,6 +323,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 height={150}
                 sizes="(max-width: 768px) 50vw, 25vw"
                 data-heic={heicFiles[img] ? 'true' : 'false'}
+                data-format={heicFiles[img] ? 'heic' : undefined}
               />
               <button 
                 type="button" 

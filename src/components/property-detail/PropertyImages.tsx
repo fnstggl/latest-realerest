@@ -67,17 +67,27 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
       const parsedUrl = new URL(url);
       const width = parsedUrl.searchParams.get('w');
       const height = parsedUrl.searchParams.get('h');
+      const isHeic = parsedUrl.searchParams.get('heic') === 'true' || url.toLowerCase().includes('.heic');
+      
       return { 
         width: width ? parseInt(width) : undefined, 
-        height: height ? parseInt(height) : undefined 
+        height: height ? parseInt(height) : undefined,
+        isHeic
       };
     } catch (e) {
-      return { width: undefined, height: undefined };
+      return { width: undefined, height: undefined, isHeic: false };
     }
   };
   
   // For main active image
   const activeDimensions = extractDimensions(activeImage);
+  
+  // Check if we should mark the image as HEIC
+  const isHeicImage = (url: string): boolean => {
+    return url.toLowerCase().includes('.heic') || 
+           url.toLowerCase().includes('.heif') ||
+           (new URL(url, window.location.origin).searchParams.get('heic') === 'true');
+  };
   
   return (
     <div>
@@ -89,6 +99,8 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
           width={activeDimensions.width || 1280}
           height={activeDimensions.height || 720}
           sizes="(max-width: 768px) 100vw, 50vw"
+          data-format={activeDimensions.isHeic ? 'heic' : undefined}
+          data-heic={isHeicImage(activeImage) ? 'true' : 'false'}
           priority={true}
         />
       </div>
@@ -97,6 +109,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
         <div className="grid grid-cols-4 gap-2">
           {validImages.map((img, index) => {
             const thumbDimensions = extractDimensions(img);
+            const isHeic = isHeicImage(img);
             
             return (
               <div 
@@ -110,6 +123,8 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
                   width={thumbDimensions.width || 100}
                   height={thumbDimensions.height || 100}
                   sizes="(max-width: 768px) 25vw, 10vw"
+                  data-format={isHeic ? 'heic' : undefined}
+                  data-heic={isHeic ? 'true' : 'false'}
                   onClick={() => setActiveImage(img)}
                 />
                 
