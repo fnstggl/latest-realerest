@@ -46,35 +46,15 @@ async function convertHeicToJpeg(file: File): Promise<File> {
     
     console.log("Converting HEIC file to JPEG:", file.name);
     
-    // Try multiple quality levels if needed
-    let jpegBlob;
-    const qualityLevels = [0.85, 0.75, 0.65];
-    let attempt = 0;
-    let error;
-    
-    while (attempt < qualityLevels.length && !jpegBlob) {
-      try {
-        // Convert with timeout
-        jpegBlob = await Promise.race([
-          heic2any.default({
-            blob: file,
-            toType: "image/jpeg",
-            quality: qualityLevels[attempt]
-          }),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error("HEIC conversion timed out")), 30000)
-          )
-        ]);
-        break;
-      } catch (e) {
-        error = e;
-        attempt++;
-        console.log(`HEIC conversion attempt ${attempt} failed, trying with lower quality...`);
-      }
-    }
+    // Simplified conversion approach for better reliability
+    const jpegBlob = await heic2any.default({
+      blob: file,
+      toType: "image/jpeg",
+      quality: 0.8
+    });
     
     if (!jpegBlob) {
-      throw error || new Error("Failed to convert HEIC file after multiple attempts");
+      throw new Error("Failed to convert HEIC file");
     }
     
     // Handle both single blob and array of blobs return types
@@ -143,7 +123,6 @@ async function compressStandardImage(file: File): Promise<File> {
     fileType: file.type,
     initialQuality: JPEG_QUALITY,
     alwaysKeepResolution: false,
-    onProgress: undefined
   };
   
   // Compress the image
@@ -198,109 +177,61 @@ export const uploadImagesToSupabase = async (
     }
     
     // Step 2: Upload compressed files with concurrency control
-    const concurrencyLimit = Math.min(3, files.length);
     const results: string[] = [];
     
-    // Process files in batches
-    for (let i = 0; i < compressedFiles.length; i += concurrencyLimit) {
-      const batch = compressedFiles.slice(i, i + concurrencyLimit);
+    // Process files sequentially for better reliability
+    for (let i = 0; i < compressedFiles.length; i++) {
+      const file = compressedFiles[i];
       const progressStart = 30 + (i / compressedFiles.length) * 50;
       
-      const batchPromises = batch.map(async (file, batchIndex) => {
-        try {
-          // Create a unique but descriptive filename
-          const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
-                          file.type === 'image/png' ? 'png' :
-                          file.name.split('.').pop();
-          const fileName = `${i + batchIndex}-${Date.now().toString().slice(-6)}.${fileExt}`;
-          const filePath = `${folderName}/${fileName}`;
-          
-          // Extract image dimensions if possible
-          let width = 0;
-          let height = 0;
-          
-          try {
-            const img = document.createElement('img');
-            const loaded = new Promise<void>((resolve, reject) => {
-              img.onload = () => {
-                width = img.naturalWidth;
-                height = img.naturalHeight;
-                resolve();
-              };
-              img.onerror = reject;
-            });
+      try {
+        // Create a unique but descriptive filename
+        const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
+                      file.type === 'image/png' ? 'png' :
+                      file.name.split('.').pop();
+        const fileName = `${i}-${Date.now().toString().slice(-6)}.${fileExt}`;
+        const filePath = `${folderName}/${fileName}`;
+        
+        // Track if this was originally a HEIC file
+        const wasHeic = originalFileTypes[i] || false;
+        
+        // Upload to Supabase with better caching directives
+        const { data, error } = await supabase.storage
+          .from('property_images')
+          .upload(filePath, file, {
+            cacheControl: '31536000', // 1 year cache for immutable assets
+            upsert: false,
+            contentType: file.type
+          });
             
-            img.src = URL.createObjectURL(file);
-            await Promise.race([
-              loaded,
-              new Promise<void>(resolve => setTimeout(resolve, 1000)) // Timeout after 1s
-            ]);
-          } catch (e) {
-            console.log('Could not extract image dimensions:', e);
-          }
-          
-          // Track if this was originally a HEIC file
-          const wasHeic = originalFileTypes[i + batchIndex] || false;
-          
-          // Add metadata for better tracking and caching
-          const metadata = {
-            originalName: files[i + batchIndex].name,
-            contentType: file.type,
-            size: file.size,
-            width: width || undefined,
-            height: height || undefined,
-            uploadedAt: new Date().toISOString(),
-            propertyId: propertyId || null,
-            wasHeic: wasHeic
-          };
-          
-          // Upload to Supabase with better caching directives
-          const { data, error } = await supabase.storage
-            .from('property_images')
-            .upload(filePath, file, {
-              cacheControl: '31536000', // 1 year cache for immutable assets
-              upsert: false,
-              contentType: file.type,
-              duplex: 'half',
-              metadata
-            });
-            
-          if (error) {
-            console.error('Error uploading image:', error);
-            return null;
-          }
-          
-          // Get public URL with query string to aid in different size rendering
-          const { data: { publicUrl } } = supabase.storage
-            .from('property_images')
-            .getPublicUrl(filePath);
-          
-          // Append width, height and heic flag as query params if available
-          let finalUrl = publicUrl;
-          const urlObj = new URL(publicUrl);
-          
-          if (width) urlObj.searchParams.append('w', width.toString());
-          if (height) urlObj.searchParams.append('h', height.toString());
-          if (wasHeic) urlObj.searchParams.append('heic', 'true');
-          
-          finalUrl = urlObj.toString();
-          
-          // Update progress within batch
-          if (onProgress) {
-            const progressIncrement = 50 / compressedFiles.length;
-            onProgress(Math.min(80, progressStart + (batchIndex / batch.length) * progressIncrement));
-          }
-            
-          return finalUrl;
-        } catch (err) {
-          console.error('Error processing file:', err);
-          return null;
+        if (error) {
+          console.error('Error uploading image:', error);
+          continue;
         }
-      });
-      
-      // Wait for current batch to complete before processing next batch
-      const batchResults = await Promise.all(batchPromises);
-      results.push(...batchResults.filter(Boolean) as string[]);
+        
+        // Get public URL with query string to aid in different size rendering
+        const { data: { publicUrl } } = supabase.storage
+          .from('property_images')
+          .getPublicUrl(filePath);
+        
+        // Append original format flag if it was a HEIC file
+        let finalUrl = publicUrl;
+        if (wasHeic) {
+          const urlObj = new URL(publicUrl);
+          urlObj.searchParams.append('heic', 'true');
+          finalUrl = urlObj.toString();
+        }
+        
+        // Update progress
+        if (onProgress) {
+          const progressIncrement = 50 / compressedFiles.length;
+          onProgress(Math.min(80, progressStart + progressIncrement));
+        }
+            
+        results.push(finalUrl);
+      } catch (err) {
+        console.error('Error processing file:', err);
+      }
     }
     
     if (onProgress) {

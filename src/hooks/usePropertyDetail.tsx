@@ -101,6 +101,11 @@ const usePropertyDetail = (propertyId?: string) => {
         
         const sellerEmail = sellerProfile?.email || '';
 
+        // Handle potential missing fields with safe defaults
+        const yearBuilt = propertyData.year_built ?? null;
+        const lotSize = propertyData.lot_size ?? null;
+        const parking = propertyData.parking ?? null;
+
         const mappedProperty: PropertyDetailType = {
           id: propertyData.id,
           title: propertyData.title,
@@ -123,9 +128,9 @@ const usePropertyDetail = (propertyId?: string) => {
           after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
           estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
           property_type: propertyData.property_type,
-          year_built: propertyData.year_built || null,
-          lot_size: propertyData.lot_size || null,
-          parking: propertyData.parking || null,
+          year_built: yearBuilt,
+          lot_size: lotSize,
+          parking: parking,
           comparable_addresses: propertyData.comparable_addresses,
           created_at: propertyData.created_at,
           additional_images_link: propertyData.additional_images_link || null

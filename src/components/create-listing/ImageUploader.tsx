@@ -83,34 +83,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       
       setConversionAttempts(prev => ({...prev, [fileId]: attemptCount + 1}));
       
-      // Get the first 4 bytes of the file to verify it's actually a HEIC
-      const fileHeader = await readFileHeader(file, 4);
-      const isValidHeic = isHeicHeader(fileHeader);
-      
-      if (!isValidHeic) {
-        console.warn("File claims to be HEIC but header validation failed:", file.name);
-        // Fall back to regular object URL but still mark as HEIC for special handling
-        const imageUrl = URL.createObjectURL(file);
-        setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
-        return imageUrl;
-      }
-      
-      // More robust conversion settings
+      // For more reliable conversion, use simple settings
       const conversionOptions = {
         blob: file,
         toType: "image/jpeg",
-        quality: 0.8,
-        // Add conversion timeout
-        timeout: 30000
+        quality: 0.8
       };
       
-      // Convert HEIC to JPEG blob with timeout
-      const jpegBlob = await Promise.race([
-        heic2any.default(conversionOptions),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("HEIC conversion timed out")), 30000)
-        )
-      ]);
+      // Convert HEIC to JPEG blob
+      const jpegBlob = await heic2any.default(conversionOptions);
       
       // Ensure we got a valid result
       if (!jpegBlob) {
@@ -124,53 +105,18 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       // Mark this URL as being from a HEIC file
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
       
-      toast.success(`HEIC file "${file.name}" converted for preview.`);
       return imageUrl;
     } catch (error) {
       console.error("HEIC preview conversion failed:", error);
       
-      // Fall back to regular object URL
+      // Create a fallback blob URL from the original file
+      // This may not display correctly but will be converted properly during upload
       const imageUrl = URL.createObjectURL(file);
+      // Still mark as HEIC for tracking
       setHeicFiles(prev => ({ ...prev, [imageUrl]: true }));
-      
-      // Still mark it as HEIC so we know to convert it properly during upload
-      if ((error as Error).message !== "Maximum conversion attempts reached") {
-        toast.warning(`Preview conversion for "${file.name}" failed. It will be properly converted during upload.`);
-      }
       
       return imageUrl;
     }
-  };
-  
-  // Helper to read file header bytes
-  const readFileHeader = async (file: File, bytesCount: number): Promise<Uint8Array> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = (e) => {
-        if (e.target?.result) {
-          const array = new Uint8Array(e.target.result as ArrayBuffer);
-          resolve(array.slice(0, bytesCount));
-        } else {
-          reject(new Error("Failed to read file header"));
-        }
-      };
-      reader.onerror = reject;
-      reader.readAsArrayBuffer(file.slice(0, bytesCount));
-    });
-  };
-  
-  // Check if byte array matches HEIC header format
-  const isHeicHeader = (bytes: Uint8Array): boolean => {
-    // Common HEIC file signatures
-    // This is a very basic check that could be expanded
-    if (bytes.length < 4) return false;
-    
-    // Check for ftyp header
-    if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
-      return true;
-    }
-    
-    return false;
   };
 
   // Optimized image handling with better validation and preview generation
@@ -212,7 +158,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         
         newImageFiles.push(file);
         
-        // Create a URL for the image preview (with memory management)
+        // Create a URL for the image preview
         let imageUrl: string;
         
         // Special handling for HEIC files
@@ -323,7 +269,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 height={150}
                 sizes="(max-width: 768px) 50vw, 25vw"
                 data-heic={heicFiles[img] ? 'true' : 'false'}
-                data-format={heicFiles[img] ? 'heic' : undefined}
               />
               <button 
                 type="button" 

@@ -64,14 +64,27 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
   // Extract dimensions from URL if available
   const extractDimensions = (url: string) => {
     try {
-      const parsedUrl = new URL(url);
-      const width = parsedUrl.searchParams.get('w');
-      const height = parsedUrl.searchParams.get('h');
-      const isHeic = parsedUrl.searchParams.get('heic') === 'true' || url.toLowerCase().includes('.heic');
+      const dimensionsPattern = /[?&](w|width)=(\d+)|[?&](h|height)=(\d+)/gi;
+      const matches = [...url.matchAll(dimensionsPattern)];
+      
+      let width, height;
+      
+      matches.forEach(match => {
+        if (match[1]?.toLowerCase() === 'w' || match[1]?.toLowerCase() === 'width') {
+          width = parseInt(match[2]);
+        }
+        if (match[3]?.toLowerCase() === 'h' || match[3]?.toLowerCase() === 'height') {
+          height = parseInt(match[4]);
+        }
+      });
+      
+      const isHeic = url.toLowerCase().includes('.heic') || 
+                    url.toLowerCase().includes('.heif') || 
+                    url.includes('heic=true');
       
       return { 
-        width: width ? parseInt(width) : undefined, 
-        height: height ? parseInt(height) : undefined,
+        width: width || undefined, 
+        height: height || undefined,
         isHeic
       };
     } catch (e) {
@@ -86,7 +99,7 @@ const PropertyImages: React.FC<PropertyImagesProps> = ({
   const isHeicImage = (url: string): boolean => {
     return url.toLowerCase().includes('.heic') || 
            url.toLowerCase().includes('.heif') ||
-           (new URL(url, window.location.origin).searchParams.get('heic') === 'true');
+           url.includes('heic=true');
   };
   
   return (

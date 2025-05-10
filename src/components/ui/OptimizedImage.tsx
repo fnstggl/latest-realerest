@@ -41,7 +41,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     // Check for blob URLs with HEIC data attribute
     (src.startsWith('blob:') && rest['data-heic'] === 'true') ||
     // Check for query parameters that might indicate HEIC origin
-    (new URL(src, window.location.origin).searchParams.get('heic') === 'true') ||
+    (src.includes('?') && src.includes('heic=true')) ||
     // Check for custom attribute directly indicating HEIC
     rest['data-format'] === 'heic'
   );
@@ -56,11 +56,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
       )}
       
-      {isHeicFile && (
-        <div className="absolute top-1 right-1 bg-black/70 text-white text-xs px-2 py-1 rounded-full z-10">
-          HEIC
-        </div>
-      )}
+      {/* Removed the HEIC badge as requested */}
       
       <img
         src={hasError ? '/placeholder.svg' : src}
