@@ -1,9 +1,31 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
 
 @layer components {
   .story-link {
     @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-[#0892D0] after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+  }
+  
+  /* New fitted header style specifically for the "OWN IT. FOR LESS" text */
+  .full-width-header-fitted {
+    font-family: 'Archivo Black', sans-serif;
+    text-transform: uppercase;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    letter-spacing: -0.04em;
+    text-align: center;
+    font-size: clamp(2rem, 12vw, 13rem); /* Reduced from 14vw to 13vw */
+    line-height: 0.7;
+    font-weight: 900;
+    padding: 0 20px; /* Added padding to prevent edge cutoff */
+    position: relative;
+    white-space: nowrap;
+    overflow: visible;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: scaleY(1.4) scaleX(0.88);
   }
   
   /* Full-width typography header style for About page with adjusted letter spacing */
