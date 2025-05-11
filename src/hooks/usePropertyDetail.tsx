@@ -31,6 +31,12 @@ interface PropertyDetail {
   yearBuilt?: string | null;
   lotSize?: string | null;
   parking?: string | null;
+  // For backward compatibility with existing code
+  seller_name?: string | null; 
+  seller_email?: string | null;
+  seller_phone?: string | null;
+  seller_id?: string | null;
+  comparable_addresses?: string[];
 }
 
 export interface WaitlistStatus {
@@ -136,9 +142,11 @@ const usePropertyDetail = (propertyId?: string) => {
           userEmail: sellerEmail,
           propertyType: propertyData.property_type,
           additionalImagesLink: propertyData.additional_images_link || null,
+          comparable_addresses: propertyData.comparable_addresses || [],
+          // Handle optional fields safely
           yearBuilt: propertyData.year_built || null,
           lotSize: propertyData.lot_size || null,
-          parking: propertyData.parking || null
+          parking: propertyData.parking || null,
         };
 
         setProperty(mappedProperty);

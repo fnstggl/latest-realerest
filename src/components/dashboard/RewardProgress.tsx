@@ -6,16 +6,20 @@ import { RewardStatusDetails } from '@/types/bounty-status';
 interface RewardProgressProps {
   propertyId: string;
   claimId?: string;
-  statusDetails?: RewardStatusDetails; // Changed from status to statusDetails
+  statusDetails?: RewardStatusDetails; // Primary prop for status details
+  initialStatus?: RewardStatusDetails; // Added for backward compatibility
   updateStatusDetails?: (newDetails: RewardStatusDetails) => void;
+  onStatusUpdate?: () => void; // Added for backward compatibility
   isEditable?: boolean;
 }
 
 const RewardProgress: React.FC<RewardProgressProps> = ({
   propertyId,
   claimId,
-  statusDetails, // Changed from status to statusDetails
+  statusDetails, // Primary prop
+  initialStatus, // Support for backward compatibility
   updateStatusDetails,
+  onStatusUpdate, // Support for backward compatibility
   isEditable = false
 }) => {
   // Default status if none provided
@@ -27,11 +31,11 @@ const RewardProgress: React.FC<RewardProgressProps> = ({
     dealClosed: false
   };
 
-  // Use provided status or default
-  const currentStatus = statusDetails || defaultStatus;
+  // Use provided status or default, supporting both prop naming patterns
+  const currentStatus = statusDetails || initialStatus || defaultStatus;
   
   const handleStatusUpdate = (key: keyof RewardStatusDetails) => {
-    if (!isEditable || !updateStatusDetails) return;
+    if (!isEditable) return;
     
     // Create a new status object with the updated key
     const newStatus = { ...currentStatus, [key]: !currentStatus[key] };
@@ -60,7 +64,14 @@ const RewardProgress: React.FC<RewardProgressProps> = ({
     }
     
     // Call the update function with the new status
-    updateStatusDetails(newStatus);
+    if (updateStatusDetails) {
+      updateStatusDetails(newStatus);
+    }
+    
+    // Support for backward compatibility
+    if (onStatusUpdate) {
+      onStatusUpdate();
+    }
   };
   
   const steps = [

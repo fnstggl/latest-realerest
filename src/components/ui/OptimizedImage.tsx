@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -11,7 +10,7 @@ export interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageEl
 
 /**
  * OptimizedImage component that implements best practices for image loading and rendering
- * with improved performance and loading states
+ * with improved performance and loading states and better error handling
  */
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
@@ -26,6 +25,14 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 }) => {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
+  const maxRetries = 2;
+  
+  // Reset error state when src changes
+  useEffect(() => {
+    setHasError(false);
+    setIsLoading(true);
+  }, [src]);
   
   // Check if the image is from an external source or local
   const isExternal = src ? (src.startsWith('http') || src.startsWith('//')) : true;
@@ -53,14 +60,39 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   // Use placeholder when image fails to load
   const placeholderImage = '/placeholder.svg';
   
-  // Handle image src safely
-  const safeImageSrc = src || placeholderImage;
+  // Check if URL is from Supabase storage
+  const isSupabaseStorageUrl = src && src.includes('supabase.co') && src.includes('/storage/v1/object/public/');
+  
+  // Handle image src safely with retry mechanism for Supabase storage URLs
+  let safeImageSrc = src || placeholderImage;
+  
+  // Add cache-busting parameter for Supabase storage URLs if retrying
+  if (isSupabaseStorageUrl && retryCount > 0) {
+    // Add or update timestamp parameter to bypass cache
+    const separator = safeImageSrc.includes('?') ? '&' : '?'; 
+    safeImageSrc = `${safeImageSrc}${separator}t=${Date.now()}&retry=${retryCount}`;
+  }
+  
+  // Handle retry logic
+  const handleImageError = () => {
+    console.error(`Failed to load image: ${safeImageSrc}`);
+    
+    if (isSupabaseStorageUrl && retryCount < maxRetries) {
+      console.log(`Retrying image load (${retryCount + 1}/${maxRetries}): ${safeImageSrc}`);
+      setRetryCount(prevCount => prevCount + 1);
+      // Keep loading state true as we're retrying
+    } else {
+      setHasError(true);
+      setIsLoading(false);
+    }
+  };
   
   return (
     <div 
       className={`relative overflow-hidden ${className}`} 
       style={{ minHeight: "20px" }}
       data-image-type={isHeicFormat ? 'heic-converted' : 'standard'}
+      data-retry-count={retryCount}
     >
       {isLoading && (
         <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
@@ -77,14 +109,16 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         decoding={priority ? 'sync' : 'async'}
         srcSet={generateSrcSet()}
         onLoad={() => setIsLoading(false)}
-        onError={(e) => {
-          console.error(`Failed to load image: ${safeImageSrc}`);
-          setHasError(true);
-          setIsLoading(false);
-        }}
+        onError={handleImageError}
         fetchPriority={fetchPriority as any}
         {...rest}
       />
+      
+      {hasError && !isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-xs">
+          Image not available
+        </div>
+      )}
     </div>
   );
 };
