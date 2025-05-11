@@ -15,6 +15,12 @@ const JPEG_QUALITY = 0.75;
 // Use a smaller default image size for faster loading
 const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
 
+// Extend File type to include optional image dimensions
+interface EnhancedFile extends File {
+  width?: number;
+  height?: number;
+}
+
 /**
  * Enhanced check if a file is a HEIC/HEIF format using multiple detection methods
  */
@@ -291,9 +297,10 @@ export const uploadImagesToSupabase = async (
           const urlObj = new URL(publicUrl);
           
           // Add width and height if available
-          if (file.width && file.height) {
-            urlObj.searchParams.append('width', file.width.toString());
-            urlObj.searchParams.append('height', file.height.toString());
+          const enhancedFile = file as EnhancedFile;
+          if (enhancedFile.width && enhancedFile.height) {
+            urlObj.searchParams.append('width', enhancedFile.width.toString());
+            urlObj.searchParams.append('height', enhancedFile.height.toString());
           }
           
           // Add original format flag if it was a HEIC file

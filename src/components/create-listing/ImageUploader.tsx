@@ -75,6 +75,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     if (isHeicOrHeifFile(file)) {
       try {
         setConversionInProgress(true);
+        
         // Try to dynamically import heic2any for conversion
         try {
           const heic2any = await import('heic2any');
