@@ -100,10 +100,10 @@ const About: React.FC = () => {
           </div>
           
           <div className="relative overflow-hidden mb-8">
-            {/* Removed the gradient overlay div that was here */}
+            {/* Updated the NYC image */}
             <OptimizedImage 
-              src="/lovable-uploads/b9fc11a0-c354-433e-81b9-59847be8e3ca.png" 
-              alt="New York City street view" 
+              src="/lovable-uploads/a236ca39-1b6b-45b1-a52a-ddc4b53d0b00.png" 
+              alt="New York City street view with skyscrapers" 
               className="w-full h-[300px] md:h-[450px] object-cover"
               priority={true}
             />
@@ -146,9 +146,9 @@ const About: React.FC = () => {
           </div>
           
           <div className="relative overflow-hidden mb-8">
-            {/* Removed the gradient overlay */}
+            {/* Updated the house image */}
             <OptimizedImage 
-              src="/lovable-uploads/be595a40-ac2a-4251-be4c-4d094cd96557.png" 
+              src="/lovable-uploads/f49e3746-7878-4cf7-8866-602dd31f6adf.png" 
               alt="Modern cottage home with green door" 
               className="w-full h-[300px] md:h-[450px] object-cover"
               priority={true}
@@ -192,9 +192,9 @@ const About: React.FC = () => {
           </div>
           
           <div className="relative overflow-hidden mb-8">
-            {/* Updated image to the new one */}
+            {/* Updated the birds eye view image */}
             <OptimizedImage 
-              src="/lovable-uploads/0411d565-cccd-45a4-bb2f-3937f2b20553.png" 
+              src="/lovable-uploads/48a779b8-62cf-4b0a-86ac-d6511b5691eb.png" 
               alt="Aerial view of suburban neighborhood" 
               className="w-full h-[300px] md:h-[450px] object-cover"
               priority={true}
