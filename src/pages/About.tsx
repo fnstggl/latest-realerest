@@ -8,6 +8,8 @@ import SiteFooter from '@/components/sections/SiteFooter';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SEO from '@/components/SEO';
 import { Tilt } from "@/components/ui/tilt";
+import OptimizedImage from '@/components/ui/OptimizedImage';
+import { Asterisk } from "lucide-react";
 
 const About: React.FC = () => {
   // Animation variants for sections
@@ -86,110 +88,131 @@ const About: React.FC = () => {
         </div>
         
         {/* Content sections - more centered and structurally aesthetic */}
-        {/* THE ORIGIN Section */}
+        {/* OUR STORY Section */}
         <motion.section initial="hidden" whileInView="visible" viewport={{
         once: true,
         margin: "-100px"
       }} variants={sectionVariant} className="mx-auto max-w-5xl mb-24 md:mb-32">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center">
-              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">OUR BEGINNINGS</h2>
-              <span className="text-3xl text-[#8E9196] ml-2">(1)</span>
+              <h2 className="font-['Archivo_Black'] tracking-tighter text-[#ed0000] text-5xl md:text-6xl font-bold">(OUR STORY)</h2>
             </div>
           </div>
           
           <div className="relative overflow-hidden mb-8">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00000099] to-transparent z-10"></div>
-            <img src="/lovable-uploads/d02ec260-e51f-47be-bbc4-9a50902a8bcc.png" alt="New York City street view" className="w-full h-[300px] md:h-[450px] object-cover grayscale" />
+            {/* Removed the gradient overlay div that was here */}
+            <OptimizedImage 
+              src="/lovable-uploads/b9fc11a0-c354-433e-81b9-59847be8e3ca.png" 
+              alt="New York City street view" 
+              className="w-full h-[300px] md:h-[450px] object-cover"
+              priority={true}
+            />
             
             <div className="absolute inset-0 flex items-center z-20 px-8">
-              <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
+              <h3 className="font-['Archivo_Black'] tracking-tighter text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
                 TWO <span className="red-highlight-word">STUDENTS</span> IN NYC<span className="text-[#ea384c]">*</span>
               </h3>
             </div>
           </div>
           
-          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-center text-[#1A1F2C]">
-            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl">
-              We built <span className="font-playfair italic font-bold">Realer Estate</span> to make housing feel possible again. Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking.
+          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-left text-[#1A1F2C]">
+            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-['Archivo_Black'] tracking-tighter">
+              We built Realer Estate to make housing feel possible again. Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking.
             </motion.p>
             
-            <motion.p custom={1} variants={textRevealVariant} className="text-lg md:text-xl font-playfair italic">
+            <motion.p custom={1} variants={textRevealVariant} className="text-lg md:text-xl font-['Archivo_Black'] tracking-tighter">
               "We were two students in NYC trying to figure out how anyone was supposed to buy a home."
             </motion.p>
             
-            <motion.p custom={2} variants={textRevealVariant} className="text-lg md:text-xl">
-              We're here for the buyers who've been priced out, the ones who refresh Zillow every night hoping something new pops up. We're here for the people trying to get their families into something stable, something <span className="font-playfair italic font-bold">real</span>.
+            <motion.p custom={2} variants={textRevealVariant} className="text-lg md:text-xl font-['Archivo_Black'] tracking-tighter">
+              We're here for the buyers who've been priced out, the ones who refresh Zillow every night hoping something new pops up. We're here for the people trying to get their families into something stable, something real.
             </motion.p>
+            
+            <div className="flex justify-center pt-4">
+              <Asterisk size={20} className="text-[#ea384c]" />
+            </div>
           </div>
         </motion.section>
         
-        {/* THE JOURNEY Section */}
+        {/* WHAT WE DO Section - Updated from HOW IT WORKS */}
         <motion.section initial="hidden" whileInView="visible" viewport={{
         once: true,
         margin: "-100px"
       }} variants={sectionVariant} className="mx-auto max-w-5xl mb-24 md:mb-32">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center">
-              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">OUR JOURNEY</h2>
-              <span className="text-3xl text-[#8E9196] ml-2">(2)</span>
+              <h2 className="font-['Archivo_Black'] tracking-tighter text-[#ed0000] text-5xl md:text-6xl font-bold">(WHAT WE DO)</h2>
             </div>
           </div>
           
           <div className="relative overflow-hidden mb-8">
-            <div className="absolute inset-0 bg-gradient-to-l from-[#00000099] to-transparent z-10"></div>
-            <img src="/lovable-uploads/ae9b8849-2f3b-4a70-a520-d02738b34efd.png" alt="Modern home exterior" className="w-full h-[300px] md:h-[450px] object-cover grayscale" />
+            {/* Removed the gradient overlay */}
+            <OptimizedImage 
+              src="/lovable-uploads/be595a40-ac2a-4251-be4c-4d094cd96557.png" 
+              alt="Modern cottage home with green door" 
+              className="w-full h-[300px] md:h-[450px] object-cover"
+              priority={true}
+            />
             
-            <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
-              <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
-                DOING THINGS <span className="red-highlight-word">DIFFERENTLY</span><span className="text-[#ea384c]">*</span>
+            <div className="absolute inset-0 flex items-start px-8 pt-8 md:pt-16 z-20">
+              <h3 className="font-['Archivo_Black'] tracking-tighter text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
+                HOMES<br />YOU CAN<br /><span className="red-highlight-word">AFFORD</span><span className="text-[#ea384c]">*</span>
               </h3>
             </div>
           </div>
           
-          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-center text-[#1A1F2C]">
-            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl">
+          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-left text-[#1A1F2C]">
+            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-['Archivo_Black'] tracking-tighter">
               We know how frustrating the process of buying and selling your house can feel, so at Realer Estate... we're doing things differently.
             </motion.p>
             
-            <motion.p custom={1} variants={textRevealVariant} className="text-lg md:text-xl">
-              By connecting motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.
+            <motion.p custom={1} variants={textRevealVariant} className="text-lg md:text-xl font-['Archivo_Black'] tracking-tighter">
+              By connecting motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are actually great deals.
             </motion.p>
             
-            <motion.p custom={2} variants={textRevealVariant} className="text-lg md:text-xl font-playfair italic">
+            <motion.p custom={2} variants={textRevealVariant} className="text-lg md:text-xl font-['Archivo_Black'] tracking-tighter">
               "We knew there had to be a better way—something faster, simpler, and actually made for people like us."
             </motion.p>
+            
+            <div className="flex justify-center pt-4">
+              <Asterisk size={20} className="text-[#ea384c]" />
+            </div>
           </div>
         </motion.section>
         
-        {/* THE VISION Section */}
+        {/* WHY IT MATTERS Section - Updated from OUR VISION */}
         <motion.section initial="hidden" whileInView="visible" viewport={{
         once: true,
         margin: "-100px"
       }} variants={sectionVariant} className="mx-auto max-w-5xl mb-24 md:mb-32">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center">
-              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">OUR VISION</h2>
-              <span className="text-3xl text-[#8E9196] ml-2">(3)</span>
+              <h2 className="font-['Archivo_Black'] tracking-tighter text-[#ed0000] text-5xl md:text-6xl font-bold">(WHY IT MATTERS)</h2>
             </div>
           </div>
           
           <div className="relative overflow-hidden mb-8">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00000099] to-transparent z-10"></div>
-            <img src="/lovable-uploads/b82e0252-0b3e-4142-bbe9-1f4da2824ab9.png" alt="Classic apartment buildings" className="w-full h-[300px] md:h-[450px] object-cover grayscale" />
+            {/* Updated image to the new one */}
+            <OptimizedImage 
+              src="/lovable-uploads/0411d565-cccd-45a4-bb2f-3937f2b20553.png" 
+              alt="Aerial view of suburban neighborhood" 
+              className="w-full h-[300px] md:h-[450px] object-cover"
+              priority={true}
+            />
             
-            <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
-              <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
+            <div className="absolute inset-0 flex items-start px-8 pt-8 md:pt-16 z-20">
+              <h3 className="font-['Archivo_Black'] tracking-tighter text-6xl md:text-8xl font-bold text-white leading-none max-w-lg">
                 HOUSING FOR <span className="red-highlight-word">EVERYONE</span><span className="text-[#ea384c]">*</span>
               </h3>
             </div>
           </div>
           
-          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-center text-[#1A1F2C]">
-            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl">
-              Realer Estate is about revolutionizing the real estate market to make it work for <span className="font-playfair italic font-bold">people</span> again. You shouldn't have to fight this hard for something so basic.
+          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-left text-[#1A1F2C]">
+            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-['Archivo_Black'] tracking-tighter">
+              Realer Estate is about revolutionizing the real estate market to make it work for people again. You shouldn't have to fight this hard for something so basic.
             </motion.p>
             
+            {/* Centered the founders info while keeping text above left-aligned */}
             <motion.div custom={1} variants={textRevealVariant} className="flex items-center justify-center space-x-3 pt-4">
               <Avatar className="h-12 w-12">
                 <AvatarFallback className="bg-[#1A1F2C] text-white">RE</AvatarFallback>
