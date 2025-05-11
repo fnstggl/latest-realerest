@@ -218,12 +218,42 @@ export const uploadImagesToSupabase = async (
         
       if (bucketError) {
         console.error('Error verifying property_images bucket:', bucketError);
-        throw new Error('Property images storage not available');
+        
+        // Attempt to create the bucket if it doesn't exist
+        if (bucketError.message.includes('not found')) {
+          console.log('Attempting to create property_images bucket');
+          const { error: createError } = await supabase.storage.createBucket('property_images', {
+            public: true
+          });
+          
+          if (createError) {
+            console.error('Failed to create bucket:', createError);
+            throw new Error('Cannot create storage bucket');
+          } else {
+            console.log('Successfully created property_images bucket');
+          }
+        } else {
+          throw new Error('Property images storage not available');
+        }
+      } else {
+        console.log('Property images bucket confirmed:', bucket);
       }
-      
-      console.log('Property images bucket confirmed:', bucket);
     } catch (bucketErr) {
       console.error('Error checking storage bucket:', bucketErr);
+      
+      // Try a diagnostic check using the edge function
+      try {
+        const url = new URL(window.location.origin);
+        url.pathname = '/functions/v1/test-storage-access';
+        url.searchParams.set('bucket', 'property_images');
+        
+        const response = await fetch(url.toString());
+        const diagnosticData = await response.json();
+        console.log('Storage diagnostic test results:', diagnosticData);
+      } catch (diagErr) {
+        console.error('Diagnostic test failed:', diagErr);
+      }
+      
       throw new Error('Cannot access storage');
     }
     
@@ -276,14 +306,15 @@ export const uploadImagesToSupabase = async (
           const wasHeic = originalFileTypes[i] || false;
           
           console.log(`Attempting upload to property_images/${filePath} (Retry: ${retryCount})`);
+          console.log(`File type: ${file.type}, size: ${file.size} bytes`);
           
-          // Upload to Supabase with better caching directives
+          // Upload to Supabase with proper content-type
           const { data, error } = await supabase.storage
             .from('property_images')
             .upload(filePath, file, {
               cacheControl: '31536000', // 1 year cache for immutable assets
               upsert: false,
-              contentType: file.type
+              contentType: file.type // Explicitly set content type
             });
               
           if (error) {

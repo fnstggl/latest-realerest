@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 
 export interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -32,6 +33,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   useEffect(() => {
     setHasError(false);
     setIsLoading(true);
+    setRetryCount(0);
   }, [src]);
   
   // Check if the image is from an external source or local
@@ -57,20 +59,29 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   // Add fetchpriority attribute if supported
   const fetchPriority = priority ? 'high' : 'auto';
   
-  // Use placeholder when image fails to load
+  // Better placeholder for when image fails to load
   const placeholderImage = '/placeholder.svg';
   
   // Check if URL is from Supabase storage
-  const isSupabaseStorageUrl = src && src.includes('supabase.co') && src.includes('/storage/v1/object/public/');
+  const isSupabaseStorageUrl = src && 
+    (src.includes('supabase.co') && src.includes('/storage/v1/object/public/'));
   
   // Handle image src safely with retry mechanism for Supabase storage URLs
   let safeImageSrc = src || placeholderImage;
   
   // Add cache-busting parameter for Supabase storage URLs if retrying
   if (isSupabaseStorageUrl && retryCount > 0) {
-    // Add or update timestamp parameter to bypass cache
-    const separator = safeImageSrc.includes('?') ? '&' : '?'; 
-    safeImageSrc = `${safeImageSrc}${separator}t=${Date.now()}&retry=${retryCount}`;
+    try {
+      // Properly add cache-busting with URL parsing
+      const urlObj = new URL(safeImageSrc);
+      urlObj.searchParams.set('t', Date.now().toString());
+      urlObj.searchParams.set('retry', retryCount.toString());
+      safeImageSrc = urlObj.toString();
+    } catch (e) {
+      // If URL parsing fails, use simple string concatenation
+      const separator = safeImageSrc.includes('?') ? '&' : '?'; 
+      safeImageSrc = `${safeImageSrc}${separator}t=${Date.now()}&retry=${retryCount}`;
+    }
   }
   
   // Handle retry logic

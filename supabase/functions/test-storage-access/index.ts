@@ -33,6 +33,7 @@ Deno.serve(async (req) => {
       .getBucket(bucket)
 
     if (bucketError) {
+      console.error("Bucket access error:", bucketError);
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -54,6 +55,7 @@ Deno.serve(async (req) => {
       .list()
 
     if (listError) {
+      console.error("File listing error:", listError);
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -70,9 +72,19 @@ Deno.serve(async (req) => {
     }
 
     // Check policies
-    const { data: policiesData, error: policiesError } = await supabase
-      .rpc('get_policies_for_table', { table_name: 'objects', schema_name: 'storage' })
-      .single()
+    let policiesData = null;
+    let policiesError = null;
+    try {
+      const { data, error } = await supabase
+        .rpc('get_policies_for_table', { table_name: 'objects', schema_name: 'storage' })
+        .single();
+      
+      policiesData = data;
+      policiesError = error;
+    } catch (e) {
+      console.error("Policy check error:", e);
+      policiesError = e;
+    }
 
     // Return success with diagnostic data
     return new Response(
@@ -90,6 +102,7 @@ Deno.serve(async (req) => {
       }
     )
   } catch (error) {
+    console.error("Global error:", error);
     return new Response(
       JSON.stringify({ 
         success: false, 
