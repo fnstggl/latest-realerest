@@ -109,7 +109,7 @@ async function convertHeicToJpeg(file: File): Promise<File> {
       writable: false
     });
     
-    throw new Error(`HEIC conversion failed: ${error.message}`);
+    throw new Error(`HEIC conversion failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -197,7 +197,8 @@ async function compressStandardImage(file: File): Promise<File> {
 }
 
 /**
- * Uploads images to Supabase storage with improved handling for HEIC files
+ * Uploads images to Supabase storage with improved handling for HEIC files and 
+ * optimized for the new RLS policies
  */
 export const uploadImagesToSupabase = async (
   files: File[], 
@@ -274,6 +275,8 @@ export const uploadImagesToSupabase = async (
           // Track if this was originally a HEIC file
           const wasHeic = originalFileTypes[i] || false;
           
+          console.log(`Attempting upload to property_images/${filePath} (Retry: ${retryCount})`);
+          
           // Upload to Supabase with better caching directives
           const { data, error } = await supabase.storage
             .from('property_images')
@@ -284,8 +287,11 @@ export const uploadImagesToSupabase = async (
             });
               
           if (error) {
+            console.error("Supabase upload error:", error);
             throw error;
           }
+          
+          console.log("Upload successful:", data);
           
           // Get public URL with improved query parameters
           const { data: { publicUrl } } = supabase.storage
@@ -309,6 +315,7 @@ export const uploadImagesToSupabase = async (
           }
           
           finalUrl = urlObj.toString();
+          console.log("Final URL with metadata:", finalUrl);
           
           // Update progress
           if (onProgress) {

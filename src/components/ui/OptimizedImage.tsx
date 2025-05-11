@@ -79,7 +79,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
           setHasError(true);
           setIsLoading(false);
         }}
-        fetchPriority={fetchPriority}
+        fetchPriority={fetchPriority as any}
         {...rest}
       />
     </div>
