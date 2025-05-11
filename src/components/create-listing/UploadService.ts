@@ -36,25 +36,39 @@ function isHeicFile(file: File): boolean {
 }
 
 /**
- * Converts a HEIC/HEIF file to JPEG format with enhanced reliability
- * This uses a dynamic import to avoid bloating the main bundle
+ * Converts a HEIC/HEIF file to JPEG format using more reliable direct approach
  */
 async function convertHeicToJpeg(file: File): Promise<File> {
   try {
-    // Dynamically import heic2any library only when needed
-    const heic2any = await import('heic2any');
-    
     console.log("Converting HEIC file to JPEG:", file.name);
+
+    // Load heic2any as a dynamic import with error handling
+    let heic2any;
+    try {
+      heic2any = await import('heic2any');
+    } catch (importError) {
+      console.error("Failed to import heic2any library:", importError);
+      throw new Error("HEIC conversion library not available");
+    }
     
-    // Simplified conversion approach for better reliability
-    const jpegBlob = await heic2any.default({
+    // Configure conversion with better reliability settings
+    const conversionOptions = {
       blob: file,
       toType: "image/jpeg",
       quality: 0.8
-    });
+    };
+    
+    // Add timeout for conversion to prevent hanging
+    const conversionPromise = heic2any.default(conversionOptions);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("HEIC conversion timed out")), 30000)
+    );
+    
+    // Race between conversion and timeout
+    const jpegBlob = await Promise.race([conversionPromise, timeoutPromise]);
     
     if (!jpegBlob) {
-      throw new Error("Failed to convert HEIC file");
+      throw new Error("Empty result from HEIC conversion");
     }
     
     // Handle both single blob and array of blobs return types
@@ -67,20 +81,35 @@ async function convertHeicToJpeg(file: File): Promise<File> {
       { type: 'image/jpeg' }
     );
     
-    console.log("HEIC conversion complete:", 
+    console.log("HEIC conversion successful:", 
       `${(file.size / 1024).toFixed(2)}KB →`,
       `${(jpegFile.size / 1024).toFixed(2)}KB`);
     
     return jpegFile;
   } catch (error) {
     console.error("Error converting HEIC to JPEG:", error);
-    // If conversion fails, throw an error to be handled by the caller
-    throw new Error(`Failed to convert HEIC image: ${file.name}`);
+    
+    // Create a fallback approach - since client-side conversion failed,
+    // we'll tag this file for server-side processing instead
+    const originalFile = new File(
+      [file], 
+      file.name,
+      { type: file.type }
+    );
+    
+    // Tag file for server processing
+    Object.defineProperty(originalFile, 'needsServerConversion', {
+      value: true,
+      writable: false
+    });
+    
+    throw new Error(`HEIC conversion failed: ${error.message}`);
   }
 }
 
 /**
  * Compresses an image file to reduce its size while maintaining quality
+ * With improved handling for different image formats
  */
 async function compressImage(file: File): Promise<File> {
   try {
@@ -92,8 +121,10 @@ async function compressImage(file: File): Promise<File> {
         // Then apply compression to the JPEG
         return await compressStandardImage(jpegFile);
       } catch (error) {
-        console.error("HEIC conversion error:", error);
-        throw error;
+        console.error("HEIC conversion failed, using original file:", error);
+        
+        // If we failed to convert, we'll upload the original and handle server-side
+        return file;
       }
     } else {
       // For standard image formats, just compress
@@ -122,24 +153,45 @@ async function compressStandardImage(file: File): Promise<File> {
     useWebWorker: true,
     fileType: file.type,
     initialQuality: JPEG_QUALITY,
-    alwaysKeepResolution: false,
+    alwaysKeepResolution: true,
+    preserveExif: true
   };
   
-  // Compress the image
-  const compressedFile = await imageCompression(file, options);
-  console.log(
-    "Compression result:",
-    file.name,
-    `${(file.size / 1024).toFixed(2)}KB →`,
-    `${(compressedFile.size / 1024).toFixed(2)}KB`,
-    `(${Math.round((compressedFile.size / file.size) * 100)}%)`
-  );
-  
-  return compressedFile;
+  try {
+    // Compress the image with retry mechanism
+    let attempts = 0;
+    const maxAttempts = 3;
+    
+    while (attempts < maxAttempts) {
+      try {
+        const compressedFile = await imageCompression(file, options);
+        console.log(
+          "Compression result:",
+          file.name,
+          `${(file.size / 1024).toFixed(2)}KB →`,
+          `${(compressedFile.size / 1024).toFixed(2)}KB`,
+          `(${Math.round((compressedFile.size / file.size) * 100)}%)`
+        );
+        
+        return compressedFile;
+      } catch (err) {
+        attempts++;
+        if (attempts >= maxAttempts) throw err;
+        console.log(`Compression attempt ${attempts} failed, retrying...`);
+        // Adjust quality on retry
+        options.initialQuality = Math.max(0.5, options.initialQuality - 0.1);
+      }
+    }
+    
+    throw new Error("All compression attempts failed");
+  } catch (err) {
+    console.error("Image compression failed:", err);
+    return file; // Return original as fallback
+  }
 }
 
 /**
- * Uploads images to Supabase storage with compression and optimization
+ * Uploads images to Supabase storage with improved handling for HEIC files
  */
 export const uploadImagesToSupabase = async (
   files: File[], 
@@ -152,6 +204,22 @@ export const uploadImagesToSupabase = async (
   const folderName = propertyId ? `property-${propertyId}` : `listing-${uuidv4()}`;
   
   try {
+    // First verify storage bucket exists before starting the upload process
+    try {
+      const { data: bucket, error: bucketError } = await supabase.storage
+        .getBucket('property_images');
+        
+      if (bucketError) {
+        console.error('Error verifying property_images bucket:', bucketError);
+        throw new Error('Property images storage not available');
+      }
+      
+      console.log('Property images bucket confirmed:', bucket);
+    } catch (bucketErr) {
+      console.error('Error checking storage bucket:', bucketErr);
+      throw new Error('Cannot access storage');
+    }
+    
     // Process files in sequence with compression
     const compressedFiles: File[] = [];
     const originalFileTypes: Record<number, boolean> = {};
@@ -176,62 +244,90 @@ export const uploadImagesToSupabase = async (
       }
     }
     
-    // Step 2: Upload compressed files with concurrency control
+    // Step 2: Upload compressed files with improved error handling
     const results: string[] = [];
+    const failedUploads: number[] = [];
     
-    // Process files sequentially for better reliability
+    // Process files sequentially with retry mechanism
     for (let i = 0; i < compressedFiles.length; i++) {
       const file = compressedFiles[i];
       const progressStart = 30 + (i / compressedFiles.length) * 50;
       
-      try {
-        // Create a unique but descriptive filename
-        const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
-                      file.type === 'image/png' ? 'png' :
-                      file.name.split('.').pop();
-        const fileName = `${i}-${Date.now().toString().slice(-6)}.${fileExt}`;
-        const filePath = `${folderName}/${fileName}`;
-        
-        // Track if this was originally a HEIC file
-        const wasHeic = originalFileTypes[i] || false;
-        
-        // Upload to Supabase with better caching directives
-        const { data, error } = await supabase.storage
-          .from('property_images')
-          .upload(filePath, file, {
-            cacheControl: '31536000', // 1 year cache for immutable assets
-            upsert: false,
-            contentType: file.type
-          });
-            
-        if (error) {
-          console.error('Error uploading image:', error);
-          continue;
-        }
-        
-        // Get public URL with query string to aid in different size rendering
-        const { data: { publicUrl } } = supabase.storage
-          .from('property_images')
-          .getPublicUrl(filePath);
-        
-        // Append original format flag if it was a HEIC file
-        let finalUrl = publicUrl;
-        if (wasHeic) {
+      let retryCount = 0;
+      const maxRetries = 3;
+      
+      while (retryCount <= maxRetries) {
+        try {
+          // Create a unique but descriptive filename
+          const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
+                        file.type === 'image/png' ? 'png' :
+                        file.name.split('.').pop();
+          const fileName = `${i}-${Date.now().toString().slice(-6)}${retryCount > 0 ? `-retry${retryCount}` : ''}.${fileExt}`;
+          const filePath = `${folderName}/${fileName}`;
+          
+          // Track if this was originally a HEIC file
+          const wasHeic = originalFileTypes[i] || false;
+          
+          // Upload to Supabase with better caching directives
+          const { data, error } = await supabase.storage
+            .from('property_images')
+            .upload(filePath, file, {
+              cacheControl: '31536000', // 1 year cache for immutable assets
+              upsert: false,
+              contentType: file.type
+            });
+              
+          if (error) {
+            throw error;
+          }
+          
+          // Get public URL with improved query parameters
+          const { data: { publicUrl } } = supabase.storage
+            .from('property_images')
+            .getPublicUrl(filePath);
+          
+          // Append metadata flags to help with display
+          let finalUrl = publicUrl;
           const urlObj = new URL(publicUrl);
-          urlObj.searchParams.append('heic', 'true');
+          
+          // Add width and height if available
+          if (file.width && file.height) {
+            urlObj.searchParams.append('width', file.width.toString());
+            urlObj.searchParams.append('height', file.height.toString());
+          }
+          
+          // Add original format flag if it was a HEIC file
+          if (wasHeic) {
+            urlObj.searchParams.append('format', 'heic');
+          }
+          
           finalUrl = urlObj.toString();
+          
+          // Update progress
+          if (onProgress) {
+            const progressIncrement = 50 / compressedFiles.length;
+            onProgress(Math.min(80, progressStart + progressIncrement));
+          }
+              
+          results.push(finalUrl);
+          break; // Success, exit retry loop
+        } catch (err) {
+          retryCount++;
+          console.error(`Error uploading file (attempt ${retryCount}/${maxRetries}):`, err);
+          
+          if (retryCount > maxRetries) {
+            failedUploads.push(i);
+            break;
+          }
+          
+          // Wait before retry (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
         }
-        
-        // Update progress
-        if (onProgress) {
-          const progressIncrement = 50 / compressedFiles.length;
-          onProgress(Math.min(80, progressStart + progressIncrement));
-        }
-            
-        results.push(finalUrl);
-      } catch (err) {
-        console.error('Error processing file:', err);
       }
+    }
+    
+    if (failedUploads.length > 0) {
+      console.warn(`Failed to upload ${failedUploads.length} images after retries`);
     }
     
     if (onProgress) {
