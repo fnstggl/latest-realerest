@@ -10,6 +10,18 @@ const supabase = createClient(
 )
 
 Deno.serve(async (req) => {
+  // CORS headers for browser access
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Content-Type': 'application/json'
+  };
+
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   try {
     // Get URL params
     const url = new URL(req.url)
@@ -29,7 +41,7 @@ Deno.serve(async (req) => {
           step: 'getBucket'
         }),
         { 
-          headers: { "Content-Type": "application/json" },
+          headers: { ...corsHeaders },
           status: 500
         }
       )
@@ -51,7 +63,7 @@ Deno.serve(async (req) => {
           bucketInfo: bucketData
         }),
         { 
-          headers: { "Content-Type": "application/json" },
+          headers: { ...corsHeaders },
           status: 500
         }
       )
@@ -73,7 +85,7 @@ Deno.serve(async (req) => {
         message: `Successfully accessed storage bucket '${bucket}'`
       }),
       { 
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders },
         status: 200 
       }
     )
@@ -85,7 +97,7 @@ Deno.serve(async (req) => {
         message: "Server error during storage test" 
       }),
       { 
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders },
         status: 500
       }
     )

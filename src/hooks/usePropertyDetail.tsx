@@ -119,6 +119,11 @@ const usePropertyDetail = (propertyId?: string) => {
         
         const sellerEmail = sellerProfile?.email || '';
 
+        // Safely access optional fields
+        const yearBuilt = propertyData.year_built || null;
+        const lotSize = propertyData.lot_size || null;
+        const parking = propertyData.parking || null;
+
         const mappedProperty: PropertyDetail = {
           id: propertyData.id,
           title: propertyData.title,
@@ -142,11 +147,10 @@ const usePropertyDetail = (propertyId?: string) => {
           userEmail: sellerEmail,
           propertyType: propertyData.property_type,
           additionalImagesLink: propertyData.additional_images_link || null,
+          yearBuilt: yearBuilt,
+          lotSize: lotSize,
+          parking: parking,
           comparable_addresses: propertyData.comparable_addresses || [],
-          // Handle optional fields safely
-          yearBuilt: propertyData.year_built || null,
-          lotSize: propertyData.lot_size || null,
-          parking: propertyData.parking || null,
         };
 
         setProperty(mappedProperty);
