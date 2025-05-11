@@ -2,6 +2,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
 import imageCompression from 'browser-image-compression';
+import { testStorageBucketAccess } from '@/utils/storageUtils';
 
 // Maximum image size in bytes (3MB)
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
@@ -197,6 +198,32 @@ async function compressStandardImage(file: File): Promise<File> {
 }
 
 /**
+ * Verifies storage bucket access and permissions before starting upload
+ */
+async function verifyStorageAccess(bucketName: string = 'property_images'): Promise<boolean> {
+  try {
+    console.log(`Verifying access to ${bucketName} bucket...`);
+    const result = await testStorageBucketAccess(bucketName);
+    
+    if (!result.success) {
+      console.error(`Storage access verification failed for ${bucketName}:`, result.error);
+      return false;
+    }
+    
+    if (!result.uploadAccess) {
+      console.error(`No upload permission for ${bucketName} bucket:`, result.diagnosticData?.uploadTest);
+      return false;
+    }
+    
+    console.log(`Storage access verified for ${bucketName}`);
+    return true;
+  } catch (error) {
+    console.error(`Storage access verification error for ${bucketName}:`, error);
+    return false;
+  }
+}
+
+/**
  * Uploads images to Supabase storage with improved handling for HEIC files and 
  * optimized for the new RLS policies
  */
@@ -211,50 +238,10 @@ export const uploadImagesToSupabase = async (
   const folderName = propertyId ? `property-${propertyId}` : `listing-${uuidv4()}`;
   
   try {
-    // First verify storage bucket exists before starting the upload process
-    try {
-      const { data: bucket, error: bucketError } = await supabase.storage
-        .getBucket('property_images');
-        
-      if (bucketError) {
-        console.error('Error verifying property_images bucket:', bucketError);
-        
-        // Attempt to create the bucket if it doesn't exist
-        if (bucketError.message.includes('not found')) {
-          console.log('Attempting to create property_images bucket');
-          const { error: createError } = await supabase.storage.createBucket('property_images', {
-            public: true
-          });
-          
-          if (createError) {
-            console.error('Failed to create bucket:', createError);
-            throw new Error('Cannot create storage bucket');
-          } else {
-            console.log('Successfully created property_images bucket');
-          }
-        } else {
-          throw new Error('Property images storage not available');
-        }
-      } else {
-        console.log('Property images bucket confirmed:', bucket);
-      }
-    } catch (bucketErr) {
-      console.error('Error checking storage bucket:', bucketErr);
-      
-      // Try a diagnostic check using the edge function
-      try {
-        const url = new URL(window.location.origin);
-        url.pathname = '/functions/v1/test-storage-access';
-        url.searchParams.set('bucket', 'property_images');
-        
-        const response = await fetch(url.toString());
-        const diagnosticData = await response.json();
-        console.log('Storage diagnostic test results:', diagnosticData);
-      } catch (diagErr) {
-        console.error('Diagnostic test failed:', diagErr);
-      }
-      
-      throw new Error('Cannot access storage');
+    // Verify storage access before attempting uploads
+    const hasStorageAccess = await verifyStorageAccess('property_images');
+    if (!hasStorageAccess) {
+      throw new Error('No access to property_images bucket. Please check permissions and authentication.');
     }
     
     // Process files in sequence with compression
@@ -285,6 +272,15 @@ export const uploadImagesToSupabase = async (
     const results: string[] = [];
     const failedUploads: number[] = [];
     
+    // Check authentication status before upload
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData?.session) {
+      console.error("No active session found, uploads may fail due to authentication");
+      // We'll still try to upload in case public uploads are allowed
+    } else {
+      console.log("Authenticated upload, user ID:", sessionData.session.user.id);
+    }
+    
     // Process files sequentially with retry mechanism
     for (let i = 0; i < compressedFiles.length; i++) {
       const file = compressedFiles[i];
@@ -307,6 +303,12 @@ export const uploadImagesToSupabase = async (
           
           console.log(`Attempting upload to property_images/${filePath} (Retry: ${retryCount})`);
           console.log(`File type: ${file.type}, size: ${file.size} bytes`);
+          
+          // Refresh auth token before upload
+          if (retryCount > 0) {
+            await supabase.auth.refreshSession();
+            console.log("Auth session refreshed for retry");
+          }
           
           // Upload to Supabase with proper content-type
           const { data, error } = await supabase.storage

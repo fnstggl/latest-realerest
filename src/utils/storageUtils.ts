@@ -7,6 +7,55 @@ import { supabase } from '@/integrations/supabase/client';
  */
 export const testStorageBucketAccess = async (bucketName: string = 'property_images') => {
   try {
+    // Call our edge function for more comprehensive diagnostics
+    try {
+      const apiUrl = `${window.location.origin}/functions/v1/test-storage-access`;
+      const url = new URL(apiUrl);
+      url.searchParams.set('bucket', bucketName);
+      url.searchParams.set('check_policies', 'true');
+      
+      console.log(`Testing storage access for ${bucketName} using function...`);
+      const response = await fetch(url.toString());
+      const diagnosticData = await response.json();
+      console.log(`Storage diagnostic results for ${bucketName}:`, diagnosticData);
+      
+      if (!diagnosticData.success) {
+        console.error(`Diagnostic test failed for ${bucketName}:`, diagnosticData.error);
+        return {
+          success: false,
+          bucketName,
+          error: diagnosticData.error,
+          diagnosticData
+        };
+      }
+      
+      return {
+        success: true,
+        bucketName,
+        directAccess: true,
+        listAccess: true,
+        uploadAccess: diagnosticData.uploadTest?.success,
+        diagnosticData
+      };
+    } catch (diagError) {
+      console.error(`Error running diagnostic function for ${bucketName}:`, diagError);
+      
+      // Fall back to direct testing if the function fails
+      return performDirectBucketTest(bucketName);
+    }
+  } catch (error) {
+    console.error(`Error testing storage bucket ${bucketName}:`, error);
+    return {
+      success: false,
+      bucketName,
+      error
+    };
+  }
+};
+
+// Direct bucket test as a fallback
+async function performDirectBucketTest(bucketName: string) {
+  try {
     // First, check if we can access the bucket directly
     const { data: bucketData, error: bucketError } = await supabase.storage
       .getBucket(bucketName);
@@ -57,45 +106,23 @@ export const testStorageBucketAccess = async (bucketName: string = 'property_ima
       }
     }
     
-    // Finally, use the edge function test for a comprehensive check
-    try {
-      const functionUrl = `${window.location.origin}/functions/v1/test-storage-access`;
-      const url = new URL(functionUrl);
-      url.searchParams.set('bucket', bucketName);
-      
-      const response = await fetch(url.toString());
-      const diagnosticData = await response.json();
-      console.log(`Edge function diagnostic results for ${bucketName}:`, diagnosticData);
-      
-      return {
-        success: true,
-        bucketName,
-        directAccess: !bucketError,
-        listAccess: !listError,
-        uploadAccess: !uploadError,
-        diagnosticData
-      };
-    } catch (diagError) {
-      console.error(`Error running diagnostic function for ${bucketName}:`, diagError);
-      
-      return {
-        success: false,
-        bucketName,
-        directAccess: !bucketError,
-        listAccess: !listError,
-        uploadAccess: !uploadError,
-        error: diagError
-      };
-    }
+    return {
+      success: !bucketError && !listError,
+      bucketName,
+      directAccess: !bucketError,
+      listAccess: !listError,
+      uploadAccess: !uploadError,
+      error: bucketError || listError || uploadError
+    };
   } catch (error) {
-    console.error(`Error testing storage bucket ${bucketName}:`, error);
+    console.error(`Error in direct bucket test for ${bucketName}:`, error);
     return {
       success: false,
       bucketName,
       error
     };
   }
-};
+}
 
 /**
  * Creates a storage bucket with appropriate policies if it doesn't already exist
@@ -112,7 +139,7 @@ export const ensureStorageBucketExists = async (bucketName: string = 'property_i
         const { data, error } = await supabase.storage
           .createBucket(bucketName, {
             public: true,
-            fileSizeLimit: 5242880 // 5MB limit
+            fileSizeLimit: 10485760 // 10MB limit
           });
         
         if (error) {

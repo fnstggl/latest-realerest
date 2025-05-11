@@ -42,6 +42,10 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   // Check if image might be a HEIC/HEIF format based on URL parameters
   const isHeicFormat = src ? src.includes('format=heic') : false;
   
+  // Check if URL is from Supabase storage
+  const isSupabaseStorageUrl = src && 
+    (src.includes('supabase.co') && src.includes('/storage/v1/object/public/'));
+  
   // Generate appropriate srcSet for responsive images
   const generateSrcSet = () => {
     if (!src || isExternal || isHeicFormat) {
@@ -62,25 +66,28 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   // Better placeholder for when image fails to load
   const placeholderImage = '/placeholder.svg';
   
-  // Check if URL is from Supabase storage
-  const isSupabaseStorageUrl = src && 
-    (src.includes('supabase.co') && src.includes('/storage/v1/object/public/'));
-  
   // Handle image src safely with retry mechanism for Supabase storage URLs
   let safeImageSrc = src || placeholderImage;
   
-  // Add cache-busting parameter for Supabase storage URLs if retrying
-  if (isSupabaseStorageUrl && retryCount > 0) {
+  // Add special handling for Supabase storage URLs
+  if (isSupabaseStorageUrl) {
     try {
-      // Properly add cache-busting with URL parsing
+      // Parse the Supabase URL
       const urlObj = new URL(safeImageSrc);
-      urlObj.searchParams.set('t', Date.now().toString());
-      urlObj.searchParams.set('retry', retryCount.toString());
-      safeImageSrc = urlObj.toString();
+      
+      // Check if this is a Supabase storage URL that might be affected by policy issues
+      if (urlObj.pathname.includes('/storage/v1/object/public/')) {
+        // Ensure we're using the latest version and bypass any caching issues
+        if (retryCount > 0) {
+          // Add cache-busting parameter if retrying
+          urlObj.searchParams.set('t', Date.now().toString());
+          urlObj.searchParams.set('retry', retryCount.toString());
+        }
+        safeImageSrc = urlObj.toString();
+      }
     } catch (e) {
-      // If URL parsing fails, use simple string concatenation
-      const separator = safeImageSrc.includes('?') ? '&' : '?'; 
-      safeImageSrc = `${safeImageSrc}${separator}t=${Date.now()}&retry=${retryCount}`;
+      console.error("Error parsing Supabase URL:", e);
+      // Continue with original URL if parsing fails
     }
   }
   
@@ -89,7 +96,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     console.error(`Failed to load image: ${safeImageSrc}`);
     
     if (isSupabaseStorageUrl && retryCount < maxRetries) {
-      console.log(`Retrying image load (${retryCount + 1}/${maxRetries}): ${safeImageSrc}`);
+      console.log(`Retrying Supabase image load (${retryCount + 1}/${maxRetries}): ${safeImageSrc}`);
       setRetryCount(prevCount => prevCount + 1);
       // Keep loading state true as we're retrying
     } else {
@@ -103,6 +110,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       className={`relative overflow-hidden ${className}`} 
       style={{ minHeight: "20px" }}
       data-image-type={isHeicFormat ? 'heic-converted' : 'standard'}
+      data-supabase-storage={isSupabaseStorageUrl ? 'true' : 'false'}
       data-retry-count={retryCount}
     >
       {isLoading && (

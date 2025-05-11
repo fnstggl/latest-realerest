@@ -27,6 +27,9 @@ Deno.serve(async (req) => {
     const url = new URL(req.url)
     const bucket = url.searchParams.get('bucket') || 'property_images'
 
+    // Get query parameter to check policies
+    const checkPolicies = url.searchParams.has('check_policies')
+
     // Test bucket access
     const { data: bucketData, error: bucketError } = await supabase
       .storage
@@ -71,19 +74,59 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Check policies
-    let policiesData = null;
-    let policiesError = null;
+    // Get all storage policies for this bucket
+    let policiesData = {};
+    
+    if (checkPolicies) {
+      try {
+        // Query for existing policies
+        const { data: policies, error: policiesError } = await supabase
+          .from('pg_policies')
+          .select('*')
+          .eq('tablename', 'objects')
+          .eq('schemaname', 'storage');
+        
+        if (policiesError) {
+          console.error("Error fetching policies:", policiesError);
+          policiesData = { error: policiesError.message };
+        } else {
+          policiesData = policies || [];
+        }
+      } catch (e) {
+        console.error("Policy check error:", e);
+        policiesData = { error: e.message };
+      }
+    }
+
+    // Test upload permission with a tiny file
+    let uploadTest = null;
     try {
-      const { data, error } = await supabase
-        .rpc('get_policies_for_table', { table_name: 'objects', schema_name: 'storage' })
-        .single();
-      
-      policiesData = data;
-      policiesError = error;
-    } catch (e) {
-      console.error("Policy check error:", e);
-      policiesError = e;
+      const testContent = new Uint8Array([84, 101, 115, 116]); // "Test" in binary
+      const { data: uploadData, error: uploadError } = await supabase
+        .storage
+        .from(bucket)
+        .upload(`test-${Date.now()}.txt`, testContent, {
+          contentType: 'text/plain',
+          upsert: true
+        });
+
+      uploadTest = {
+        success: !uploadError,
+        data: uploadData,
+        error: uploadError
+      };
+
+      // If successful, delete the test file
+      if (!uploadError && uploadData) {
+        await supabase.storage
+          .from(bucket)
+          .remove([uploadData.path]);
+      }
+    } catch (uploadErr) {
+      uploadTest = {
+        success: false,
+        error: uploadErr.message
+      };
     }
 
     // Return success with diagnostic data
@@ -93,7 +136,8 @@ Deno.serve(async (req) => {
         bucket: bucketData,
         files: listData,
         fileCount: listData?.length || 0,
-        policies: policiesError ? 'Failed to fetch policies' : (policiesData || 'No policy data available'),
+        policies: policiesData,
+        uploadTest,
         message: `Successfully accessed storage bucket '${bucket}'`
       }),
       { 
