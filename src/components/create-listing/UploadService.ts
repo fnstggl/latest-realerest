@@ -210,7 +210,7 @@ async function verifyStorageAccess(bucketName: string = 'property_images'): Prom
     }
     
     if (!result.uploadAccess) {
-      console.error(`No upload permission for ${bucketName} bucket:`, result.data?.uploadTest);
+      console.error(`No upload permission for ${bucketName} bucket:`, result.diagnosticData?.uploadTest);
       return false;
     }
     

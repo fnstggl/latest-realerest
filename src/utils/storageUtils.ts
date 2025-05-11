@@ -12,20 +12,19 @@ export const testStorageBucketAccess = async (bucketName: string = 'property_ima
       const apiUrl = `${window.location.origin}/functions/v1/test-storage-access`;
       const url = new URL(apiUrl);
       url.searchParams.set('bucket', bucketName);
-      url.searchParams.set('check_policies', 'true');
       
       console.log(`Testing storage access for ${bucketName} using function...`);
       const response = await fetch(url.toString());
-      const data = await response.json();
-      console.log(`Storage diagnostic results for ${bucketName}:`, data);
+      const responseData = await response.json();
+      console.log(`Storage diagnostic results for ${bucketName}:`, responseData);
       
-      if (!data.success) {
-        console.error(`Diagnostic test failed for ${bucketName}:`, data.error);
+      if (!responseData.success) {
+        console.error(`Diagnostic test failed for ${bucketName}:`, responseData.error);
         return {
           success: false,
           bucketName,
-          error: data.error,
-          data
+          error: responseData.error,
+          diagnosticData: responseData
         };
       }
       
@@ -34,8 +33,8 @@ export const testStorageBucketAccess = async (bucketName: string = 'property_ima
         bucketName,
         directAccess: true,
         listAccess: true,
-        uploadAccess: data.uploadTest?.success,
-        data
+        uploadAccess: responseData.uploadTest?.success,
+        diagnosticData: responseData
       };
     } catch (diagError) {
       console.error(`Error running diagnostic function for ${bucketName}:`, diagError);
