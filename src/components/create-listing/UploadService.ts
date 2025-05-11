@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
 import imageCompression from 'browser-image-compression';
@@ -211,7 +210,7 @@ async function verifyStorageAccess(bucketName: string = 'property_images'): Prom
     }
     
     if (!result.uploadAccess) {
-      console.error(`No upload permission for ${bucketName} bucket:`, result.diagnosticData?.uploadTest);
+      console.error(`No upload permission for ${bucketName} bucket:`, result.data?.uploadTest);
       return false;
     }
     
@@ -225,7 +224,7 @@ async function verifyStorageAccess(bucketName: string = 'property_images'): Prom
 
 /**
  * Uploads images to Supabase storage with improved handling for HEIC files and 
- * optimized for the new RLS policies
+ * optimized for the new storage policies
  */
 export const uploadImagesToSupabase = async (
   files: File[], 
