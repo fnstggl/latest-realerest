@@ -6,7 +6,7 @@ import { RewardStatusDetails } from '@/types/bounty-status';
 interface RewardProgressProps {
   propertyId: string;
   claimId?: string;
-  statusDetails: RewardStatusDetails;
+  statusDetails?: RewardStatusDetails; // Changed from status to statusDetails
   updateStatusDetails?: (newDetails: RewardStatusDetails) => void;
   isEditable?: boolean;
 }
@@ -14,7 +14,7 @@ interface RewardProgressProps {
 const RewardProgress: React.FC<RewardProgressProps> = ({
   propertyId,
   claimId,
-  statusDetails,
+  statusDetails, // Changed from status to statusDetails
   updateStatusDetails,
   isEditable = false
 }) => {

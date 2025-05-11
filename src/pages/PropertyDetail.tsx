@@ -112,6 +112,11 @@ const PropertyDetail: React.FC = () => {
     );
   }
 
+  // Add this utility function to safely access property fields
+  const getSellerName = () => {
+    return property?.seller_name || property?.userName || 'Property Owner';
+  };
+
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
       {property && (
@@ -130,7 +135,7 @@ const PropertyDetail: React.FC = () => {
             "name": property.title,
             "description": property.description,
             "url": window.location.href,
-            "datePosted": property.created_at,
+            "datePosted": property.createdAt,
             "image": property.images && property.images.length > 0 ? property.images[0] : undefined,
             "numberOfRooms": property.beds,
             "numberOfBathroomsTotal": property.baths,
@@ -171,8 +176,8 @@ const PropertyDetail: React.FC = () => {
         {!isOwner && isApproved && property && (
           <OfferStatusBanner 
             propertyId={property.id} 
-            sellerName={property.seller_name || 'Property Owner'} 
-            sellerEmail={property.seller_email} 
+            sellerName={property.seller_name || getSellerName()} 
+            sellerEmail={property.seller_email || property.userEmail} 
             sellerPhone={property.seller_phone} 
           />
         )}
@@ -184,39 +189,39 @@ const PropertyDetail: React.FC = () => {
           
           <div className="flex flex-col space-y-4">
             <PropertyHeader 
-              title={property?.title} 
-              belowMarket={property?.below_market} 
-              price={property?.price} 
-              marketPrice={property?.market_price} 
-              beds={property?.beds} 
-              baths={property?.baths} 
-              sqft={property?.sqft} 
-              location={property?.location} 
-              fullAddress={property?.full_address} 
+              title={property?.title || ''} 
+              belowMarket={property?.belowMarket || 0} 
+              price={property?.price || 0} 
+              marketPrice={property?.marketPrice || 0} 
+              beds={property?.beds || 0} 
+              baths={property?.baths || 0} 
+              sqft={property?.sqft || 0} 
+              location={property?.location || ''} 
+              fullAddress={property?.fullAddress} 
               showFullAddress={isOwner || isApproved} 
               onShowAddressClick={() => {}}
-              userId={property?.user_id}
+              userId={property?.userId}
               propertyId={property?.id}
-              reward={property?.reward}
-              sellerName={property?.seller_name}
+              reward={property?.reward || 0}
+              sellerName={getSellerName()}
               waitlistStatus={waitlistStatus}
             />
 
             {property && shouldShowSellerInfo && (
               <SellerContactInfo 
-                name={property.seller_name} 
-                phone={property.seller_phone} 
-                email={property.seller_email}
+                name={property.seller_name || getSellerName()} 
+                phone={property.seller_phone || sellerInfo?.phone || ''} 
+                email={property.seller_email || property.userEmail || ''} 
                 showContact={true}
-                sellerId={property.seller_id}
+                sellerId={property.seller_id || property.userId || ''}
                 waitlistStatus={waitlistStatus}
                 propertyId={property.id}
                 propertyTitle={property.title}
               />
             )}
 
-            {isOwner && (
-              <Link to={`/property/${property?.id}/edit`} className="w-full">
+            {isOwner && property && (
+              <Link to={`/property/${property.id}/edit`} className="w-full">
                 <Button className="w-full bg-white hover:bg-white text-black font-bold py-2 relative group overflow-hidden rounded-xl">
                   <Cog size={18} className="mr-2" />
                   <span className="text-gradient-static relative z-10">Edit Listing</span>
@@ -243,17 +248,17 @@ const PropertyDetail: React.FC = () => {
               <PropertyOffers propertyId={property.id} realOffers={realOffers} />
             )}
             
-            {property?.after_repair_value !== undefined && property?.estimated_rehab !== undefined && (
+            {property?.afterRepairValue !== undefined && property?.estimatedRehab !== undefined && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white border border-gray-200 p-3 rounded-lg">
                   <div className="text-lg font-bold text-black">
-                    {formatCurrency(property?.after_repair_value)}
+                    {formatCurrency(property?.afterRepairValue)}
                   </div>
                   <div className="text-xs">After Repair Value</div>
                 </div>
                 <div className="bg-white border border-gray-200 p-3 rounded-lg">
                   <div className="text-lg font-bold text-black">
-                    {formatCurrency(property?.estimated_rehab)}
+                    {formatCurrency(property?.estimatedRehab)}
                   </div>
                   <div className="text-xs">Est. Rehab Cost</div>
                 </div>
@@ -265,10 +270,10 @@ const PropertyDetail: React.FC = () => {
                 <MakeOfferButton 
                   propertyId={property.id} 
                   propertyTitle={property.title} 
-                  sellerName={property.seller_name || 'Property Owner'} 
-                  sellerEmail={property.seller_email || ''} 
-                  sellerPhone={property.seller_phone || ''} 
-                  sellerId={property.seller_id || ''} 
+                  sellerName={property.seller_name || getSellerName()} 
+                  sellerEmail={property.seller_email || property.userEmail || ''} 
+                  sellerPhone={property.seller_phone || sellerInfo?.phone || ''} 
+                  sellerId={property.seller_id || property.userId || ''} 
                   currentPrice={property.price}
                   onOfferSubmitted={handleOfferSubmitted}
                 />
@@ -283,15 +288,15 @@ const PropertyDetail: React.FC = () => {
             beds={property?.beds} 
             baths={property?.baths} 
             sqft={property?.sqft} 
-            belowMarket={property?.below_market} 
+            belowMarket={property?.belowMarket} 
             comparables={shouldShowSellerInfo ? property?.comparable_addresses : undefined}
-            afterRepairValue={property?.after_repair_value}
-            estimatedRehab={property?.estimated_rehab}
-            propertyType={property?.property_type}
-            yearBuilt={property?.year_built}
-            lotSize={property?.lot_size}
+            afterRepairValue={property?.afterRepairValue}
+            estimatedRehab={property?.estimatedRehab}
+            propertyType={property?.propertyType}
+            yearBuilt={property?.yearBuilt}
+            lotSize={property?.lotSize}
             parking={property?.parking}
-            additionalImagesLink={property?.additional_images_link}
+            additionalImagesLink={property?.additionalImagesLink}
           />
         </div>
       </div>

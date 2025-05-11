@@ -28,14 +28,14 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   
   // Check if the image is from an external source or local
-  const isExternal = src.startsWith('http') || src.startsWith('//');
+  const isExternal = src ? (src.startsWith('http') || src.startsWith('//')) : true;
   
   // Check if image might be a HEIC/HEIF format based on URL parameters
-  const isHeicFormat = src.includes('format=heic');
+  const isHeicFormat = src ? src.includes('format=heic') : false;
   
   // Generate appropriate srcSet for responsive images
   const generateSrcSet = () => {
-    if (isExternal || isHeicFormat) {
+    if (!src || isExternal || isHeicFormat) {
       return undefined; // For external or HEIC images, browser handles this better
     }
     
@@ -53,6 +53,9 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   // Use placeholder when image fails to load
   const placeholderImage = '/placeholder.svg';
   
+  // Handle image src safely
+  const safeImageSrc = src || placeholderImage;
+  
   return (
     <div 
       className={`relative overflow-hidden ${className}`} 
@@ -64,7 +67,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       )}
       
       <img
-        src={hasError ? placeholderImage : src}
+        src={hasError ? placeholderImage : safeImageSrc}
         alt={alt || ''}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         width={width}
@@ -75,7 +78,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         srcSet={generateSrcSet()}
         onLoad={() => setIsLoading(false)}
         onError={(e) => {
-          console.error(`Failed to load image: ${src}`);
+          console.error(`Failed to load image: ${safeImageSrc}`);
           setHasError(true);
           setIsLoading(false);
         }}
