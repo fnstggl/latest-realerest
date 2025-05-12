@@ -1,7 +1,7 @@
+
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
 import imageCompression from 'browser-image-compression';
-import { testStorageBucketAccess } from '@/utils/storageUtils';
 
 // Maximum image size in bytes (3MB)
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
@@ -197,32 +197,6 @@ async function compressStandardImage(file: File): Promise<File> {
 }
 
 /**
- * Verifies storage bucket access and permissions before starting upload
- */
-async function verifyStorageAccess(bucketName: string = 'property_images'): Promise<boolean> {
-  try {
-    console.log(`Verifying access to ${bucketName} bucket...`);
-    const result = await testStorageBucketAccess(bucketName);
-    
-    if (!result.success) {
-      console.error(`Storage access verification failed for ${bucketName}:`, result.error);
-      return false;
-    }
-    
-    if (!result.uploadAccess) {
-      console.error(`No upload permission for ${bucketName} bucket:`, result.diagnosticData?.uploadTest);
-      return false;
-    }
-    
-    console.log(`Storage access verified for ${bucketName}`);
-    return true;
-  } catch (error) {
-    console.error(`Storage access verification error for ${bucketName}:`, error);
-    return false;
-  }
-}
-
-/**
  * Uploads images to Supabase storage with improved handling for HEIC files and 
  * optimized for the new storage policies
  */
@@ -237,12 +211,6 @@ export const uploadImagesToSupabase = async (
   const folderName = propertyId ? `property-${propertyId}` : `listing-${uuidv4()}`;
   
   try {
-    // Verify storage access before attempting uploads
-    const hasStorageAccess = await verifyStorageAccess('property_images');
-    if (!hasStorageAccess) {
-      throw new Error('No access to property_images bucket. Please check permissions and authentication.');
-    }
-    
     // Process files in sequence with compression
     const compressedFiles: File[] = [];
     const originalFileTypes: Record<number, boolean> = {};
@@ -313,9 +281,12 @@ export const uploadImagesToSupabase = async (
           const { data, error } = await supabase.storage
             .from('property_images')
             .upload(filePath, file, {
-              cacheControl: '31536000', // 1 year cache for immutable assets
+              cacheControl: '31536000',
               upsert: false,
-              contentType: file.type // Explicitly set content type
+              contentType: file.type,
+              metadata: {
+                owner: sessionData.session.user.id || "anonymous"
+              }
             });
               
           if (error) {
