@@ -66,8 +66,8 @@ const About: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-8 md:pb-16">
-        {/* New Header Section */}
-        <div className="max-w-5xl mb-16 md:mb-24">
+        {/* New Header Section - Adjusted to match other sections' positioning */}
+        <div className="mx-auto max-w-5xl mb-16 md:mb-24">
           {/* Main header text */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }} 
