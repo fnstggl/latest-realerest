@@ -14,4 +14,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://donedealfinal.lovable.app/sitemap.xml
+Sitemap: https://realerestate.org/sitemap.xml
