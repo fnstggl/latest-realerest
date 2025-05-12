@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
         </div>
       </SheetContent>
     </Sheet>;
-  return <nav className="glass fixed top-0 left-0 right-0 py-2 sm:py-3 px-3 sm:px-4 md:px-6 z-50 shadow-lg backdrop-blur-lg bg-[#FCFBF8]/20 border-b border-white/30">
+  return <nav className="glass fixed top-0 left-0 right-0 py-2 sm:py-3 px-3 sm:px-4 md:px-6 z-50 backdrop-blur-lg bg-[#FCFBF8]/20 border-b border-white/30">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
           {isMobile && <MobileNavigation />}
