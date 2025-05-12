@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -9,7 +8,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SEO from '@/components/SEO';
 import { Tilt } from "@/components/ui/tilt";
 import OptimizedImage from '@/components/ui/OptimizedImage';
-
 const About: React.FC = () => {
   // Animation variants for sections
   const sectionVariant = {
@@ -41,7 +39,6 @@ const About: React.FC = () => {
       }
     })
   };
-  
   return <div className="min-h-screen bg-[#FCFBF8] text-black overflow-hidden">
       <SEO title="About Realer Estate | Our Mission & Story" description="Realer Estate is revolutionizing how people buy and sell homes. Learn about our mission to make housing accessible again with below-market properties." canonical="/about" schema={{
       "@context": "https://schema.org",
@@ -66,15 +63,18 @@ const About: React.FC = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-8 md:pb-16">
-        {/* New Header Section - Adjusted to match other sections' positioning */}
-        <div className="mx-auto max-w-5xl mb-16 md:mb-24">
+        {/* New Header Section */}
+        <div className="max-w-5xl mb-16 md:mb-24">
           {/* Main header text */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8 }}
-            className="mb-8 md:mb-10"
-          >
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.8
+        }} className="mb-8 md:mb-10">
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-futura font-extrabold tracking-tighter leading-tight">
               FROM DREAM<br />
               TO DREAM HOME
@@ -82,12 +82,16 @@ const About: React.FC = () => {
           </motion.div>
           
           {/* Subtext */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="max-w-4xl"
-          >
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.8,
+          delay: 0.3
+        }} className="max-w-4xl">
             <p className="text-lg md:text-xl font-futura font-bold tracking-tight">
               Realer Estate is a platform helping struggling homebuyers find homes they can <em>afford</em>. We 
               understand the Real Estate market is broken. Regular buyers are getting priced out. Not anymore. 
@@ -96,26 +100,27 @@ const About: React.FC = () => {
           </motion.div>
           
           {/* Divider - now 15px thicker */}
-          <motion.div 
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="w-full h-[15px] bg-black my-10 md:my-12 origin-left"
-          />
+          <motion.div initial={{
+          opacity: 0,
+          scaleX: 0
+        }} animate={{
+          opacity: 1,
+          scaleX: 1
+        }} transition={{
+          duration: 0.8,
+          delay: 0.5
+        }} className="w-full h-[15px] bg-black my-10 md:my-12 origin-left" />
           
           {/* Featured Image - now with no space after divider */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, delay: 0.7 }}
-            className="w-full -mt-10 md:-mt-12"
-          >
-            <OptimizedImage 
-              src="/lovable-uploads/869ab762-f99a-4e66-8b73-0e10639dbeda.png" 
-              alt="New York City street view with tall buildings" 
-              className="w-full h-[400px] md:h-[600px] object-cover"
-              priority={true}
-            />
+          <motion.div initial={{
+          opacity: 0
+        }} animate={{
+          opacity: 1
+        }} transition={{
+          duration: 1.2,
+          delay: 0.7
+        }} className="w-full -mt-10 md:-mt-12">
+            <OptimizedImage src="/lovable-uploads/869ab762-f99a-4e66-8b73-0e10639dbeda.png" alt="New York City street view with tall buildings" className="w-full h-[400px] md:h-[600px] object-cover" priority={true} />
           </motion.div>
         </div>
         
@@ -140,12 +145,15 @@ const About: React.FC = () => {
           </div>
           
           {/* Divider - same 15px thickness */}
-          <motion.div 
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ duration: 0.8 }}
-            className="w-full h-[15px] bg-black mb-0 origin-left"
-          />
+          <motion.div initial={{
+          opacity: 0,
+          scaleX: 0
+        }} animate={{
+          opacity: 1,
+          scaleX: 1
+        }} transition={{
+          duration: 0.8
+        }} className="w-full h-[15px] bg-black mb-0 origin-left" />
           
           {/* New Image */}
           <div className="relative overflow-hidden">
@@ -176,12 +184,15 @@ const About: React.FC = () => {
           </div>
           
           {/* Divider - same 15px thickness */}
-          <motion.div 
-            initial={{ opacity: 0, scaleX: 0 }}
-            animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ duration: 0.8 }}
-            className="w-full h-[15px] bg-black mb-0 origin-left"
-          />
+          <motion.div initial={{
+          opacity: 0,
+          scaleX: 0
+        }} animate={{
+          opacity: 1,
+          scaleX: 1
+        }} transition={{
+          duration: 0.8
+        }} className="w-full h-[15px] bg-black mb-0 origin-left" />
           
           {/* New Image */}
           <div className="relative overflow-hidden">
@@ -231,7 +242,7 @@ const About: React.FC = () => {
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-6xl md:text-8xl font-bold text-[#1A1F2C] mb-8 leading-tight">
               <span className="block">WE DO REAL ESTATE</span>
-              <span className="inline-block font-playfair italic relative">
+              <span className="inline-block font-futura relative font-extrabold">
                 DIFFERENTLY
                 <span className="absolute -right-10 md:-right-12 -top-1 text-[#ea384c] font-sans">*</span>
               </span>
