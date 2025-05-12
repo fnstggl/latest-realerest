@@ -285,7 +285,7 @@ export const uploadImagesToSupabase = async (
               upsert: false,
               contentType: file.type,
               metadata: {
-                owner: sessionData.session.user.id || "anonymous"
+                owner: sessionData.session?.user.id || "anonymous"
               }
             });
               
