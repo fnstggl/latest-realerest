@@ -58,63 +58,34 @@ export const useAIExtractor = (form: UseFormReturn<z.infer<typeof formSchema>>) 
         .trim();
 
       // Address extraction
-      const addressPatterns = [
-        /(?:^|\s)(\d+\s+[A-Za-z0-9\s.,'-]+(?:,\s*[A-Za-z\s]+,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Za-z\s]+,\s*[A-Z]{2}|,\s*[A-Z]{2}\s*\d{5}))/i,
-        /(?:Address|Property|Located at|Home at)[:;]?\s+(\d+[^,]+,\s*[^,]+(?:,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Z]{2}))/i,
-        /\b(\d+\s+[A-Za-z0-9\s.'-]+(Road|Rd|Street|St|Avenue|Ave|Lane|Ln|Drive|Dr|Court|Ct|Boulevard|Blvd|Highway|Hwy|Place|Pl|Way|Terrace|Ter|Circle|Cir))/i
-      ];
-
-      let addressFound = false;
-      for (const pattern of addressPatterns) {
-        const addressMatch = normalizedText.match(pattern);
-        if (addressMatch) {
-          addressFound = true;
-          const fullAddressText = addressMatch[1].trim();
-          
-          // Try to extract street address first
-          const streetMatch = fullAddressText.match(/^\d+[^,]+/);
-          if (streetMatch) {
-            form.setValue('address', streetMatch[0].trim());
-            extracted.address = true;
-          }
-          
-          const addressParts = fullAddressText.split(',').map(part => part.trim());
+      const addressPattern = /(?:^|\s)(\d+\s+[A-Za-z0-9\s.,'-]+(?:,\s*[A-Za-z\s]+,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Za-z\s]+,\s*[A-Z]{2}|,\s*[A-Z]{2}\s*\d{5}))/i;
+      const addressMatch = normalizedText.match(addressPattern);
+      
+      if (addressMatch) {
+        const fullAddressText = addressMatch[1].trim();
+        const addressParts = fullAddressText.split(',').map(part => part.trim());
+        
+        if (addressParts.length >= 1) {
+          form.setValue('address', addressParts[0]);
+          extracted.address = true;
           
           if (addressParts.length >= 2) {
-            // If address wasn't extracted yet but we have parts
-            if (!extracted.address && addressParts[0]) {
-              form.setValue('address', addressParts[0]);
-              extracted.address = true;
-            }
-            
-            // Extract city, state, zip from the address parts
+            // Extract state and zip
             const lastPart = addressParts[addressParts.length - 1];
-            const stateZipPattern = /([A-Z]{2})\s*(\d{5})?/i;
+            const stateZipPattern = /([A-Z]{2})\s*(\d{5})/i;
             const stateZipMatch = lastPart.match(stateZipPattern);
             
             if (stateZipMatch) {
               form.setValue('state', stateZipMatch[1].toUpperCase());
+              form.setValue('zipCode', stateZipMatch[2]);
               extracted.state = true;
+              extracted.zip = true;
               
-              if (stateZipMatch[2]) {
-                form.setValue('zipCode', stateZipMatch[2]);
-                extracted.zip = true;
-              }
-              
-              // City is usually the part before state/zip
               if (addressParts.length >= 3) {
                 form.setValue('city', addressParts[addressParts.length - 2]);
                 extracted.city = true;
-              } else if (addressParts.length === 2) {
-                // Try to extract city from the same part as state/zip
-                const cityMatch = lastPart.match(/([^,]+),\s*[A-Z]{2}/i);
-                if (cityMatch) {
-                  form.setValue('city', cityMatch[1].trim());
-                  extracted.city = true;
-                }
               }
             } else {
-              // If no state/zip pattern, try just state pattern
               const statePattern = /\b([A-Z]{2})\b/i;
               const stateMatch = lastPart.match(statePattern);
               
@@ -123,137 +94,59 @@ export const useAIExtractor = (form: UseFormReturn<z.infer<typeof formSchema>>) 
                 extracted.state = true;
                 
                 if (addressParts.length >= 3) {
-                  form.setValue('city', addressParts[addressParts.length - 2]);
+                  const cityCandidate = addressParts[addressParts.length - 2];
+                  form.setValue('city', cityCandidate);
                   extracted.city = true;
                 }
-              } else if (addressParts.length >= 2) {
-                // If no state pattern but we have multiple parts, assume the second-to-last is the city
-                form.setValue('city', addressParts[addressParts.length - 2]);
+              } else if (addressParts.length === 2) {
+                form.setValue('city', addressParts[1]);
                 extracted.city = true;
               }
             }
           }
-          
-          break;
         }
       }
       
-      // Standalone city detection if not found in address
-      if (!extracted.city) {
-        const cityPatterns = [
-          /\b(?:in|at|near|city\s+of)\s+([A-Za-z\s.']+?)[,\s]/i,
-          /\bCity[:;]?\s+([A-Za-z\s.']+)/i
-        ];
-        
-        for (const pattern of cityPatterns) {
-          const cityMatch = normalizedText.match(pattern);
-          if (cityMatch) {
-            form.setValue('city', cityMatch[1].trim());
-            extracted.city = true;
-            break;
-          }
-        }
-      }
-      
-      // Standalone state detection if not found in address
-      if (!extracted.state) {
-        const statePatterns = [
-          /\b(?:state\s+of|in)\s+([A-Z]{2})\b/i,
-          /\bState[:;]?\s+([A-Z]{2})\b/i,
-          /\bin\s+([A-Za-z\s]+?)[,\s]/i
-        ];
-        
-        for (const pattern of statePatterns) {
-          const stateMatch = normalizedText.match(pattern);
-          if (stateMatch) {
-            const potentialState = stateMatch[1].trim().toUpperCase();
-            if (potentialState.length === 2 || usStates.includes(potentialState)) {
-              form.setValue('state', potentialState.substring(0, 2));
-              extracted.state = true;
-              break;
-            }
-          }
-        }
-      }
-      
-      // Standalone ZIP code detection if not found in address
-      if (!extracted.zip) {
-        const zipPatterns = [
-          /\b(ZIP|postal\s+code)[:;]?\s+(\d{5})/i,
-          /\b(\d{5}[-\s]?\d{0,4})\b/
-        ];
-        
-        for (const pattern of zipPatterns) {
-          const zipMatch = normalizedText.match(pattern);
-          if (zipMatch) {
-            // Extract the first 5 digits as ZIP code
-            const zip = zipMatch[pattern.toString().includes("ZIP") ? 2 : 1].substring(0, 5);
-            form.setValue('zipCode', zip);
-            extracted.zip = true;
-            break;
-          }
-        }
-      }
-
-      // Bedrooms extraction
-      const bedsPatterns = [
-        /(\d+)\s*(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)/i,
-        /(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)[:\s-]*(\d+)/i,
-        /(\d+)[-\s]*(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)/i
-      ];
-
+      // Property details extraction
+      const bedsPatterns = [/(\d+)\s*(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)/i];
       for (const pattern of bedsPatterns) {
-        const bedsMatch = normalizedText.match(pattern);
-        if (bedsMatch) {
-          form.setValue('beds', bedsMatch[1]);
+        const match = normalizedText.match(pattern);
+        if (match) {
+          form.setValue('beds', match[1]);
           extracted.beds = true;
           break;
         }
       }
-
-      // Bathrooms extraction
-      const bathsPatterns = [
-        /(\d+(?:\.\d+)?)\s*(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)/i,
-        /(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)[:\s-]*(\d+(?:\.\d+)?)/i,
-        /(\d+(?:\.\d+)?)[-\s]*(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)/i
-      ];
-
+      
+      const bathsPatterns = [/(\d+(?:\.\d+)?)\s*(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)/i];
       for (const pattern of bathsPatterns) {
-        const bathsMatch = normalizedText.match(pattern);
-        if (bathsMatch) {
-          form.setValue('baths', bathsMatch[1]);
+        const match = normalizedText.match(pattern);
+        if (match) {
+          form.setValue('baths', match[1]);
           extracted.baths = true;
           break;
         }
       }
-
-      // Square footage extraction
-      const sqftPatterns = [
-        /(\d+(?:,\d+)?)\s*(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot|sf|SqFt)/i,
-        /(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot|sf|SqFt)[:\s-]*(\d+(?:,\d+)?)/i,
-        /(\d+(?:,\d+)?)\s*(?:sq)/i
-      ];
-
+      
+      const sqftPatterns = [/(\d+(?:,\d+)?)\s*(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot|sf|SqFt)/i];
       for (const pattern of sqftPatterns) {
-        const sqftMatch = normalizedText.match(pattern);
-        if (sqftMatch) {
-          const sqft = sqftMatch[1].replace(/,/g, '');
-          form.setValue('sqft', sqft);
+        const match = normalizedText.match(pattern);
+        if (match) {
+          form.setValue('sqft', match[1].replace(/,/g, ''));
           extracted.sqft = true;
           break;
         }
       }
-
-      // Property type extraction
+      
+      // Property type
       const propertyTypeMatches = {
-        'House': [/(?:Row\s*[Hh]ome|Single\s*Family|SFH|Detached|Town\s*[Hh]ome|Brick\s*Row\s*[Hh]ome)/i, /\b(?:house|home)\b/i],
-        'Multi-Family': [/(?:Multi[-\s]*Family|MFH|Duplex|Triplex|Quadplex|4-plex)/i],
+        'House': [/\b(?:house|home|Single\s*Family|SFH)\b/i],
+        'Multi-Family': [/\b(?:Multi[-\s]*Family|MFH|Duplex|Triplex|Quadplex)\b/i],
         'Condo': [/\b(?:Condo|Condominium)\b/i],
         'Apartment': [/\b(?:Apartment|Apt)\b/i],
-        'Studio': [/\b(?:Studio)\b/i],
         'Land': [/\b(?:Land|Lot|Vacant\s*Land)\b/i]
       };
-
+      
       for (const [type, patterns] of Object.entries(propertyTypeMatches)) {
         for (const pattern of patterns) {
           if (normalizedText.match(pattern)) {
@@ -264,42 +157,36 @@ export const useAIExtractor = (form: UseFormReturn<z.infer<typeof formSchema>>) 
         }
         if (extracted.propertyType) break;
       }
-
-      // Asking price extraction
-      const askingPricePatterns = [
-        /(?:Asking|Price|List\s*Price|Listed\s*at|asking price)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /\$\s*(\d+(?:,\d+)*(?:\.\d+)?K?)\s*(?:asking|price)/i,
-        /(\d+(?:,\d+)*(?:\.\d+)?)[Kk]\s*(?:asking|price)/i,
-        /(\d+(?:,\d+)*(?:\.\d+)?)\s*[Kk]/i
+      
+      // Price extraction
+      const pricePatterns = [
+        /(?:asking|price|list|selling|sell for)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
+        /\$\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i
       ];
-
-      for (const pattern of askingPricePatterns) {
-        const askingMatch = normalizedText.match(pattern);
-        if (askingMatch) {
-          let price = askingMatch[1].replace(/,/g, '');
+      
+      for (const pattern of pricePatterns) {
+        const match = normalizedText.match(pattern);
+        if (match) {
+          let price = match[1].replace(/,/g, '');
           if (price.toLowerCase().endsWith('k')) {
             price = (parseFloat(price.toLowerCase().replace('k', '')) * 1000).toString();
           }
           form.setValue('price', price);
           extracted.price = true;
-          
-          // REMOVED: No longer setting market price automatically based on price
-          // Only set market price if explicitly mentioned in the text (handled below)
           break;
         }
       }
-
-      // Market price extraction - only set if explicitly found
+      
+      // Market price extraction - only if explicitly mentioned
       const marketPricePatterns = [
-        /(?:Market|Retail|Comps?|Comparable|Market\s*Value|Retail\s*Value)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /\$\s*(\d+(?:,\d+)*(?:\.\d+)?K?)\s*(?:market|retail|comp)/i,
-        /worth\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i
+        /(?:Market\s*Price|Market\s*Value|Comps|Comparables|Appraised)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
+        /(?:Market|Comps|Comparables|Appraised)\s*[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i
       ];
-
+      
       for (const pattern of marketPricePatterns) {
-        const marketMatch = normalizedText.match(pattern);
-        if (marketMatch) {
-          let marketPrice = marketMatch[1].replace(/,/g, '');
+        const match = normalizedText.match(pattern);
+        if (match) {
+          let marketPrice = match[1].replace(/,/g, '');
           if (marketPrice.toLowerCase().endsWith('k')) {
             marketPrice = (parseFloat(marketPrice.toLowerCase().replace('k', '')) * 1000).toString();
           }
@@ -308,57 +195,28 @@ export const useAIExtractor = (form: UseFormReturn<z.infer<typeof formSchema>>) 
           break;
         }
       }
-
+      
       // ARV extraction
-      const arvPatterns = [
-        /ARV[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)\s*(?:[-–]\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?))?/i,
-        /(?:after\s*repair\s*value|ARV)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /(?:after\s*repair|ARV)[:\s;]+(\d+(?:,\d+)*(?:\.\d+)?K?)/i
-      ];
-
+      const arvPatterns = [/(?:ARV|after\s*repair\s*value)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i];
       for (const pattern of arvPatterns) {
-        const arvMatch = normalizedText.match(pattern);
-        if (arvMatch) {
-          let arvValue;
-          if (arvMatch[2]) {
-            let arvLow = arvMatch[1].replace(/,/g, '');
-            let arvHigh = arvMatch[2].replace(/,/g, '');
-
-            if (arvLow.toLowerCase().endsWith('k')) {
-              arvLow = (parseFloat(arvLow.toLowerCase().replace('k', '')) * 1000).toString();
-            }
-            if (arvHigh.toLowerCase().endsWith('k')) {
-              arvHigh = (parseFloat(arvHigh.toLowerCase().replace('k', '')) * 1000).toString();
-            }
-
-            const arvAvg = Math.round((parseFloat(arvLow) + parseFloat(arvHigh)) / 2);
-            arvValue = String(arvAvg);
-          } else {
-            let arv = arvMatch[1].replace(/,/g, '');
-            if (arv.toLowerCase().endsWith('k')) {
-              arv = (parseFloat(arv.toLowerCase().replace('k', '')) * 1000).toString();
-            }
-            arvValue = arv;
+        const match = normalizedText.match(pattern);
+        if (match) {
+          let arv = match[1].replace(/,/g, '');
+          if (arv.toLowerCase().endsWith('k')) {
+            arv = (parseFloat(arv.toLowerCase().replace('k', '')) * 1000).toString();
           }
-
-          form.setValue('afterRepairValue', arvValue);
+          form.setValue('afterRepairValue', arv);
           extracted.arv = true;
           break;
         }
       }
-
+      
       // Rehab cost extraction
-      const rehabPatterns = [
-        /(?:Rehab|Renovation|Repair|Repairs)\s*(?:Cost|Estimate|Budget)?[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /(?:Rehab|REHAB)[:;]\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /(?:Rehab|REHAB)\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /(?:needs|requires)\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)\s*(?:in|of)?\s*(?:work|repairs|rehab)/i
-      ];
-
+      const rehabPatterns = [/(?:rehab|repairs|renovation)(?:\s*cost)?[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i];
       for (const pattern of rehabPatterns) {
-        const rehabMatch = normalizedText.match(pattern);
-        if (rehabMatch) {
-          let rehab = rehabMatch[1].replace(/,/g, '');
+        const match = normalizedText.match(pattern);
+        if (match) {
+          let rehab = match[1].replace(/,/g, '');
           if (rehab.toLowerCase().endsWith('k')) {
             rehab = (parseFloat(rehab.toLowerCase().replace('k', '')) * 1000).toString();
           }
@@ -367,67 +225,41 @@ export const useAIExtractor = (form: UseFormReturn<z.infer<typeof formSchema>>) 
           break;
         }
       }
-
-      // Extract description from the text
-      const address = form.getValues('address') || '';
-      const city = form.getValues('city') || '';
-      const state = form.getValues('state') || '';
-      const zipCode = form.getValues('zipCode') || '';
-
-      let description = normalizedText;
-
-      if (extracted.address && address) {
-        description = description.replace(address, '');
-      }
-      if (extracted.city && city) {
-        description = description.replace(new RegExp(city, 'gi'), '');
-      }
-      if (extracted.state && state) {
-        description = description.replace(new RegExp(state, 'gi'), '');
-      }
-      if (extracted.zip && zipCode) {
-        description = description.replace(zipCode, '');
-      }
-
-      description = description
+      
+      // Extract description
+      const description = normalizedText
+        .replace(/\d+\s+[A-Za-z0-9\s.,'-]+(?:,\s*[A-Za-z\s]+,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Za-z\s]+,\s*[A-Z]{2}|,\s*[A-Z]{2}\s*\d{5})/gi, '')
+        .replace(/\d+\s*(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)/gi, '')
+        .replace(/\d+(?:\.\d+)?\s*(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)/gi, '')
+        .replace(/\d+(?:,\d+)?\s*(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot|sf|SqFt)/gi, '')
+        .replace(/\$\s*\d+(?:,\d+)*(?:\.\d+)?K?/gi, '')
+        .replace(/\d+(?:,\d+)*(?:\.\d+)?K?\s*(?:asking|price)/gi, '')
+        .replace(/ARV[:;]?\s*\$?\s*\d+(?:,\d+)*(?:\.\d+)?K?/gi, '')
+        .replace(/(?:rehab|repairs|renovation)(?:\s*cost)?[:;]?\s*\$?\s*\d+(?:,\d+)*(?:\.\d+)?K?/gi, '')
         .replace(/\s+/g, ' ')
         .replace(/,\s*,/g, ',')
         .replace(/\s+\./g, '.')
         .trim();
-
+      
       if (description) {
         form.setValue('description', description);
       }
-
-      // Use Cohere API for missing fields
-      const missingFields = Object.entries(extracted).filter(([field, value]) => 
-        !value && ['address', 'city', 'state', 'zip', 'price', 'marketPrice', 'arv', 'rehab'].includes(field)
-      );
       
+      // Check for fields that weren't extracted and try to use Cohere API
+      const missingFields = Object.entries(extracted).filter(([_, value]) => !value);
       if (missingFields.length > 0 && apiKey) {
-        console.log("Using Cohere API to extract missing fields:", missingFields.map(([field]) => field).join(", "));
-        
         try {
           const response = await fetch('https://api.cohere.ai/v1/generate', {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${apiKey}`,
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               model: 'command-light',
-              prompt: `You are a real estate data extraction expert. Extract ONLY the following information from this real estate listing text: ${missingFields.map(([field]) => field).join(", ")}. Format as JSON with ONLY these fields. Be as accurate as possible. DO NOT guess or estimate values that aren't directly mentioned or strongly implied in the text.
-              
-Example: For "123 Main St, Springfield, IL 62701", you would return {"address":"123 Main St", "city":"Springfield", "state":"IL", "zip":"62701"}
-
-For partial data like "property in Chicago area with price $250k", you might return {"city":"Chicago", "state":"IL", "price":"250000"}
-
-Text: ${normalizedText}
-
-Return JSON with ONLY the requested fields that appear in the text:`,
+              prompt: `Extract ONLY the following missing information from this real estate listing text: ${missingFields.map(([field]) => field).join(", ")}. Format as JSON with ONLY these fields.\n\nText: ${normalizedText}\n\nJSON:`,
               max_tokens: 150,
               temperature: 0.1,
-              stop_sequences: ["}"],
             })
           });
 
@@ -436,59 +268,38 @@ Return JSON with ONLY the requested fields that appear in the text:`,
             const generatedText = data.generations[0].text;
             
             try {
-              let jsonText = generatedText + "}";  // Add closing brace if not present
-              const startIdx = jsonText.indexOf('{');
-              const endIdx = jsonText.lastIndexOf('}') + 1;
-              
+              const startIdx = generatedText.indexOf('{');
+              const endIdx = generatedText.lastIndexOf('}') + 1;
               if (startIdx >= 0 && endIdx > startIdx) {
-                const jsonStr = jsonText.substring(startIdx, endIdx);
+                const jsonStr = generatedText.substring(startIdx, endIdx);
                 const extractedData = JSON.parse(jsonStr);
-                console.log("Extracted data from Cohere:", extractedData);
                 
-                if (!extracted.address && extractedData.address) {
-                  form.setValue('address', extractedData.address);
-                }
-                if (!extracted.city && extractedData.city) {
-                  form.setValue('city', extractedData.city);
-                }
-                if (!extracted.state && extractedData.state) {
-                  form.setValue('state', extractedData.state.toUpperCase().substring(0, 2));
-                }
-                if (!extracted.zip && extractedData.zip) {
-                  form.setValue('zipCode', extractedData.zip);
-                }
-                if (!extracted.price && extractedData.price) {
-                  const price = String(extractedData.price).replace(/[$,]/g, '');
-                  form.setValue('price', price);
-                }
-                if (!extracted.marketPrice && extractedData.marketPrice) {
-                  form.setValue('marketPrice', String(extractedData.marketPrice).replace(/[$,]/g, ''));
-                }
-                if (!extracted.arv && extractedData.arv) {
-                  form.setValue('afterRepairValue', String(extractedData.arv).replace(/[$,]/g, ''));
-                }
-                if (!extracted.rehab && extractedData.rehab) {
-                  form.setValue('estimatedRehab', String(extractedData.rehab).replace(/[$,]/g, ''));
-                }
+                if (!extracted.address && extractedData.address) form.setValue('address', extractedData.address);
+                if (!extracted.city && extractedData.city) form.setValue('city', extractedData.city);
+                if (!extracted.state && extractedData.state) form.setValue('state', extractedData.state);
+                if (!extracted.zip && extractedData.zip) form.setValue('zipCode', extractedData.zip);
+                if (!extracted.beds && extractedData.beds) form.setValue('beds', String(extractedData.beds));
+                if (!extracted.baths && extractedData.baths) form.setValue('baths', String(extractedData.baths));
+                if (!extracted.sqft && extractedData.sqft) form.setValue('sqft', String(extractedData.sqft).replace(/,/g, ''));
+                if (!extracted.propertyType && extractedData.propertyType) form.setValue('propertyType', extractedData.propertyType);
+                if (!extracted.price && extractedData.price) form.setValue('price', String(extractedData.price).replace(/[$,]/g, ''));
+                if (!extracted.marketPrice && extractedData.marketPrice) form.setValue('marketPrice', String(extractedData.marketPrice).replace(/[$,]/g, ''));
+                if (!extracted.arv && extractedData.arv) form.setValue('afterRepairValue', String(extractedData.arv).replace(/[$,]/g, ''));
+                if (!extracted.rehab && extractedData.rehab) form.setValue('estimatedRehab', String(extractedData.rehab).replace(/[$,]/g, ''));
               }
             } catch (e) {
               console.error("Error parsing Cohere response:", e);
             }
           }
-        } catch (cohereError) {
-          console.log("Error using Cohere API:", cohereError);
+        } catch (error) {
+          console.error("Error using Cohere API:", error);
         }
       }
+      
+      // Removed automatic rehab/market price calculation
+      // Only set these values if they were explicitly found in the text
 
-      // REMOVED: No longer automatically calculating rehab costs if not explicitly mentioned
-      // We only use values explicitly mentioned in the text now
-
-      const anyFieldExtracted = Object.values(extracted).some(value => value === true);
-      if (anyFieldExtracted) {
-        toast.success("Property details extracted successfully!");
-      } else {
-        toast.warning("Limited details found. Please fill in the remaining fields manually.");
-      }
+      toast.success("Property details extracted successfully!");
     } catch (error) {
       console.error("AI extraction error:", error);
       toast.error("Could not extract property details. Please try again or fill the form manually.");
@@ -496,9 +307,6 @@ Return JSON with ONLY the requested fields that appear in the text:`,
       setIsProcessing(false);
     }
   };
-
-  // Helper definition for US states
-  const usStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
 
   return {
     propertyText,
