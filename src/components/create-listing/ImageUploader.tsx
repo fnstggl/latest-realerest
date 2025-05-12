@@ -1,9 +1,9 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Upload, X, AlertCircle } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import { toast } from "sonner";
 import OptimizedImage from '@/components/ui/OptimizedImage';
-import { testStorageBucketAccess } from '@/utils/storageUtils';
 
 interface ImageUploaderProps {
   images: string[];
@@ -34,29 +34,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [conversionInProgress, setConversionInProgress] = useState(false);
-  const [storageTestResult, setStorageTestResult] = useState<{ success?: boolean; error?: any } | null>(null);
-
-  // Test storage access on component mount
-  useEffect(() => {
-    const checkStorageAccess = async () => {
-      try {
-        const result = await testStorageBucketAccess('property_images');
-        setStorageTestResult(result);
-        
-        if (!result.success) {
-          console.error("Storage access test failed:", result);
-          toast.error("Warning: Image upload may not work due to storage access issues");
-        } else {
-          console.log("Storage access test successful:", result);
-        }
-      } catch (error) {
-        console.error("Error testing storage access:", error);
-        setStorageTestResult({ success: false, error });
-      }
-    };
-    
-    checkStorageAccess();
-  }, []);
 
   // Clean up object URLs when component unmounts
   useEffect(() => {
@@ -232,23 +209,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const retryStorageTest = async () => {
-    try {
-      setStorageTestResult(null);
-      const result = await testStorageBucketAccess('property_images');
-      setStorageTestResult(result);
-      
-      if (result.success) {
-        toast.success("Storage access test successful!");
-      } else {
-        toast.error("Storage access test failed. Image uploads may not work.");
-      }
-    } catch (error) {
-      setStorageTestResult({ success: false, error });
-      toast.error("Error testing storage access");
-    }
-  };
-
   return (
     <div className="p-6 rounded-xl border border-black/10 bg-white">
       <h2 className="text-xl font-bold mb-4">Property Images</h2>
@@ -256,26 +216,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         Recommended: Add up to {MAX_IMAGES} images (less than {MAX_IMAGE_SIZE/1024/1024}MB each). 
         All formats including HEIC/iPhone images are supported.
       </p>
-      
-      {/* Storage test result warning */}
-      {storageTestResult !== null && !storageTestResult.success && (
-        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md flex items-start">
-          <AlertCircle className="text-yellow-500 mr-2 h-5 w-5 flex-shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <p className="text-sm text-yellow-700">
-              Warning: Storage access test failed. Image uploads may not work correctly.
-            </p>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mt-2 text-xs"
-              onClick={retryStorageTest}
-            >
-              Retry Test
-            </Button>
-          </div>
-        </div>
-      )}
       
       <div className="mb-6">
         <input

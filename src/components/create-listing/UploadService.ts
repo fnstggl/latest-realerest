@@ -197,8 +197,7 @@ async function compressStandardImage(file: File): Promise<File> {
 }
 
 /**
- * Uploads images to Supabase storage with improved handling for HEIC files and 
- * optimized for the new storage policies
+ * Uploads images to Supabase storage with improved handling for HEIC files
  */
 export const uploadImagesToSupabase = async (
   files: File[], 
@@ -283,10 +282,7 @@ export const uploadImagesToSupabase = async (
             .upload(filePath, file, {
               cacheControl: '31536000',
               upsert: false,
-              contentType: file.type,
-              metadata: {
-                owner: sessionData.session?.user.id || "anonymous"
-              }
+              contentType: file.type
             });
               
           if (error) {
