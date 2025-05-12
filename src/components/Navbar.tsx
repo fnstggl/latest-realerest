@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
         alt="Realer Estate Logo" 
         className="w-7 h-7 sm:w-7 sm:h-7 md:w-7 md:h-7 object-contain -translate-y-[2px]" 
       />
-      <span className="font-playfair font-bold italic text-foreground text-sm sm:text-base md:text-base hidden md:block tracking-tight">Realer Estate</span>
+      <span className="font-playfair font-bold italic text-foreground text-sm sm:text-base md:text-base hidden md:block">Realer Estate</span>
     </>
   );
   const MobileNavigation = () => <Sheet>
@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
         <div className="flex flex-col gap-4 sm:gap-6 p-6 sm:p-8">
           <Link to="/" className="flex items-center gap-2">
             <img src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" alt="Realer Estate Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
-            <span className="font-bold text-black text-lg sm:text-xl md:text-2xl tracking-tight">Realer Estate</span>
+            <span className="font-bold text-black text-lg sm:text-xl md:text-2xl">Realer Estate</span>
           </Link>
 
           <nav className="flex flex-col space-y-1 sm:space-y-2">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsContent as RadixTabsContent } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -22,29 +22,21 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-// Define the WaitlistUser type to match the one from useProperties
-interface WaitlistUser {
-  id: string;
-  propertyId: string;
-  userId: string;
-  name: string;
-  email: string;
-  phone: string;
-  status: string;
-  createdAt: string;
-}
-
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const {
+    user,
+    logout
+  } = useAuth();
   const [activeTab, setActiveTab] = useState("properties");
   const [showAddForm, setShowAddForm] = useState(false);
   const [accountType, setAccountType] = useState(user?.accountType || 'buyer');
-  
-  // Fix type issue by specifying the type from useNotifications
-  const { notifications, markAsRead, clearAll } = useNotifications();
-  
+  const {
+    notifications,
+    markAsRead,
+    clearAll
+  } = useNotifications();
   const {
     myProperties,
     setMyProperties,
