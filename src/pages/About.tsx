@@ -91,25 +91,24 @@ const About: React.FC = () => {
             <p className="text-lg md:text-xl font-futura font-bold tracking-tight">
               Realer Estate is a platform helping struggling homebuyers find homes they can <em>afford</em>. We 
               understand the Real Estate market is broken. Regular buyers are getting priced out. Not anymore. 
-              We provide exclusively below-market homes, available to everyone—no lotteries, waitlists or fees.
-              <br />Just Realer Estate.
+              We provide exclusively below-market homes, available to everyone—no lotteries, waitlists or fees. Just Realer Estate.
             </p>
           </motion.div>
           
-          {/* Divider */}
+          {/* Divider - now 15px thicker */}
           <motion.div 
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 1, scaleX: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="w-full h-px bg-black my-10 md:my-12 origin-left"
+            className="w-full h-[15px] bg-black my-10 md:my-12 origin-left"
           />
           
-          {/* Featured Image */}
+          {/* Featured Image - now with no space after divider */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.2, delay: 0.7 }}
-            className="w-full"
+            className="w-full -mt-10 md:-mt-12"
           >
             <OptimizedImage 
               src="/lovable-uploads/869ab762-f99a-4e66-8b73-0e10639dbeda.png" 
@@ -120,81 +119,73 @@ const About: React.FC = () => {
           </motion.div>
         </div>
         
-        {/* THE JOURNEY Section */}
+        {/* THE JOURNEY Section - Redesigned */}
         <motion.section initial="hidden" whileInView="visible" viewport={{
         once: true,
         margin: "-100px"
       }} variants={sectionVariant} className="mx-auto max-w-5xl mb-24 md:mb-32">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center">
-              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">OUR JOURNEY</h2>
-              <span className="text-3xl text-[#8E9196] ml-2">(2)</span>
-            </div>
-          </div>
-          
-          <div className="relative overflow-hidden mb-8">
-            <div className="absolute inset-0 bg-gradient-to-l from-[#00000099] to-transparent z-10"></div>
-            <img src="/lovable-uploads/ae9b8849-2f3b-4a70-a520-d02738b34efd.png" alt="Modern home exterior" className="w-full h-[300px] md:h-[450px] object-cover grayscale" />
-            
-            <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
-              <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
-                DOING THINGS <span className="red-highlight-word">DIFFERENTLY</span><span className="text-[#ea384c]">*</span>
-              </h3>
-            </div>
-          </div>
-          
-          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-center text-[#1A1F2C]">
-            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl">
+          {/* Journey text moved above image */}
+          <div className="mx-auto space-y-6 max-w-4xl mb-10">
+            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-futura font-bold tracking-tight text-[#1A1F2C]">
               We know how frustrating the process of buying and selling your house can feel, so at Realer Estate... we're doing things differently.
             </motion.p>
             
-            <motion.p custom={1} variants={textRevealVariant} className="text-lg md:text-xl">
+            <motion.p custom={1} variants={textRevealVariant} className="text-lg md:text-xl font-futura font-bold tracking-tight text-[#1A1F2C]">
               By connecting motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.
             </motion.p>
             
-            <motion.p custom={2} variants={textRevealVariant} className="text-lg md:text-xl font-playfair italic">
+            <motion.p custom={2} variants={textRevealVariant} className="text-lg md:text-xl font-futura font-bold tracking-tight text-[#1A1F2C]">
               "We knew there had to be a better way—something faster, simpler, and actually made for people like us."
             </motion.p>
           </div>
+          
+          {/* Divider - same 15px thickness */}
+          <motion.div 
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.8 }}
+            className="w-full h-[15px] bg-black mb-0 origin-left"
+          />
+          
+          {/* New Image */}
+          <div className="relative overflow-hidden">
+            <img src="/lovable-uploads/7b12fd25-9fa6-4b02-81ed-521ace622717.png" alt="Small cottage style home with green shutters" className="w-full h-[400px] md:h-[600px] object-cover" />
+          </div>
         </motion.section>
         
-        {/* THE VISION Section */}
+        {/* THE VISION Section - Redesigned */}
         <motion.section initial="hidden" whileInView="visible" viewport={{
         once: true,
         margin: "-100px"
       }} variants={sectionVariant} className="mx-auto max-w-5xl mb-24 md:mb-32">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center">
-              <h2 className="text-5xl md:text-6xl font-bold text-[#1A1F2C]">OUR VISION</h2>
-              <span className="text-3xl text-[#8E9196] ml-2">(3)</span>
-            </div>
-          </div>
-          
-          <div className="relative overflow-hidden mb-8">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00000099] to-transparent z-10"></div>
-            <img src="/lovable-uploads/b82e0252-0b3e-4142-bbe9-1f4da2824ab9.png" alt="Classic apartment buildings" className="w-full h-[300px] md:h-[450px] object-cover grayscale" />
-            
-            <div className="absolute inset-0 flex items-center justify-center z-20 px-8">
-              <h3 className="text-6xl md:text-8xl font-bold text-white leading-none max-w-lg text-center">
-                HOUSING FOR <span className="red-highlight-word">EVERYONE</span><span className="text-[#ea384c]">*</span>
-              </h3>
-            </div>
-          </div>
-          
-          <div className="mx-auto space-y-6 border-t-4 border-[#1A1F2C] pt-8 max-w-3xl text-center text-[#1A1F2C]">
-            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl">
+          {/* Vision text moved above image */}
+          <div className="mx-auto space-y-6 max-w-4xl mb-10">
+            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-futura font-bold tracking-tight text-[#1A1F2C]">
               Realer Estate is about revolutionizing the real estate market to make it work for <span className="font-playfair italic font-bold">people</span> again. You shouldn't have to fight this hard for something so basic.
             </motion.p>
             
-            <motion.div custom={1} variants={textRevealVariant} className="flex items-center justify-center space-x-3 pt-4">
+            <motion.div custom={1} variants={textRevealVariant} className="flex items-center space-x-3 pt-4">
               <Avatar className="h-12 w-12">
                 <AvatarFallback className="bg-[#1A1F2C] text-white">RE</AvatarFallback>
               </Avatar>
-              <div>
-                <p className="font-bold">- Beckett & Derrick</p>
-                <p className="text-sm">Realer Estate Founders</p>
+              <div className="text-left">
+                <p className="font-futura font-bold tracking-tight">- Beckett & Derrick</p>
+                <p className="text-sm font-futura font-bold tracking-tight">Realer Estate Founders</p>
               </div>
             </motion.div>
+          </div>
+          
+          {/* Divider - same 15px thickness */}
+          <motion.div 
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.8 }}
+            className="w-full h-[15px] bg-black mb-0 origin-left"
+          />
+          
+          {/* New Image */}
+          <div className="relative overflow-hidden">
+            <img src="/lovable-uploads/79ffa508-3e4e-436f-b3f2-f0dc75e16344.png" alt="Aerial view of suburban neighborhood" className="w-full h-[400px] md:h-[600px] object-cover" />
           </div>
         </motion.section>
         
@@ -262,4 +253,3 @@ const About: React.FC = () => {
     </div>;
 };
 export default About;
-
