@@ -54,12 +54,12 @@ const About: React.FC = () => {
           "@type": "AboutPage",
           "name": "About Realer Estate",
           "description": "Our mission is to give people a real shot at buying a home — without needing perfect credit, endless paperwork, or thousands over asking.",
-          "url": "https://realerestate.org/about",
+          "url": window.location.origin + "/about",
           "mainEntity": {
             "@type": "Organization",
             "name": "Realer Estate",
-            "url": "https://realerestate.org",
-            "logo": "https://realerestate.org/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png",
+            "url": window.location.origin,
+            "logo": `${window.location.origin}/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png`,
             "description": "Realer Estate helps connect buyers with below-market properties and sellers who want to sell quickly without fees.",
             "founders": [{
               "@type": "Person",
@@ -75,12 +75,12 @@ const About: React.FC = () => {
       <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-8 md:pb-16">
         {/* Main content container with consistent max-width for all sections */}
         <div className="max-w-4xl mx-auto">
-          {/* Header Section - Centered with same margin as other sections */}
+          {/* Header Section */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.8 }}
-            className="mb-8 md:mb-10 text-center"
+            className="mb-8 md:mb-10"
           >
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-futura font-extrabold tracking-tighter leading-tight">
               FROM DREAM<br />
@@ -88,12 +88,11 @@ const About: React.FC = () => {
             </h1>
           </motion.div>
           
-          {/* Subtext - Centered */}
+          {/* Subtext */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-center"
           >
             <p className="text-lg md:text-xl font-futura font-bold tracking-tight">
               Realer Estate is a platform helping struggling homebuyers find homes they can <em>afford</em>. We 
@@ -231,12 +230,12 @@ const About: React.FC = () => {
             
             <motion.div custom={1} variants={textRevealVariant} className="border-2 border-[#1A1F2C] p-8 relative">
               <div className="text-6xl font-playfair italic font-bold mb-6 text-[#1A1F2C]">02</div>
-              <p className="text-lg">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-futura font-extrabold italic">actually great deals</span>.</p>
+              <p className="text-lg">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-playfair italic font-bold">actually great deals</span>.</p>
             </motion.div>
             
             <motion.div custom={2} variants={textRevealVariant} className="border-2 border-[#1A1F2C] p-8 relative">
               <div className="text-6xl font-playfair italic font-bold mb-6 text-[#1A1F2C]">03</div>
-              <p className="text-lg">Due to the high demand for below-market properties, listings on our platform <span className="font-futura font-extrabold italic">may not stay available</span> for long.</p>
+              <p className="text-lg">Due to the high demand for below-market properties, listings on our platform <span className="font-playfair italic">may not stay available</span> for long.</p>
             </motion.div>
           </div>
         </motion.section>
@@ -256,7 +255,7 @@ const About: React.FC = () => {
           <div className="text-left">
             <h2 className="text-6xl md:text-8xl font-bold text-[#1A1F2C] mb-8 leading-tight tracking-tighter">
               <span className="block">REAL ESTATE</span>
-              <span className="inline-block font-futura font-extrabold tracking-tighter">
+              <span className="inline-block font-futura font-extrabold">
                 DONE RIGHT
               </span>
             </h2>

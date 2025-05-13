@@ -21,8 +21,8 @@ const SEO: React.FC<SEOProps> = ({
   schema,
   children
 }) => {
-  const siteUrl = 'https://realerestate.org';
-  const url = canonical ? `${siteUrl}${canonical}` : window.location.pathname ? `${siteUrl}${window.location.pathname}` : siteUrl;
+  const siteUrl = window.location.origin || 'https://donedealfinal.lovable.app';
+  const url = canonical ? `${siteUrl}${canonical}` : window.location.href || siteUrl;
   const fullImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
   const favicon = '/lovable-uploads/44490515-f297-40ac-a263-afe8590da99f.png';
   
