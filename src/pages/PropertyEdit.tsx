@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -679,7 +678,7 @@ const PropertyEdit: React.FC = () => {
               >
                 {saving ? (
                   <>
-                    <Loader2 size={18} className="animate-spin mr-2" />
+                    <span className="animate-spin inline-block w-4 h-4 mr-2 border-2 border-current border-t-transparent text-current rounded-full"></span>
                     <span className="relative z-10">Saving...</span>
                   </>
                 ) : (

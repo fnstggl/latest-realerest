@@ -157,6 +157,13 @@ async function uploadFileWithRetry(
       toast.error("Authentication error. Please sign in again.");
       throw new Error("User not authenticated");
     }
+    
+    // Get the current user to include in metadata
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.error("Failed to get current user for metadata");
+      throw new Error("User not authenticated. Upload aborted.");
+    }
 
     // Add timeout protection for the upload
     const uploadPromise = new Promise<{data: any, error: any}>((resolve, reject) => {
@@ -165,13 +172,16 @@ async function uploadFileWithRetry(
         reject(new Error(`Upload timeout for ${file.name}`));
       }, 30000); // 30 second timeout
       
-      // Attempt the upload
+      // Attempt the upload with owner metadata
       supabase.storage
         .from('property_images')
         .upload(filePath, file, {
           cacheControl: '31536000', // 1 year cache for immutable assets
           upsert: false,
-          contentType: file.type
+          contentType: file.type,
+          metadata: {
+            owner: user.id
+          }
         })
         .then(result => {
           clearTimeout(timeoutId);
