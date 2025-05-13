@@ -62,12 +62,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     if (validSizedFiles.length > 0) {
       // Add valid files to the existing files
-      setImageFiles(prev => [...prev, ...validSizedFiles]);
+      setImageFiles([...imageFiles, ...validSizedFiles]);
       
       // Create temporary preview URLs
       validSizedFiles.forEach(file => {
         const previewUrl = URL.createObjectURL(file);
-        setImages(prev => [...prev, previewUrl]);
+        setImages([...images, previewUrl]);
       });
     }
   };
