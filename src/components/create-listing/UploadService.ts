@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
 import imageCompression from 'browser-image-compression';
@@ -112,30 +111,25 @@ async function compressStandardImage(file: File): Promise<File> {
     useWebWorker: true,
     fileType: file.type,
     initialQuality: JPEG_QUALITY,
-    alwaysKeepResolution: false
+    alwaysKeepResolution: false,
+    onProgress: undefined
   };
   
-  try {
-    // Compress the image
-    const compressedFile = await imageCompression(file, options);
-    console.log(
-      "Compression result:",
-      file.name,
-      `${(file.size / 1024).toFixed(2)}KB →`,
-      `${(compressedFile.size / 1024).toFixed(2)}KB`,
-      `(${Math.round((compressedFile.size / file.size) * 100)}%)`
-    );
-    
-    return compressedFile;
-  } catch (err) {
-    console.error("Error compressing image:", err);
-    return file; // Return original as fallback
-  }
+  // Compress the image
+  const compressedFile = await imageCompression(file, options);
+  console.log(
+    "Compression result:",
+    file.name,
+    `${(file.size / 1024).toFixed(2)}KB →`,
+    `${(compressedFile.size / 1024).toFixed(2)}KB`,
+    `(${Math.round((compressedFile.size / file.size) * 100)}%)`
+  );
+  
+  return compressedFile;
 }
 
 /**
  * Uploads images to Supabase storage with compression and optimization
- * Added better error handling and concurrency control
  */
 export const uploadImagesToSupabase = async (
   files: File[], 
@@ -167,83 +161,102 @@ export const uploadImagesToSupabase = async (
       }
     }
     
-    // Step 2: Upload compressed files with improved error handling
+    // Step 2: Upload compressed files with concurrency control
+    const concurrencyLimit = Math.min(3, files.length);
     const results: string[] = [];
-    // Reduce concurrency to avoid overwhelming the API
-    const concurrencyLimit = Math.min(2, files.length);
     
-    // Process files in batches with lower concurrency
+    // Process files in batches
     for (let i = 0; i < compressedFiles.length; i += concurrencyLimit) {
       const batch = compressedFiles.slice(i, i + concurrencyLimit);
       const progressStart = 30 + (i / compressedFiles.length) * 50;
       
       const batchPromises = batch.map(async (file, batchIndex) => {
-        const currentIndex = i + batchIndex;
-        const progressIncrement = 50 / compressedFiles.length;
-        
         try {
           // Create a unique but descriptive filename
           const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
-                          file.type === 'image/png' ? 'png' : 
+                          file.type === 'image/png' ? 'png' :
                           file.name.split('.').pop();
-          const fileName = `${currentIndex}-${Date.now().toString().slice(-6)}.${fileExt}`;
+          const fileName = `${i + batchIndex}-${Date.now().toString().slice(-6)}.${fileExt}`;
           const filePath = `${folderName}/${fileName}`;
           
-          // Add timeout protection for each upload
-          const uploadPromise = supabase.storage
+          // Extract image dimensions if possible
+          let width = 0;
+          let height = 0;
+          
+          try {
+            const img = document.createElement('img');
+            const loaded = new Promise<void>((resolve, reject) => {
+              img.onload = () => {
+                width = img.naturalWidth;
+                height = img.naturalHeight;
+                resolve();
+              };
+              img.onerror = reject;
+            });
+            
+            img.src = URL.createObjectURL(file);
+            await Promise.race([
+              loaded,
+              new Promise<void>(resolve => setTimeout(resolve, 1000)) // Timeout after 1s
+            ]);
+          } catch (e) {
+            console.log('Could not extract image dimensions:', e);
+          }
+          
+          // Add metadata for better tracking and caching
+          const metadata = {
+            originalName: file.name,
+            contentType: file.type,
+            size: file.size,
+            width: width || undefined,
+            height: height || undefined,
+            uploadedAt: new Date().toISOString(),
+            propertyId: propertyId || null,
+            wasHeic: isHeicFile(files[i + batchIndex]) ? true : undefined
+          };
+          
+          // Upload to Supabase with better caching directives
+          const { data, error } = await supabase.storage
             .from('property_images')
             .upload(filePath, file, {
               cacheControl: '31536000', // 1 year cache for immutable assets
               upsert: false,
-              contentType: file.type
+              contentType: file.type,
+              duplex: 'half',
+              metadata
             });
             
-          // Create a timeout promise
-          const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error(`Upload timeout for ${file.name}`)), 30000); // 30 second timeout
-          });
-          
-          // Race the upload against the timeout
-          const { data, error } = await Promise.race([
-            uploadPromise,
-            timeoutPromise.then(() => { throw new Error(`Upload timeout for ${file.name}`); })
-          ]) as any;
-          
           if (error) {
             console.error('Error uploading image:', error);
             return null;
           }
           
-          // Get public URL
+          // Get public URL with query string to aid in different size rendering
           const { data: { publicUrl } } = supabase.storage
             .from('property_images')
             .getPublicUrl(filePath);
           
+          // Append width and height as query params if available
+          const finalUrl = width && height 
+            ? `${publicUrl}?w=${width}&h=${height}` 
+            : publicUrl;
+          
           // Update progress within batch
           if (onProgress) {
-            onProgress(Math.min(80, progressStart + progressIncrement * (batchIndex + 1)));
+            const progressIncrement = 50 / compressedFiles.length;
+            onProgress(Math.min(80, progressStart + (batchIndex / batch.length) * progressIncrement));
           }
             
-          return publicUrl;
+          return finalUrl;
         } catch (err) {
           console.error('Error processing file:', err);
           return null;
         }
       });
       
-      try {
-        // Wait for current batch to complete before processing next batch
-        const batchResults = await Promise.allSettled(batchPromises);
-        
-        // Filter successful uploads and add to results
-        batchResults.forEach(result => {
-          if (result.status === 'fulfilled' && result.value) {
-            results.push(result.value);
-          }
-        });
-      } catch (batchError) {
-        console.error('Error in upload batch:', batchError);
-      }
+      // Wait for current batch to complete before processing next batch
+      const batchResults = await Promise.all(batchPromises);
+      results.push(...batchResults.filter(Boolean) as string[]);
     }
     
     if (onProgress) {
@@ -253,7 +266,7 @@ export const uploadImagesToSupabase = async (
     return results.length > 0 ? results : [DEFAULT_IMAGE];
     
   } catch (error) {
-    console.error('Error in image upload process:', error);
+    console.error('Error in image upload:', error);
     return [DEFAULT_IMAGE]; // Fallback to default image
   }
 };

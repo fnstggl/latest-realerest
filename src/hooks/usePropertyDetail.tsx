@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -32,32 +33,6 @@ type PropertyDetailType = {
   created_at?: string;
   additional_images_link?: string | null;
 };
-
-export interface PropertyDetail {
-  id: string;
-  price: number;
-  market_price: number;
-  beds: number;
-  baths: number;
-  sqft: number;
-  title: string;
-  location: string;
-  description?: string;
-  images: string[];
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-  after_repair_value?: number;
-  estimated_rehab?: number;
-  reward?: number;
-  full_address?: string;
-  property_type?: string;
-  additional_images_link?: string;
-  // Add these optional properties
-  year_built?: number;
-  lot_size?: number;
-  parking?: string;
-}
 
 const usePropertyDetail = (propertyId?: string) => {
   const { user } = useAuth();

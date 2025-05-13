@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Loader2, Wand2 } from "lucide-react";
@@ -296,26 +295,10 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           }
           form.setValue('price', price);
           extracted.price = true;
-          
-          // Only look for market price if it's explicitly mentioned in the text
-          const marketPricePatterns = [
-            /(?:Market\s*Price|Market\s*Value|Comps|Comparables|Appraised)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-            /(?:Market|Comps|Comparables|Appraised)\s*[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i
-          ];
-          
-          for (const mpPattern of marketPricePatterns) {
-            const marketMatch = normalizedText.match(mpPattern);
-            if (marketMatch) {
-              let marketPrice = marketMatch[1].replace(/,/g, '');
-              if (marketPrice.toLowerCase().endsWith('k')) {
-                marketPrice = (parseFloat(marketPrice.toLowerCase().replace('k', '')) * 1000).toString();
-              }
-              form.setValue('marketPrice', marketPrice);
-              extracted.marketPrice = true;
-              break;
-            }
-          }
-          
+
+          const marketPrice = Math.round(parseFloat(price) * 1.1);
+          form.setValue('marketPrice', String(marketPrice));
+          extracted.marketPrice = true;
           break;
         }
       }
@@ -474,8 +457,15 @@ Return JSON with ONLY the requested fields:`,
         }
       }
 
-      // Remove the automatic estimation of rehab costs when ARV and price are available
-      // Only set rehab if explicitly found in the text or via the Cohere API
+      const arv = form.getValues('afterRepairValue');
+      const price = form.getValues('price');
+
+      if (!extracted.rehab && arv && price) {
+        const estimatedRehab = Math.round((parseFloat(arv) - parseFloat(price)) * 0.7);
+        if (estimatedRehab > 0) {
+          form.setValue('estimatedRehab', String(estimatedRehab));
+        }
+      }
 
       const anyFieldExtracted = Object.values(extracted).some(value => value === true);
 
