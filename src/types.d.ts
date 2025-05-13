@@ -25,6 +25,9 @@ interface Property {
   additional_images_link?: string;
   belowMarket?: number; // Used in UI but calculated, not stored
   waitlistCount?: number; // Used in UI but calculated, not stored
+  year_built?: string; // Adding optional properties referenced in usePropertyDetail
+  lot_size?: string;
+  parking?: string;
 }
 
 // Define other shared types to fix the build errors

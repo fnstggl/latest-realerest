@@ -102,8 +102,8 @@ export const uploadFileWithRetry = async (
     }
     
     // Get the current user to include in metadata
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData?.user) {
       console.error("Failed to get current user for metadata");
       throw new Error("User not authenticated. Upload aborted.");
     }
@@ -123,7 +123,7 @@ export const uploadFileWithRetry = async (
           upsert: false,
           contentType: file.type,
           metadata: {
-            owner: user.id
+            owner: userData.user.id
           }
         })
         .then(result => {
@@ -210,7 +210,7 @@ export const uploadFileWithRetry = async (
   }
 };
 
-// Add the missing uploadImagesToSupabase function that is being imported in CreateListing.tsx
+// The uploadImagesToSupabase function needed by CreateListing.tsx
 export const uploadImagesToSupabase = async (
   imageFiles: File[], 
   propertyId: string,
@@ -315,7 +315,8 @@ export const createNotification = async (
         title: "New Property Listed",
         message: `A new ${propertyType} in ${location} was just listed`,
         type: "property",
-        properties: { propertyId }
+        properties: { propertyId },
+        user_id: authUser.id // Add the user_id field that was missing
       });
     
     if (error) {
