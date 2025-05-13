@@ -6,29 +6,54 @@ WHERE NOT EXISTS (
     SELECT 1 FROM storage.buckets WHERE id = 'property_images'
 );
 
--- Create a policy to allow anyone to read images
-CREATE POLICY "Public Read Policy" ON storage.objects 
-    FOR SELECT USING (bucket_id = 'property_images');
+-- Enable RLS on the objects table if not already enabled
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
--- Create a policy to allow authenticated users to upload images
-CREATE POLICY "Authenticated Upload Policy" ON storage.objects 
-    FOR INSERT TO authenticated
-    WITH CHECK (
-        bucket_id = 'property_images'
-    );
+-- Create simplified, non-conflicting policies
 
--- Create a policy to allow users to update their own images
-CREATE POLICY "Owner Update Policy" ON storage.objects 
-    FOR UPDATE TO authenticated
-    USING (
-        bucket_id = 'property_images' AND 
-        auth.uid()::text = owner::text
-    );
+-- 1. Public read access for all images (simplifies frontend display)
+CREATE POLICY "property_images:public_read" 
+ON storage.objects FOR SELECT 
+USING (bucket_id = 'property_images');
 
--- Create a policy to allow users to delete their own images
-CREATE POLICY "Owner Delete Policy" ON storage.objects 
-    FOR DELETE TO authenticated
-    USING (
-        bucket_id = 'property_images' AND 
-        auth.uid()::text = owner::text
-    );
+-- 2. Authenticated users can upload images with proper ownership
+CREATE POLICY "property_images:authenticated_insert" 
+ON storage.objects FOR INSERT 
+TO authenticated
+WITH CHECK (
+    bucket_id = 'property_images' AND
+    (
+        -- Either metadata owner matches user ID
+        ((metadata ->> 'owner')::text = auth.uid()::text) OR
+        -- Or object is in user's folder path
+        (storage.foldername(name))[1] = auth.uid()::text
+    )
+);
+
+-- 3. Users can only update their own images
+CREATE POLICY "property_images:owner_update" 
+ON storage.objects FOR UPDATE 
+TO authenticated
+USING (
+    bucket_id = 'property_images' AND
+    (
+        -- Either metadata owner matches user ID
+        ((metadata ->> 'owner')::text = auth.uid()::text) OR
+        -- Or object is in user's folder path
+        (storage.foldername(name))[1] = auth.uid()::text
+    )
+);
+
+-- 4. Users can only delete their own images
+CREATE POLICY "property_images:owner_delete" 
+ON storage.objects FOR DELETE 
+TO authenticated
+USING (
+    bucket_id = 'property_images' AND
+    (
+        -- Either metadata owner matches user ID
+        ((metadata ->> 'owner')::text = auth.uid()::text) OR
+        -- Or it's in user's folder
+        (storage.foldername(name))[1] = auth.uid()::text
+    )
+);

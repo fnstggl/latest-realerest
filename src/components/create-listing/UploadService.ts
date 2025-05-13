@@ -1,159 +1,101 @@
-
-import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
-import imageCompression from 'browser-image-compression';
-import { toast } from 'sonner';
-import { validateAuthState } from '@/utils/authUtils';
+import { toast } from "sonner";
+import { ensureAuthenticated } from "@/utils/authUtils";
+import imageCompression from "browser-image-compression";
+import heic2any from "heic2any";
+import { v4 as uuidv4 } from 'uuid';
 
-// Maximum image size in bytes (3MB)
-const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
-// Target size for compressed images (500KB)
-const TARGET_COMPRESSED_SIZE = 500 * 1024;
-// Maximum dimensions for full-size images
-const MAX_IMAGE_WIDTH = 1600;
-// JPEG quality setting (0.75 = 75% quality, good balance between size and quality)
-const JPEG_QUALITY = 0.75;
-// Maximum number of retries for failed uploads
-const MAX_RETRIES = 3;
-// Delay between retries (in milliseconds)
-const RETRY_DELAY = 2000;
-
-// Use a smaller default image size for faster loading
-const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
-
-/**
- * Checks if a file is a HEIC/HEIF format
- */
-function isHeicFile(file: File): boolean {
-  const fileType = file.type.toLowerCase();
-  const fileName = file.name.toLowerCase();
-  return fileType === 'image/heic' || 
-         fileType === 'image/heif' || 
-         fileName.endsWith('.heic') || 
-         fileName.endsWith('.heif');
+interface UploadResult {
+  success: boolean;
+  url?: string;
+  error?: string;
 }
 
-/**
- * Converts a HEIC/HEIF file to JPEG format
- * This uses a dynamic import to avoid bloating the main bundle
- */
-async function convertHeicToJpeg(file: File): Promise<File> {
+export const isHEIC = (file: File): boolean => {
+  return file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+};
+
+export const convertHEICToJPEG = async (file: File): Promise<File> => {
   try {
-    // Dynamically import heic2any library only when needed
-    const heic2any = await import('heic2any');
-    
     console.log("Converting HEIC file to JPEG:", file.name);
-    
-    // Convert the HEIC file to JPEG blob
-    const jpegBlob = await heic2any.default({
+    const jpegBlob = await heic2any({
       blob: file,
       toType: "image/jpeg",
-      quality: 0.85 // Slightly higher than our normal JPEG quality to preserve details
-    });
+      quality: 0.8
+    }) as Blob;
     
-    // Handle both single blob and array of blobs return types
-    const resultBlob = Array.isArray(jpegBlob) ? jpegBlob[0] : jpegBlob;
-    
-    // Create a new File from the JPEG blob
-    const jpegFile = new File(
-      [resultBlob], 
-      file.name.replace(/\.(heic|heif)$/i, '.jpg'), 
-      { type: 'image/jpeg' }
-    );
-    
-    console.log("HEIC conversion complete:", 
-      `${(file.size / 1024).toFixed(2)}KB →`,
-      `${(jpegFile.size / 1024).toFixed(2)}KB`);
-    
-    return jpegFile;
+    // Create new file with proper name and type
+    const fileName = file.name.replace(/\.(heic|HEIC|heif|HEIF)$/, '.jpg');
+    return new File([jpegBlob], fileName, { type: "image/jpeg" });
   } catch (error) {
-    console.error("Error converting HEIC to JPEG:", error);
-    // If conversion fails, throw an error to be handled by the caller
-    throw new Error(`Failed to convert HEIC image: ${file.name}`);
+    console.error("HEIC conversion error:", error);
+    throw new Error(`Failed to convert HEIC image: ${error}`);
   }
-}
+};
 
-/**
- * Compresses an image file to reduce its size while maintaining quality
- */
-async function compressImage(file: File): Promise<File> {
+export const compressImage = async (file: File): Promise<File> => {
   try {
-    // Check if this is a HEIC/HEIF file that needs conversion
-    if (isHeicFile(file)) {
-      try {
-        console.log("Processing HEIC file:", file.name);
-        // Convert HEIC to JPEG first
-        const jpegFile = await convertHeicToJpeg(file);
-        console.log("HEIC converted to JPEG, now compressing:", jpegFile.name);
-        // Then apply compression to the JPEG
-        return await compressStandardImage(jpegFile);
-      } catch (error) {
-        console.error("HEIC conversion error:", error);
-        throw error;
-      }
-    } else {
-      // For standard image formats, just compress
-      return await compressStandardImage(file);
+    console.log("Compressing image:", file.name, "Original size:", Math.round(file.size / 1024), "KB");
+    
+    // Check if the file is already small enough
+    if (file.size < 800 * 1024) {
+      console.log("Image already small enough, skipping compression");
+      return file;
     }
-  } catch (error) {
-    console.error("Error in image processing pipeline:", error);
-    return file; // Return original as fallback
-  }
-}
-
-/**
- * Standard compression for JPEG, PNG, etc.
- */
-async function compressStandardImage(file: File): Promise<File> {
-  // Skip compression for small enough files
-  if (file.size <= TARGET_COMPRESSED_SIZE) {
-    console.log("Image already small enough, skipping compression:", file.name);
-    return file;
-  }
-  
-  // Options for image compression
-  const options = {
-    maxSizeMB: TARGET_COMPRESSED_SIZE / (1024 * 1024),
-    maxWidthOrHeight: MAX_IMAGE_WIDTH,
-    useWebWorker: true,
-    fileType: file.type,
-    initialQuality: JPEG_QUALITY,
-    alwaysKeepResolution: false
-  };
-  
-  try {
-    // Compress the image
+    
+    const options = {
+      maxSizeMB: 0.8,
+      maxWidthOrHeight: 1600,
+      useWebWorker: true,
+      fileType: file.type
+    };
+    
     const compressedFile = await imageCompression(file, options);
-    console.log(
-      "Compression result:",
-      file.name,
-      `${(file.size / 1024).toFixed(2)}KB →`,
-      `${(compressedFile.size / 1024).toFixed(2)}KB`,
-      `(${Math.round((compressedFile.size / file.size) * 100)}%)`
-    );
+    console.log("Compressed size:", Math.round(compressedFile.size / 1024), "KB");
     
     return compressedFile;
-  } catch (err) {
-    console.error("Error compressing image:", err);
-    return file; // Return original as fallback
+  } catch (error) {
+    console.error("Image compression error:", error);
+    throw new Error(`Failed to compress image: ${error}`);
   }
-}
+};
 
-/**
- * Uploads a single file to Supabase storage with retry logic
- */
-async function uploadFileWithRetry(
-  file: File, 
-  filePath: string, 
-  retryCount: number = 0
-): Promise<string | null> {
+export const preprocessImage = async (file: File): Promise<File> => {
   try {
-    console.log(`Uploading file: ${filePath} (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+    let processedFile = file;
     
-    // Verify authentication before each upload attempt
-    const session = await validateAuthState();
-    if (!session) {
-      console.error("Authentication failed during upload attempt");
+    // Convert HEIC to JPEG if needed
+    if (isHEIC(processedFile)) {
+      processedFile = await convertHEICToJPEG(processedFile);
+    }
+    
+    // Compress image
+    processedFile = await compressImage(processedFile);
+    
+    return processedFile;
+  } catch (error) {
+    console.error("Image preprocessing error:", error);
+    throw new Error(`Failed to preprocess image: ${error}`);
+  }
+};
+
+export const uploadFileWithRetry = async (
+  file: File, 
+  path = "properties",
+  maxRetries = 3
+): Promise<UploadResult> => {
+  let attemptCount = 0;
+  
+  // Generate unique filename to avoid conflicts
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+  const filePath = `${path}/${fileName}`;
+  
+  // First verify authentication state
+  try {
+    const session = await ensureAuthenticated(false);
+    if (!session?.user) {
+      console.error("User not authenticated for upload");
       toast.error("Authentication error. Please sign in again.");
       throw new Error("User not authenticated");
     }
@@ -167,8 +109,8 @@ async function uploadFileWithRetry(
 
     // Add timeout protection for the upload
     const uploadPromise = new Promise<{data: any, error: any}>((resolve, reject) => {
-      // Create a timeout for the upload
       const timeoutId = setTimeout(() => {
+        console.error(`Upload timeout for ${file.name}`);
         reject(new Error(`Upload timeout for ${file.name}`));
       }, 30000); // 30 second timeout
       
@@ -192,271 +134,123 @@ async function uploadFileWithRetry(
           reject(error);
         });
     });
-    
-    const { data, error } = await uploadPromise;
-    
-    if (error) {
-      console.error('Error uploading image:', error);
-      
-      // Check for auth errors that require user interaction
-      if (error.message?.includes("row-level security") || 
-          error.message?.includes("permission denied") || 
-          error.message?.includes("not authorized")) {
-        console.error("Permission denied during upload:", error);
-        throw new Error("Storage permission denied. Please sign in again to refresh your session.");
-      }
-      
-      // For other errors, try to retry if we haven't exceeded MAX_RETRIES
-      if (retryCount < MAX_RETRIES) {
-        console.log(`Retrying upload for ${file.name} in ${RETRY_DELAY/1000} seconds...`);
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-        return await uploadFileWithRetry(file, filePath, retryCount + 1);
-      }
-      
-      // If we've exhausted retries, throw the error
-      throw error;
-    }
-    
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('property_images')
-      .getPublicUrl(filePath);
-    
-    console.log(`Successfully uploaded: ${filePath}`, publicUrl);
-    return publicUrl;
-  } catch (err) {
-    console.error(`Upload error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, err);
-    
-    // Try again if we haven't exceeded MAX_RETRIES
-    if (retryCount < MAX_RETRIES) {
-      console.log(`Retrying upload for ${file.name} in ${RETRY_DELAY/1000} seconds...`);
-      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-      return await uploadFileWithRetry(file, filePath, retryCount + 1);
-    }
-    
-    return null;
-  }
-}
 
-/**
- * Uploads images to Supabase storage with compression and optimization
- * Added better error handling and concurrency control
- */
-export const uploadImagesToSupabase = async (
-  files: File[], 
-  propertyId?: string, 
-  onProgress?: (progress: number) => void
-): Promise<string[]> => {
-  if (files.length === 0) return [DEFAULT_IMAGE];
-  
-  // Create a folder name for this batch of uploads - use property ID if available for better tracking
-  const folderName = propertyId ? `property-${propertyId}` : `listing-${uuidv4()}`;
-  
-  try {
-    // Validate authentication first before proceeding with upload
-    const session = await validateAuthState();
-    if (!session) {
-      console.error("User not authenticated for image upload");
-      toast.error("Authentication required. Please sign in to upload images.");
-      throw new Error("User not authenticated");
-    }
-    
-    console.log("Authentication validated successfully for upload");
-    
-    // Test bucket access before proceeding with full upload
-    try {
-      console.log("Testing storage bucket access...");
-      const { error: testError } = await supabase.storage
-        .from('property_images')
-        .list("test", { limit: 1 });
-        
-      if (testError) {
-        console.error("Storage bucket access test failed:", testError);
-        if (testError.message?.includes("row-level security") || testError.message?.includes("permission denied")) {
-          toast.error("Storage access denied. Please sign in again to refresh your session.");
-          throw new Error("Storage permission denied. Please make sure you're logged in and have permission to upload images.");
-        }
-      }
-      console.log("Storage bucket access verified");
-    } catch (accessError) {
-      console.error("Storage bucket test access error:", accessError);
-      throw accessError;
-    }
-  
-    // Process files in sequence with compression
-    const compressedFiles: File[] = [];
-    
-    // Step 1: Compress all images
-    for (let i = 0; i < files.length; i++) {
-      if (onProgress) {
-        onProgress(Math.min(30, (i / files.length) * 30));
-      }
-      
+    while (attemptCount < maxRetries) {
       try {
-        const compressedFile = await compressImage(files[i]);
-        compressedFiles.push(compressedFile);
-      } catch (err) {
-        console.error("Error compressing file:", err);
-        // Use original file as fallback
-        compressedFiles.push(files[i]);
-      }
-    }
-    
-    // Step 2: Upload compressed files with improved error handling
-    const results: string[] = [];
-    
-    // Process files in batches with lower concurrency (1 file at a time for reliability)
-    for (let i = 0; i < compressedFiles.length; i++) {
-      const file = compressedFiles[i];
-      const progressStart = 30 + (i / compressedFiles.length) * 50;
-      
-      try {
-        // Create a unique but descriptive filename
-        const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
-                      file.type === 'image/png' ? 'png' : 
-                      file.name.split('.').pop();
-        const fileName = `${i}-${Date.now().toString().slice(-6)}.${fileExt}`;
-        const filePath = `${folderName}/${fileName}`;
+        attemptCount++;
         
-        console.log(`Uploading file ${i + 1}/${compressedFiles.length}: ${filePath}`);
+        console.log(`Upload attempt ${attemptCount} for ${file.name}`);
         
-        // Use the retry mechanism for uploads
-        const publicUrl = await uploadFileWithRetry(file, filePath);
-        
-        if (publicUrl) {
-          results.push(publicUrl);
+        if (attemptCount > 1) {
+          // Small delay between retries to avoid overwhelming the server
+          await new Promise(resolve => setTimeout(resolve, 1000 * attemptCount)); 
         }
         
-        // Update progress
-        if (onProgress) {
-          onProgress(Math.min(80, progressStart + (50 / compressedFiles.length)));
-        }
-      } catch (err) {
-        console.error('Error processing file:', err);
-      }
-    }
-    
-    if (onProgress) {
-      onProgress(95);
-    }
-    
-    console.log(`Upload completed: ${results.length} files uploaded successfully`);
-    return results.length > 0 ? results : [DEFAULT_IMAGE];
-    
-  } catch (error: any) {
-    console.error('Error in image upload process:', error);
-    // Provide specific error messages for common issues
-    if (error.message?.includes("row-level security") || error.message?.includes("permission denied")) {
-      toast.error("Storage permission denied. Please sign in again to refresh your session.");
-      throw new Error("Storage permission denied. Please make sure you're logged in and have the correct permissions to upload images.");
-    }
-    // Throw the error to be handled by the calling code
-    throw error;
-  }
-};
-
-/**
- * Deletes images associated with a property listing from storage
- */
-export const deletePropertyImages = async (propertyId: string, images?: string[]): Promise<boolean> => {
-  try {
-    if (!images || images.length === 0) {
-      console.log("No images to delete for property:", propertyId);
-      return true;
-    }
-    
-    const filesToDelete: string[] = [];
-    
-    // First try to delete by property folder
-    try {
-      const { data: folderData, error: folderError } = await supabase.storage
-        .from('property_images')
-        .list(`property-${propertyId}`);
-      
-      if (!folderError && folderData && folderData.length > 0) {
-        // Found property folder, extract file paths
-        filesToDelete.push(...folderData.map(file => `property-${propertyId}/${file.name}`));
-      }
-    } catch (folderErr) {
-      console.error("Error listing property folder:", folderErr);
-    }
-    
-    // If no files found by property ID folder, try to extract file paths from URLs
-    if (filesToDelete.length === 0 && images && images.length > 0) {
-      // Extract file paths from the image URLs
-      images.forEach(imageUrl => {
-        try {
-          // Parse the URL to extract the file path
-          const url = new URL(imageUrl);
-          const pathParts = url.pathname.split('/');
-          const bucketName = pathParts[2]; // typically "property_images"
+        // Perform the upload with timeout protection
+        const { data, error } = await uploadPromise;
+        
+        if (error) {
+          console.error(`Upload error (attempt ${attemptCount}):`, error);
           
-          if (bucketName === "property_images") {
-            // Extract the file path (everything after the bucket name)
-            const filePath = pathParts.slice(3).join('/');
-            if (filePath) {
-              filesToDelete.push(filePath);
+          // Handle specific errors
+          if (error.message.includes('permission') || error.message.includes('not allowed')) {
+            // Try reauthenticating on permission issues
+            try {
+              await ensureAuthenticated(true);
+              console.log("Re-authenticated for next attempt");
+            } catch (authError) {
+              console.error("Re-authentication failed:", authError);
             }
           }
-        } catch (err) {
-          console.error("Error parsing image URL:", imageUrl, err);
+          
+          // If last attempt, throw the error
+          if (attemptCount >= maxRetries) {
+            throw error;
+          }
+          
+          // Otherwise continue to next attempt
+          continue;
         }
-      });
+        
+        // If we got here, upload was successful
+        const publicURL = supabase.storage
+          .from('property_images')
+          .getPublicUrl(filePath).data.publicUrl;
+        
+        console.log(`Successfully uploaded ${file.name} on attempt ${attemptCount}`);
+        return { 
+          success: true, 
+          url: publicURL
+        };
+      } catch (err) {
+        console.error(`Exception on upload attempt ${attemptCount}:`, err);
+        
+        // If this was the last attempt, return the error
+        if (attemptCount >= maxRetries) {
+          return {
+            success: false,
+            error: `Failed to upload ${file.name} after ${maxRetries} attempts: ${err}`
+          };
+        }
+      }
     }
     
-    if (filesToDelete.length > 0) {
-      console.log(`Deleting ${filesToDelete.length} images for property ${propertyId}`);
-      const { error } = await supabase.storage
-        .from('property_images')
-        .remove(filesToDelete);
-        
-      if (error) {
-        console.error("Error deleting property images:", error);
-        return false;
-      }
-      
-      return true;
-    } else {
-      console.log("No image files found to delete for property:", propertyId);
-      return true;
-    }
+    // This should never be reached but adding as fallback
+    return {
+      success: false,
+      error: `Failed to upload ${file.name} after ${maxRetries} attempts.`
+    };
   } catch (error) {
-    console.error("Error in deletePropertyImages:", error);
-    return false;
+    console.error("Upload service error:", error);
+    return {
+      success: false,
+      error: String(error)
+    };
   }
 };
 
-export const createNotification = async (propertyId: string, propertyType: string, city: string, state: string) => {
+export const processAndUploadImages = async (imageFiles: File[]): Promise<string[]> => {
+  if (!imageFiles || imageFiles.length === 0) {
+    return [];
+  }
+
+  console.log(`Starting to process and upload ${imageFiles.length} images`);
+  
   try {
-    // First, add a 'notifications' table if it doesn't exist
-    // This is a dynamic solution that doesn't rely on modifying the database schema
+    // Preprocess all images in parallel first (convert/compress)
+    const preprocessPromises = imageFiles.map(file => preprocessImage(file));
+    const processedFiles = await Promise.all(preprocessPromises);
     
-    // Create a collection in Supabase storage for notifications (as a temporary solution)
-    const notificationsData = {
-      type: 'new_listing',
-      title: 'New Property Listed',
-      message: `A new ${propertyType} was just listed in ${city}, ${state}`,
-      property_id: propertyId,
-      created_at: new Date().toISOString()
-    };
+    console.log("All images preprocessed, starting uploads");
     
-    // Store notification data in localStorage as a fallback mechanism
-    const storageKey = 'system_notifications';
-    const existingNotifications = localStorage.getItem(storageKey);
-    let notifications = [];
+    // Generate a batch ID for this group of uploads
+    const batchId = uuidv4().slice(0, 8);
     
-    if (existingNotifications) {
-      notifications = JSON.parse(existingNotifications);
+    // Upload all images (with retries baked in)
+    const uploadPromises = processedFiles.map(file => 
+      uploadFileWithRetry(file, `properties/${batchId}`)
+    );
+    
+    const results = await Promise.all(uploadPromises);
+    
+    // Get successful upload URLs
+    const uploadedUrls = results
+      .filter(result => result.success && result.url)
+      .map(result => result.url as string);
+    
+    // Check for any failed uploads
+    const failedUploads = results.filter(result => !result.success);
+    if (failedUploads.length > 0) {
+      console.error(`${failedUploads.length} images failed to upload`);
+      const errorMessages = failedUploads.map(result => result.error).join('; ');
+      toast.error(`Some images failed to upload: ${errorMessages}`);
     }
     
-    notifications.push(notificationsData);
-    localStorage.setItem(storageKey, JSON.stringify(notifications));
-    
-    console.log("Notification created for new property using fallback mechanism");
-    return notificationsData;
-    
+    console.log(`Upload complete: ${uploadedUrls.length} successful, ${failedUploads.length} failed`);
+    return uploadedUrls;
   } catch (error) {
-    console.error("Could not create notification:", error);
-    return null;
+    console.error("Error in processAndUploadImages:", error);
+    toast.error("Failed to process and upload images");
+    return [];
   }
 };

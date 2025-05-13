@@ -1,4 +1,8 @@
 
+-- This file is kept for reference but the actual policies are now consolidated in storage.sql
+-- The policies below have been replaced with the simplified versions in storage.sql
+
+/*
 -- Enable RLS on the property_images bucket if not already enabled
 ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
@@ -61,3 +65,4 @@ USING (
     (storage.foldername(name))[1] = auth.uid()::text
   )
 );
+*/
