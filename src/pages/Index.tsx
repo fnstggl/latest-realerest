@@ -9,6 +9,8 @@ import SiteFooter from '@/components/sections/SiteFooter';
 import SEO from '@/components/SEO';
 
 const Index: React.FC = () => {
+  const currentDomain = window.location.origin;
+
   return (
     <div className="min-h-screen bg-[#FCFBF8] overflow-x-hidden relative perspective-container">
       <SEO
@@ -19,8 +21,8 @@ const Index: React.FC = () => {
           "@context": "https://schema.org",
           "@type": "Organization",
           "name": "Realer Estate",
-          "url": "https://realerestate.org",
-          "logo": "https://realerestate.org/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png",
+          "url": currentDomain,
+          "logo": `${currentDomain}/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png`,
           "sameAs": [],
           "description": "Find below market real estate deals & investment opportunities at Realer Estate. Get motivated sellers and off-market properties.",
           "address": {
