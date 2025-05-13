@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
 import imageCompression from 'browser-image-compression';
@@ -148,6 +147,25 @@ export const uploadImagesToSupabase = async (
   const folderName = propertyId ? `property-${propertyId}` : `listing-${uuidv4()}`;
   
   try {
+    // Test bucket access before proceeding with full upload
+    try {
+      console.log("Testing storage bucket access...");
+      const { error: testError } = await supabase.storage
+        .from('property_images')
+        .list("test", { limit: 1 });
+        
+      if (testError) {
+        console.error("Storage bucket access test failed:", testError);
+        if (testError.message?.includes("row-level security") || testError.message?.includes("permission denied")) {
+          throw new Error("Storage permission denied. Please make sure you're logged in and have permission to upload images.");
+        }
+      }
+      console.log("Storage bucket access verified");
+    } catch (accessError) {
+      console.error("Storage bucket test access error:", accessError);
+      throw accessError;
+    }
+  
     // Process files in sequence with compression
     const compressedFiles: File[] = [];
     
@@ -169,8 +187,8 @@ export const uploadImagesToSupabase = async (
     
     // Step 2: Upload compressed files with improved error handling
     const results: string[] = [];
-    // Reduce concurrency to avoid overwhelming the API
-    const concurrencyLimit = Math.min(2, files.length);
+    // Reduce concurrency to avoid overwhelming the API - use sequential uploads to prevent race conditions
+    const concurrencyLimit = 1; // Process one file at a time for reliability
     
     // Process files in batches with lower concurrency
     for (let i = 0; i < compressedFiles.length; i += concurrencyLimit) {
@@ -189,28 +207,41 @@ export const uploadImagesToSupabase = async (
           const fileName = `${currentIndex}-${Date.now().toString().slice(-6)}.${fileExt}`;
           const filePath = `${folderName}/${fileName}`;
           
+          console.log(`Uploading file ${currentIndex + 1}/${compressedFiles.length}: ${filePath}`);
+          
           // Add timeout protection for each upload
-          const uploadPromise = supabase.storage
-            .from('property_images')
-            .upload(filePath, file, {
-              cacheControl: '31536000', // 1 year cache for immutable assets
-              upsert: false,
-              contentType: file.type
-            });
+          const uploadPromise = new Promise<{data: any, error: any}>((resolve, reject) => {
+            // Create a timeout for the upload
+            const timeoutId = setTimeout(() => {
+              reject(new Error(`Upload timeout for ${file.name}`));
+            }, 30000); // 30 second timeout
             
-          // Create a timeout promise
-          const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error(`Upload timeout for ${file.name}`)), 30000); // 30 second timeout
+            // Attempt the upload
+            supabase.storage
+              .from('property_images')
+              .upload(filePath, file, {
+                cacheControl: '31536000', // 1 year cache for immutable assets
+                upsert: false,
+                contentType: file.type
+              })
+              .then(result => {
+                clearTimeout(timeoutId);
+                resolve(result);
+              })
+              .catch(error => {
+                clearTimeout(timeoutId);
+                reject(error);
+              });
           });
           
-          // Race the upload against the timeout
-          const { data, error } = await Promise.race([
-            uploadPromise,
-            timeoutPromise.then(() => { throw new Error(`Upload timeout for ${file.name}`); })
-          ]) as any;
+          const { data, error } = await uploadPromise;
           
           if (error) {
             console.error('Error uploading image:', error);
+            // Check specifically for RLS policy errors
+            if (error.message?.includes("row-level security") || error.message?.includes("permission denied")) {
+              throw new Error("Storage permission denied. Please make sure you're logged in and have the correct permissions to upload images.");
+            }
             return null;
           }
           
@@ -218,6 +249,8 @@ export const uploadImagesToSupabase = async (
           const { data: { publicUrl } } = supabase.storage
             .from('property_images')
             .getPublicUrl(filePath);
+          
+          console.log(`Successfully uploaded: ${filePath}`, publicUrl);
           
           // Update progress within batch
           if (onProgress) {
@@ -233,16 +266,17 @@ export const uploadImagesToSupabase = async (
       
       try {
         // Wait for current batch to complete before processing next batch
-        const batchResults = await Promise.allSettled(batchPromises);
+        const batchResults = await Promise.all(batchPromises);
         
         // Filter successful uploads and add to results
         batchResults.forEach(result => {
-          if (result.status === 'fulfilled' && result.value) {
-            results.push(result.value);
+          if (result) {
+            results.push(result);
           }
         });
       } catch (batchError) {
         console.error('Error in upload batch:', batchError);
+        throw batchError; // Re-throw to handle in the main try-catch
       }
     }
     
@@ -250,11 +284,17 @@ export const uploadImagesToSupabase = async (
       onProgress(95);
     }
     
+    console.log(`Upload completed: ${results.length} files uploaded successfully`);
     return results.length > 0 ? results : [DEFAULT_IMAGE];
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in image upload process:', error);
-    return [DEFAULT_IMAGE]; // Fallback to default image
+    // Provide specific error messages for common issues
+    if (error.message?.includes("row-level security") || error.message?.includes("permission denied")) {
+      throw new Error("Storage permission denied. Please make sure you're logged in and have the correct permissions to upload images.");
+    }
+    // Throw the error to be handled by the calling code
+    throw error;
   }
 };
 

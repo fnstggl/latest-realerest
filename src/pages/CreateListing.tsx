@@ -114,6 +114,9 @@ const CreateListing: React.FC = () => {
               });
               if (createError) {
                 console.error("Failed to create bucket:", createError);
+                if (createError.message.includes("row-level security") || createError.message.includes("permission denied")) {
+                  toast.error("You don't have permission to create a storage bucket. Please contact support.");
+                }
               } else {
                 console.log("Created property_images bucket");
               }
@@ -163,6 +166,7 @@ const CreateListing: React.FC = () => {
       navigate('/signin');
       return;
     }
+    
     if (imageFiles.length === 0) {
       toast.error("Please upload at least one image");
       return;
@@ -191,7 +195,6 @@ const CreateListing: React.FC = () => {
       console.log('Creating listing for user:', user.id);
 
       // Create a temporary ID for the listing that we'll use for image organization
-      // Later we'll update this with the actual listing ID
       const tempPropertyId = uuidv4();
 
       // Show progress update
@@ -200,12 +203,31 @@ const CreateListing: React.FC = () => {
       });
       setUploadProgress(10);
 
-      // Upload images to Supabase storage using the enhanced service
-      // We pass the tempPropertyId for better organization in storage
-      const uploadedImageUrls = await uploadImagesToSupabase(imageFiles, tempPropertyId, progress => {
-        if (signal.aborted) return;
-        setUploadProgress(progress);
-      });
+      let uploadedImageUrls: string[];
+      
+      try {
+        // Upload images to Supabase storage using the enhanced service
+        uploadedImageUrls = await uploadImagesToSupabase(imageFiles, tempPropertyId, progress => {
+          if (signal.aborted) return;
+          setUploadProgress(progress);
+        });
+      } catch (uploadError: any) {
+        console.error("Image upload failed:", uploadError);
+        // Show specific error for permission issues
+        if (uploadError.message?.includes("permission denied") || uploadError.message?.includes("row-level security")) {
+          toast.dismiss(loadingToastId);
+          toast.error("Storage permission issue. Please check that you have permission to upload images.");
+          cancelUploads();
+          return;
+        }
+        
+        // For other errors, continue with default image
+        console.warn("Using default image due to upload failure");
+        uploadedImageUrls = [DEFAULT_IMAGE];
+        toast.loading("Using default image due to upload error...", {
+          id: loadingToastId
+        });
+      }
 
       // Check if the request was aborted during image upload
       if (signal.aborted) {
@@ -247,52 +269,77 @@ const CreateListing: React.FC = () => {
       // Log the user ID being used for debugging
       console.log("Inserting listing with user_id:", user.id, "Type:", typeof user.id);
 
-      // Using 'reward' instead of 'bounty' to match database column name
-      const { data, error } = await supabase.from('property_listings').insert({
-        title: title,
-        price: price,
-        market_price: marketPrice,
-        location: location,
-        full_address: fullAddress,
-        description: values.description,
-        beds: parseInt(values.beds) || 0,
-        baths: parseInt(values.baths) || 0,
-        sqft: parseInt(values.sqft) || 0,
-        images: finalImages,
-        user_id: user.id,
-        reward: values.bounty ? Number(values.bounty) : null,
-        additional_images_link: values.additionalImagesLink || null,
-        property_type: values.propertyType || 'House',
-        after_repair_value: values.afterRepairValue ? Number(values.afterRepairValue) : null,
-        estimated_rehab: values.estimatedRehab ? Number(values.estimatedRehab) : null
-      }).select();
-      
-      // Clear timeout since we got a response
-      clearTimeout(timeoutId);
-      
-      if (error) {
-        console.error("Supabase error:", error);
-        throw error;
-      }
-
-      // Complete the progress
-      setUploadProgress(100);
-      toast.dismiss(loadingToastId);
-      toast.success("Property listing created successfully!");
-
-      // Trigger a notification for all users when a new property is listed
-      if (data?.[0]?.id) {
-        try {
-          // Create notification using our service
-          await createNotification(data[0].id, values.propertyType || 'Property', values.city || '', values.state || '');
-          console.log("Notification created for new property");
-        } catch (notifyError) {
-          console.error("Could not create notification:", notifyError);
+      try {
+        // Using 'reward' instead of 'bounty' to match database column name
+        const { data, error } = await supabase.from('property_listings').insert({
+          title: title,
+          price: price,
+          market_price: marketPrice,
+          location: location,
+          full_address: fullAddress,
+          description: values.description,
+          beds: parseInt(values.beds) || 0,
+          baths: parseInt(values.baths) || 0,
+          sqft: parseInt(values.sqft) || 0,
+          images: finalImages,
+          user_id: user.id,
+          reward: values.bounty ? Number(values.bounty) : null,
+          additional_images_link: values.additionalImagesLink || null,
+          property_type: values.propertyType || 'House',
+          after_repair_value: values.afterRepairValue ? Number(values.afterRepairValue) : null,
+          estimated_rehab: values.estimatedRehab ? Number(values.estimatedRehab) : null
+        }).select();
+        
+        // Clear timeout since we got a response
+        clearTimeout(timeoutId);
+        
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
         }
-      }
 
-      // Navigate to dashboard
-      navigate('/dashboard');
+        // Complete the progress
+        setUploadProgress(100);
+        toast.dismiss(loadingToastId);
+        toast.success("Property listing created successfully!");
+
+        // Trigger a notification for all users when a new property is listed
+        if (data?.[0]?.id) {
+          try {
+            // Create notification using our service
+            await createNotification(data[0].id, values.propertyType || 'Property', values.city || '', values.state || '');
+            console.log("Notification created for new property");
+          } catch (notifyError) {
+            console.error("Could not create notification:", notifyError);
+          }
+        }
+
+        // Navigate to dashboard
+        navigate('/dashboard');
+      } catch (dbError: any) {
+        console.error("Database error:", dbError);
+        
+        // Clear timeout since we got a response
+        clearTimeout(timeoutId);
+        
+        // Handle specific database errors
+        if (dbError.message?.includes('violates row-level security policy')) {
+          toast.dismiss(loadingToastId);
+          toast.error("Access denied. Please ensure you're properly signed in.");
+          // Force re-authentication
+          logout();
+          setTimeout(() => {
+            navigate('/signin', {
+              state: {
+                returnPath: '/sell/create'
+              }
+            });
+          }, 1500);
+          return;
+        }
+        
+        throw dbError;
+      }
     } catch (error: any) {
       console.error("Error creating listing:", error);
       toast.dismiss(loadingToastId);
@@ -324,7 +371,6 @@ const CreateListing: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
   
   // If page is not fully loaded, show a more pleasant loading state
   if (!isPageLoaded) {
