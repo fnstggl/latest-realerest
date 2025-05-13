@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -5,13 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import ImageUploader from "@/components/create-listing/ImageUploader";
 import SEO from "@/components/SEO";
 import PropertyImages from "@/components/property-detail/PropertyImages";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ensureAuthenticated } from '@/utils/authUtils';
 
 interface Property {
   id: string;
@@ -34,13 +37,15 @@ interface Property {
 const PropertyEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [property, setProperty] = useState<Property | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [retryAttempt, setRetryAttempt] = useState(0);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     price: "",
     marketPrice: "",
@@ -57,30 +62,82 @@ const PropertyEdit: React.FC = () => {
   });
   const [images, setImages] = useState<string[]>([]);
 
+  // Function to validate authentication state
+  const validateAuthState = async () => {
+    setAuthError(null);
+    
+    if (!id || !isAuthenticated) {
+      setAuthError("You must be logged in to edit this property");
+      return false;
+    }
+    
+    try {
+      // Directly check for valid session
+      const authUser = await ensureAuthenticated(false);
+      if (!authUser) {
+        setAuthError("Authentication required. Please sign in to edit this property.");
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Auth validation error:", error);
+      setAuthError("Authentication error. Please sign in again.");
+      return false;
+    }
+  };
+
   useEffect(() => {
     const fetchProperty = async () => {
       setLoading(true);
       
-      if (!id || !user) {
+      // First validate authentication
+      const isAuthenticated = await validateAuthState();
+      if (!isAuthenticated) {
         setLoading(false);
         return;
       }
 
       try {
-        // Fetch directly from Supabase
-        const { data, error } = await supabase
-          .from('property_listings')
-          .select('*')
-          .eq('id', id)
-          .eq('user_id', user.id)
-          .single();
+        console.log(`Fetching property data for ID: ${id}, User ID: ${user?.id}`);
         
-        if (error) {
-          console.error("Error fetching property:", error);
-          toast.error("Failed to load property details");
-          setLoading(false);
-          return;
-        }
+        // Fetch directly from Supabase with retry mechanism
+        const fetchWithRetry = async (attempt = 0): Promise<any> => {
+          try {
+            const { data, error } = await supabase
+              .from('property_listings')
+              .select('*')
+              .eq('id', id)
+              .eq('user_id', user?.id)
+              .single();
+              
+            if (error) {
+              console.error(`Error fetching property (attempt ${attempt + 1}):`, error);
+              
+              // Retry for permission errors that might be due to auth state lag
+              if (error.message.includes('permission denied') && attempt < 2) {
+                console.log(`Retrying fetch in 1 second (attempt ${attempt + 1})...`);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return fetchWithRetry(attempt + 1);
+              }
+              
+              throw error;
+            }
+            
+            return data;
+          } catch (err) {
+            console.error(`Fetch attempt ${attempt + 1} failed:`, err);
+            if (attempt < 2) {
+              console.log(`Retrying fetch in 1 second...`);
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              return fetchWithRetry(attempt + 1);
+            }
+            throw err;
+          }
+        };
+        
+        // Fetch with retry mechanism
+        const data = await fetchWithRetry();
         
         if (data) {
           setProperty({
@@ -121,6 +178,7 @@ const PropertyEdit: React.FC = () => {
       } catch (error) {
         console.error("Error fetching property:", error);
         toast.error("Failed to load property details");
+        setAuthError("Failed to load property. Please check that you are the owner of this property.");
       } finally {
         setLoading(false);
       }
@@ -129,7 +187,7 @@ const PropertyEdit: React.FC = () => {
     if (id) {
       fetchProperty();
     }
-  }, [id, user]);
+  }, [id, user, retryAttempt]); // Added retryAttempt to allow manual retries
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -145,6 +203,12 @@ const PropertyEdit: React.FC = () => {
     }
 
     try {
+      // First validate authentication
+      const isAuthenticated = await validateAuthState();
+      if (!isAuthenticated) {
+        throw new Error("Authentication required");
+      }
+      
       setIsProcessingImages(true);
       // Import dynamically to avoid build issues
       const imageCompression = await import('browser-image-compression');
@@ -173,28 +237,64 @@ const PropertyEdit: React.FC = () => {
         
         setUploadProgress(40 + Math.round((i / imageFiles.length) * 50)); // Next 50% for upload
         
-        // Upload to Supabase Storage
-        const { data, error } = await supabase.storage
-          .from('property_images')
-          .upload(filePath, compressedFile);
+        // Upload to Supabase Storage with retry logic
+        let uploaded = false;
+        let attempts = 0;
         
-        if (error) {
-          console.error("Error uploading image:", error);
-          continue;
+        while (!uploaded && attempts < 3) {
+          try {
+            // Validate auth state before each attempt
+            if (attempts > 0) {
+              const stillAuth = await validateAuthState();
+              if (!stillAuth) {
+                throw new Error("Authentication lost during upload");
+              }
+            }
+            
+            console.log(`Upload attempt ${attempts + 1} for ${fileName}`);
+            const { data, error } = await supabase.storage
+              .from('property_images')
+              .upload(filePath, compressedFile);
+            
+            if (error) {
+              console.error(`Upload attempt ${attempts + 1} failed:`, error);
+              attempts++;
+              if (attempts < 3) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                continue;
+              }
+              throw error;
+            }
+            
+            // Get public URL
+            const { data: urlData } = supabase.storage
+              .from('property_images')
+              .getPublicUrl(filePath);
+              
+            uploadedImageUrls.push(urlData.publicUrl);
+            uploaded = true;
+            console.log(`Successfully uploaded ${fileName} on attempt ${attempts + 1}`);
+          } catch (err) {
+            console.error(`Error on upload attempt ${attempts + 1}:`, err);
+            attempts++;
+            if (attempts >= 3) {
+              throw err;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
         }
-        
-        // Get public URL
-        const { data: urlData } = supabase.storage
-          .from('property_images')
-          .getPublicUrl(filePath);
-          
-        uploadedImageUrls.push(urlData.publicUrl);
       }
       
       setUploadProgress(100);
       return uploadedImageUrls;
     } catch (error) {
       console.error("Error processing images:", error);
+      if (String(error).includes("Authentication")) {
+        setAuthError("Authentication error during upload. Please sign in again.");
+        toast.error("Authentication error during upload");
+      } else {
+        toast.error("Failed to process images");
+      }
       throw new Error("Failed to process images");
     } finally {
       setIsProcessingImages(false);
@@ -204,8 +304,10 @@ const PropertyEdit: React.FC = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) {
-      toast.error("You must be logged in to edit a property");
+    // First validate authentication
+    const authUser = await ensureAuthenticated();
+    if (!authUser) {
+      setAuthError("Authentication required. Please sign in to save changes.");
       return;
     }
     
@@ -216,6 +318,7 @@ const PropertyEdit: React.FC = () => {
     
     setSaving(true);
     setUploadProgress(0);
+    setAuthError(null);
     
     try {
       console.log("Starting property update process");
@@ -249,41 +352,81 @@ const PropertyEdit: React.FC = () => {
         additional_images_link: formData.additionalImagesLink || null
       });
       
-      // Update in Supabase
-      const { data, error } = await supabase
-        .from('property_listings')
-        .update({
-          price: price,
-          market_price: marketPrice,
-          location: formData.location,
-          full_address: formData.full_address,
-          beds: parseInt(formData.beds) || 0,
-          baths: parseInt(formData.baths) || 0,
-          sqft: parseInt(formData.sqft) || 0,
-          description: formData.description,
-          after_repair_value: afterRepairValue,
-          estimated_rehab: estimatedRehab,
-          images: finalImages,
-          property_type: formData.propertyType,
-          additional_images_link: formData.additionalImagesLink || null,
-        })
-        .eq('id', id)
-        .select();
+      // Update in Supabase with retry logic
+      let updated = false;
+      let attempts = 0;
       
-      if (error) {
-        console.error("Error updating property:", error);
-        throw error;
+      while (!updated && attempts < 3) {
+        try {
+          // Revalidate auth before each attempt if not first attempt
+          if (attempts > 0) {
+            const stillAuth = await validateAuthState();
+            if (!stillAuth) {
+              throw new Error("Authentication lost during update");
+            }
+          }
+          
+          console.log(`Update attempt ${attempts + 1}`);
+          const { data, error } = await supabase
+            .from('property_listings')
+            .update({
+              price: price,
+              market_price: marketPrice,
+              location: formData.location,
+              full_address: formData.full_address,
+              beds: parseInt(formData.beds) || 0,
+              baths: parseInt(formData.baths) || 0,
+              sqft: parseInt(formData.sqft) || 0,
+              description: formData.description,
+              after_repair_value: afterRepairValue,
+              estimated_rehab: estimatedRehab,
+              images: finalImages,
+              property_type: formData.propertyType,
+              additional_images_link: formData.additionalImagesLink || null,
+            })
+            .eq('id', id)
+            .select();
+          
+          if (error) {
+            console.error(`Update attempt ${attempts + 1} failed:`, error);
+            attempts++;
+            if (attempts < 3) {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              continue;
+            }
+            throw error;
+          }
+          
+          console.log("Property updated successfully:", data);
+          updated = true;
+          toast.success("Property updated successfully!");
+          navigate(`/property/${id}`);
+        } catch (err) {
+          console.error(`Error on update attempt ${attempts + 1}:`, err);
+          attempts++;
+          if (attempts >= 3) {
+            throw err;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
       }
-      
-      console.log("Property updated successfully:", data);
-      toast.success("Property updated successfully!");
-      navigate(`/property/${id}`);
     } catch (error) {
       console.error("Error updating property:", error);
-      toast.error("Failed to update property");
+      
+      if (String(error).includes("Authentication") || String(error).includes("permission denied")) {
+        setAuthError("Authentication error. Please sign in again.");
+        toast.error("Authentication error while saving changes");
+      } else {
+        toast.error("Failed to update property");
+      }
     } finally {
       setSaving(false);
     }
+  };
+
+  const retryAuth = () => {
+    setRetryAttempt(prev => prev + 1);
+    validateAuthState();
   };
 
   if (loading) {
@@ -300,7 +443,7 @@ const PropertyEdit: React.FC = () => {
     );
   }
 
-  if (!property) {
+  if (!property && !authError) {
     return (
       <div className="min-h-screen bg-white">
         <Navbar />
@@ -318,7 +461,7 @@ const PropertyEdit: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FCFBF8]">
       <SEO
-        title={`Edit ${property.title} | Realer Estate`}
+        title={property ? `Edit ${property.title} | Realer Estate` : "Edit Property | Realer Estate"}
         description="Edit your property listing details"
       />
       <Navbar />
@@ -328,12 +471,27 @@ const PropertyEdit: React.FC = () => {
           <Button 
             variant="default" 
             className="flex items-center text-white bg-black hover:bg-black/90 font-bold transition-colors rounded-lg mt-12"
-            onClick={() => navigate(`/property/${id}`)}
+            onClick={() => navigate(id ? `/property/${id}` : '/dashboard')}
           >
             <ArrowLeft size={18} className="mr-2" />
-            Back to Property
+            {property ? 'Back to Property' : 'Back to Dashboard'}
           </Button>
         </div>
+        
+        {authError && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="ml-2">
+              {authError}{" "}
+              <button 
+                onClick={retryAuth}
+                className="underline font-semibold"
+              >
+                Retry
+              </button>
+            </AlertDescription>
+          </Alert>
+        )}
         
         <div className="p-6 mb-12">
           <h1 className="text-3xl font-bold mb-6">Edit Property</h1>
@@ -517,10 +675,19 @@ const PropertyEdit: React.FC = () => {
               <Button
                 type="submit"
                 className="bg-white hover:bg-white text-black font-bold px-6 py-2 relative group overflow-hidden rounded-xl"
-                disabled={saving}
+                disabled={saving || !!authError}
               >
-                <Save size={18} className="mr-2" />
-                <span className="relative z-10">{saving ? "Saving..." : "Save Changes"}</span>
+                {saving ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin mr-2" />
+                    <span className="relative z-10">Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save size={18} className="mr-2" />
+                    <span className="relative z-10">Save Changes</span>
+                  </>
+                )}
                 
                 {/* Rainbow border hover effect - adds a gradient outline only on hover */}
                 <span 

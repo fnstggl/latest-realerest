@@ -10,9 +10,11 @@ import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import BountyInput from '@/components/create-listing/BountyInput';
+import { ensureAuthenticated } from '@/utils/authUtils';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Import formSchema (small import)
 import { formSchema } from '@/components/create-listing/formSchema';
@@ -45,12 +47,18 @@ const CreateListing: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [hasPerformedAuthCheck, setHasPerformedAuthCheck] = useState(false);
+  const [uploadAttempts, setUploadAttempts] = useState(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const {
     user,
     isAuthenticated,
+    isLoading: authLoading,
     logout
   } = useAuth();
+  
+  // Form setup
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,21 +91,61 @@ const CreateListing: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Check if user is authenticated
+  // Enhanced auth check that includes validation of the session
+  const validateAuthentication = async () => {
+    // Reset any previous auth errors
+    setAuthError(null);
+    
+    if (!isAuthenticated || !user) {
+      console.error("Authentication state check failed - user not authenticated");
+      setAuthError("You must be logged in to create a listing");
+      return false;
+    }
+
+    try {
+      // Perform a direct session check to verify the auth state
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error("Session validation error:", error);
+        setAuthError("Authentication error. Please sign in again.");
+        return false;
+      }
+      
+      if (!data.session || !data.session.user) {
+        console.error("No active session found despite authentication state being true");
+        setAuthError("Your session has expired. Please sign in again.");
+        return false;
+      }
+      
+      console.log("Authentication validated successfully:", data.session.user.id);
+      return true;
+    } catch (err) {
+      console.error("Exception during authentication validation:", err);
+      setAuthError("Authentication error. Please try signing in again.");
+      return false;
+    } finally {
+      setHasPerformedAuthCheck(true);
+    }
+  };
+
+  // Check if user is authenticated with the enhanced validation
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!authLoading && !isAuthenticated) {
+      console.log("User not authenticated, redirecting to signin");
       toast.error("You must be logged in to create a listing");
       navigate('/signin', {
         state: {
           returnPath: '/sell/create'
         }
       });
-    } else {
-      console.log("Authenticated user:", user?.id);
-
+    } else if (!authLoading && isAuthenticated) {
+      validateAuthentication();
+      
       // Check storage bucket exists
       const checkStorageBucket = async () => {
         try {
+          console.log("Checking storage bucket access...");
           const {
             data,
             error
@@ -115,6 +163,7 @@ const CreateListing: React.FC = () => {
               if (createError) {
                 console.error("Failed to create bucket:", createError);
                 if (createError.message.includes("row-level security") || createError.message.includes("permission denied")) {
+                  setAuthError("Storage access issue. Please try signing in again.");
                   toast.error("You don't have permission to create a storage bucket. Please contact support.");
                 }
               } else {
@@ -130,7 +179,7 @@ const CreateListing: React.FC = () => {
       };
       checkStorageBucket();
     }
-  }, [isAuthenticated, navigate, user]);
+  }, [isAuthenticated, navigate, user, authLoading]);
 
   // Cleanup function for image processing
   useEffect(() => {
@@ -161,9 +210,14 @@ const CreateListing: React.FC = () => {
 
   // Update onSubmit to handle errors better and avoid infinite loading states
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user) {
-      toast.error("You must be logged in to create a listing");
-      navigate('/signin');
+    // Reset error state
+    setAuthError(null);
+    
+    // Verify authentication before starting
+    const authUser = await ensureAuthenticated();
+    if (!authUser) {
+      console.error("Authentication check failed at form submission");
+      setAuthError("Authentication required. Please sign in to continue.");
       return;
     }
     
@@ -178,6 +232,7 @@ const CreateListing: React.FC = () => {
     
     setIsSubmitting(true);
     setUploadProgress(0);
+    setUploadAttempts(prev => prev + 1);
 
     // Show loading toast that we can update
     const loadingToastId = toast.loading("Creating your listing...");
@@ -188,11 +243,18 @@ const CreateListing: React.FC = () => {
         throw new Error("Upload was cancelled");
       }
       
-      // Basic validation for user ID
-      if (!user.id) {
-        throw new Error("Invalid user ID");
+      // Another authentication validation just before the critical database operations
+      const authCheck = await validateAuthentication();
+      if (!authCheck) {
+        cancelUploads();
+        toast.dismiss(loadingToastId);
+        toast.error("Authentication error. Please sign in again before continuing.");
+        return;
       }
-      console.log('Creating listing for user:', user.id);
+      
+      // Add detailed logging to track auth state
+      console.log('Creating listing for authenticated user:', authUser.id);
+      console.log('Auth state:', { isAuthenticated, hasValidSession: !!authUser });
 
       // Create a temporary ID for the listing that we'll use for image organization
       const tempPropertyId = uuidv4();
@@ -216,6 +278,7 @@ const CreateListing: React.FC = () => {
         // Show specific error for permission issues
         if (uploadError.message?.includes("permission denied") || uploadError.message?.includes("row-level security")) {
           toast.dismiss(loadingToastId);
+          setAuthError("Storage permission issue. Please sign in again to refresh your session.");
           toast.error("Storage permission issue. Please check that you have permission to upload images.");
           cancelUploads();
           return;
@@ -267,7 +330,7 @@ const CreateListing: React.FC = () => {
       }, 60000); // 60 second timeout
 
       // Log the user ID being used for debugging
-      console.log("Inserting listing with user_id:", user.id, "Type:", typeof user.id);
+      console.log("Inserting listing with user_id:", authUser.id, "Type:", typeof authUser.id);
 
       try {
         // Using 'reward' instead of 'bounty' to match database column name
@@ -282,7 +345,7 @@ const CreateListing: React.FC = () => {
           baths: parseInt(values.baths) || 0,
           sqft: parseInt(values.sqft) || 0,
           images: finalImages,
-          user_id: user.id,
+          user_id: authUser.id,
           reward: values.bounty ? Number(values.bounty) : null,
           additional_images_link: values.additionalImagesLink || null,
           property_type: values.propertyType || 'House',
@@ -325,7 +388,9 @@ const CreateListing: React.FC = () => {
         // Handle specific database errors
         if (dbError.message?.includes('violates row-level security policy')) {
           toast.dismiss(loadingToastId);
+          setAuthError("Access denied. Please ensure you're properly signed in.");
           toast.error("Access denied. Please ensure you're properly signed in.");
+          
           // Force re-authentication
           logout();
           setTimeout(() => {
@@ -347,12 +412,15 @@ const CreateListing: React.FC = () => {
 
       // Show more specific error messages
       if (error.message?.includes('invalid input syntax for type uuid')) {
+        setAuthError("Authentication error. Please sign out and sign in again.");
         toast.error("Authentication error. Please sign out and sign in again.");
       } else if (error.message?.includes('foreign key constraint')) {
+        setAuthError("User account error. Please update your profile.");
         toast.error("User account error. Please update your profile.");
       } else if (error.message?.includes('violates row-level security policy')) {
+        setAuthError("Access denied. Please ensure you're properly signed in.");
         toast.error("Access denied. Please ensure you're properly signed in.");
-        console.error("RLS policy violation. User ID:", user.id);
+        console.error("RLS policy violation. User ID:", user?.id);
         // Force re-authentication
         logout();
         setTimeout(() => {
@@ -365,6 +433,7 @@ const CreateListing: React.FC = () => {
       } else if (error.message === "Upload was cancelled") {
         toast.error("Upload was cancelled");
       } else {
+        setAuthError(`Failed to create listing: ${error.message || 'Unknown error'}`);
         toast.error(`Failed to create listing: ${error.message || 'Unknown error'}`);
       }
     } finally {
@@ -401,6 +470,22 @@ const CreateListing: React.FC = () => {
           <p className="mb-8 text-lg font-playfair font-bold italic text-black">
             List your property in 60 seconds.
           </p>
+          
+          {/* Show auth errors with retry option */}
+          {authError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="ml-2">
+                {authError}{" "}
+                <button 
+                  onClick={validateAuthentication} 
+                  className="underline font-semibold"
+                >
+                  Retry authentication
+                </button>
+              </AlertDescription>
+            </Alert>
+          )}
           
           <div className="bg-white border border-black/10 p-8 rounded-xl">
             <Form {...form}>
@@ -447,7 +532,10 @@ const CreateListing: React.FC = () => {
                 </Suspense>
                 
                 <Suspense fallback={<LoadingFallback />}>
-                  <SubmitSection isSubmitting={isSubmitting} />
+                  <SubmitSection 
+                    isSubmitting={isSubmitting}
+                    hasAuthError={!!authError}
+                  />
                 </Suspense>
               </form>
             </Form>

@@ -1,6 +1,9 @@
+
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from "@/integrations/supabase/client";
 import imageCompression from 'browser-image-compression';
+import { toast } from 'sonner';
+import { validateAuthState } from '@/utils/authUtils';
 
 // Maximum image size in bytes (3MB)
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
@@ -10,6 +13,10 @@ const TARGET_COMPRESSED_SIZE = 500 * 1024;
 const MAX_IMAGE_WIDTH = 1600;
 // JPEG quality setting (0.75 = 75% quality, good balance between size and quality)
 const JPEG_QUALITY = 0.75;
+// Maximum number of retries for failed uploads
+const MAX_RETRIES = 3;
+// Delay between retries (in milliseconds)
+const RETRY_DELAY = 2000;
 
 // Use a smaller default image size for faster loading
 const DEFAULT_IMAGE = "https://source.unsplash.com/random/400x300?house";
@@ -133,6 +140,95 @@ async function compressStandardImage(file: File): Promise<File> {
 }
 
 /**
+ * Uploads a single file to Supabase storage with retry logic
+ */
+async function uploadFileWithRetry(
+  file: File, 
+  filePath: string, 
+  retryCount: number = 0
+): Promise<string | null> {
+  try {
+    console.log(`Uploading file: ${filePath} (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+    
+    // Verify authentication before each upload attempt
+    const session = await validateAuthState();
+    if (!session) {
+      console.error("Authentication failed during upload attempt");
+      toast.error("Authentication error. Please sign in again.");
+      throw new Error("User not authenticated");
+    }
+
+    // Add timeout protection for the upload
+    const uploadPromise = new Promise<{data: any, error: any}>((resolve, reject) => {
+      // Create a timeout for the upload
+      const timeoutId = setTimeout(() => {
+        reject(new Error(`Upload timeout for ${file.name}`));
+      }, 30000); // 30 second timeout
+      
+      // Attempt the upload
+      supabase.storage
+        .from('property_images')
+        .upload(filePath, file, {
+          cacheControl: '31536000', // 1 year cache for immutable assets
+          upsert: false,
+          contentType: file.type
+        })
+        .then(result => {
+          clearTimeout(timeoutId);
+          resolve(result);
+        })
+        .catch(error => {
+          clearTimeout(timeoutId);
+          reject(error);
+        });
+    });
+    
+    const { data, error } = await uploadPromise;
+    
+    if (error) {
+      console.error('Error uploading image:', error);
+      
+      // Check for auth errors that require user interaction
+      if (error.message?.includes("row-level security") || 
+          error.message?.includes("permission denied") || 
+          error.message?.includes("not authorized")) {
+        console.error("Permission denied during upload:", error);
+        throw new Error("Storage permission denied. Please sign in again to refresh your session.");
+      }
+      
+      // For other errors, try to retry if we haven't exceeded MAX_RETRIES
+      if (retryCount < MAX_RETRIES) {
+        console.log(`Retrying upload for ${file.name} in ${RETRY_DELAY/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        return await uploadFileWithRetry(file, filePath, retryCount + 1);
+      }
+      
+      // If we've exhausted retries, throw the error
+      throw error;
+    }
+    
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('property_images')
+      .getPublicUrl(filePath);
+    
+    console.log(`Successfully uploaded: ${filePath}`, publicUrl);
+    return publicUrl;
+  } catch (err) {
+    console.error(`Upload error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, err);
+    
+    // Try again if we haven't exceeded MAX_RETRIES
+    if (retryCount < MAX_RETRIES) {
+      console.log(`Retrying upload for ${file.name} in ${RETRY_DELAY/1000} seconds...`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      return await uploadFileWithRetry(file, filePath, retryCount + 1);
+    }
+    
+    return null;
+  }
+}
+
+/**
  * Uploads images to Supabase storage with compression and optimization
  * Added better error handling and concurrency control
  */
@@ -147,6 +243,16 @@ export const uploadImagesToSupabase = async (
   const folderName = propertyId ? `property-${propertyId}` : `listing-${uuidv4()}`;
   
   try {
+    // Validate authentication first before proceeding with upload
+    const session = await validateAuthState();
+    if (!session) {
+      console.error("User not authenticated for image upload");
+      toast.error("Authentication required. Please sign in to upload images.");
+      throw new Error("User not authenticated");
+    }
+    
+    console.log("Authentication validated successfully for upload");
+    
     // Test bucket access before proceeding with full upload
     try {
       console.log("Testing storage bucket access...");
@@ -157,6 +263,7 @@ export const uploadImagesToSupabase = async (
       if (testError) {
         console.error("Storage bucket access test failed:", testError);
         if (testError.message?.includes("row-level security") || testError.message?.includes("permission denied")) {
+          toast.error("Storage access denied. Please sign in again to refresh your session.");
           throw new Error("Storage permission denied. Please make sure you're logged in and have permission to upload images.");
         }
       }
@@ -187,96 +294,35 @@ export const uploadImagesToSupabase = async (
     
     // Step 2: Upload compressed files with improved error handling
     const results: string[] = [];
-    // Reduce concurrency to avoid overwhelming the API - use sequential uploads to prevent race conditions
-    const concurrencyLimit = 1; // Process one file at a time for reliability
     
-    // Process files in batches with lower concurrency
-    for (let i = 0; i < compressedFiles.length; i += concurrencyLimit) {
-      const batch = compressedFiles.slice(i, i + concurrencyLimit);
+    // Process files in batches with lower concurrency (1 file at a time for reliability)
+    for (let i = 0; i < compressedFiles.length; i++) {
+      const file = compressedFiles[i];
       const progressStart = 30 + (i / compressedFiles.length) * 50;
       
-      const batchPromises = batch.map(async (file, batchIndex) => {
-        const currentIndex = i + batchIndex;
-        const progressIncrement = 50 / compressedFiles.length;
-        
-        try {
-          // Create a unique but descriptive filename
-          const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
-                          file.type === 'image/png' ? 'png' : 
-                          file.name.split('.').pop();
-          const fileName = `${currentIndex}-${Date.now().toString().slice(-6)}.${fileExt}`;
-          const filePath = `${folderName}/${fileName}`;
-          
-          console.log(`Uploading file ${currentIndex + 1}/${compressedFiles.length}: ${filePath}`);
-          
-          // Add timeout protection for each upload
-          const uploadPromise = new Promise<{data: any, error: any}>((resolve, reject) => {
-            // Create a timeout for the upload
-            const timeoutId = setTimeout(() => {
-              reject(new Error(`Upload timeout for ${file.name}`));
-            }, 30000); // 30 second timeout
-            
-            // Attempt the upload
-            supabase.storage
-              .from('property_images')
-              .upload(filePath, file, {
-                cacheControl: '31536000', // 1 year cache for immutable assets
-                upsert: false,
-                contentType: file.type
-              })
-              .then(result => {
-                clearTimeout(timeoutId);
-                resolve(result);
-              })
-              .catch(error => {
-                clearTimeout(timeoutId);
-                reject(error);
-              });
-          });
-          
-          const { data, error } = await uploadPromise;
-          
-          if (error) {
-            console.error('Error uploading image:', error);
-            // Check specifically for RLS policy errors
-            if (error.message?.includes("row-level security") || error.message?.includes("permission denied")) {
-              throw new Error("Storage permission denied. Please make sure you're logged in and have the correct permissions to upload images.");
-            }
-            return null;
-          }
-          
-          // Get public URL
-          const { data: { publicUrl } } = supabase.storage
-            .from('property_images')
-            .getPublicUrl(filePath);
-          
-          console.log(`Successfully uploaded: ${filePath}`, publicUrl);
-          
-          // Update progress within batch
-          if (onProgress) {
-            onProgress(Math.min(80, progressStart + progressIncrement * (batchIndex + 1)));
-          }
-            
-          return publicUrl;
-        } catch (err) {
-          console.error('Error processing file:', err);
-          return null;
-        }
-      });
-      
       try {
-        // Wait for current batch to complete before processing next batch
-        const batchResults = await Promise.all(batchPromises);
+        // Create a unique but descriptive filename
+        const fileExt = file.type === 'image/jpeg' ? 'jpg' : 
+                      file.type === 'image/png' ? 'png' : 
+                      file.name.split('.').pop();
+        const fileName = `${i}-${Date.now().toString().slice(-6)}.${fileExt}`;
+        const filePath = `${folderName}/${fileName}`;
         
-        // Filter successful uploads and add to results
-        batchResults.forEach(result => {
-          if (result) {
-            results.push(result);
-          }
-        });
-      } catch (batchError) {
-        console.error('Error in upload batch:', batchError);
-        throw batchError; // Re-throw to handle in the main try-catch
+        console.log(`Uploading file ${i + 1}/${compressedFiles.length}: ${filePath}`);
+        
+        // Use the retry mechanism for uploads
+        const publicUrl = await uploadFileWithRetry(file, filePath);
+        
+        if (publicUrl) {
+          results.push(publicUrl);
+        }
+        
+        // Update progress
+        if (onProgress) {
+          onProgress(Math.min(80, progressStart + (50 / compressedFiles.length)));
+        }
+      } catch (err) {
+        console.error('Error processing file:', err);
       }
     }
     
@@ -291,6 +337,7 @@ export const uploadImagesToSupabase = async (
     console.error('Error in image upload process:', error);
     // Provide specific error messages for common issues
     if (error.message?.includes("row-level security") || error.message?.includes("permission denied")) {
+      toast.error("Storage permission denied. Please sign in again to refresh your session.");
       throw new Error("Storage permission denied. Please make sure you're logged in and have the correct permissions to upload images.");
     }
     // Throw the error to be handled by the calling code

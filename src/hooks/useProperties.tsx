@@ -1,6 +1,8 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { validateAuthState } from '@/utils/authUtils';
 
 export interface Property {
   id: string;
@@ -14,7 +16,7 @@ export interface Property {
   updated_at: string;
   after_repair_value?: number;
   estimated_rehab?: number;
-  reward?: number; // This is the correct property name from the database
+  reward?: number;
   title: string;
   location: string;
   description?: string;
@@ -23,6 +25,11 @@ export interface Property {
   full_address?: string;
   additional_images?: string;
   additional_images_link?: string;
+  // Derived properties for UI
+  marketPrice?: number;
+  belowMarket?: number;
+  image?: string;
+  waitlistCount?: number;
 }
 
 export interface WaitlistUser {
@@ -43,9 +50,32 @@ export const useProperties = (userId: string | undefined) => {
   const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [authValid, setAuthValid] = useState(true);
+
+  const validateAuth = useCallback(async () => {
+    try {
+      const session = await validateAuthState();
+      const isValid = !!session?.user;
+      setAuthValid(isValid);
+      return isValid;
+    } catch (err) {
+      console.error("Auth validation error:", err);
+      setAuthValid(false);
+      return false;
+    }
+  }, []);
 
   const fetchUserProperties = useCallback(async () => {
     if (!userId) {
+      setIsLoading(false);
+      return;
+    }
+    
+    // Validate auth before fetching
+    const isAuthValid = await validateAuth();
+    if (!isAuthValid) {
+      console.error("Authentication validation failed, cannot fetch properties");
+      setError("Authentication error");
       setIsLoading(false);
       return;
     }
@@ -69,26 +99,23 @@ export const useProperties = (userId: string | undefined) => {
       }
       
       if (data && data.length > 0) {
-        // Transform data to match our Property interface
-        const formattedProperties = data.map(prop => ({
-          id: prop.id,
-          title: prop.title,
-          price: Number(prop.price),
-          marketPrice: Number(prop.market_price),
-          image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://placehold.co/600x400?text=Property+Image",
-          location: prop.location,
-          beds: prop.beds || 0,
-          baths: prop.baths || 0,
-          sqft: prop.sqft || 0,
-          belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100),
-          waitlistCount: 0,
-          reward: Number(prop.reward || 0) // Map reward to reward
-        }));
+        // Transform data to include derived properties for UI
+        const properties = data.map(prop => {
+          const property: Property = {
+            ...prop,
+            // Add derived properties
+            marketPrice: Number(prop.market_price),
+            belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100),
+            image: prop.images && prop.images.length > 0 ? prop.images[0] : "https://placehold.co/600x400?text=Property+Image",
+            waitlistCount: 0
+          };
+          return property;
+        });
         
-        setMyProperties(formattedProperties);
+        setMyProperties(properties);
         
         // Fetch waitlist counts for each property
-        fetchWaitlistCounts(formattedProperties);
+        fetchWaitlistCounts(properties);
       } else {
         setMyProperties([]);
       }
@@ -98,7 +125,7 @@ export const useProperties = (userId: string | undefined) => {
     } finally {
       setIsLoading(false);
     }
-  }, [userId]);
+  }, [userId, validateAuth]);
 
   const fetchWaitlistCounts = async (properties: Property[]) => {
     if (!properties.length) return;
@@ -141,6 +168,13 @@ export const useProperties = (userId: string | undefined) => {
 
   const fetchWaitlistRequests = useCallback(async () => {
     if (!userId) {
+      return;
+    }
+
+    // Validate auth before fetching
+    const isAuthValid = await validateAuth();
+    if (!isAuthValid) {
+      console.error("Authentication validation failed, cannot fetch waitlist requests");
       return;
     }
     
@@ -196,7 +230,7 @@ export const useProperties = (userId: string | undefined) => {
     } catch (error) {
       console.error("Error fetching waitlist data:", error);
     }
-  }, [userId]);
+  }, [userId, validateAuth]);
 
   useEffect(() => {
     let isMounted = true;
@@ -235,7 +269,7 @@ export const useProperties = (userId: string | undefined) => {
       clearTimeout(timeoutId);
       supabase.removeChannel(waitlistSubscription);
     };
-  }, [userId, fetchUserProperties]);
+  }, [userId, fetchUserProperties, fetchWaitlistRequests]);
 
   return {
     myProperties,
@@ -245,7 +279,9 @@ export const useProperties = (userId: string | undefined) => {
     isLoading,
     setIsLoading,
     error,
+    authValid,
     refreshProperties: fetchUserProperties,
-    refreshWaitlist: fetchWaitlistRequests
+    refreshWaitlist: fetchWaitlistRequests,
+    validateAuth
   };
 };
