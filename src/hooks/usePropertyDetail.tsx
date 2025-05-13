@@ -1,77 +1,70 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { useUserProfiles } from './useUserProfiles';
+import { useUserProfiles } from '@/hooks/useUserProfiles';
 
-type PropertyDetailType = {
+interface PropertyDetail {
   id: string;
   title: string;
   price: number;
-  market_price: number;
+  marketPrice: number;
   location: string;
-  full_address: string;
-  description: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  images: string[];
-  user_id: string;
-  below_market: number;
-  seller_name: string;
-  seller_email: string;
-  seller_phone: string;
-  seller_id: string;
-  reward: number | null;
-  after_repair_value?: number;
-  estimated_rehab?: number;
-  property_type?: string;
-  year_built?: number | null;
-  lot_size?: number | null;
-  parking?: string | null;
-  comparable_addresses?: string[];
-  created_at?: string;
-  additional_images_link?: string | null;
-};
-
-export interface PropertyDetail {
-  id: string;
-  price: number;
-  market_price: number;
-  beds: number;
-  baths: number;
-  sqft: number;
-  title: string;
-  location: string;
+  fullAddress?: string;
   description?: string;
+  beds: number;
+  baths: number;
+  sqft: number;
   images: string[];
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-  after_repair_value?: number;
-  estimated_rehab?: number;
-  reward?: number;
-  full_address?: string;
-  property_type?: string;
-  additional_images_link?: string;
-  // Add these optional properties
-  year_built?: number;
-  lot_size?: number;
-  parking?: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  afterRepairValue?: number | null;
+  estimatedRehab?: number | null;
+  reward?: number | null;
+  belowMarket: number;
+  userName?: string;
+  userEmail?: string;
+  propertyType?: string;
+  additionalImagesLink?: string | null;
+  yearBuilt?: string | null;
+  lotSize?: string | null;
+  parking?: string | null;
+  // For backward compatibility with existing code
+  seller_name?: string | null; 
+  seller_email?: string | null;
+  seller_phone?: string | null;
+  seller_id?: string | null;
+  comparable_addresses?: string[];
+}
+
+export interface WaitlistStatus {
+  isOnWaitlist: boolean;
+  isApproved: boolean;
+  requestId?: string;
+}
+
+export interface PropertyUser {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
 }
 
 const usePropertyDetail = (propertyId?: string) => {
   const { user } = useAuth();
   const { getUserProfile } = useUserProfiles();
-  const [property, setProperty] = useState<PropertyDetailType | null>(null);
+  const [property, setProperty] = useState<PropertyDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [sellerInfo, setSellerInfo] = useState<{ name: string | null; phone: string | null; email: string | null }>({ name: null, phone: null, email: null });
-  const [waitlistStatus, setWaitlistStatus] = useState<string | null>(null);
+  const [waitlistStatus, setWaitlistStatus] = useState<WaitlistStatus | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
   const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
 
-  const fetchPropertyData = async () => {
+  const fetchPropertyData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -126,34 +119,33 @@ const usePropertyDetail = (propertyId?: string) => {
         
         const sellerEmail = sellerProfile?.email || '';
 
-        const mappedProperty: PropertyDetailType = {
+        const mappedProperty: PropertyDetail = {
           id: propertyData.id,
           title: propertyData.title,
           price: Number(propertyData.price),
-          market_price: Number(propertyData.market_price),
+          marketPrice: Number(propertyData.market_price),
           location: propertyData.location,
-          full_address: propertyData.full_address || '',
+          fullAddress: propertyData.full_address || '',
           description: propertyData.description || '',
           beds: propertyData.beds,
           baths: propertyData.baths,
           sqft: propertyData.sqft,
           images: propertyData.images || [],
-          user_id: propertyData.user_id,
-          below_market: parseFloat(belowMarket),
-          seller_name: sellerName,
-          seller_email: sellerEmail,
-          seller_phone: '',
-          seller_id: propertyData.user_id,
+          userId: propertyData.user_id,
+          createdAt: propertyData.created_at,
+          updatedAt: propertyData.updated_at,
+          afterRepairValue: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : null,
+          estimatedRehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : null,
           reward: rewardAmount,
-          after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
-          estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
-          property_type: propertyData.property_type,
-          year_built: propertyData.year_built || null,
-          lot_size: propertyData.lot_size || null,
-          parking: propertyData.parking || null,
-          comparable_addresses: propertyData.comparable_addresses,
-          created_at: propertyData.created_at,
-          additional_images_link: propertyData.additional_images_link || null
+          belowMarket: parseFloat(belowMarket),
+          userName: sellerName,
+          userEmail: sellerEmail,
+          propertyType: propertyData.property_type,
+          additionalImagesLink: propertyData.additional_images_link || null,
+          yearBuilt: propertyData.property_type?.includes("Land") ? null : "2000", // Default values or extracted from API
+          lotSize: propertyData.property_type?.includes("Land") ? "0.5 acres" : null,
+          parking: propertyData.property_type?.includes("Condo") ? "Garage" : "Street",
+          comparable_addresses: propertyData.comparable_addresses || [],
         };
 
         setProperty(mappedProperty);
@@ -179,15 +171,16 @@ const usePropertyDetail = (propertyId?: string) => {
             email: sellerData.email || null
           });
 
-          setProperty(prev => {
-            if (!prev) return null;
-            return {
-              ...prev,
-              seller_name: name,
-              seller_email: sellerData.email || sellerEmail,
-              seller_phone: sellerData.phone || '',
-            };
-          });
+          // Update seller-related properties
+          const updatedProperty = {
+            ...mappedProperty,
+            seller_name: name,
+            seller_email: sellerData.email || sellerEmail,
+            seller_phone: sellerData.phone || '',
+            seller_id: sellerData.id
+          };
+          
+          setProperty(updatedProperty);
         }
 
         const { data: authData } = await supabase.auth.getUser();
@@ -198,7 +191,7 @@ const usePropertyDetail = (propertyId?: string) => {
         // Auto-approve all non-owner users - this is the key change
         if (!isCurrentUserOwner) {
           setIsApproved(true);
-          setWaitlistStatus('approved');
+          setWaitlistStatus({ isOnWaitlist: true, isApproved: true });
         }
       }
     } catch (err: any) {
@@ -207,11 +200,11 @@ const usePropertyDetail = (propertyId?: string) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [propertyId, getUserProfile]);
 
   useEffect(() => {
     fetchPropertyData();
-  }, [propertyId]);
+  }, [propertyId, fetchPropertyData]);
 
   useEffect(() => {
     setShouldShowSellerInfo(isOwner || isApproved);

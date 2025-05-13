@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -206,27 +205,9 @@ export const usePropertyExtractor = (form: UseFormReturn<z.infer<typeof formSche
           form.setValue('price', price);
           extracted.price = true;
           
-          // Only set market price if specifically found in the text - don't auto-calculate
-          const marketPricePatterns = [
-            /(?:Market\s*Price|Market\s*Value|Appraised|Comps|Comparables|Comp)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-            /(?:Market|Appraised|Comps|Comparables|Comp)\s*[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i
-          ];
-          
-          let marketPriceFound = false;
-          for (const mpPattern of marketPricePatterns) {
-            const marketMatch = normalizedText.match(mpPattern);
-            if (marketMatch) {
-              let marketPrice = marketMatch[1].replace(/,/g, '');
-              if (marketPrice.toLowerCase().endsWith('k')) {
-                marketPrice = (parseFloat(marketPrice.toLowerCase().replace('k', '')) * 1000).toString();
-              }
-              form.setValue('marketPrice', marketPrice);
-              extracted.marketPrice = true;
-              marketPriceFound = true;
-              break;
-            }
-          }
-          
+          const marketPrice = Math.round(parseFloat(price) * 1.1);
+          form.setValue('marketPrice', String(marketPrice));
+          extracted.marketPrice = true;
           break;
         }
       }
@@ -375,9 +356,11 @@ export const usePropertyExtractor = (form: UseFormReturn<z.infer<typeof formSche
                 if (!extracted.price && extractedData.price) {
                   const price = String(extractedData.price).replace(/[$,]/g, '');
                   form.setValue('price', price);
-                }
-                if (!extracted.marketPrice && extractedData.marketPrice) {
-                  form.setValue('marketPrice', String(extractedData.marketPrice).replace(/[$,]/g, ''));
+                  
+                  if (!extracted.marketPrice) {
+                    const marketPrice = Math.round(parseFloat(price) * 1.1);
+                    form.setValue('marketPrice', String(marketPrice));
+                  }
                 }
                 if (!extracted.arv && extractedData.arv) {
                   form.setValue('afterRepairValue', String(extractedData.arv).replace(/[$,]/g, ''));
@@ -395,8 +378,14 @@ export const usePropertyExtractor = (form: UseFormReturn<z.infer<typeof formSche
         }
       }
       
-      // Remove auto-calculation of estimated rehab cost
-      // Only set if explicitly found in the text or via the Cohere API
+      const arv = form.getValues('afterRepairValue');
+      const price = form.getValues('price');
+      if (!extracted.rehab && arv && price) {
+        const estimatedRehab = Math.round((parseFloat(arv) - parseFloat(price)) * 0.7);
+        if (estimatedRehab > 0) {
+          form.setValue('estimatedRehab', String(estimatedRehab));
+        }
+      }
 
       const anyFieldExtracted = Object.values(extracted).some(value => value === true);
       if (anyFieldExtracted) {

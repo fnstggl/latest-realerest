@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -156,7 +155,7 @@ const CreateListing: React.FC = () => {
     setUploadProgress(0);
   };
 
-  // Update onSubmit to handle errors better and avoid infinite loading states
+  // Update onSubmit to include additionalImagesLink
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) {
       toast.error("You must be logged in to create a listing");
@@ -167,23 +166,12 @@ const CreateListing: React.FC = () => {
       toast.error("Please upload at least one image");
       return;
     }
-    
-    // Create a new abort controller for this submission
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
-    
     setIsSubmitting(true);
     setUploadProgress(0);
 
     // Show loading toast that we can update
     const loadingToastId = toast.loading("Creating your listing...");
-    
     try {
-      // Check if the request was aborted
-      if (signal.aborted) {
-        throw new Error("Upload was cancelled");
-      }
-      
       // Basic validation for user ID
       if (!user.id) {
         throw new Error("Invalid user ID");
@@ -203,14 +191,8 @@ const CreateListing: React.FC = () => {
       // Upload images to Supabase storage using the enhanced service
       // We pass the tempPropertyId for better organization in storage
       const uploadedImageUrls = await uploadImagesToSupabase(imageFiles, tempPropertyId, progress => {
-        if (signal.aborted) return;
         setUploadProgress(progress);
       });
-
-      // Check if the request was aborted during image upload
-      if (signal.aborted) {
-        throw new Error("Upload was cancelled");
-      }
 
       // Use uploaded URLs or fallback to default
       const finalImages = uploadedImageUrls.length > 0 ? uploadedImageUrls : [DEFAULT_IMAGE];
@@ -222,8 +204,8 @@ const CreateListing: React.FC = () => {
       const fullAddress = values.address;
 
       // Calculate below market percentage
-      const price = Number(values.price) || 0;
-      const marketPrice = Number(values.marketPrice) || 0;
+      const price = Number(values.price);
+      const marketPrice = Number(values.marketPrice);
       const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
 
       // Generate title with property type and location
@@ -235,19 +217,10 @@ const CreateListing: React.FC = () => {
       });
       setUploadProgress(97);
 
-      // Add timeout protection to prevent infinite loading
-      const timeoutId = setTimeout(() => {
-        if (isSubmitting) {
-          cancelUploads();
-          toast.dismiss(loadingToastId);
-          toast.error("Submission timed out. Please try again.");
-        }
-      }, 60000); // 60 second timeout
-
       // Log the user ID being used for debugging
       console.log("Inserting listing with user_id:", user.id, "Type:", typeof user.id);
 
-      // Using 'reward' instead of 'bounty' to match database column name
+      // Fixed: Using 'reward' instead of 'bounty' to match database column name
       const { data, error } = await supabase.from('property_listings').insert({
         title: title,
         price: price,
@@ -255,20 +228,14 @@ const CreateListing: React.FC = () => {
         location: location,
         full_address: fullAddress,
         description: values.description,
-        beds: parseInt(values.beds) || 0,
-        baths: parseInt(values.baths) || 0,
-        sqft: parseInt(values.sqft) || 0,
+        beds: parseInt(values.beds),
+        baths: parseInt(values.baths),
+        sqft: parseInt(values.sqft),
         images: finalImages,
         user_id: user.id,
         reward: values.bounty ? Number(values.bounty) : null,
-        additional_images_link: values.additionalImagesLink || null,
-        property_type: values.propertyType || 'House',
-        after_repair_value: values.afterRepairValue ? Number(values.afterRepairValue) : null,
-        estimated_rehab: values.estimatedRehab ? Number(values.estimatedRehab) : null
+        additional_images_link: values.additionalImagesLink || null  // Add the additional images link
       }).select();
-      
-      // Clear timeout since we got a response
-      clearTimeout(timeoutId);
       
       if (error) {
         console.error("Supabase error:", error);
@@ -284,7 +251,7 @@ const CreateListing: React.FC = () => {
       if (data?.[0]?.id) {
         try {
           // Create notification using our service
-          await createNotification(data[0].id, values.propertyType || 'Property', values.city || '', values.state || '');
+          await createNotification(data[0].id, values.propertyType, values.city, values.state);
           console.log("Notification created for new property");
         } catch (notifyError) {
           console.error("Could not create notification:", notifyError);
@@ -315,8 +282,6 @@ const CreateListing: React.FC = () => {
             }
           });
         }, 1500);
-      } else if (error.message === "Upload was cancelled") {
-        toast.error("Upload was cancelled");
       } else {
         toast.error(`Failed to create listing: ${error.message || 'Unknown error'}`);
       }

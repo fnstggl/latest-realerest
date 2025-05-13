@@ -19,8 +19,8 @@ const Index: React.FC = () => {
           "@context": "https://schema.org",
           "@type": "Organization",
           "name": "Realer Estate",
-          "url": "https://realerestate.org",
-          "logo": "https://realerestate.org/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png",
+          "url": window.location.origin,
+          "logo": `${window.location.origin}/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png`,
           "sameAs": [],
           "description": "Find below market real estate deals & investment opportunities at Realer Estate. Get motivated sellers and off-market properties.",
           "address": {

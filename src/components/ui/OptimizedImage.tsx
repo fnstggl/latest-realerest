@@ -11,7 +11,7 @@ export interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageEl
 
 /**
  * OptimizedImage component that implements best practices for image loading and rendering
- * with improved HEIC file support
+ * with improved performance and loading states and better error handling
  */
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
@@ -21,66 +21,123 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   height,
   sizes = '100vw',
   priority = false,
+  loading,
   ...rest
 }) => {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [imageSrc, setImageSrc] = useState(src);
+  const [retryCount, setRetryCount] = useState(0);
+  const maxRetries = 2;
   
-  // Check if the image is from an external source or local
-  const isExternal = src.startsWith('http') || src.startsWith('//');
-  
-  // Default widths for responsive images
-  const defaultSrcSet = isExternal ? undefined : 
-    `${src} 640w, ${src} 750w, ${src} 828w, ${src} 1080w, ${src} 1200w`;
-  
-  // Handle HEIC/HEIF files specifically
-  const isHeicFile = src.toLowerCase().includes('.heic') || 
-                    src.toLowerCase().includes('.heif') ||
-                    (src.startsWith('blob:') && rest['data-heic'] === 'true');
-  
-  // Effect to handle HEIC files when src changes
+  // Reset error state when src changes
   useEffect(() => {
-    setImageSrc(src);
     setHasError(false);
     setIsLoading(true);
-    
-    // For blob URLs that are HEIC files, we need to ensure they render properly
-    if (isHeicFile && src.startsWith('blob:')) {
-      console.log('Processing HEIC file for display:', src);
-      // We already have a blob URL, but we need to ensure it's properly set
-      // The actual conversion should happen in the ImageUploader component
+    setRetryCount(0);
+  }, [src]);
+  
+  // Check if the image is from an external source or local
+  const isExternal = src ? (src.startsWith('http') || src.startsWith('//')) : true;
+  
+  // Check if image might be a HEIC/HEIF format based on URL parameters
+  const isHeicFormat = src ? src.includes('format=heic') : false;
+  
+  // Check if URL is from Supabase storage
+  const isSupabaseStorageUrl = src && 
+    (src.includes('supabase.co') && src.includes('/storage/v1/object/public/'));
+  
+  // Generate appropriate srcSet for responsive images
+  const generateSrcSet = () => {
+    if (!src || isExternal || isHeicFormat) {
+      return undefined; // For external or HEIC images, browser handles this better
     }
-  }, [src, isHeicFile]);
-
+    
+    // For local images, create responsive breakpoints
+    const widths = [640, 750, 828, 1080, 1200, 1920];
+    return widths.map(w => `${src} ${w}w`).join(', ');
+  };
+  
+  // Set loading attribute based on priority
+  const loadingAttribute = priority ? 'eager' : loading || 'lazy';
+  
+  // Add fetchpriority attribute if supported
+  const fetchPriority = priority ? 'high' : 'auto';
+  
+  // Better placeholder for when image fails to load
+  const placeholderImage = '/placeholder.svg';
+  
+  // Handle image src safely with retry mechanism for Supabase storage URLs
+  let safeImageSrc = src || placeholderImage;
+  
+  // Add special handling for Supabase storage URLs
+  if (isSupabaseStorageUrl) {
+    try {
+      // Parse the Supabase URL
+      const urlObj = new URL(safeImageSrc);
+      
+      // Check if this is a Supabase storage URL that might be affected by policy issues
+      if (urlObj.pathname.includes('/storage/v1/object/public/')) {
+        // Ensure we're using the latest version and bypass any caching issues
+        if (retryCount > 0) {
+          // Add cache-busting parameter if retrying
+          urlObj.searchParams.set('t', Date.now().toString());
+          urlObj.searchParams.set('retry', retryCount.toString());
+        }
+        safeImageSrc = urlObj.toString();
+      }
+    } catch (e) {
+      console.error("Error parsing Supabase URL:", e);
+      // Continue with original URL if parsing fails
+    }
+  }
+  
+  // Handle retry logic
+  const handleImageError = () => {
+    console.error(`Failed to load image: ${safeImageSrc}`);
+    
+    if (isSupabaseStorageUrl && retryCount < maxRetries) {
+      console.log(`Retrying Supabase image load (${retryCount + 1}/${maxRetries}): ${safeImageSrc}`);
+      setRetryCount(prevCount => prevCount + 1);
+      // Keep loading state true as we're retrying
+    } else {
+      setHasError(true);
+      setIsLoading(false);
+    }
+  };
+  
   return (
-    <div className={`relative ${className}`} style={{ minHeight: "20px" }}>
+    <div 
+      className={`relative overflow-hidden ${className}`} 
+      style={{ minHeight: "20px" }}
+      data-image-type={isHeicFormat ? 'heic-converted' : 'standard'}
+      data-supabase-storage={isSupabaseStorageUrl ? 'true' : 'false'}
+      data-retry-count={retryCount}
+    >
       {isLoading && (
         <div className="absolute inset-0 bg-gray-100 animate-pulse"></div>
       )}
       
       <img
-        src={hasError ? '/placeholder.svg' : imageSrc}
+        src={hasError ? placeholderImage : safeImageSrc}
         alt={alt || ''}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         width={width}
         height={height}
         sizes={sizes}
-        loading={priority ? 'eager' : 'lazy'}
+        loading={loadingAttribute}
         decoding={priority ? 'sync' : 'async'}
-        srcSet={defaultSrcSet}
+        srcSet={generateSrcSet()}
         onLoad={() => setIsLoading(false)}
-        onError={(e) => {
-          // Log details for debugging
-          console.error(`Failed to load image: ${src}${isHeicFile ? ' (HEIC format)' : ''}`);
-          if (isHeicFile) {
-            console.warn("HEIC file handling error. Check conversion process.");
-          }
-          setHasError(true);
-          setIsLoading(false);
-        }}
+        onError={handleImageError}
+        fetchPriority={fetchPriority as any}
         {...rest}
       />
+      
+      {hasError && !isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-xs">
+          Image not available
+        </div>
+      )}
     </div>
   );
 };

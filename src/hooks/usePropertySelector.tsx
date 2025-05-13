@@ -16,6 +16,7 @@ export interface PropertyOption {
   sqft: number;
   belowMarket: number;
   images?: string[];
+  reward?: number | null;  // Changed from 'bounty' to 'reward' to match database
 }
 
 export const usePropertySelector = () => {
@@ -54,7 +55,8 @@ export const usePropertySelector = () => {
             baths: prop.baths || 0,
             sqft: prop.sqft || 0,
             belowMarket: Math.round(((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price)) * 100),
-            images: prop.images
+            images: prop.images,
+            reward: prop.reward  // Using reward to match database field
           }));
           
           setProperties(formattedProperties);
