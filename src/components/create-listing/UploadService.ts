@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ensureAuthenticated } from "@/utils/authUtils";
@@ -102,8 +101,8 @@ export const uploadFileWithRetry = async (
     }
     
     // Get the current user to include in metadata
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData?.user) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
       console.error("Failed to get current user for metadata");
       throw new Error("User not authenticated. Upload aborted.");
     }
@@ -123,7 +122,7 @@ export const uploadFileWithRetry = async (
           upsert: false,
           contentType: file.type,
           metadata: {
-            owner: userData.user.id
+            owner: user.id
           }
         })
         .then(result => {
@@ -210,61 +209,27 @@ export const uploadFileWithRetry = async (
   }
 };
 
-// The uploadImagesToSupabase function needed by CreateListing.tsx
-export const uploadImagesToSupabase = async (
-  imageFiles: File[], 
-  propertyId: string,
-  onProgressUpdate?: (progress: number) => void
-): Promise<string[]> => {
+export const processAndUploadImages = async (imageFiles: File[]): Promise<string[]> => {
   if (!imageFiles || imageFiles.length === 0) {
-    console.log("No images to upload");
     return [];
   }
 
-  console.log(`Starting to upload ${imageFiles.length} images for property ${propertyId}`);
+  console.log(`Starting to process and upload ${imageFiles.length} images`);
   
   try {
-    // Verify authentication before starting
-    const authUser = await ensureAuthenticated(false);
-    if (!authUser) {
-      console.error("Authentication check failed in uploadImagesToSupabase");
-      toast.error("Authentication required. Please sign in to continue.");
-      return [];
-    }
-    
-    // Generate a batch ID for this group of uploads (use propertyId if provided)
-    const batchPath = `properties/${propertyId || uuidv4().slice(0, 8)}`;
-    console.log(`Using batch path: ${batchPath}`);
-    
-    // First preprocess all images (convert/compress)
-    const totalSteps = imageFiles.length * 2; // Preprocess + upload for each file
-    let completedSteps = 0;
-    
-    if (onProgressUpdate) onProgressUpdate(5); // Start with 5%
-    
-    const preprocessPromises = imageFiles.map(async (file) => {
-      const processedFile = await preprocessImage(file);
-      completedSteps++;
-      if (onProgressUpdate) {
-        const progress = Math.round((completedSteps / totalSteps) * 90) + 5; // 5-95%
-        onProgressUpdate(progress);
-      }
-      return processedFile;
-    });
-    
+    // Preprocess all images in parallel first (convert/compress)
+    const preprocessPromises = imageFiles.map(file => preprocessImage(file));
     const processedFiles = await Promise.all(preprocessPromises);
+    
     console.log("All images preprocessed, starting uploads");
     
-    // Upload all files with retry logic
-    const uploadPromises = processedFiles.map(async (file) => {
-      const result = await uploadFileWithRetry(file, batchPath);
-      completedSteps++;
-      if (onProgressUpdate) {
-        const progress = Math.round((completedSteps / totalSteps) * 90) + 5; // 5-95%
-        onProgressUpdate(progress);
-      }
-      return result;
-    });
+    // Generate a batch ID for this group of uploads
+    const batchId = uuidv4().slice(0, 8);
+    
+    // Upload all images (with retries baked in)
+    const uploadPromises = processedFiles.map(file => 
+      uploadFileWithRetry(file, `properties/${batchId}`)
+    );
     
     const results = await Promise.all(uploadPromises);
     
@@ -281,113 +246,11 @@ export const uploadImagesToSupabase = async (
       toast.error(`Some images failed to upload: ${errorMessages}`);
     }
     
-    if (onProgressUpdate) onProgressUpdate(100); // Complete
     console.log(`Upload complete: ${uploadedUrls.length} successful, ${failedUploads.length} failed`);
     return uploadedUrls;
   } catch (error) {
-    console.error("Error in uploadImagesToSupabase:", error);
+    console.error("Error in processAndUploadImages:", error);
     toast.error("Failed to process and upload images");
-    if (onProgressUpdate) onProgressUpdate(0); // Reset progress on error
     return [];
   }
-};
-
-// Add the createNotification function that is being imported in CreateListing.tsx
-export const createNotification = async (
-  propertyId: string,
-  propertyType: string = 'Property',
-  city: string = '',
-  state: string = ''
-): Promise<void> => {
-  try {
-    const authUser = await ensureAuthenticated(false);
-    if (!authUser) {
-      console.error("Authentication check failed in createNotification");
-      return;
-    }
-    
-    const location = city && state ? `${city}, ${state}` : "a new location";
-    
-    // Create a notification for new property listing
-    const { error } = await supabase
-      .from('notifications')
-      .insert({
-        title: "New Property Listed",
-        message: `A new ${propertyType} in ${location} was just listed`,
-        type: "property",
-        properties: { propertyId },
-        user_id: authUser.id // Add the user_id field that was missing
-      });
-    
-    if (error) {
-      console.error("Failed to create notification:", error);
-    } else {
-      console.log("Notification created for new property");
-    }
-  } catch (error) {
-    console.error("Error creating notification:", error);
-  }
-};
-
-// Add function to delete property images
-export const deletePropertyImages = async (imageUrls: string[]): Promise<boolean> => {
-  if (!imageUrls || imageUrls.length === 0) return true;
-  
-  try {
-    const authUser = await ensureAuthenticated(false);
-    if (!authUser) {
-      console.error("Authentication check failed in deletePropertyImages");
-      toast.error("Authentication required. Please sign in to continue.");
-      return false;
-    }
-    
-    // Extract paths from URLs
-    const imagePaths = imageUrls.map(url => {
-      // Parse the URL to get the path
-      try {
-        const urlObj = new URL(url);
-        // Get the path without the leading slash
-        const pathWithoutBucket = urlObj.pathname.split('/storage/v1/object/public/property_images/')[1];
-        if (!pathWithoutBucket) {
-          console.error("Could not parse image path from URL:", url);
-          return null;
-        }
-        return pathWithoutBucket;
-      } catch (err) {
-        console.error("Invalid URL:", url, err);
-        return null;
-      }
-    }).filter(Boolean) as string[];
-    
-    if (imagePaths.length === 0) {
-      console.warn("No valid image paths to delete");
-      return true;
-    }
-    
-    console.log("Deleting images:", imagePaths);
-    
-    // Delete the images
-    const { data, error } = await supabase.storage
-      .from('property_images')
-      .remove(imagePaths);
-    
-    if (error) {
-      console.error("Error deleting images:", error);
-      toast.error("Failed to delete some images");
-      return false;
-    }
-    
-    console.log("Images deleted successfully:", data);
-    return true;
-  } catch (error) {
-    console.error("Error in deletePropertyImages:", error);
-    toast.error("Failed to delete images");
-    return false;
-  }
-};
-
-export const processAndUploadImages = async (imageFiles: File[]): Promise<string[]> => {
-  // Maintain this function for backward compatibility
-  // It delegates to the new uploadImagesToSupabase function
-  return uploadImagesToSupabase(imageFiles, uuidv4().slice(0, 8));
 };

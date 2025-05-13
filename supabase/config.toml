@@ -1,7 +1,1 @@
-
 project_id = "pdptbknhwyvtotlxkekh"
-
-# The following configuration ensures the property_images bucket is public
-# and has consistent row level security policies applied
-[storage.buckets]
-property_images = { public = true }
