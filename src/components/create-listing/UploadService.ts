@@ -1,9 +1,6 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ensureAuthenticated } from "@/utils/authUtils";
-import imageCompression from "browser-image-compression";
-import heic2any from "heic2any";
 import { v4 as uuidv4 } from 'uuid';
 
 interface UploadResult {
@@ -11,74 +8,6 @@ interface UploadResult {
   url?: string;
   error?: string;
 }
-
-export const isHEIC = (file: File): boolean => {
-  return file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
-};
-
-export const convertHEICToJPEG = async (file: File): Promise<File> => {
-  try {
-    console.log("Converting HEIC file to JPEG:", file.name);
-    const jpegBlob = await heic2any({
-      blob: file,
-      toType: "image/jpeg",
-      quality: 0.8
-    }) as Blob;
-    
-    // Create new file with proper name and type
-    const fileName = file.name.replace(/\.(heic|HEIC|heif|HEIF)$/, '.jpg');
-    return new File([jpegBlob], fileName, { type: "image/jpeg" });
-  } catch (error) {
-    console.error("HEIC conversion error:", error);
-    throw new Error(`Failed to convert HEIC image: ${error}`);
-  }
-};
-
-export const compressImage = async (file: File): Promise<File> => {
-  try {
-    console.log("Compressing image:", file.name, "Original size:", Math.round(file.size / 1024), "KB");
-    
-    // Check if the file is already small enough
-    if (file.size < 800 * 1024) {
-      console.log("Image already small enough, skipping compression");
-      return file;
-    }
-    
-    const options = {
-      maxSizeMB: 0.8,
-      maxWidthOrHeight: 1600,
-      useWebWorker: true,
-      fileType: file.type
-    };
-    
-    const compressedFile = await imageCompression(file, options);
-    console.log("Compressed size:", Math.round(compressedFile.size / 1024), "KB");
-    
-    return compressedFile;
-  } catch (error) {
-    console.error("Image compression error:", error);
-    throw new Error(`Failed to compress image: ${error}`);
-  }
-};
-
-export const preprocessImage = async (file: File): Promise<File> => {
-  try {
-    let processedFile = file;
-    
-    // Convert HEIC to JPEG if needed
-    if (isHEIC(processedFile)) {
-      processedFile = await convertHEICToJPEG(processedFile);
-    }
-    
-    // Compress image
-    processedFile = await compressImage(processedFile);
-    
-    return processedFile;
-  } catch (error) {
-    console.error("Image preprocessing error:", error);
-    throw new Error(`Failed to preprocess image: ${error}`);
-  }
-};
 
 export const uploadFileWithRetry = async (
   file: File, 
@@ -101,13 +30,6 @@ export const uploadFileWithRetry = async (
       throw new Error("User not authenticated");
     }
     
-    // Get the current user to include in metadata
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      console.error("Failed to get current user for metadata");
-      throw new Error("User not authenticated. Upload aborted.");
-    }
-
     // Add timeout protection for the upload
     const uploadPromise = new Promise<{data: any, error: any}>((resolve, reject) => {
       const timeoutId = setTimeout(() => {
@@ -123,7 +45,7 @@ export const uploadFileWithRetry = async (
           upsert: false,
           contentType: file.type,
           metadata: {
-            owner: user.id
+            owner: session.user.id
           }
         })
         .then(result => {
@@ -210,53 +132,6 @@ export const uploadFileWithRetry = async (
   }
 };
 
-export const processAndUploadImages = async (imageFiles: File[]): Promise<string[]> => {
-  if (!imageFiles || imageFiles.length === 0) {
-    return [];
-  }
-
-  console.log(`Starting to process and upload ${imageFiles.length} images`);
-  
-  try {
-    // Preprocess all images in parallel first (convert/compress)
-    const preprocessPromises = imageFiles.map(file => preprocessImage(file));
-    const processedFiles = await Promise.all(preprocessPromises);
-    
-    console.log("All images preprocessed, starting uploads");
-    
-    // Generate a batch ID for this group of uploads
-    const batchId = uuidv4().slice(0, 8);
-    
-    // Upload all images (with retries baked in)
-    const uploadPromises = processedFiles.map(file => 
-      uploadFileWithRetry(file, `properties/${batchId}`)
-    );
-    
-    const results = await Promise.all(uploadPromises);
-    
-    // Get successful upload URLs
-    const uploadedUrls = results
-      .filter(result => result.success && result.url)
-      .map(result => result.url as string);
-    
-    // Check for any failed uploads
-    const failedUploads = results.filter(result => !result.success);
-    if (failedUploads.length > 0) {
-      console.error(`${failedUploads.length} images failed to upload`);
-      const errorMessages = failedUploads.map(result => result.error).join('; ');
-      toast.error(`Some images failed to upload: ${errorMessages}`);
-    }
-    
-    console.log(`Upload complete: ${uploadedUrls.length} successful, ${failedUploads.length} failed`);
-    return uploadedUrls;
-  } catch (error) {
-    console.error("Error in processAndUploadImages:", error);
-    toast.error("Failed to process and upload images");
-    return [];
-  }
-};
-
-// Implement the missing uploadImagesToSupabase function
 export const uploadImagesToSupabase = async (
   imageFiles: File[], 
   propertyId: string,
@@ -271,19 +146,10 @@ export const uploadImagesToSupabase = async (
     // Update progress to 10%
     onProgress?.(10);
     
-    // Process and upload the images
     console.log(`Uploading ${imageFiles.length} images for property ${propertyId}`);
     
-    // Use the existing processAndUploadImages function with progress updates
-    const progressStep = 80 / imageFiles.length; // 80% of progress bar for uploads (10-90%)
-    
-    // Preprocess all images in parallel first (convert/compress)
-    const preprocessPromises = imageFiles.map(file => preprocessImage(file));
-    const processedFiles = await Promise.all(preprocessPromises);
-    
-    onProgress?.(20); // Update progress to 20% after preprocessing
-    
-    console.log("All images preprocessed, starting uploads");
+    // Calculate progress steps
+    const progressStep = 80 / imageFiles.length; // 80% of progress for uploads
     
     // Generate a batch ID using the property ID
     const path = `properties/${propertyId}`;
@@ -291,9 +157,9 @@ export const uploadImagesToSupabase = async (
     // Upload images one by one to track progress
     const uploadedUrls: string[] = [];
     
-    for (let i = 0; i < processedFiles.length; i++) {
-      const file = processedFiles[i];
-      console.log(`Uploading image ${i+1}/${processedFiles.length}: ${file.name}`);
+    for (let i = 0; i < imageFiles.length; i++) {
+      const file = imageFiles[i];
+      console.log(`Uploading image ${i+1}/${imageFiles.length}: ${file.name}`);
       
       const result = await uploadFileWithRetry(file, path);
       
@@ -308,7 +174,7 @@ export const uploadImagesToSupabase = async (
       onProgress?.(Math.min(90, currentProgress)); // Cap at 90%
     }
     
-    console.log(`Upload complete: ${uploadedUrls.length}/${processedFiles.length} successful`);
+    console.log(`Upload complete: ${uploadedUrls.length}/${imageFiles.length} successful`);
     onProgress?.(95); // Almost done
     
     return uploadedUrls;
@@ -318,7 +184,6 @@ export const uploadImagesToSupabase = async (
   }
 };
 
-// Implement the missing createNotification function
 export const createNotification = async (
   propertyId: string,
   propertyType: string,

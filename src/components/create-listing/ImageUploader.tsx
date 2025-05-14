@@ -42,9 +42,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     // Validate file types
     const validFiles = newFiles.filter(file => {
-      const isValid = file.type.startsWith('image/') || 
-                      file.name.toLowerCase().endsWith('.heic') || 
-                      file.name.toLowerCase().endsWith('.heif');
+      const isValid = file.type.startsWith('image/');
       if (!isValid) {
         toast.error(`${file.name} is not a valid image file`);
       }
@@ -62,13 +60,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     if (validSizedFiles.length > 0) {
       // Add valid files to the existing files
-      setImageFiles(prev => [...prev, ...validSizedFiles]);
+      const newImageFiles = [...imageFiles, ...validSizedFiles];
+      setImageFiles(newImageFiles);
       
       // Create temporary preview URLs
-      validSizedFiles.forEach(file => {
-        const previewUrl = URL.createObjectURL(file);
-        setImages(prev => [...prev, previewUrl]);
-      });
+      const newUrls = validSizedFiles.map(file => URL.createObjectURL(file));
+      const updatedImages = [...images, ...newUrls];
+      setImages(updatedImages);
     }
   };
 
@@ -126,7 +124,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           type="file"
           id="image-upload"
           multiple
-          accept="image/*,.heic,.heif"
+          accept="image/*"
           className="hidden"
           onChange={(e) => handleFileUpload(e.target.files)}
           disabled={isSubmitting || isProcessingImages}
@@ -137,7 +135,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             Drag & drop images or <span className="text-primary underline">browse</span>
           </p>
           <p className="text-xs text-gray-500">
-            Supports JPG, PNG, WebP, HEIC • 10MB max file size
+            Supports JPG, PNG, WebP • 10MB max file size
           </p>
         </div>
       </div>
