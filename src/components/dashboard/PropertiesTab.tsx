@@ -92,10 +92,10 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
   };
 
   return <>
-      {isLoading ? <div className="layer-2 backdrop-blur-lg p-12 text-center rounded-xl border border-white/40">
+      {isLoading ? <div className="bg-white p-12 text-center rounded-xl border border-gray-200">
           <p className="mb-6">Loading your properties...</p>
         </div> : myProperties.length > 0 ? <div className="grid md:grid-cols-1 gap-6">
-          {myProperties.map(property => <div key={property.id} className="backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden">
+          {myProperties.map(property => <div key={property.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
               <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-1/3">
                   <img src={property.image} alt={property.title} className="h-64 w-full object-cover" />
@@ -183,7 +183,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                 </div>
               </div>
               
-              <div className="border-t border-white/20 p-4 bg-white/30 backdrop-blur-sm">
+              <div className="border-t border-gray-200 p-4 bg-white">
                 <div className="flex justify-between items-center">
                   <div className="text-black">
                     <span className="font-bold mr-2">Waitlist:</span>
@@ -195,7 +195,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                 </div>
               </div>
             </div>)}
-        </div> : <div className="backdrop-blur-lg p-12 text-center rounded-xl border border-white/40">
+        </div> : <div className="bg-white p-12 text-center rounded-xl border border-gray-200">
           <Building2 size={48} className="mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-4 text-black">No Properties Listed</h3>
           <p className="mb-6 text-black">You haven't listed any properties yet.</p>

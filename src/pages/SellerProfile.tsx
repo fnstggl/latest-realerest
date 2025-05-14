@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -6,6 +7,7 @@ import { User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Property } from '@/hooks/useProperties';
 import PropertyCard from '@/components/PropertyCard';
+
 const SellerProfile = () => {
   const {
     sellerId
@@ -20,11 +22,16 @@ const SellerProfile = () => {
       if (!sellerId) return;
       setLoading(true);
       try {
-        // Get seller properties
+        // Get seller properties - order by created_at DESC to get newest first
         const {
           data,
           error
-        } = await supabase.from('property_listings').select('*').eq('user_id', sellerId);
+        } = await supabase
+          .from('property_listings')
+          .select('*')
+          .eq('user_id', sellerId)
+          .order('created_at', { ascending: false });
+          
         if (error) {
           console.error("Error fetching seller properties:", error);
           return;
@@ -65,6 +72,8 @@ const SellerProfile = () => {
             sqft: prop.sqft || 0,
             belowMarket: Math.round((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price) * 100)
           }));
+          
+          // Set formatted properties to state
           setProperties(formattedProperties);
         }
       } catch (error) {
@@ -75,13 +84,14 @@ const SellerProfile = () => {
     };
     fetchSellerProperties();
   }, [sellerId]);
+  
   return <div className="min-h-screen bg-gradient-to-br from-white via-purple-50/20 to-blue-50/30">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center mb-8 p-6 backdrop-blur-lg border border-white/20 rounded-xl">
-            <div className="p-3 rounded-full bg-white/80 mr-4">
+          <div className="flex items-center mb-8 p-6 bg-white border border-gray-200 rounded-xl">
+            <div className="p-3 rounded-full bg-white mr-4">
               <User size={32} className="text-black" />
             </div>
             <div>
@@ -101,4 +111,5 @@ const SellerProfile = () => {
       <SiteFooter />
     </div>;
 };
+
 export default SellerProfile;
