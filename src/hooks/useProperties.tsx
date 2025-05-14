@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -89,6 +88,7 @@ export const useProperties = (userId: string | undefined) => {
         .from('property_listings')
         .select('*')
         .eq('user_id', userId)
+        .order('created_at', { ascending: false }) // Changed to false to sort newest first
         .abortSignal(AbortSignal.timeout(10000)); // Add timeout to prevent hanging requests
         
       if (error) {

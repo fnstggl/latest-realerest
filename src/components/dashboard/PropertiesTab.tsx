@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -72,7 +73,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
       if (propertyImages.length > 0) {
         toast.loading("Cleaning up property images...", { id: "cleanup-toast" });
         
-        const cleanupResult = await deletePropertyImages(propertyId, propertyImages);
+        const cleanupResult = await deletePropertyImages(propertyId);
         
         if (cleanupResult) {
           toast.dismiss("cleanup-toast");
@@ -91,10 +92,10 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
   };
 
   return <>
-      {isLoading ? <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
+      {isLoading ? <div className="layer-2 backdrop-blur-lg p-12 text-center rounded-xl border border-white/40">
           <p className="mb-6">Loading your properties...</p>
         </div> : myProperties.length > 0 ? <div className="grid md:grid-cols-1 gap-6">
-          {myProperties.map(property => <div key={property.id} className="layer-2 glass-card backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden shadow-lg transition-transform hover:-translate-y-1">
+          {myProperties.map(property => <div key={property.id} className="backdrop-blur-lg border border-white/40 rounded-xl overflow-hidden">
               <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-1/3">
                   <img src={property.image} alt={property.title} className="h-64 w-full object-cover" />
@@ -194,7 +195,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                 </div>
               </div>
             </div>)}
-        </div> : <div className="layer-2 glass-card backdrop-blur-lg p-12 text-center rounded-xl border border-white/40 shadow-lg">
+        </div> : <div className="backdrop-blur-lg p-12 text-center rounded-xl border border-white/40">
           <Building2 size={48} className="mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-4 text-black">No Properties Listed</h3>
           <p className="mb-6 text-black">You haven't listed any properties yet.</p>
