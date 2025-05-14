@@ -1,6 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ensureAuthenticated } from "@/utils/authUtils";
 import { v4 as uuidv4 } from 'uuid';
 
 interface UploadResult {
@@ -23,8 +22,8 @@ export const uploadFileWithRetry = async (
   
   // First verify authentication state
   try {
-    const session = await ensureAuthenticated(false);
-    if (!session?.user) {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !sessionData.session) {
       console.error("User not authenticated for upload");
       toast.error("Authentication error. Please sign in again.");
       throw new Error("User not authenticated");
@@ -45,7 +44,7 @@ export const uploadFileWithRetry = async (
           upsert: false,
           contentType: file.type,
           metadata: {
-            owner: session.user.id
+            owner: sessionData.session.user.id
           }
         })
         .then(result => {
@@ -192,8 +191,8 @@ export const createNotification = async (
 ): Promise<void> => {
   try {
     // Verify user authentication
-    const session = await ensureAuthenticated(false);
-    if (!session?.user) {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !sessionData.session) {
       console.error("Cannot create notification: User not authenticated");
       return;
     }
@@ -201,7 +200,7 @@ export const createNotification = async (
     // Create a notification for the new property listing
     const { error } = await supabase.from('notifications').insert({
       type: 'new_property',
-      user_id: session.user.id,
+      user_id: sessionData.session.user.id,
       title: `New ${propertyType} Listed`,
       message: `A new ${propertyType.toLowerCase()} has been listed in ${city}, ${state}`,
       metadata: { 
@@ -219,5 +218,51 @@ export const createNotification = async (
     }
   } catch (error) {
     console.error("Error creating property notification:", error);
+  }
+};
+
+// Fix for missing deletePropertyImages function referenced in PropertiesTab.tsx
+export const deletePropertyImages = async (
+  imageUrls: string[]
+): Promise<boolean> => {
+  try {
+    if (!imageUrls || imageUrls.length === 0) {
+      return true;
+    }
+    
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      console.error("Cannot delete images: User not authenticated");
+      return false;
+    }
+    
+    console.log(`Attempting to delete ${imageUrls.length} images`);
+    
+    // Extract paths from URLs
+    const filesToDelete = imageUrls.map(url => {
+      // Get path part after property_images/
+      const pathMatch = url.match(/property_images\/(.*)/);
+      return pathMatch ? pathMatch[1] : null;
+    }).filter(Boolean) as string[];
+    
+    if (filesToDelete.length === 0) {
+      console.log("No valid image paths found to delete");
+      return true;
+    }
+    
+    const { data, error } = await supabase.storage
+      .from('property_images')
+      .remove(filesToDelete);
+      
+    if (error) {
+      console.error("Error deleting images:", error);
+      return false;
+    }
+    
+    console.log(`Successfully deleted ${data?.length} images`);
+    return true;
+  } catch (error) {
+    console.error("Error in deletePropertyImages:", error);
+    return false;
   }
 };
