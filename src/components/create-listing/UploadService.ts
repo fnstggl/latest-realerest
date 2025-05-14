@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ensureAuthenticated } from "@/utils/authUtils";
@@ -252,5 +253,106 @@ export const processAndUploadImages = async (imageFiles: File[]): Promise<string
     console.error("Error in processAndUploadImages:", error);
     toast.error("Failed to process and upload images");
     return [];
+  }
+};
+
+// Implement the missing uploadImagesToSupabase function
+export const uploadImagesToSupabase = async (
+  imageFiles: File[], 
+  propertyId: string,
+  onProgress?: (progress: number) => void
+): Promise<string[]> => {
+  try {
+    if (!imageFiles || imageFiles.length === 0) {
+      console.log("No images to upload");
+      return [];
+    }
+    
+    // Update progress to 10%
+    onProgress?.(10);
+    
+    // Process and upload the images
+    console.log(`Uploading ${imageFiles.length} images for property ${propertyId}`);
+    
+    // Use the existing processAndUploadImages function with progress updates
+    const progressStep = 80 / imageFiles.length; // 80% of progress bar for uploads (10-90%)
+    
+    // Preprocess all images in parallel first (convert/compress)
+    const preprocessPromises = imageFiles.map(file => preprocessImage(file));
+    const processedFiles = await Promise.all(preprocessPromises);
+    
+    onProgress?.(20); // Update progress to 20% after preprocessing
+    
+    console.log("All images preprocessed, starting uploads");
+    
+    // Generate a batch ID using the property ID
+    const path = `properties/${propertyId}`;
+    
+    // Upload images one by one to track progress
+    const uploadedUrls: string[] = [];
+    
+    for (let i = 0; i < processedFiles.length; i++) {
+      const file = processedFiles[i];
+      console.log(`Uploading image ${i+1}/${processedFiles.length}: ${file.name}`);
+      
+      const result = await uploadFileWithRetry(file, path);
+      
+      if (result.success && result.url) {
+        uploadedUrls.push(result.url);
+      } else {
+        console.error(`Failed to upload image ${i+1}: ${result.error}`);
+      }
+      
+      // Update progress
+      const currentProgress = 20 + ((i + 1) * progressStep);
+      onProgress?.(Math.min(90, currentProgress)); // Cap at 90%
+    }
+    
+    console.log(`Upload complete: ${uploadedUrls.length}/${processedFiles.length} successful`);
+    onProgress?.(95); // Almost done
+    
+    return uploadedUrls;
+  } catch (error) {
+    console.error("Error uploading images to Supabase:", error);
+    throw new Error(`Failed to upload images: ${error}`);
+  }
+};
+
+// Implement the missing createNotification function
+export const createNotification = async (
+  propertyId: string,
+  propertyType: string,
+  city: string,
+  state: string
+): Promise<void> => {
+  try {
+    // Verify user authentication
+    const session = await ensureAuthenticated(false);
+    if (!session?.user) {
+      console.error("Cannot create notification: User not authenticated");
+      return;
+    }
+
+    // Create a notification for the new property listing
+    const { error } = await supabase.from('notifications').insert({
+      type: 'new_property',
+      user_id: session.user.id,
+      title: `New ${propertyType} Listed`,
+      message: `A new ${propertyType.toLowerCase()} has been listed in ${city}, ${state}`,
+      metadata: { 
+        property_id: propertyId,
+        property_type: propertyType,
+        location: `${city}, ${state}`
+      },
+      seen: false
+    });
+
+    if (error) {
+      console.error("Failed to create notification:", error);
+    } else {
+      console.log("Property notification created successfully");
+    }
+  } catch (error) {
+    console.error("Error creating property notification:", error);
   }
 };
