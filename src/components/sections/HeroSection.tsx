@@ -24,12 +24,12 @@ const HeroSection: React.FC = () => {
   return (
     <section className="pt-32 sm:pt-24 md:pt-36 pb-16 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
       <div className="container px-4 lg:px-8 mx-auto relative flex justify-center">
-        {/* Background gradient blob */}
+        {/* Background gradient blob - increased size by 30% */}
         <div 
           className="absolute inset-0 z-0"
           style={{
             backgroundImage: `url('/lovable-uploads/28a79fc0-8fcc-4d56-9bd6-0696e9db1e9b.png')`,
-            backgroundSize: 'contain',
+            backgroundSize: '130% auto', // Increased from 'contain' to '130% auto'
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             opacity: 0.9
