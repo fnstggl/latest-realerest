@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -6,7 +5,6 @@ import { Building2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { deletePropertyImages } from "@/components/create-listing/UploadService";
-
 interface Property {
   id: string;
   title: string;
@@ -21,7 +19,6 @@ interface Property {
   belowMarket: number;
   waitlistCount?: number;
 }
-
 interface PropertiesTabProps {
   myProperties: Property[];
   setMyProperties: React.Dispatch<React.SetStateAction<Property[]>>;
@@ -32,7 +29,6 @@ interface PropertiesTabProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   user: any;
 }
-
 const PropertiesTab: React.FC<PropertiesTabProps> = ({
   myProperties,
   setMyProperties,
@@ -45,36 +41,32 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
 }) => {
   const handleUnlistProperty = async (propertyId: string) => {
     if (!user) return;
-    
     try {
       // Find the property to get its images before deletion
       const property = myProperties.find(p => p.id === propertyId);
       const propertyImages = property?.images || [];
-      
+
       // First delete from database
-      const { error } = await supabase
-        .from('property_listings')
-        .delete()
-        .eq('id', propertyId)
-        .eq('user_id', user.id);
-        
+      const {
+        error
+      } = await supabase.from('property_listings').delete().eq('id', propertyId).eq('user_id', user.id);
       if (error) {
         console.error("Error deleting property:", error);
         toast.error("Failed to unlist property");
         return;
       }
-      
+
       // Update local state
       const updatedProperties = myProperties.filter(property => property.id !== propertyId);
       setMyProperties(updatedProperties);
-      
+
       // After database deletion succeeds, clean up storage
       // We do this after database deletion to ensure we don't have orphaned records
       if (propertyImages.length > 0) {
-        toast.loading("Cleaning up property images...", { id: "cleanup-toast" });
-        
+        toast.loading("Cleaning up property images...", {
+          id: "cleanup-toast"
+        });
         const cleanupResult = await deletePropertyImages(propertyId);
-        
         if (cleanupResult) {
           toast.dismiss("cleanup-toast");
           toast.success("Property unlisted successfully and images cleaned up");
@@ -90,7 +82,6 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
       toast.error("Failed to unlist property");
     }
   };
-
   return <>
       {isLoading ? <div className="bg-white p-12 text-center rounded-xl border border-gray-200">
           <p className="mb-6">Loading your properties...</p>
@@ -128,14 +119,13 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                       </Link>
                     </Button>
                     <Button asChild className="bg-white border border-gray-200 text-xs md:text-sm px-2 md:px-4">
-                      <Link to={`/property/${property.id}/edit`} style={{ color: "#000000" }}>
+                      <Link to={`/property/${property.id}/edit`} style={{
+                  color: "#000000"
+                }}>
                         Edit Listing
                       </Link>
                     </Button>
-                    <Button 
-                      className="bg-white text-black border border-gray-200 text-xs md:text-sm px-2 md:px-4" 
-                      onClick={() => handleUnlistProperty(property.id)}
-                    >
+                    <Button className="bg-white text-black border border-gray-200 text-xs md:text-sm px-2 md:px-4" onClick={() => handleUnlistProperty(property.id)}>
                       <Trash2 size={16} className="mr-1 md:mr-2 md:size-[18px]" />
                       Unlist
                     </Button>
@@ -143,17 +133,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                 </div>
               </div>
               
-              <div className="border-t border-gray-200 p-4 bg-white">
-                <div className="flex justify-between items-center">
-                  <div className="text-black">
-                    <span className="font-bold mr-2">Waitlist:</span>
-                    {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
-                  </div>
-                  <Button asChild className="bg-white text-black border border-gray-200">
-                    
-                  </Button>
-                </div>
-              </div>
+              
             </div>)}
         </div> : <div className="bg-white p-12 text-center rounded-xl border border-gray-200">
           <Building2 size={48} className="mx-auto mb-4" />
@@ -168,5 +148,4 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
         </div>}
     </>;
 };
-
 export default PropertiesTab;
