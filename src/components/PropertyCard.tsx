@@ -65,7 +65,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       to={`/property/${id}`} 
       className="block perspective-container h-full property-card-glow rounded-xl"
     >
-      <div className="h-full border border-white/30 shadow-lg overflow-hidden transform translate-z-5 relative z-10 flex flex-col rounded-xl">
+     <div className="h-full border border-white/30 shadow-lg overflow-hidden transform transition duration-200 hover:-translate-y-1 hover:shadow-xl relative z-10 flex flex-col rounded-xl">
         <div className="relative rounded-t-xl">
           <OptimizedImage 
             src={validImage} 
