@@ -4,7 +4,7 @@ interface Property {
   id: string;
   price: number;
   market_price: number; // Database field name
-  marketPrice?: number; // UI field name - optional to maintain compatibility
+  marketPrice: number; // UI field name - no longer optional to fix type conflicts
   beds: number;
   baths: number;
   sqft: number;
@@ -36,7 +36,7 @@ interface WaitlistUser {
   name: string;
   email: string;
   phone: string;
-  user_id?: string; // Make it optional for compatibility
+  user_id: string; // No longer optional to fix type conflicts
   propertyId: string;
   property?: {
     title: string;
@@ -74,7 +74,7 @@ interface RewardStatusDetails {
   [key: string]: boolean | BuyerProgress[] | any; // Index signature to fix TypeScript errors
 }
 
-// Define Notification type
+// Define Notification type (ensuring timestamp is string | Date)
 interface Notification {
   id: string;
   title: string;

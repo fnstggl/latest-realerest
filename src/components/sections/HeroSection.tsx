@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import SearchBar from '@/components/SearchBar';
 import { GlowEffect } from '@/components/ui/glow-effect';
@@ -25,17 +24,29 @@ const HeroSection: React.FC = () => {
   return (
     <section className="pt-32 sm:pt-24 md:pt-36 pb-16 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
       <div className="container px-4 lg:px-8 mx-auto relative flex justify-center">
+        {/* Background gradient blob */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url('/lovable-uploads/28a79fc0-8fcc-4d56-9bd6-0696e9db1e9b.png')`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            opacity: 0.9
+          }}
+        ></div>
+
         <div className="w-full max-w-5xl text-center mx-auto">
-          <div className="flex flex-col items-center">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-1 sm:mb-3 md:mb-4 mx-auto text-center leading-tight">
-              Find a home you <span className="font-bold">love</span>...
+          <div className="flex flex-col items-center relative z-10">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-black mb-1 sm:mb-3 md:mb-4 mx-auto text-center leading-tight" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Find a home you <span className="font-extrabold">love</span>...
             </h1>
             <div className="mb-2 sm:mb-4 md:mb-6">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center text-gradient-static tracking-normal py-1">
-                at a price you'll <span className="font-bold">love</span> more
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-black tracking-normal py-1" style={{ fontFamily: 'Inter, sans-serif' }}>
+                at a <em>price</em> you'll <span className="font-extrabold">love</span> more
               </h1>
             </div>
-            <p className="text-foreground mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center">
+            <p className="text-foreground mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10">
               Helping families buy homes they were told they <span className="font-bold">couldn't afford</span>.
             </p>
             <div className="glass-card p-0.25 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">

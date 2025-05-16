@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsContent as RadixTabsContent } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -129,7 +130,11 @@ const Dashboard: React.FC = () => {
         icon: Bell,
         content: (
           <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
-            <NotificationsTab notifications={notifications} markAsRead={markAsRead} clearAll={clearAll} />
+            <NotificationsTab 
+              notifications={notifications as Notification[]} 
+              markAsRead={markAsRead} 
+              clearAll={clearAll} 
+            />
           </TabsContent>
         )
       }
@@ -144,9 +149,9 @@ const Dashboard: React.FC = () => {
           content: (
             <TabsContent value="properties" className="space-y-6">
               <PropertiesTab 
-                myProperties={myProperties} 
-                setMyProperties={setMyProperties} 
-                waitlistUsers={waitlistUsers} 
+                myProperties={myProperties as unknown as Property[]} 
+                setMyProperties={setMyProperties as React.Dispatch<React.SetStateAction<Property[]>>} 
+                waitlistUsers={waitlistUsers as unknown as WaitlistUser[]}
                 showAddForm={showAddForm} 
                 setShowAddForm={setShowAddForm} 
                 isLoading={isLoading} 
@@ -163,7 +168,7 @@ const Dashboard: React.FC = () => {
           content: (
             <TabsContent value="waitlist" className="space-y-6">
               <WaitlistTab 
-                waitlistUsers={waitlistUsers}
+                waitlistUsers={waitlistUsers as unknown as WaitlistUser[]}
                 setWaitlistUsers={setWaitlistUsers}
               />
             </TabsContent>

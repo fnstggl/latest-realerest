@@ -7,25 +7,26 @@ import { User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import PropertyCard from '@/components/PropertyCard';
 
-interface PropertyFormatted {
-  id: string;
-  title: string;
-  price: number;
-  marketPrice: number;
-  image: string;
-  location: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  belowMarket: number;
-}
+// Use the Property interface from types.d.ts
+// interface PropertyFormatted {
+//  id: string;
+//  title: string;
+//  price: number;
+//  marketPrice: number;
+//  image: string;
+//  location: string;
+//  beds: number;
+//  baths: number;
+//  sqft: number;
+//  belowMarket: number;
+//}
 
 const SellerProfile = () => {
   const {
     sellerId
   } = useParams();
   const [sellerName, setSellerName] = useState<string>('Seller');
-  const [properties, setProperties] = useState<PropertyFormatted[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch seller properties
@@ -77,15 +78,25 @@ const SellerProfile = () => {
             title: prop.title || 'Property Listing',
             price: Number(prop.price) || 0,
             marketPrice: Number(prop.market_price) || 0,
+            market_price: Number(prop.market_price) || 0, // Include both for type compatibility
             image: prop.images && prop.images.length > 0 ? prop.images[0] : '/placeholder.svg',
+            images: prop.images || [],
             location: prop.location || 'Unknown location',
             beds: prop.beds || 0,
             baths: prop.baths || 0,
             sqft: prop.sqft || 0,
-            belowMarket: Math.round((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price) * 100)
+            belowMarket: Math.round((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price) * 100),
+            user_id: prop.user_id,
+            created_at: prop.created_at,
+            updated_at: prop.updated_at || prop.created_at,
+            description: prop.description || '',
+            property_type: prop.property_type || '',
+            after_repair_value: prop.after_repair_value,
+            estimated_rehab: prop.estimated_rehab,
+            reward: prop.reward
           }));
           
-          // Set formatted properties to state - using the correct type
+          // Set formatted properties to state
           setProperties(formattedProperties);
         }
       } catch (error) {
@@ -113,7 +124,7 @@ const SellerProfile = () => {
           </div>
 
           {loading ? <div className="text-center py-12">Loading properties...</div> : properties && properties.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties.map(property => <PropertyCard key={property.id} id={property.id} price={property.price} marketPrice={property.marketPrice} image={property.image || '/placeholder.svg'} location={property.location} address={property.title} beds={property.beds} baths={property.baths} sqft={property.sqft} belowMarket={property.belowMarket} />)}
+              {properties.map(property => <PropertyCard key={property.id} id={property.id} price={property.price} marketPrice={property.marketPrice} image={property.image || '/placeholder.svg'} location={property.location} address={property.title} beds={property.beds} baths={property.baths} sqft={property.sqft} belowMarket={property.belowMarket || 0} />)}
             </div> : <div className="text-center py-12">
               <p className="text-gray-600">No properties found for this seller.</p>
             </div>}

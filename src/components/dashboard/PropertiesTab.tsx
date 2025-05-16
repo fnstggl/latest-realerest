@@ -95,7 +95,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
       {isLoading ? <div className="bg-white p-12 text-center rounded-xl border border-gray-200">
           <p className="mb-6">Loading your properties...</p>
         </div> : myProperties.length > 0 ? <div className="grid md:grid-cols-1 gap-6">
-          {myProperties.map(property => <div key={property.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          {myProperties.map(property => <div key={property.id} className="bg-white border border-gray-200 rounded-xl">
               <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-1/3">
                   <img src={property.image} alt={property.title} className="h-64 w-full object-cover" />

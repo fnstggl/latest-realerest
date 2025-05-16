@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -72,5 +73,14 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Futura', 'Helvetica', 'Arial', sans-serif;
     font-weight: 700;
+  }
+  
+  /* Add Inter font family */
+  .font-inter {
+    font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
+  }
+  
+  .font-extrabold {
+    font-weight: 800;
   }
 }
