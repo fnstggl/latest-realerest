@@ -9,22 +9,69 @@ import { useAuth } from '@/context/AuthContext';
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface SearchResultsProps {
-  properties: any[];
-  loading: boolean;
-  error: string | null;
-  searchQuery?: string;
+  location: string;
+  minPrice: number;
+  maxPrice: number;
+  minBeds: number;
+  minBaths: number;
+  propertyType: string;
+  nearbyOnly: boolean;
+  belowMarket: boolean;
+  sort: string;
+  includeRental: boolean;
+  withPhotosOnly: boolean;
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({
-  properties,
-  loading,
-  error,
-  searchQuery
+  location,
+  minPrice,
+  maxPrice,
+  minBeds,
+  minBaths,
+  propertyType,
+  nearbyOnly,
+  belowMarket,
+  sort,
+  includeRental,
+  withPhotosOnly
 }) => {
+  const { listings, loading: isLoading, error, fetchListings } = useListings();
   const { isAuthenticated } = useAuth();
   const resultsContainerRef = useRef<HTMLDivElement>(null);
   
-  if (loading) {
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchListings({
+        location,
+        minPrice,
+        maxPrice,
+        minBeds,
+        minBaths,
+        propertyType,
+        nearbyOnly,
+        belowMarket,
+        sort,
+        includeRental,
+        withPhotosOnly
+      });
+    };
+    
+    fetchData();
+  }, [
+    location,
+    minPrice,
+    maxPrice,
+    minBeds,
+    minBaths,
+    propertyType,
+    nearbyOnly,
+    belowMarket,
+    sort,
+    includeRental,
+    withPhotosOnly
+  ]);
+
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20">
         <LoadingSpinner />
@@ -44,14 +91,26 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         <p className="text-gray-600 mb-4">
           There was a problem with your search. Please try again.
         </p>
-        <Button>
+        <Button onClick={() => fetchListings({
+          location,
+          minPrice,
+          maxPrice,
+          minBeds,
+          minBaths,
+          propertyType,
+          nearbyOnly,
+          belowMarket,
+          sort,
+          includeRental,
+          withPhotosOnly
+        })}>
           Try Again
         </Button>
       </div>
     );
   }
 
-  if (!properties || properties.length === 0) {
+  if (!listings || listings.length === 0) {
     // Show skeleton preview for non-authenticated users
     if (!isAuthenticated) {
       // Determine the number of skeleton cards based on screen width
@@ -131,10 +190,22 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         </div>
         <h3 className="text-xl font-bold mb-2">No Properties Found</h3>
         <p className="text-gray-600 mb-4">
-          {searchQuery ? `Can't find a below-market home in ${searchQuery}? Be the first to know when one gets listed.` : 
+          {location ? `Can't find a below-market home in ${location}? Be the first to know when one gets listed.` : 
           `We couldn't find any properties matching your criteria.`}
         </p>
-        <Button>
+        <Button onClick={() => fetchListings({
+          location: '',
+          minPrice: 0,
+          maxPrice: 10000000,
+          minBeds: 0,
+          minBaths: 0,
+          propertyType: '',
+          nearbyOnly: false,
+          belowMarket: false,
+          sort: 'newest',
+          includeRental: true,
+          withPhotosOnly: false
+        })}>
           Reset Filters
         </Button>
       </div>
@@ -151,20 +222,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   const itemsPerRow = getItemsPerRow();
   
   // For non-authenticated users, determine what to show
-  const shouldProcessForNonAuth = !isAuthenticated && properties.length > itemsPerRow;
+  const shouldProcessForNonAuth = !isAuthenticated && listings.length > itemsPerRow;
   
   // Calculate the last full row information
   const getLastFullRowInfo = () => {
     if (!shouldProcessForNonAuth) {
       return {
-        blurStartIndex: properties.length,
-        blurEndIndex: properties.length,
-        displayCount: properties.length,
+        blurStartIndex: listings.length,
+        blurEndIndex: listings.length,
+        displayCount: listings.length,
         rowPosition: 0
       };
     }
     
-    const totalItems = properties.length;
+    const totalItems = listings.length;
     const remainder = totalItems % itemsPerRow;
     const lastFullRowStart = remainder === 0 
       ? totalItems - itemsPerRow 
@@ -220,7 +291,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   return (
     <div ref={resultsContainerRef} className="relative flex-1">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {properties.slice(0, displayCount).map((property, index) => (
+        {listings.slice(0, displayCount).map((property, index) => (
           <div 
             key={property.id}
             className={`relative ${index >= blurStartIndex && index < blurEndIndex ? 'blur-sm' : ''}`}
