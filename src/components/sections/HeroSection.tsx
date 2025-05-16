@@ -28,7 +28,7 @@ const HeroSection: React.FC = () => {
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-full h-full"
         style={{
           backgroundImage: `url('/lovable-uploads/28a79fc0-8fcc-4d56-9bd6-0696e9db1e9b.png')`,
-          backgroundSize: '120% auto', // Slightly smaller than 130% but not cut off
+          backgroundSize: '100% auto', // Slightly smaller than 130% but not cut off
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           opacity: 0.9
