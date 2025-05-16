@@ -36,7 +36,7 @@ interface WaitlistUser {
   name: string;
   email: string;
   phone: string;
-  user_id: string; // Make it required for compatibility
+  user_id?: string; // Make it optional for compatibility
   propertyId: string;
   property?: {
     title: string;

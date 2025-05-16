@@ -103,18 +103,8 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                 <div className="p-6 flex-1">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-2xl font-bold text-black">{property.title}</h3>
-                    <div className="relative bg-white text-black px-3 py-1 font-bold inline-flex items-center text-sm rounded-lg group transition-colors">
+                    <div className="bg-white text-black px-3 py-1 font-bold inline-flex items-center text-sm rounded-lg">
                       <span>{Math.round(property.belowMarket)}% BELOW MARKET</span>
-                      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
-                  background: "transparent",
-                  border: "2px solid transparent",
-                  backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                  backgroundOrigin: "border-box",
-                  backgroundClip: "border-box",
-                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "xor",
-                  maskComposite: "exclude"
-                }} />
                     </div>
                   </div>
                   
@@ -132,52 +122,22 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                   </div>
                   
                   <div className="flex gap-4 flex-wrap md:flex-nowrap">
-                    <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all text-xs md:text-sm px-2 md:px-4">
+                    <Button asChild className="bg-white text-black border border-gray-200 text-xs md:text-sm px-2 md:px-4">
                       <Link to={`/property/${property.id}`}>
                         View Listing
-                        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }} />
                       </Link>
                     </Button>
-                    <Button asChild className="relative bg-white border border-gray-200 group hover:bg-white transition-all text-xs md:text-sm px-2 md:px-4">
+                    <Button asChild className="bg-white border border-gray-200 text-xs md:text-sm px-2 md:px-4">
                       <Link to={`/property/${property.id}/edit`} style={{ color: "#000000" }}>
                         Edit Listing
-                        <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }} />
                       </Link>
                     </Button>
                     <Button 
-                      className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all text-xs md:text-sm px-2 md:px-4" 
+                      className="bg-white text-black border border-gray-200 text-xs md:text-sm px-2 md:px-4" 
                       onClick={() => handleUnlistProperty(property.id)}
                     >
                       <Trash2 size={16} className="mr-1 md:mr-2 md:size-[18px]" />
                       Unlist
-                      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude"
-                  }} />
                     </Button>
                   </div>
                 </div>
@@ -189,7 +149,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                     <span className="font-bold mr-2">Waitlist:</span>
                     {waitlistUsers.filter(user => user.propertyId === property.id).length} interested buyers
                   </div>
-                  <Button asChild className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all">
+                  <Button asChild className="bg-white text-black border border-gray-200">
                     
                   </Button>
                 </div>
@@ -199,20 +159,10 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
           <Building2 size={48} className="mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-4 text-black">No Properties Listed</h3>
           <p className="mb-6 text-black">You haven't listed any properties yet.</p>
-          <Button asChild variant="glass" className="relative bg-white text-black border border-gray-200 group hover:bg-white transition-all text-xs md:text-sm px-2 md:px-4">
+          <Button asChild variant="glass" className="bg-white text-black border border-gray-200 text-xs md:text-sm px-2 md:px-4">
             <Link to="/sell/create">
               <Plus size={16} className="mr-1 md:mr-2 md:size-[18px]" />
               Add Your First Property
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
-            background: "transparent",
-            border: "2px solid transparent",
-            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-            backgroundOrigin: "border-box",
-            backgroundClip: "border-box",
-            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude"
-          }} />
             </Link>
           </Button>
         </div>}

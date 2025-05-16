@@ -113,6 +113,7 @@ export const useProperties = (userId: string | undefined) => {
           return property;
         });
         
+        // Set formatted properties to state - using the correct type
         setMyProperties(properties);
         
         // Fetch waitlist counts for each property
