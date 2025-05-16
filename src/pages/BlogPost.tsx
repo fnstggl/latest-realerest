@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Navbar from '@/components/Navbar';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner"; // Use sonner toast
 import { Helmet } from 'react-helmet-async';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SEO from '@/components/SEO';
@@ -29,7 +29,6 @@ const BlogPost: React.FC = () => {
   const [blogPost, setBlogPost] = useState<BlogPostData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [property, setProperty] = useState<any>(null);
-  const { toast } = useToast();
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -63,11 +62,7 @@ const BlogPost: React.FC = () => {
         }
       } catch (error: any) {
         console.error('Error fetching blog post:', error);
-        toast({
-          title: "Error",
-          description: error.message || "Failed to load blog post",
-          variant: "destructive"
-        });
+        toast.error(error.message || "Failed to load blog post");
       } finally {
         setIsLoading(false);
       }
@@ -76,7 +71,7 @@ const BlogPost: React.FC = () => {
     if (id) {
       fetchBlogPost();
     }
-  }, [id, toast]);
+  }, [id]);
 
   // Format date for display
   const formatDate = (dateString: string) => {

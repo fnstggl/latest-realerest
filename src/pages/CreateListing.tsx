@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Import formSchema (small import)
 import { formSchema } from '@/components/create-listing/formSchema';
-import { uploadImagesToSupabase, createNotification } from '@/components/create-listing/UploadService';
+import { uploadImageToSupabase, uploadImagesToSupabase, createNotification } from '@/components/create-listing/UploadService';
 import AIPropertyExtractor from '@/components/create-listing/AIPropertyExtractor';
 import AdditionalImagesInput from '@/components/create-listing/AdditionalImagesInput';
 

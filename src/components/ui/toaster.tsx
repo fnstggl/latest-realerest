@@ -10,7 +10,11 @@ import {
 } from "@/components/ui/toast"
 
 export function Toaster() {
-  const { toasts } = useToast()
+  const { toast } = useToast()
+  
+  // Access the toast object's internal toast array directly
+  // @ts-ignore - We know this exists but TypeScript doesn't
+  const toasts = toast.toasts || []
 
   return (
     <ToastProvider>

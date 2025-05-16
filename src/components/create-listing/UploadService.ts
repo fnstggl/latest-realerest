@@ -35,6 +35,60 @@ export const uploadImageToSupabase = async (file: File, propertyId: string): Pro
   }
 };
 
+// Wrapper function for multiple image uploads with progress tracking
+export const uploadImagesToSupabase = async (
+  files: File[], 
+  propertyId: string,
+  progressCallback?: (progress: number) => void
+): Promise<string[]> => {
+  const totalFiles = files.length;
+  let uploadedFiles = 0;
+  const uploadedUrls: string[] = [];
+
+  for (const file of files) {
+    const url = await uploadImageToSupabase(file, propertyId);
+    if (url) {
+      uploadedUrls.push(url);
+    }
+    
+    uploadedFiles++;
+    if (progressCallback) {
+      progressCallback(Math.round((uploadedFiles / totalFiles) * 100));
+    }
+  }
+
+  return uploadedUrls;
+};
+
+// Function to create notification
+export const createNotification = async (
+  userId: string, 
+  title: string, 
+  message: string, 
+  type = 'info', 
+  properties = {}
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase.from('notifications').insert([{
+      user_id: userId,
+      title,
+      message,
+      type,
+      properties
+    }]);
+
+    if (error) {
+      console.error('Error creating notification:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Exception creating notification:', error);
+    return false;
+  }
+};
+
 // Function to delete property images from storage
 export const deletePropertyImages = async (propertyId: string): Promise<boolean> => {
   try {

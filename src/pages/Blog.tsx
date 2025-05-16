@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -9,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import SiteFooter from '@/components/sections/SiteFooter';
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner"; // Use sonner toast
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Helmet } from 'react-helmet-async';
 
@@ -37,9 +36,6 @@ const Blog: React.FC = () => {
   const {
     user
   } = useAuth();
-  const {
-    toast
-  } = useToast();
 
   useEffect(() => {
     fetchBlogPosts();
@@ -85,17 +81,10 @@ const Blog: React.FC = () => {
       } = await supabase.from('blog_posts').delete().eq('id', deletePostId);
       if (error) throw error;
       setBlogPosts(prevPosts => prevPosts.filter(post => post.id !== deletePostId));
-      toast({
-        title: "Success",
-        description: "Blog post deleted successfully"
-      });
+      toast.success("Blog post deleted successfully");
     } catch (error: any) {
       console.error('Error deleting post:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete blog post",
-        variant: "destructive"
-      });
+      toast.error(error.message || "Failed to delete blog post");
     } finally {
       setDeletePostId(null);
       setIsDialogOpen(false);

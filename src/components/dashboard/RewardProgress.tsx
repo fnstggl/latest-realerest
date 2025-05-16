@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Check, X, CircleCheck, CircleX, ArrowDown } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -54,7 +53,7 @@ const RewardProgress = ({ claimId, initialStatus, onStatusUpdate }: RewardProgre
       const { error } = await supabase
         .from('bounty_claims')
         .update({ 
-          status_details: newStatus,
+          status_details: newStatus as any,
           status: newOverallStatus
         })
         .eq('id', claimId);
@@ -92,7 +91,7 @@ const RewardProgress = ({ claimId, initialStatus, onStatusUpdate }: RewardProgre
       const { error } = await supabase
         .from('bounty_claims')
         .update({ 
-          status_details: updatedStatus
+          status_details: updatedStatus as any
         })
         .eq('id', claimId);
       
@@ -139,7 +138,7 @@ const RewardProgress = ({ claimId, initialStatus, onStatusUpdate }: RewardProgre
       const { error } = await supabase
         .from('bounty_claims')
         .update({
-          status_details: newStatus
+          status_details: newStatus as any
         })
         .eq('id', claimId);
 
@@ -204,7 +203,11 @@ const RewardProgress = ({ claimId, initialStatus, onStatusUpdate }: RewardProgre
     if (!dateString) return null;
     try {
       const date = new Date(dateString);
-      return format(date, 'MM/dd/yyyy');
+      return new Intl.DateTimeFormat('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+      }).format(date);
     } catch (error) {
       console.error('Error formatting date:', error);
       return null;

@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner"; // Use sonner toast
 import { motion } from 'framer-motion';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { Loader2, Wand2 } from 'lucide-react';
-import { usePropertySelector, PropertyOption } from '@/hooks/usePropertySelector';
+import { usePropertySelector } from '@/hooks/usePropertySelector';
 import { 
   Select, 
   SelectContent, 
@@ -24,7 +24,6 @@ import { formatCurrency } from '@/lib/utils';
 const CreateBlog: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [formData, setFormData] = useState({
@@ -61,11 +60,7 @@ const CreateBlog: React.FC = () => {
 
   const handleGenerateContent = async () => {
     if (!selectedProperty) {
-      toast({
-        title: "No property selected",
-        description: "Please select a property to generate content",
-        variant: "destructive"
-      });
+      toast.error("Please select a property to generate content");
       return;
     }
 
@@ -85,18 +80,11 @@ const CreateBlog: React.FC = () => {
           content: data.content
         });
 
-        toast({
-          title: "Content generated",
-          description: "AI has created your blog post content"
-        });
+        toast.success("AI has created your blog post content");
       }
     } catch (error: any) {
       console.error("Error generating content:", error);
-      toast({
-        title: "Generation failed",
-        description: error.message || "Could not generate content",
-        variant: "destructive"
-      });
+      toast.error(error.message || "Could not generate content");
     } finally {
       setIsGenerating(false);
     }
@@ -106,21 +94,13 @@ const CreateBlog: React.FC = () => {
     e.preventDefault();
     
     if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "You must be signed in to create a blog post",
-        variant: "destructive"
-      });
+      toast.error("You must be signed in to create a blog post");
       navigate('/signin');
       return;
     }
     
     if (!formData.title || !formData.excerpt || !formData.content) {
-      toast({
-        title: "Missing fields",
-        description: "Please fill out all required fields",
-        variant: "destructive"
-      });
+      toast.error("Please fill out all required fields");
       return;
     }
     
@@ -155,19 +135,12 @@ const CreateBlog: React.FC = () => {
       
       if (error) throw error;
       
-      toast({
-        title: "Success!",
-        description: "Your blog post has been published",
-      });
+      toast.success("Your blog post has been published");
       
       navigate('/blog');
     } catch (error: any) {
       console.error('Error creating blog post:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create blog post",
-        variant: "destructive"
-      });
+      toast.error(error.message || "Failed to create blog post");
     } finally {
       setIsSubmitting(false);
     }

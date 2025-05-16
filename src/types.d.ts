@@ -25,6 +25,9 @@ interface Property {
   additional_images_link?: string;
   belowMarket?: number; // Used in UI but calculated, not stored
   waitlistCount?: number; // Used in UI but calculated, not stored
+  lot_size?: string;  // Added missing property
+  year_built?: string; // Added missing property
+  parking?: string;    // Added missing property
 }
 
 // Define other shared types to fix the build errors
@@ -33,7 +36,7 @@ interface WaitlistUser {
   name: string;
   email: string;
   phone: string;
-  user_id?: string; // Make it optional for compatibility
+  user_id: string; // Make it required for compatibility
   propertyId: string;
   property?: {
     title: string;
@@ -42,8 +45,23 @@ interface WaitlistUser {
   createdAt: string; // Added for sorting
 }
 
-// Define Json type for jsonb fields
-type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+// Define BuyerProgress and BuyerStatus types for the RewardProgress component
+interface BuyerProgress {
+  id: string;
+  name: string;
+  status?: BuyerStatus;
+  foundBuyer: boolean;
+  submittedOffer: boolean;
+  offerAccepted: boolean;
+  dealClosed: boolean;
+  foundBuyerDate?: string;
+  submittedOfferDate?: string;
+  offerAcceptedDate?: string;
+  dealClosedDate?: string;
+  [key: string]: string | boolean | undefined; // Index signature for flexible access
+}
+
+type BuyerStatus = "Interested Buyer" | "Considering Buyer" | "Uninterested Buyer";
 
 // Define RewardStatusDetails type for reward status
 interface RewardStatusDetails {
@@ -52,7 +70,8 @@ interface RewardStatusDetails {
   submittedOffer: boolean;
   offerAccepted: boolean;
   dealClosed: boolean;
-  [key: string]: boolean; // Index signature to fix TypeScript errors
+  buyers: BuyerProgress[];
+  [key: string]: boolean | BuyerProgress[] | any; // Index signature to fix TypeScript errors
 }
 
 // Define Notification type
@@ -67,3 +86,6 @@ interface Notification {
   created_at: string;
   timestamp?: string | Date;
 }
+
+// Define Json type for jsonb fields
+type Json = string | number | boolean | null | { [key: string]: Json } | Json[];

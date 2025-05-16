@@ -1,19 +1,30 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import SiteFooter from '@/components/sections/SiteFooter';
 import { User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { Property } from '@/hooks/useProperties';
 import PropertyCard from '@/components/PropertyCard';
+
+interface PropertyFormatted {
+  id: string;
+  title: string;
+  price: number;
+  marketPrice: number;
+  image: string;
+  location: string;
+  beds: number;
+  baths: number;
+  sqft: number;
+  belowMarket: number;
+}
 
 const SellerProfile = () => {
   const {
     sellerId
   } = useParams();
   const [sellerName, setSellerName] = useState<string>('Seller');
-  const [properties, setProperties] = useState<Property[]>([]);
+  const [properties, setProperties] = useState<PropertyFormatted[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch seller properties
@@ -73,7 +84,7 @@ const SellerProfile = () => {
             belowMarket: Math.round((Number(prop.market_price) - Number(prop.price)) / Number(prop.market_price) * 100)
           }));
           
-          // Set formatted properties to state
+          // Set formatted properties to state - using the correct type
           setProperties(formattedProperties);
         }
       } catch (error) {
