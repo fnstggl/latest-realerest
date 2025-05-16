@@ -17,6 +17,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Slider
+} from "@/components/ui/slider"; // Fix the import - use slider instead of range
 import { Filter, CheckSquare } from "lucide-react";
 import { motion } from 'framer-motion';
 
@@ -39,14 +42,12 @@ const Search = () => {
   const [showFilters, setShowFilters] = useState(false);
   
   const {
-    listings,
+    properties,
     loading,
     error,
-    fetchListings
+    fetchProperties,
+    totalCount
   } = useListings();
-
-  // Calculate the total count for display
-  const totalCount = listings ? listings.length : 0;
 
   // Apply filters when they change
   useEffect(() => {
@@ -66,7 +67,7 @@ const Search = () => {
     }, { replace: true });
     
     // Fetch properties with filters
-    fetchListings({
+    fetchProperties({
       query,
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
@@ -125,14 +126,16 @@ const Search = () => {
                 </SheetHeader>
                 <div className="mt-6">
                   <SearchFilters
-                    onFilterChange={(filters) => {
-                      setPriceRange([filters.minPrice, filters.maxPrice]);
-                      setMinBeds(parseInt(filters.bedrooms) || 0);
-                      setMinBaths(parseInt(filters.bathrooms) || 0);
-                      setPropertyType(filters.propertyType);
-                    }}
-                    isFiltersCollapsed={false}
-                    setIsFiltersCollapsed={() => {}}
+                    priceRange={priceRange}
+                    setPriceRange={setPriceRange}
+                    minBeds={minBeds}
+                    setMinBeds={setMinBeds}
+                    minBaths={minBaths}
+                    setMinBaths={setMinBaths}
+                    propertyType={propertyType}
+                    setPropertyType={setPropertyType}
+                    onReset={handleFilterReset}
+                    mobile
                   />
                 </div>
               </SheetContent>
@@ -155,14 +158,15 @@ const Search = () => {
             </div>
             
             <SearchFilters
-              onFilterChange={(filters) => {
-                setPriceRange([filters.minPrice, filters.maxPrice]);
-                setMinBeds(parseInt(filters.bedrooms) || 0);
-                setMinBaths(parseInt(filters.bathrooms) || 0);
-                setPropertyType(filters.propertyType);
-              }}
-              isFiltersCollapsed={false}
-              setIsFiltersCollapsed={() => {}}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              minBeds={minBeds}
+              setMinBeds={setMinBeds}
+              minBaths={minBaths}
+              setMinBaths={setMinBaths}
+              propertyType={propertyType}
+              setPropertyType={setPropertyType}
+              onReset={handleFilterReset}
             />
           </div>
           
@@ -175,14 +179,14 @@ const Search = () => {
               </div>
               
               <HorizontalFilters 
-                onFilterChange={(filters) => {
-                  setPriceRange([filters.minPrice, filters.maxPrice]);
-                  setMinBeds(parseInt(filters.bedrooms) || 0);
-                  setMinBaths(parseInt(filters.bathrooms) || 0);
-                  setPropertyType(filters.propertyType);
-                }}
-                isFiltersCollapsed={false}
-                setIsFiltersCollapsed={() => {}}
+                priceRange={priceRange}
+                setPriceRange={setPriceRange}
+                minBeds={minBeds}
+                setMinBeds={setMinBeds}
+                minBaths={minBaths}
+                setMinBaths={setMinBaths}
+                propertyType={propertyType}
+                setPropertyType={setPropertyType}
               />
             </div>
             
@@ -193,17 +197,10 @@ const Search = () => {
               transition={{ duration: 0.5 }}
             >
               <SearchResults 
-                location=""
-                minPrice={priceRange[0]}
-                maxPrice={priceRange[1]}
-                minBeds={minBeds}
-                minBaths={minBaths}
-                propertyType={propertyType}
-                nearbyOnly={false}
-                belowMarket={false}
-                sort="newest"
-                includeRental={true}
-                withPhotosOnly={false}
+                properties={properties} 
+                loading={loading} 
+                error={error} 
+                searchQuery={query}
               />
             </motion.div>
             

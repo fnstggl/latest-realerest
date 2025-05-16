@@ -1,326 +1,266 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Check, Clock, Edit, Info, Plus, Save, X } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { CheckCircle2, Circle, AlertCircle } from 'lucide-react';
+import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
-import { formatDate } from '@/lib/utils';
-import { RewardStatusDetails, BuyerProgress, BuyerStatus } from '@/types/bounty';
-import { v4 as uuidv4 } from 'uuid';
+import { useAuth } from '@/context/AuthContext';
 
-interface RewardProgressProps {
-  id: string;
-  statusDetails: RewardStatusDetails;
-  onUpdate: () => void;
-}
+// Note: We're importing interfaces directly as the file is properly set up now
+// interface BuyerProgress, type BuyerStatus, and interface RewardStatusDetails are imported from types.d.ts
 
-const RewardProgress: React.FC<RewardProgressProps> = ({ id, statusDetails, onUpdate }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [status, setStatus] = useState<RewardStatusDetails>(statusDetails || {
-    claimed: true,
+const RewardProgress = ({ 
+  propertyId, 
+  reward = 0, 
+  initialStatus = { 
+    claimed: false,
     foundBuyer: false,
     submittedOffer: false,
     offerAccepted: false,
     dealClosed: false,
     buyers: []
-  });
-  const [editingBuyerId, setEditingBuyerId] = useState<string | null>(null);
-  const [editingBuyerName, setEditingBuyerName] = useState('');
-  const [editingBuyerStatus, setEditingBuyerStatus] = useState<BuyerStatus>('Interested Buyer');
-  
-  const buyerStatuses: BuyerStatus[] = [
-    'Interested Buyer',
-    'Considering Buyer',
-    'Uninterested Buyer'
-  ];
-  
-  const handleSaveStatus = async () => {
+  }
+}: {
+  propertyId: string;
+  reward?: number;
+  initialStatus?: RewardStatusDetails;
+}) => {
+  const { user } = useAuth();
+  const [status, setStatus] = useState<RewardStatusDetails>(initialStatus);
+  const [showAddBuyer, setShowAddBuyer] = useState(false);
+  const [newBuyerName, setNewBuyerName] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const handleAddBuyer = async () => {
+    if (!newBuyerName.trim()) {
+      toast.error("Please enter a buyer name");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('bounty_claims')
-        .update({ status_details: status })
-        .eq('id', id)
-        .select();
-      
+      const newBuyer: BuyerProgress = {
+        id: crypto.randomUUID(),
+        name: newBuyerName.trim(),
+        status: "Interested Buyer",
+        foundBuyer: true,
+        submittedOffer: false,
+        offerAccepted: false,
+        dealClosed: false,
+        foundBuyerDate: new Date().toISOString()
+      };
+
+      // Update local state
+      const updatedBuyers = [...status.buyers, newBuyer];
+      const updatedStatus = { 
+        ...status, 
+        buyers: updatedBuyers,
+        foundBuyer: true
+      };
+      setStatus(updatedStatus);
+
+      // Update database
+      const { error } = await supabase
+        .from('property_rewards')
+        .upsert({
+          property_id: propertyId,
+          user_id: user?.id,
+          status_details: updatedStatus
+        });
+
       if (error) throw error;
       
-      setIsEditing(false);
-      onUpdate(); // Trigger refetch of data
-      
-    } catch (err) {
-      console.error('Error updating reward status:', err);
+      setNewBuyerName('');
+      setShowAddBuyer(false);
+      toast.success("Buyer added successfully");
+    } catch (error) {
+      console.error("Error adding buyer:", error);
+      toast.error("Failed to add buyer");
+    } finally {
+      setLoading(false);
     }
   };
-  
-  const handleToggleEdit = () => {
-    setIsEditing(!isEditing);
-  };
-  
-  const handleCancelEdit = () => {
-    setStatus(statusDetails);
-    setIsEditing(false);
-    setEditingBuyerId(null);
-  };
-  
-  const handleStepToggle = (buyerId: string, step: keyof BuyerProgress) => {
-    // Only allow changes in edit mode
-    if (!isEditing) return;
+
+  const updateBuyerStatus = async (buyerId: string, field: keyof BuyerProgress, value: boolean) => {
+    if (!user) return;
     
-    // Find the specific buyer
-    const updatedBuyers = status.buyers.map(buyer => {
-      if (buyer.id === buyerId) {
-        const now = new Date().toISOString();
-        const dateField = `${step}Date` as keyof BuyerProgress;
-        // Toggle the status and update timestamp
-        return {
-          ...buyer,
-          [step]: !buyer[step],
-          [dateField]: !buyer[step] ? now : undefined
-        };
-      }
-      return buyer;
-    });
-    
-    setStatus({ ...status, buyers: updatedBuyers });
-  };
-  
-  const handleAddBuyer = () => {
-    const newBuyer: BuyerProgress = {
-      id: uuidv4(),
-      name: 'New Buyer',
-      status: 'Interested Buyer',
-      foundBuyer: false,
-      submittedOffer: false,
-      offerAccepted: false,
-      dealClosed: false
-    };
-    
-    setStatus({ ...status, buyers: [...status.buyers, newBuyer] });
-    setEditingBuyerId(newBuyer.id);
-    setEditingBuyerName(newBuyer.name);
-    setEditingBuyerStatus(newBuyer.status || 'Interested Buyer');
-  };
-  
-  const handleRemoveBuyer = (buyerId: string) => {
-    const updatedBuyers = status.buyers.filter(b => b.id !== buyerId);
-    setStatus({ ...status, buyers: updatedBuyers });
-  };
-  
-  const handleEditBuyer = (buyer: BuyerProgress) => {
-    setEditingBuyerId(buyer.id);
-    setEditingBuyerName(buyer.name);
-    setEditingBuyerStatus(buyer.status || 'Interested Buyer');
-  };
-  
-  const handleSaveBuyerEdit = () => {
-    if (!editingBuyerId) return;
-    
-    const updatedBuyers = status.buyers.map(buyer => {
-      if (buyer.id === editingBuyerId) {
-        return {
-          ...buyer,
-          name: editingBuyerName,
-          status: editingBuyerStatus
-        };
-      }
-      return buyer;
-    });
-    
-    setStatus({ ...status, buyers: updatedBuyers });
-    setEditingBuyerId(null);
-  };
-  
-  const calculateProgress = (buyer: BuyerProgress) => {
-    const steps = [buyer.foundBuyer, buyer.submittedOffer, buyer.offerAccepted, buyer.dealClosed];
-    return (steps.filter(Boolean).length / 4) * 100;
-  };
-  
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold text-lg">Reward Progress</h3>
-        {isEditing ? (
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-              <X size={16} className="mr-1" /> Cancel
-            </Button>
-            <Button size="sm" onClick={handleSaveStatus}>
-              <Save size={16} className="mr-1" /> Save Changes
-            </Button>
-          </div>
-        ) : (
-          <Button size="sm" variant="outline" onClick={handleToggleEdit}>
-            <Edit size={16} className="mr-1" /> Edit Progress
-          </Button>
-        )}
-      </div>
+    setLoading(true);
+    try {
+      const updatedBuyers = status.buyers.map(buyer => {
+        if (buyer.id === buyerId) {
+          const update = { ...buyer, [field]: value };
+          
+          // Add date stamp for the action
+          const dateField = `${String(field)}Date`;
+          if (value && !(buyer as any)[dateField]) {
+            (update as any)[dateField] = new Date().toISOString();
+          }
+          
+          return update;
+        }
+        return buyer;
+      });
+
+      // Check if we need to update overall status
+      const anyTrueForThisStep = updatedBuyers.some(buyer => buyer[field] === true);
       
-      <div className="space-y-4">
-        {status.buyers && status.buyers.map(buyer => (
-          <div key={buyer.id} className="border rounded-lg p-4">
-            <div className="flex items-center justify-between mb-4">
-              {editingBuyerId === buyer.id ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={editingBuyerName}
-                    onChange={e => setEditingBuyerName(e.target.value)}
-                    className="border border-gray-300 rounded px-2 py-1 text-sm"
-                    placeholder="Buyer name"
-                  />
-                  <select
-                    value={editingBuyerStatus}
-                    onChange={e => setEditingBuyerStatus(e.target.value as BuyerStatus)}
-                    className="border border-gray-300 rounded px-2 py-1 text-sm"
-                  >
-                    {buyerStatuses.map(status => (
-                      <option key={status} value={status}>{status}</option>
-                    ))}
-                  </select>
-                  <Button size="sm" variant="outline" onClick={handleSaveBuyerEdit}>
-                    <Save size={14} />
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center">
-                  <h4 className="font-semibold">{buyer.name}</h4>
-                  {buyer.status && (
-                    <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
-                      buyer.status === 'Interested Buyer' ? 'bg-green-100 text-green-800' : 
-                      buyer.status === 'Considering Buyer' ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {buyer.status}
-                    </span>
-                  )}
-                </div>
-              )}
-              
-              {isEditing && editingBuyerId !== buyer.id && (
-                <div className="flex gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
-                    className="h-8 w-8 p-0" 
-                    onClick={() => handleEditBuyer(buyer)}
-                  >
-                    <Edit size={14} />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
-                    className="h-8 w-8 p-0 text-red-500 hover:text-red-600" 
-                    onClick={() => handleRemoveBuyer(buyer.id)}
-                  >
-                    <X size={14} />
-                  </Button>
-                </div>
-              )}
-            </div>
-            
-            {/* Progress bar */}
-            <div className="w-full bg-gray-200 h-2 rounded-full mb-4">
-              <div 
-                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
-                style={{ width: `${calculateProgress(buyer)}%` }}
-              ></div>
-            </div>
-            
-            {/* Progress steps */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-              {[
-                { key: 'foundBuyer' as const, label: 'Found Buyer', dateKey: 'foundBuyerDate' as keyof BuyerProgress },
-                { key: 'submittedOffer' as const, label: 'Submitted Offer', dateKey: 'submittedOfferDate' as keyof BuyerProgress },
-                { key: 'offerAccepted' as const, label: 'Offer Accepted', dateKey: 'offerAcceptedDate' as keyof BuyerProgress },
-                { key: 'dealClosed' as const, label: 'Deal Closed', dateKey: 'dealClosedDate' as keyof BuyerProgress }
-              ].map((step) => (
-                <div 
-                  key={step.key}
-                  className={`border rounded p-3 flex flex-col items-center justify-center transition-colors cursor-pointer ${
-                    buyer[step.key] 
-                      ? 'bg-blue-50 border-blue-200' 
-                      : isEditing 
-                        ? 'hover:bg-gray-50 border-gray-200' 
-                        : 'border-gray-200'
-                  }`}
-                  onClick={() => handleStepToggle(buyer.id, step.key)}
-                >
-                  <div className="mb-2">
-                    {buyer[step.key] ? (
-                      <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
-                        <Check className="h-5 w-5 text-white" />
-                      </div>
-                    ) : (
-                      <div className="h-8 w-8 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                        <Clock className="h-4 w-4 text-gray-400" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-sm font-medium text-center">{step.label}</div>
-                  {buyer[step.dateKey] && (
-                    <div className="text-xs text-gray-500 mt-1">
-                      {formatDate(buyer[step.dateKey] as string)}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      // Update fields that depend on buyer progress
+      const updatedStatus = { 
+        ...status, 
+        buyers: updatedBuyers,
+        [field]: anyTrueForThisStep
+      };
+
+      setStatus(updatedStatus);
+
+      // Update database
+      const { error } = await supabase
+        .from('property_rewards')
+        .upsert({
+          property_id: propertyId,
+          user_id: user.id,
+          status_details: updatedStatus
+        });
+
+      if (error) throw error;
+      
+      toast.success(`Progress updated: ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update progress");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderBuyerList = () => {
+    if (status.buyers.length === 0) {
+      return (
+        <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <p>No buyers added yet</p>
+        </div>
+      );
+    }
+    
+    return status.buyers.map(buyer => (
+      <div key={buyer.id} className="mb-6 p-4 bg-white border border-gray-200 rounded-lg">
+        <h4 className="font-bold mb-3">
+          {buyer.name}
+        </h4>
         
-        {/* Add new buyer button */}
-        {isEditing && (
-          <Button 
-            variant="outline" 
-            className="w-full flex items-center justify-center border-dashed"
-            onClick={handleAddBuyer}
+        <div className="space-y-3">
+          {/* Found Buyer - always true when added */}
+          <div className="flex items-center">
+            <CheckCircle2 className="text-green-500 mr-2" size={18} />
+            <span>Found Buyer</span>
+          </div>
+          
+          {/* Submitted Offer */}
+          <div 
+            className="flex items-center cursor-pointer" 
+            onClick={() => updateBuyerStatus(buyer.id, 'submittedOffer', !buyer.submittedOffer)}
           >
-            <Plus size={16} className="mr-1" /> Add Buyer
-          </Button>
-        )}
-        
-        {/* Show help message if no buyers */}
-        {(!status.buyers || status.buyers.length === 0) && (
-          <div className="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
-            <Info size={24} className="mx-auto mb-2 text-gray-400" />
-            <p className="text-gray-600">
-              {isEditing ? 
-                "Click 'Add Buyer' to start tracking your progress with interested buyers" : 
-                "No buyers have been added yet. Click 'Edit Progress' to add buyers."
-              }
-            </p>
+            {buyer.submittedOffer ? (
+              <CheckCircle2 className="text-green-500 mr-2" size={18} />
+            ) : (
+              <Circle className="text-gray-400 mr-2" size={18} />
+            )}
+            <span>Submitted Offer</span>
           </div>
-        )}
-      </div>
-      
-      <TooltipProvider>
-        <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-          <div className="flex items-start">
-            <Info size={16} className="text-blue-500 mt-0.5 mr-2 shrink-0" />
-            <div className="text-sm text-blue-700">
-              <p className="font-medium mb-1">How rewards work:</p>
-              <ol className="list-decimal pl-4 space-y-1">
-                <li>Find an interested buyer for the property</li>
-                <li>Help them submit an offer</li>
-                <li>When their offer is accepted, track it here</li>
-                <li>
-                  After the deal closes, the bounty is yours!
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info size={14} className="inline ml-1 cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-[220px] text-xs">
-                        Payment is processed within 5 business days after the deal closes
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </li>
-              </ol>
-            </div>
+          
+          {/* Offer Accepted */}
+          <div 
+            className="flex items-center cursor-pointer" 
+            onClick={() => buyer.submittedOffer && updateBuyerStatus(buyer.id, 'offerAccepted', !buyer.offerAccepted)}
+          >
+            {buyer.offerAccepted ? (
+              <CheckCircle2 className="text-green-500 mr-2" size={18} />
+            ) : buyer.submittedOffer ? (
+              <Circle className="text-gray-400 mr-2" size={18} />
+            ) : (
+              <AlertCircle className="text-gray-300 mr-2" size={18} />
+            )}
+            <span className={!buyer.submittedOffer ? "text-gray-300" : ""}>Offer Accepted</span>
+          </div>
+          
+          {/* Deal Closed */}
+          <div 
+            className="flex items-center cursor-pointer" 
+            onClick={() => buyer.offerAccepted && updateBuyerStatus(buyer.id, 'dealClosed', !buyer.dealClosed)}
+          >
+            {buyer.dealClosed ? (
+              <CheckCircle2 className="text-green-500 mr-2" size={18} />
+            ) : buyer.offerAccepted ? (
+              <Circle className="text-gray-400 mr-2" size={18} />
+            ) : (
+              <AlertCircle className="text-gray-300 mr-2" size={18} />
+            )}
+            <span className={!buyer.offerAccepted ? "text-gray-300" : ""}>Deal Closed</span>
           </div>
         </div>
-      </TooltipProvider>
+      </div>
+    ));
+  };
+
+  return (
+    <div className="mt-6">
+      <div className="mb-6">
+        <h3 className="text-xl font-bold mb-2">Track Your Progress</h3>
+        <p className="text-gray-600">Complete these steps to earn your {formatCurrency(reward)} reward.</p>
+      </div>
+      
+      <div className="mb-6">
+        {renderBuyerList()}
+      </div>
+      
+      {!showAddBuyer ? (
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={() => setShowAddBuyer(true)}
+          disabled={loading}
+        >
+          Add Buyer
+        </Button>
+      ) : (
+        <div className="space-y-4">
+          <div className="flex">
+            <input
+              type="text"
+              className="flex-grow border border-gray-300 rounded-l-lg px-3 py-2"
+              placeholder="Enter buyer name"
+              value={newBuyerName}
+              onChange={(e) => setNewBuyerName(e.target.value)}
+            />
+            <Button 
+              className="rounded-l-none"
+              onClick={handleAddBuyer}
+              disabled={loading}
+            >
+              Add
+            </Button>
+          </div>
+          <Button 
+            variant="outline" 
+            className="w-full" 
+            onClick={() => setShowAddBuyer(false)}
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
