@@ -23,19 +23,19 @@ const stagger = {
 const HeroSection: React.FC = () => {
   return (
     <section className="pt-32 sm:pt-24 md:pt-36 pb-16 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
+      {/* Background gradient blob - positioned absolutely to the entire section */}
+      <div 
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-full h-full"
+        style={{
+          backgroundImage: `url('/lovable-uploads/28a79fc0-8fcc-4d56-9bd6-0696e9db1e9b.png')`,
+          backgroundSize: '120% auto', // Slightly smaller than 130% but not cut off
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.9
+        }}
+      ></div>
+      
       <div className="container px-4 lg:px-8 mx-auto relative flex justify-center">
-        {/* Background gradient blob - increased size by 30% */}
-        <div 
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url('/lovable-uploads/28a79fc0-8fcc-4d56-9bd6-0696e9db1e9b.png')`,
-            backgroundSize: '130% auto', // Increased from 'contain' to '130% auto'
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            opacity: 0.9
-          }}
-        ></div>
-
         <div className="w-full max-w-5xl text-center mx-auto">
           <div className="flex flex-col items-center relative z-10">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-black mb-1 sm:mb-3 md:mb-4 mx-auto text-center leading-tight" style={{ fontFamily: 'Inter, sans-serif' }}>
