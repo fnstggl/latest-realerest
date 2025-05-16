@@ -42,11 +42,10 @@ const Search = () => {
   const [showFilters, setShowFilters] = useState(false);
   
   const {
-    properties,
+    listings: properties,
     loading,
     error,
-    fetchProperties,
-    totalCount
+    fetchListings
   } = useListings();
 
   // Apply filters when they change
@@ -67,7 +66,7 @@ const Search = () => {
     }, { replace: true });
     
     // Fetch properties with filters
-    fetchProperties({
+    fetchListings({
       query,
       minPrice: priceRange[0],
       maxPrice: priceRange[1],
@@ -102,7 +101,7 @@ const Search = () => {
           <div className="lg:hidden flex justify-between items-center mb-4">
             <div>
               <h2 className="text-xl font-semibold">
-                {loading ? 'Searching...' : `${totalCount} Properties Found`}
+                {loading ? 'Searching...' : `${properties.length} Properties Found`}
               </h2>
             </div>
             
@@ -175,7 +174,7 @@ const Search = () => {
             {/* Desktop Horizontal Quick Filters */}
             <div className="hidden lg:block mb-6">
               <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">{loading ? 'Searching...' : `${totalCount} Properties Found`}</h1>
+                <h1 className="text-2xl font-bold">{loading ? 'Searching...' : `${properties.length} Properties Found`}</h1>
               </div>
               
               <HorizontalFilters 

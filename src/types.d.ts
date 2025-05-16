@@ -23,7 +23,7 @@ interface Property {
   full_address?: string;
   additional_images?: string;
   additional_images_link?: string;
-  belowMarket?: number; // Used in UI but calculated, not stored
+  belowMarket: number; // Changed from optional to required to match expectations
   waitlistCount?: number; // Used in UI but calculated, not stored
   lot_size?: string;  // Added missing property
   year_built?: string; // Added missing property
@@ -66,15 +66,15 @@ type BuyerStatus = "Interested Buyer" | "Considering Buyer" | "Uninterested Buye
 // Define RewardStatusDetails type for reward status
 interface RewardStatusDetails {
   claimed: boolean;
-  foundBuyer: boolean;
-  submittedOffer: boolean;
-  offerAccepted: boolean;
-  dealClosed: boolean;
+  foundBuyer?: boolean;
+  submittedOffer?: boolean;
+  offerAccepted?: boolean;
+  dealClosed?: boolean;
   buyers: BuyerProgress[];
   [key: string]: boolean | BuyerProgress[] | any; // Index signature to fix TypeScript errors
 }
 
-// Define Notification type (ensuring timestamp is string | Date)
+// Define Notification type ensuring timestamp is string or Date
 interface Notification {
   id: string;
   title: string;

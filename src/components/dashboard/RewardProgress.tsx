@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { CheckCircle2, Circle, AlertCircle } from 'lucide-react';
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
-
-// Note: We're importing interfaces directly as the file is properly set up now
-// interface BuyerProgress, type BuyerStatus, and interface RewardStatusDetails are imported from types.d.ts
+import { toast } from 'sonner';
+import { formatDate } from '@/lib/utils';
+import { BuyerProgress, BuyerStatus, RewardStatusDetails } from '@/types/bounty';
+import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 
 const RewardProgress = ({ 
   propertyId, 
@@ -51,7 +51,7 @@ const RewardProgress = ({
     setLoading(true);
     try {
       const newBuyer: BuyerProgress = {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         name: newBuyerName.trim(),
         status: "Interested Buyer",
         foundBuyer: true,
