@@ -1,265 +1,279 @@
-
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { CheckCircle2, Circle, AlertCircle } from 'lucide-react';
-import { toast } from "sonner";
+import React, { useEffect, useState } from 'react';
+import { CheckCircle, Circle, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
-// Note: We're importing interfaces directly as the file is properly set up now
-// interface BuyerProgress, type BuyerStatus, and interface RewardStatusDetails are imported from types.d.ts
+interface RewardProgressProps {
+  userId: string;
+  propertyId: string;
+}
 
-const RewardProgress = ({ 
-  propertyId, 
-  reward = 0, 
-  initialStatus = { 
-    claimed: false,
+const RewardProgress: React.FC<RewardProgressProps> = ({ userId, propertyId }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [rewardStatus, setRewardStatus] = useState<string>('claimed');
+  const [statusDetails, setStatusDetails] = useState<RewardStatusDetails>({
+    claimed: true,
     foundBuyer: false,
     submittedOffer: false,
     offerAccepted: false,
     dealClosed: false,
     buyers: []
-  }
-}: {
-  propertyId: string;
-  reward?: number;
-  initialStatus?: RewardStatusDetails;
-}) => {
-  const { user } = useAuth();
-  const [status, setStatus] = useState<RewardStatusDetails>(initialStatus);
-  const [showAddBuyer, setShowAddBuyer] = useState(false);
-  const [newBuyerName, setNewBuyerName] = useState('');
-  const [loading, setLoading] = useState(false);
+  });
+  const [property, setProperty] = useState<{ title: string; image: string }>({
+    title: '',
+    image: '/placeholder.svg'
+  });
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
+  useEffect(() => {
+    fetchRewardStatus();
+  }, [userId, propertyId]);
 
-  const handleAddBuyer = async () => {
-    if (!newBuyerName.trim()) {
-      toast.error("Please enter a buyer name");
-      return;
-    }
-
-    setLoading(true);
+  // Fix the table names and replace method usage
+  const fetchRewardStatus = async () => {
+    setIsLoading(true);
+    
     try {
-      const newBuyer: BuyerProgress = {
-        id: crypto.randomUUID(),
-        name: newBuyerName.trim(),
-        status: "Interested Buyer",
-        foundBuyer: true,
-        submittedOffer: false,
-        offerAccepted: false,
-        dealClosed: false,
-        foundBuyerDate: new Date().toISOString()
-      };
-
-      // Update local state
-      const updatedBuyers = [...status.buyers, newBuyer];
-      const updatedStatus = { 
-        ...status, 
-        buyers: updatedBuyers,
-        foundBuyer: true
-      };
-      setStatus(updatedStatus);
-
-      // Update database
-      const { error } = await supabase
-        .from('property_rewards')
-        .upsert({
-          property_id: propertyId,
-          user_id: user?.id,
-          status_details: updatedStatus
-        });
-
+      // Use the correct table name 'bounty_claims' instead of 'property_rewards'
+      const { data: rewardData, error } = await supabase
+        .from('bounty_claims')
+        .select('*, property_listings(title, images)')
+        .eq('user_id', userId)
+        .eq('property_id', propertyId)
+        .maybeSingle();
+      
       if (error) throw error;
       
-      setNewBuyerName('');
-      setShowAddBuyer(false);
-      toast.success("Buyer added successfully");
-    } catch (error) {
-      console.error("Error adding buyer:", error);
-      toast.error("Failed to add buyer");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateBuyerStatus = async (buyerId: string, field: keyof BuyerProgress, value: boolean) => {
-    if (!user) return;
-    
-    setLoading(true);
-    try {
-      const updatedBuyers = status.buyers.map(buyer => {
-        if (buyer.id === buyerId) {
-          const update = { ...buyer, [field]: value };
-          
-          // Add date stamp for the action
-          const dateField = `${String(field)}Date`;
-          if (value && !(buyer as any)[dateField]) {
-            (update as any)[dateField] = new Date().toISOString();
-          }
-          
-          return update;
-        }
-        return buyer;
-      });
-
-      // Check if we need to update overall status
-      const anyTrueForThisStep = updatedBuyers.some(buyer => buyer[field] === true);
-      
-      // Update fields that depend on buyer progress
-      const updatedStatus = { 
-        ...status, 
-        buyers: updatedBuyers,
-        [field]: anyTrueForThisStep
-      };
-
-      setStatus(updatedStatus);
-
-      // Update database
-      const { error } = await supabase
-        .from('property_rewards')
-        .upsert({
-          property_id: propertyId,
-          user_id: user.id,
-          status_details: updatedStatus
-        });
-
-      if (error) throw error;
-      
-      toast.success(`Progress updated: ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
-    } catch (error) {
-      console.error("Error updating status:", error);
-      toast.error("Failed to update progress");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const renderBuyerList = () => {
-    if (status.buyers.length === 0) {
-      return (
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <p>No buyers added yet</p>
-        </div>
-      );
-    }
-    
-    return status.buyers.map(buyer => (
-      <div key={buyer.id} className="mb-6 p-4 bg-white border border-gray-200 rounded-lg">
-        <h4 className="font-bold mb-3">
-          {buyer.name}
-        </h4>
+      if (rewardData) {
+        setRewardStatus(rewardData.status || 'claimed');
         
-        <div className="space-y-3">
-          {/* Found Buyer - always true when added */}
-          <div className="flex items-center">
-            <CheckCircle2 className="text-green-500 mr-2" size={18} />
-            <span>Found Buyer</span>
-          </div>
+        if (rewardData.status_details) {
+          setStatusDetails(rewardData.status_details);
+        }
+        
+        // Get property details
+        if (rewardData.property_listings) {
+          setProperty({
+            title: rewardData.property_listings.title,
+            image: rewardData.property_listings.images?.[0] || '/placeholder.svg'
+          });
+        }
+      } else {
+        // If no reward data found, check if we need to create a new record
+        const { data: propertyData } = await supabase
+          .from('property_listings')
+          .select('title, images, reward')
+          .eq('id', propertyId)
+          .single();
+        
+        if (propertyData) {
+          setProperty({
+            title: propertyData.title,
+            image: propertyData.images?.[0] || '/placeholder.svg'
+          });
           
-          {/* Submitted Offer */}
-          <div 
-            className="flex items-center cursor-pointer" 
-            onClick={() => updateBuyerStatus(buyer.id, 'submittedOffer', !buyer.submittedOffer)}
-          >
-            {buyer.submittedOffer ? (
-              <CheckCircle2 className="text-green-500 mr-2" size={18} />
-            ) : (
-              <Circle className="text-gray-400 mr-2" size={18} />
-            )}
-            <span>Submitted Offer</span>
-          </div>
-          
-          {/* Offer Accepted */}
-          <div 
-            className="flex items-center cursor-pointer" 
-            onClick={() => buyer.submittedOffer && updateBuyerStatus(buyer.id, 'offerAccepted', !buyer.offerAccepted)}
-          >
-            {buyer.offerAccepted ? (
-              <CheckCircle2 className="text-green-500 mr-2" size={18} />
-            ) : buyer.submittedOffer ? (
-              <Circle className="text-gray-400 mr-2" size={18} />
-            ) : (
-              <AlertCircle className="text-gray-300 mr-2" size={18} />
-            )}
-            <span className={!buyer.submittedOffer ? "text-gray-300" : ""}>Offer Accepted</span>
-          </div>
-          
-          {/* Deal Closed */}
-          <div 
-            className="flex items-center cursor-pointer" 
-            onClick={() => buyer.offerAccepted && updateBuyerStatus(buyer.id, 'dealClosed', !buyer.dealClosed)}
-          >
-            {buyer.dealClosed ? (
-              <CheckCircle2 className="text-green-500 mr-2" size={18} />
-            ) : buyer.offerAccepted ? (
-              <Circle className="text-gray-400 mr-2" size={18} />
-            ) : (
-              <AlertCircle className="text-gray-300 mr-2" size={18} />
-            )}
-            <span className={!buyer.offerAccepted ? "text-gray-300" : ""}>Deal Closed</span>
-          </div>
-        </div>
-      </div>
-    ));
+          // Create new reward claim record
+          if (propertyData.reward > 0) {
+            const { data: newClaim, error: insertError } = await supabase
+              .from('bounty_claims')
+              .insert({
+                user_id: userId,
+                property_id: propertyId,
+                status: 'claimed',
+                status_details: {
+                  claimed: true,
+                  foundBuyer: false,
+                  submittedOffer: false,
+                  offerAccepted: false,
+                  dealClosed: false,
+                  buyers: []
+                }
+              })
+              .select()
+              .single();
+            
+            if (insertError) throw insertError;
+            
+            if (newClaim) {
+              setRewardStatus('claimed');
+              setStatusDetails(newClaim.status_details);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching reward status:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const checkAndUpdateOverallProgress = (updatedStatusDetails: RewardStatusDetails) => {
+    const allBuyersDealClosed = updatedStatusDetails.buyers.every(buyer => buyer.dealClosed);
+    
+    if (updatedStatusDetails.foundBuyer &&
+        updatedStatusDetails.submittedOffer &&
+        updatedStatusDetails.offerAccepted &&
+        allBuyersDealClosed) {
+      setRewardStatus('completed');
+    } else {
+      setRewardStatus('in progress');
+    }
+  };
+
+  const addBuyer = async () => {
+    const newBuyerId = Math.random().toString(36).substring(2, 15);
+    const newBuyer = {
+      id: newBuyerId,
+      name: `Buyer ${statusDetails.buyers.length + 1}`,
+      status: 'Interested Buyer',
+      foundBuyer: true,
+      submittedOffer: false,
+      offerAccepted: false,
+      dealClosed: false
+    };
+
+    try {
+      const updatedStatusDetails = {
+        ...statusDetails,
+        buyers: [...statusDetails.buyers, newBuyer]
+      };
+
+      const { error } = await supabase
+        .from('bounty_claims')
+        .update({
+          status_details: updatedStatusDetails
+        })
+        .eq('user_id', userId)
+        .eq('property_id', propertyId);
+
+      if (error) {
+        throw error;
+      }
+
+      setStatusDetails(updatedStatusDetails);
+    } catch (error) {
+      console.error('Error adding buyer:', error);
+    }
+  };
+
+  const updateProgressForBuyer = async (buyerId: string, field: keyof BuyerProgress, value: boolean) => {
+    try {
+      const newBuyers = [...statusDetails.buyers];
+      const buyerIndex = newBuyers.findIndex(b => b.id === buyerId);
+      
+      if (buyerIndex >= 0) {
+        newBuyers[buyerIndex] = {
+          ...newBuyers[buyerIndex],
+          [field]: value,
+          // Don't use string.replace here, just use the field name directly with Date
+          [field + 'Date']: value ? new Date().toISOString() : undefined
+        };
+        
+        // Update the status details with the new buyer progress
+        const updatedStatusDetails = {
+          ...statusDetails,
+          buyers: newBuyers
+        };
+        
+        // Update in database
+        const { error } = await supabase
+          .from('bounty_claims')
+          .update({
+            status_details: updatedStatusDetails
+          })
+          .eq('user_id', userId)
+          .eq('property_id', propertyId);
+        
+        if (error) throw error;
+        
+        // Update local state
+        setStatusDetails(updatedStatusDetails);
+        
+        // Check if we should update overall progress
+        checkAndUpdateOverallProgress(updatedStatusDetails);
+      }
+    } catch (error) {
+      console.error('Error updating buyer progress:', error);
+    }
+  };
+
+  const getStatusIcon = (status: boolean) => {
+    return status ? <CheckCircle className="h-5 w-5 text-green-500" /> : <Circle className="h-5 w-5 text-gray-400" />;
   };
 
   return (
-    <div className="mt-6">
-      <div className="mb-6">
-        <h3 className="text-xl font-bold mb-2">Track Your Progress</h3>
-        <p className="text-gray-600">Complete these steps to earn your {formatCurrency(reward)} reward.</p>
-      </div>
-      
-      <div className="mb-6">
-        {renderBuyerList()}
-      </div>
-      
-      {!showAddBuyer ? (
-        <Button 
-          variant="outline" 
-          className="w-full" 
-          onClick={() => setShowAddBuyer(true)}
-          disabled={loading}
-        >
-          Add Buyer
-        </Button>
+    <div className="bg-white p-6 rounded-md shadow-md">
+      <h3 className="text-lg font-semibold mb-4">Reward Progress</h3>
+      {isLoading ? (
+        <p>Loading reward status...</p>
       ) : (
-        <div className="space-y-4">
-          <div className="flex">
-            <input
-              type="text"
-              className="flex-grow border border-gray-300 rounded-l-lg px-3 py-2"
-              placeholder="Enter buyer name"
-              value={newBuyerName}
-              onChange={(e) => setNewBuyerName(e.target.value)}
-            />
-            <Button 
-              className="rounded-l-none"
-              onClick={handleAddBuyer}
-              disabled={loading}
-            >
-              Add
-            </Button>
+        <>
+          <div className="mb-4">
+            <h4 className="text-md font-semibold">Property:</h4>
+            <p>{property.title}</p>
+            <img src={property.image} alt={property.title} className="w-32 h-20 object-cover rounded-md" />
           </div>
-          <Button 
-            variant="outline" 
-            className="w-full" 
-            onClick={() => setShowAddBuyer(false)}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-        </div>
+          <div className="mb-4">
+            <h4 className="text-md font-semibold">Status:</h4>
+            <p>Current Reward Status: {rewardStatus}</p>
+          </div>
+          <div className="mb-4">
+            <h4 className="text-md font-semibold">Progress:</h4>
+            <div className="flex items-center justify-between">
+              <span>Found Buyer</span>
+              {getStatusIcon(statusDetails.foundBuyer)}
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Submitted Offer</span>
+              {getStatusIcon(statusDetails.submittedOffer)}
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Offer Accepted</span>
+              {getStatusIcon(statusDetails.offerAccepted)}
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Deal Closed</span>
+              {getStatusIcon(statusDetails.dealClosed)}
+            </div>
+          </div>
+          <div>
+            <h4 className="text-md font-semibold">Buyers:</h4>
+            {statusDetails.buyers.map((buyer) => (
+              <div key={buyer.id} className="mb-2 p-3 rounded-md border border-gray-200">
+                <div className="flex items-center mb-2">
+                  <User className="h-4 w-4 mr-2" />
+                  <span>{buyer.name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Found Buyer</span>
+                  <Button variant="ghost" onClick={() => updateProgressForBuyer(buyer.id, 'foundBuyer', !buyer.foundBuyer)}>
+                    {getStatusIcon(buyer.foundBuyer)}
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Submitted Offer</span>
+                  <Button variant="ghost" onClick={() => updateProgressForBuyer(buyer.id, 'submittedOffer', !buyer.submittedOffer)}>
+                    {getStatusIcon(buyer.submittedOffer)}
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Offer Accepted</span>
+                  <Button variant="ghost" onClick={() => updateProgressForBuyer(buyer.id, 'offerAccepted', !buyer.offerAccepted)}>
+                    {getStatusIcon(buyer.offerAccepted)}
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Deal Closed</span>
+                  <Button variant="ghost" onClick={() => updateProgressForBuyer(buyer.id, 'dealClosed', !buyer.dealClosed)}>
+                    {getStatusIcon(buyer.dealClosed)}
+                  </Button>
+                </div>
+              </div>
+            ))}
+            <Button onClick={addBuyer} className="w-full neo-button-primary text-black">Add Buyer</Button>
+          </div>
+        </>
       )}
     </div>
   );

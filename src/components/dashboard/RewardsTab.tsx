@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -94,6 +93,20 @@ const RewardsTab = () => {
     }));
     
     return highestProgress;
+  };
+
+  const formatRewardStatus = (statusDetails: RewardStatusDetails | null): RewardStatusDetails => {
+    // Ensure we have a valid status details object with all required fields
+    return {
+      claimed: statusDetails?.claimed || false,
+      foundBuyer: statusDetails?.foundBuyer || false,
+      submittedOffer: statusDetails?.submittedOffer || false,
+      offerAccepted: statusDetails?.offerAccepted || false,
+      dealClosed: statusDetails?.dealClosed || false,
+      buyers: statusDetails?.buyers || [],
+      // Include any other properties that might be in the status details
+      ...statusDetails
+    };
   };
 
   if (isLoading) {
