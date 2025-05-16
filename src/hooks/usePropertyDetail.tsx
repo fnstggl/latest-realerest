@@ -1,293 +1,233 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { useUserProfiles } from './useUserProfiles';
 
-export interface PropertyDetailData {
-  property: Property | null;
-  seller: any | null;
-  loading: boolean;
-  error: string | null;
-  isLiked: boolean;
-  likeCount: number;
-  isWaitlisted: boolean;
-  waitlistCount: number;
-  isOwner: boolean;
-  toggleLike: () => Promise<void>;
-  handleWaitlistToggle: () => Promise<void>;
-  rewardData: null | {
-    reward: number;
-    claimed: boolean;
-  };
-  isLoading?: boolean;
-  sellerInfo?: any;
-  waitlistStatus?: any;
-  isApproved?: boolean;
-  shouldShowSellerInfo?: boolean;
-  refreshProperty?: () => Promise<void>;
+type PropertyDetailType = {
+  id: string;
+  title: string;
+  price: number;
+  market_price: number;
+  location: string;
+  full_address: string;
+  description: string;
+  beds: number;
+  baths: number;
+  sqft: number;
+  images: string[];
+  user_id: string;
+  below_market: number;
+  seller_name: string;
+  seller_email: string;
+  seller_phone: string;
+  seller_id: string;
+  reward: number | null;
+  after_repair_value?: number;
+  estimated_rehab?: number;
+  property_type?: string;
+  year_built?: number | null;
+  lot_size?: number | null;
+  parking?: string | null;
+  comparable_addresses?: string[];
+  created_at?: string;
+  additional_images_link?: string | null;
+};
+
+export interface PropertyDetail {
+  id: string;
+  price: number;
+  market_price: number;
+  beds: number;
+  baths: number;
+  sqft: number;
+  title: string;
+  location: string;
+  description?: string;
+  images: string[];
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+  after_repair_value?: number;
+  estimated_rehab?: number;
+  reward?: number;
+  full_address?: string;
+  property_type?: string;
+  additional_images_link?: string;
+  // Add these optional properties
+  year_built?: number;
+  lot_size?: number;
+  parking?: string;
 }
 
-// Alias the return type for clarity
-export type UsePropertyDetailResult = PropertyDetailData;
-
-export const usePropertyDetail = (propertyId: string): UsePropertyDetailResult => {
-  const [property, setProperty] = useState<Property | null>(null);
-  const [seller, setSeller] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-  const [isWaitlisted, setIsWaitlisted] = useState(false);
-  const [waitlistCount, setWaitlistCount] = useState(0);
-  const [rewardData, setRewardData] = useState<{reward: number; claimed: boolean;} | null>(null);
+const usePropertyDetail = (propertyId?: string) => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  
-  // Add missing properties to match what PropertyDetail.tsx expects
-  const isApproved = true; // Default value to match expected type
-  const shouldShowSellerInfo = true; // Default value to match expected type
+  const { getUserProfile } = useUserProfiles();
+  const [property, setProperty] = useState<PropertyDetailType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [sellerInfo, setSellerInfo] = useState<{ name: string | null; phone: string | null; email: string | null }>({ name: null, phone: null, email: null });
+  const [waitlistStatus, setWaitlistStatus] = useState<string | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
+  const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
 
-  // Fetch property data
-  useEffect(() => {
-    const fetchPropertyDetail = async () => {
-      if (!propertyId) {
-        setError('No property ID provided');
-        setLoading(false);
+  const fetchPropertyData = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    if (!propertyId) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { data: propertyData, error: propertyError } = await supabase
+        .from('property_listings')
+        .select('*')
+        .eq('id', propertyId)
+        .single();
+
+      if (propertyError) {
+        setError(propertyError);
+        console.error("Error fetching property:", propertyError);
         return;
       }
-      
-      try {
-        setLoading(true);
-        // Fetch property data
-        const { data: propertyData, error: propertyError } = await supabase
-          .from('property_listings')
-          .select('*')
-          .eq('id', propertyId)
-          .single();
-          
-        if (propertyError) throw propertyError;
-        if (!propertyData) {
-          setError('Property not found');
-          setLoading(false);
-          return;
+
+      if (propertyData) {
+        const price = Number(propertyData.price);
+        const marketPrice = Number(propertyData.market_price);
+        const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
+        
+        // Handle null or undefined reward properly
+        const rewardAmount = propertyData.reward ? Number(propertyData.reward) : null;
+
+        // Fetch seller profile using useUserProfiles hook
+        let sellerProfile = null;
+        try {
+          sellerProfile = await getUserProfile(propertyData.user_id);
+          console.log("Seller profile fetched:", sellerProfile);
+        } catch (profileError) {
+          console.error("Error fetching seller profile:", profileError);
         }
 
-        // Format property data
-        const formattedProperty = {
-          ...propertyData,
-          marketPrice: propertyData.market_price,
-          belowMarket: Math.round((propertyData.market_price - propertyData.price) / propertyData.market_price * 100),
-          image: propertyData.images && propertyData.images.length > 0 ? propertyData.images[0] : null,
-        };
-
-        setProperty(formattedProperty);
+        // Create a user-friendly seller name
+        // Capitalize first letter and use name from profile or format email if name isn't available
+        let sellerName = 'Property Owner';
         
-        // Fetch property like count
-        const { count: likesCount } = await supabase
-          .from('property_likes')
-          .select('*', { count: 'exact', head: true })
-          .eq('property_id', propertyId);
-        
-        setLikeCount(likesCount || 0);
-        
-        // Fetch property waitlist count
-        const { count: waitlistUsers } = await supabase
-          .from('property_waitlist')
-          .select('*', { count: 'exact', head: true })
-          .eq('property_id', propertyId);
-        
-        setWaitlistCount(waitlistUsers || 0);
-        
-        // Check if current user likes this property
-        if (user?.id) {
-          const { data: userLike } = await supabase
-            .from('property_likes')
-            .select('*')
-            .eq('property_id', propertyId)
-            .eq('user_id', user.id)
-            .maybeSingle();
-          
-          setIsLiked(!!userLike);
-          
-          // Check if user is waitlisted
-          const { data: userWaitlist } = await supabase
-            .from('property_waitlist')
-            .select('*')
-            .eq('property_id', propertyId)
-            .eq('user_id', user.id)
-            .maybeSingle();
-          
-          setIsWaitlisted(!!userWaitlist);
-          
-          // Check if property has reward
-          if (propertyData.reward) {
-            const { data: rewardStatus } = await supabase
-              .from('property_rewards')
-              .select('status_details')
-              .eq('property_id', propertyId)
-              .eq('user_id', user.id)
-              .maybeSingle();
-              
-            setRewardData({
-              reward: propertyData.reward,
-              claimed: rewardStatus?.status_details?.claimed || false
-            });
+        if (sellerProfile) {
+          if (sellerProfile.name && !sellerProfile.name.includes('@')) {
+            sellerName = sellerProfile.name;
+          } else if (sellerProfile.email) {
+            // Create a readable name from the email (e.g., john.doe@example.com → John)
+            const emailName = sellerProfile.email.split('@')[0];
+            sellerName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
           }
         }
         
-        // Get seller info
+        const sellerEmail = sellerProfile?.email || '';
+
+        const mappedProperty: PropertyDetailType = {
+          id: propertyData.id,
+          title: propertyData.title,
+          price: Number(propertyData.price),
+          market_price: Number(propertyData.market_price),
+          location: propertyData.location,
+          full_address: propertyData.full_address || '',
+          description: propertyData.description || '',
+          beds: propertyData.beds,
+          baths: propertyData.baths,
+          sqft: propertyData.sqft,
+          images: propertyData.images || [],
+          user_id: propertyData.user_id,
+          below_market: parseFloat(belowMarket),
+          seller_name: sellerName,
+          seller_email: sellerEmail,
+          seller_phone: '',
+          seller_id: propertyData.user_id,
+          reward: rewardAmount,
+          after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
+          estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
+          property_type: propertyData.property_type,
+          year_built: propertyData.year_built || null,
+          lot_size: propertyData.lot_size || null,
+          parking: propertyData.parking || null,
+          comparable_addresses: propertyData.comparable_addresses,
+          created_at: propertyData.created_at,
+          additional_images_link: propertyData.additional_images_link || null
+        };
+
+        setProperty(mappedProperty);
+
         const { data: sellerData, error: sellerError } = await supabase
           .from('profiles')
-          .select('*')
+          .select('name, phone, email, id')
           .eq('id', propertyData.user_id)
           .single();
-        
+
         if (sellerError) {
-          console.error("Error fetching seller:", sellerError);
-        } else {
-          setSeller(sellerData);
+          console.error("Error fetching seller info:", sellerError);
+        } else if (sellerData) {
+          // Check if name is an actual name (not an email) and not empty
+          let name = sellerName;
+          if (sellerData.name && !sellerData.name.includes('@') && sellerData.name.trim() !== '') {
+            name = sellerData.name;
+          }
+          
+          setSellerInfo({
+            name: name,
+            phone: sellerData.phone || null,
+            email: sellerData.email || null
+          });
+
+          setProperty(prev => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              seller_name: name,
+              seller_email: sellerData.email || sellerEmail,
+              seller_phone: sellerData.phone || '',
+            };
+          });
         }
-        
-      } catch (err: any) {
-        console.error("Error fetching property:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchPropertyDetail();
-  }, [propertyId, user?.id]);
 
-  // Check if user is the property owner
-  const isOwner = user?.id && property?.user_id === user.id;
-
-  // Toggle property like
-  const toggleLike = async () => {
-    if (!user) {
-      navigate('/signin', { state: { from: `/property/${propertyId}` } });
-      return;
-    }
-    
-    try {
-      if (isLiked) {
-        // Unlike
-        await supabase
-          .from('property_likes')
-          .delete()
-          .eq('property_id', propertyId)
-          .eq('user_id', user.id);
+        const { data: authData } = await supabase.auth.getUser();
+        const currentUser = authData?.user;
+        const isCurrentUserOwner = currentUser?.id === propertyData.user_id;
+        setIsOwner(isCurrentUserOwner);
         
-        setIsLiked(false);
-        setLikeCount(prev => Math.max(0, prev - 1));
-        toast.success('Property removed from your likes');
-      } else {
-        // Like
-        await supabase
-          .from('property_likes')
-          .insert({
-            property_id: propertyId,
-            user_id: user.id,
-            property_title: property?.title || 'Property',
-            property_location: property?.location || '',
-            property_price: property?.price || 0,
-            property_beds: property?.beds || 0,
-            property_baths: property?.baths || 0,
-            property_sqft: property?.sqft || 0,
-            property_image: property?.image || '',
-            property_year_built: property?.year_built || '',
-            property_lot_size: property?.lot_size || '',
-            property_parking: property?.parking || '',
-          });
-        
-        setIsLiked(true);
-        setLikeCount(prev => prev + 1);
-        toast.success('Property added to your likes');
+        // Auto-approve all non-owner users - this is the key change
+        if (!isCurrentUserOwner) {
+          setIsApproved(true);
+          setWaitlistStatus('approved');
+        }
       }
-    } catch (err) {
-      console.error("Error toggling like:", err);
-      toast.error('Failed to update likes');
+    } catch (err: any) {
+      setError(err);
+      console.error("Unexpected error:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Toggle waitlist
-  const handleWaitlistToggle = async () => {
-    if (!user) {
-      navigate('/signin', { state: { from: `/property/${propertyId}` } });
-      return;
-    }
-    
-    if (isOwner) {
-      toast.error("You cannot join the waitlist for your own property");
-      return;
-    }
-    
-    try {
-      if (isWaitlisted) {
-        // Remove from waitlist
-        await supabase
-          .from('property_waitlist')
-          .delete()
-          .eq('property_id', propertyId)
-          .eq('user_id', user.id);
-        
-        setIsWaitlisted(false);
-        setWaitlistCount(prev => Math.max(0, prev - 1));
-        toast.success('You have been removed from the waitlist');
-      } else {
-        // Add to waitlist
-        await supabase
-          .from('property_waitlist')
-          .insert({
-            property_id: propertyId,
-            user_id: user.id,
-            name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Anonymous',
-            email: user.email || '',
-            phone: user.user_metadata?.phone || '',
-            status: 'pending',
-            property: {
-              title: property?.title || 'Property'
-            }
-          });
-        
-        setIsWaitlisted(true);
-        setWaitlistCount(prev => prev + 1);
-        toast.success('You have been added to the waitlist');
-      }
-    } catch (err) {
-      console.error("Error toggling waitlist:", err);
-      toast.error('Failed to update waitlist');
-    }
-  };
-  
-  // Add refreshProperty function to match what PropertyDetail.tsx expects
-  const refreshProperty = async () => {
-    const fetchPropertyDetail = async () => {
-      // Re-implement property fetching logic as needed
-    };
-    await fetchPropertyDetail();
-  };
+  useEffect(() => {
+    fetchPropertyData();
+  }, [propertyId]);
+
+  useEffect(() => {
+    setShouldShowSellerInfo(isOwner || isApproved);
+  }, [isOwner, isApproved]);
 
   return {
     property,
-    seller,
-    loading,
+    isLoading,
     error,
-    isLiked,
-    likeCount,
-    isWaitlisted,
-    waitlistCount,
+    sellerInfo,
+    waitlistStatus,
     isOwner,
-    toggleLike,
-    handleWaitlistToggle,
-    rewardData,
-    // Add the additional properties needed by PropertyDetail.tsx
-    isLoading: loading,
-    sellerInfo: seller,
-    waitlistStatus: { isWaitlisted, count: waitlistCount },
     isApproved,
     shouldShowSellerInfo,
-    refreshProperty
+    refreshProperty: fetchPropertyData
   };
 };
+
+export { usePropertyDetail };
