@@ -98,7 +98,7 @@ const About: React.FC = () => {
             <p className="text-lg md:text-xl font-futura font-bold tracking-tight">
               Realer Estate is a platform helping struggling homebuyers find homes they can <em>afford</em>. We 
               understand the Real Estate market is broken. Regular buyers are getting priced out. Not anymore. 
-              We provide exclusively below-market homes, available to everyone—no lotteries, waitlists or fees. Just Realer Estate.
+              We provide exclusively below-market homes, available to everyone—no lotteries, waitlists or fees.
             </p>
           </motion.div>
           
