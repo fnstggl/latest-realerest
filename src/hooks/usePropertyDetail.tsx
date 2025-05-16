@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -163,7 +164,10 @@ const fetchPropertyData = async () => {
     try {
       const { data, error } = await supabase
         .from('liked_properties')
-        .insert([{ property_id: propertyId, user_id: user.id }]);
+        .insert({
+          property_id: propertyId,
+          user_id: user.id
+        });
 
       if (error) {
         throw new Error(error.message);
@@ -207,9 +211,25 @@ const fetchPropertyData = async () => {
     }
 
     try {
+      // Fetch user's profile to get name
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        throw new Error(profileError.message);
+      }
+
       const { data, error } = await supabase
         .from('waitlist_requests')
-        .insert([{ property_id: propertyId, user_id: user.id }]);
+        .insert({
+          property_id: propertyId,
+          user_id: user.id,
+          name: profileData?.name || 'Anonymous User',
+          status: 'pending'
+        });
 
       if (error) {
         throw new Error(error.message);

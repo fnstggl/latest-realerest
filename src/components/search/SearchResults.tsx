@@ -306,7 +306,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               beds={property.beds || 0}
               baths={property.baths || 0}
               sqft={property.sqft || 0}
-              belowMarket={property.belowMarket}
+              belowMarket={property.belowMarket || 0}
               reward={property.reward}
             />
           </div>

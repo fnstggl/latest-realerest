@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -47,12 +48,23 @@ const RewardsTab = () => {
       
       // Initialize the buyers array if it doesn't exist
       return data.map((claim: any) => {
+        if (!claim.status_details) {
+          claim.status_details = {
+            claimed: true,
+            foundBuyer: false,
+            submittedOffer: false,
+            offerAccepted: false,
+            dealClosed: false,
+            buyers: []
+          };
+        }
+        
         if (!claim.status_details.buyers) {
           // Create a default buyer if there are no buyers yet
           claim.status_details.buyers = [{
             id: crypto.randomUUID(),
             name: "Primary Buyer",
-            status: "Interested Buyer",
+            status: "Interested Buyer" as BuyerStatus,
             foundBuyer: claim.status_details.foundBuyer || false,
             submittedOffer: claim.status_details.submittedOffer || false,
             offerAccepted: claim.status_details.offerAccepted || false,
@@ -66,7 +78,7 @@ const RewardsTab = () => {
           // Ensure all existing buyers have a status
           claim.status_details.buyers = claim.status_details.buyers.map((buyer: any) => ({
             ...buyer,
-            status: buyer.status || "Interested Buyer"
+            status: buyer.status as BuyerStatus || "Interested Buyer"
           }));
         }
         return claim;
@@ -97,15 +109,20 @@ const RewardsTab = () => {
 
   const formatRewardStatus = (statusDetails: RewardStatusDetails | null): RewardStatusDetails => {
     // Ensure we have a valid status details object with all required fields
-    return {
-      claimed: statusDetails?.claimed || false,
-      foundBuyer: statusDetails?.foundBuyer || false,
-      submittedOffer: statusDetails?.submittedOffer || false,
-      offerAccepted: statusDetails?.offerAccepted || false,
-      dealClosed: statusDetails?.dealClosed || false,
-      buyers: statusDetails?.buyers || [],
-      // Include any other properties that might be in the status details
-      ...statusDetails
+    return statusDetails ? {
+      claimed: statusDetails.claimed || false,
+      foundBuyer: statusDetails.foundBuyer || false,
+      submittedOffer: statusDetails.submittedOffer || false,
+      offerAccepted: statusDetails.offerAccepted || false,
+      dealClosed: statusDetails.dealClosed || false,
+      buyers: statusDetails.buyers || []
+    } : {
+      claimed: false,
+      foundBuyer: false,
+      submittedOffer: false,
+      offerAccepted: false,
+      dealClosed: false,
+      buyers: []
     };
   };
 
@@ -176,9 +193,9 @@ const RewardsTab = () => {
             {isExpanded && (
               <div className="mt-6">
                 <RewardProgress 
-                  claimId={reward.id} 
-                  initialStatus={reward.status_details} 
-                  onStatusUpdate={handleStatusUpdate}
+                  id={reward.id}
+                  statusDetails={reward.status_details} 
+                  onUpdate={handleStatusUpdate}
                 />
               </div>
             )}
