@@ -10,7 +10,7 @@ const SiteFooter: React.FC = () => {
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4 hover:opacity-90 transition-opacity">
               <img src="/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png" alt="Realer Estate Logo" className="w-10 h-10 object-contain" />
-              <span className="font-bold text-black text-xl">Realer Estate</span>
+              <span className="font-editorial font-bold italic text-black text-xl">Realer Estate</span>
             </Link>
             <p className="text-gray-600">Connecting families with affordable housing—fast.</p>
           </div>
