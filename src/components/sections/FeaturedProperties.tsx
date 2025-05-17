@@ -17,7 +17,7 @@ const FeaturedProperties: React.FC = () => {
         <div className="container px-4 lg:px-8 mx-auto relative z-10">
           <div className="flex items-center mb-8">
             <h2 className="text-2xl sm:text-4xl font-editorial font-bold italic text-foreground tracking-wide">
-              Featured Homes
+              Featured homes
             </h2>
           </div>
           
@@ -38,7 +38,7 @@ const FeaturedProperties: React.FC = () => {
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
           <h2 className="text-2xl sm:text-4xl font-editorial font-bold italic text-foreground tracking-wide">
-            Featured Homes
+            Featured homes
           </h2>
         </div>
         
