@@ -22,7 +22,7 @@ const FeaturedProperties: React.FC = () => {
           </div>
           
           <p className="text-base sm:text-xl text-foreground mb-8 max-w-3xl">
-            Real estate for <span className="font-editorial italic">real people</span>. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
+            Real Estate for <span className="font-editorial italic">real people</span>. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
           </p>
           
           <div className="flex justify-center items-center min-h-[300px]">
