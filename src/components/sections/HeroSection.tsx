@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -28,8 +27,8 @@ const HeroSection: React.FC = () => {
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-full h-full"
         style={{
           backgroundImage: `url('/lovable-uploads/28a79fc0-8fcc-4d56-9bd6-0696e9db1e9b.png')`,
-          backgroundSize: '90% auto', // Slightly smaller than 130% but not cut off
-          backgroundPosition: 'center',
+          backgroundSize: '80% auto', // Reduced from 90% to 80%
+          backgroundPosition: 'calc(50% - 15px) center', // Shifted 15px to the left
           backgroundRepeat: 'no-repeat',
           opacity: 0.9
         }}
