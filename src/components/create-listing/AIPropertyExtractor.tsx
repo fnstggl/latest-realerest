@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Loader2, Wand2 } from "lucide-react";
@@ -8,18 +7,15 @@ import { z } from "zod";
 import { formSchema } from './formSchema';
 import { supabase } from '@/integrations/supabase/client';
 import AITextArea from './ai-extractor/AITextArea';
-
 interface AIPropertyExtractorProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
 }
-
 const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
   form
 }) => {
   const [propertyText, setPropertyText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [apiKey, setApiKey] = useState('');
-
   useEffect(() => {
     const fetchCohereApiKey = async () => {
       try {
@@ -27,9 +23,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           data,
           error
         } = await supabase.functions.invoke('fetch-cohere-key');
-
         if (error) throw error;
-
         if (data?.apiKey) {
           setApiKey(data.apiKey);
         } else {
@@ -40,18 +34,14 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
         toast.error("Failed to load API key");
       }
     };
-
     fetchCohereApiKey();
   }, []);
-
   const extractPropertyDetails = async () => {
     if (!propertyText.trim()) {
       toast.error("Please enter details about your property");
       return;
     }
-
     setIsProcessing(true);
-
     try {
       const extracted = {
         address: false,
@@ -67,59 +57,49 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
         arv: false,
         rehab: false
       };
-
-      const normalizedText = propertyText
-        .replace(/\n/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+      const normalizedText = propertyText.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
 
       // Improved address extraction patterns for better matching
       const addressPatterns = [
-        // Standard address format with street, city, state, zip
-        /(?:^|\s)(\d+\s+[A-Za-z0-9\s.,'-]+(?:,\s*[A-Za-z\s]+,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Za-z\s]+,\s*[A-Z]{2}|,\s*[A-Z]{2}\s*\d{5}))/i,
-        // Looking for specific address mentions
-        /(?:Address|Property|Located at|Home at)[:;]?\s+(\d+[^,]+,\s*[^,]+(?:,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Z]{2}))/i,
-        // Street number and name pattern
-        /\b(\d+\s+[A-Za-z0-9\s.'-]+(Road|Rd|Street|St|Avenue|Ave|Lane|Ln|Drive|Dr|Court|Ct|Boulevard|Blvd|Highway|Hwy|Place|Pl|Way|Terrace|Ter|Circle|Cir))/i
-      ];
-
+      // Standard address format with street, city, state, zip
+      /(?:^|\s)(\d+\s+[A-Za-z0-9\s.,'-]+(?:,\s*[A-Za-z\s]+,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Za-z\s]+,\s*[A-Z]{2}|,\s*[A-Z]{2}\s*\d{5}))/i,
+      // Looking for specific address mentions
+      /(?:Address|Property|Located at|Home at)[:;]?\s+(\d+[^,]+,\s*[^,]+(?:,\s*[A-Z]{2}\s*\d{5}|,\s*[A-Z]{2}))/i,
+      // Street number and name pattern
+      /\b(\d+\s+[A-Za-z0-9\s.'-]+(Road|Rd|Street|St|Avenue|Ave|Lane|Ln|Drive|Dr|Court|Ct|Boulevard|Blvd|Highway|Hwy|Place|Pl|Way|Terrace|Ter|Circle|Cir))/i];
       let addressFound = false;
       for (const pattern of addressPatterns) {
         const addressMatch = normalizedText.match(pattern);
         if (addressMatch) {
           addressFound = true;
           const fullAddressText = addressMatch[1].trim();
-          
+
           // Try to extract street address first
           const streetMatch = fullAddressText.match(/^\d+[^,]+/);
           if (streetMatch) {
             form.setValue('address', streetMatch[0].trim());
             extracted.address = true;
           }
-          
           const addressParts = fullAddressText.split(',').map(part => part.trim());
-          
           if (addressParts.length >= 2) {
             // If address wasn't extracted yet but we have parts
             if (!extracted.address && addressParts[0]) {
               form.setValue('address', addressParts[0]);
               extracted.address = true;
             }
-            
+
             // Extract city, state, zip from the address parts
             const lastPart = addressParts[addressParts.length - 1];
             const stateZipPattern = /([A-Z]{2})\s*(\d{5})?/i;
             const stateZipMatch = lastPart.match(stateZipPattern);
-            
             if (stateZipMatch) {
               form.setValue('state', stateZipMatch[1].toUpperCase());
               extracted.state = true;
-              
               if (stateZipMatch[2]) {
                 form.setValue('zipCode', stateZipMatch[2]);
                 extracted.zip = true;
               }
-              
+
               // City is usually the part before state/zip
               if (addressParts.length >= 3) {
                 form.setValue('city', addressParts[addressParts.length - 2]);
@@ -136,11 +116,9 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
               // If no state/zip pattern, try just state pattern
               const statePattern = /\b([A-Z]{2})\b/i;
               const stateMatch = lastPart.match(statePattern);
-              
               if (stateMatch) {
                 form.setValue('state', stateMatch[1].toUpperCase());
                 extracted.state = true;
-                
                 if (addressParts.length >= 3) {
                   form.setValue('city', addressParts[addressParts.length - 2]);
                   extracted.city = true;
@@ -152,18 +130,13 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
               }
             }
           }
-          
           break;
         }
       }
-      
+
       // Standalone city detection if not found in address
       if (!extracted.city) {
-        const cityPatterns = [
-          /\b(?:in|at|near|city\s+of)\s+([A-Za-z\s.']+?)[,\s]/i,
-          /\bCity[:;]?\s+([A-Za-z\s.']+)/i
-        ];
-        
+        const cityPatterns = [/\b(?:in|at|near|city\s+of)\s+([A-Za-z\s.']+?)[,\s]/i, /\bCity[:;]?\s+([A-Za-z\s.']+)/i];
         for (const pattern of cityPatterns) {
           const cityMatch = normalizedText.match(pattern);
           if (cityMatch) {
@@ -173,15 +146,10 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           }
         }
       }
-      
+
       // Standalone state detection if not found in address
       if (!extracted.state) {
-        const statePatterns = [
-          /\b(?:state\s+of|in)\s+([A-Z]{2})\b/i,
-          /\bState[:;]?\s+([A-Z]{2})\b/i,
-          /\bin\s+([A-Za-z\s]+?)[,\s]/i
-        ];
-        
+        const statePatterns = [/\b(?:state\s+of|in)\s+([A-Z]{2})\b/i, /\bState[:;]?\s+([A-Z]{2})\b/i, /\bin\s+([A-Za-z\s]+?)[,\s]/i];
         for (const pattern of statePatterns) {
           const stateMatch = normalizedText.match(pattern);
           if (stateMatch) {
@@ -194,14 +162,10 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           }
         }
       }
-      
+
       // Standalone ZIP code detection if not found in address
       if (!extracted.zip) {
-        const zipPatterns = [
-          /\b(ZIP|postal\s+code)[:;]?\s+(\d{5})/i,
-          /\b(\d{5}[-\s]?\d{0,4})\b/
-        ];
-        
+        const zipPatterns = [/\b(ZIP|postal\s+code)[:;]?\s+(\d{5})/i, /\b(\d{5}[-\s]?\d{0,4})\b/];
         for (const pattern of zipPatterns) {
           const zipMatch = normalizedText.match(pattern);
           if (zipMatch) {
@@ -213,13 +177,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           }
         }
       }
-
-      const bedsPatterns = [
-        /(\d+)\s*(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)/i,
-        /(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)[:\s-]*(\d+)/i,
-        /(\d+)[-\s]*(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)/i
-      ];
-
+      const bedsPatterns = [/(\d+)\s*(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)/i, /(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)[:\s-]*(\d+)/i, /(\d+)[-\s]*(?:bed|beds|bedroom|bedrooms|BR|B\/R|bd)/i];
       for (const pattern of bedsPatterns) {
         const bedsMatch = normalizedText.match(pattern);
         if (bedsMatch) {
@@ -228,13 +186,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           break;
         }
       }
-
-      const bathsPatterns = [
-        /(\d+(?:\.\d+)?)\s*(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)/i,
-        /(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)[:\s-]*(\d+(?:\.\d+)?)/i,
-        /(\d+(?:\.\d+)?)[-\s]*(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)/i
-      ];
-
+      const bathsPatterns = [/(\d+(?:\.\d+)?)\s*(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)/i, /(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)[:\s-]*(\d+(?:\.\d+)?)/i, /(\d+(?:\.\d+)?)[-\s]*(?:bath|baths|bathroom|bathrooms|BA|B\/A|bth)/i];
       for (const pattern of bathsPatterns) {
         const bathsMatch = normalizedText.match(pattern);
         if (bathsMatch) {
@@ -243,13 +195,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           break;
         }
       }
-
-      const sqftPatterns = [
-        /(\d+(?:,\d+)?)\s*(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot|sf|SqFt)/i,
-        /(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot|sf|SqFt)[:\s-]*(\d+(?:,\d+)?)/i,
-        /(\d+(?:,\d+)?)\s*(?:sq)/i
-      ];
-
+      const sqftPatterns = [/(\d+(?:,\d+)?)\s*(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot|sf|SqFt)/i, /(?:sq\.?\s*ft|sqft|square\s*feet|square\s*foot|sf|SqFt)[:\s-]*(\d+(?:,\d+)?)/i, /(\d+(?:,\d+)?)\s*(?:sq)/i];
       for (const pattern of sqftPatterns) {
         const sqftMatch = normalizedText.match(pattern);
         if (sqftMatch) {
@@ -259,7 +205,6 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           break;
         }
       }
-
       const propertyTypeMatches = {
         'House': [/(?:Row\s*[Hh]ome|Single\s*Family|SFH|Detached|Town\s*[Hh]ome|Brick\s*Row\s*[Hh]ome)/i, /\b(?:house|home)\b/i],
         'Multi-Family': [/(?:Multi[-\s]*Family|MFH|Duplex|Triplex|Quadplex|4-plex)/i],
@@ -268,7 +213,6 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
         'Studio': [/\b(?:Studio)\b/i],
         'Land': [/\b(?:Land|Lot|Vacant\s*Land)\b/i]
       };
-
       for (const [type, patterns] of Object.entries(propertyTypeMatches)) {
         for (const pattern of patterns) {
           if (normalizedText.match(pattern)) {
@@ -279,14 +223,7 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
         }
         if (extracted.propertyType) break;
       }
-
-      const askingPricePatterns = [
-        /(?:Asking|Price|List\s*Price|Listed\s*at|asking price)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /\$\s*(\d+(?:,\d+)*(?:\.\d+)?K?)\s*(?:asking|price)/i,
-        /(\d+(?:,\d+)*(?:\.\d+)?)[Kk]\s*(?:asking|price)/i,
-        /(\d+(?:,\d+)*(?:\.\d+)?)\s*[Kk]/i
-      ];
-
+      const askingPricePatterns = [/(?:Asking|Price|List\s*Price|Listed\s*at|asking price)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i, /\$\s*(\d+(?:,\d+)*(?:\.\d+)?K?)\s*(?:asking|price)/i, /(\d+(?:,\d+)*(?:\.\d+)?)[Kk]\s*(?:asking|price)/i, /(\d+(?:,\d+)*(?:\.\d+)?)\s*[Kk]/i];
       for (const pattern of askingPricePatterns) {
         const askingMatch = normalizedText.match(pattern);
         if (askingMatch) {
@@ -296,13 +233,9 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           }
           form.setValue('price', price);
           extracted.price = true;
-          
+
           // Only look for market price if it's explicitly mentioned in the text
-          const marketPricePatterns = [
-            /(?:Market\s*Price|Market\s*Value|Comps|Comparables|Appraised)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-            /(?:Market|Comps|Comparables|Appraised)\s*[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i
-          ];
-          
+          const marketPricePatterns = [/(?:Market\s*Price|Market\s*Value|Comps|Comparables|Appraised)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i, /(?:Market|Comps|Comparables|Appraised)\s*[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i];
           for (const mpPattern of marketPricePatterns) {
             const marketMatch = normalizedText.match(mpPattern);
             if (marketMatch) {
@@ -315,17 +248,10 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
               break;
             }
           }
-          
           break;
         }
       }
-
-      const arvPatterns = [
-        /ARV[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)\s*(?:[-–]\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?))?/i,
-        /(?:after\s*repair\s*value|ARV)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /(?:after\s*repair|ARV)[:\s;]+(\d+(?:,\d+)*(?:\.\d+)?K?)/i
-      ];
-
+      const arvPatterns = [/ARV[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)\s*(?:[-–]\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?))?/i, /(?:after\s*repair\s*value|ARV)[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i, /(?:after\s*repair|ARV)[:\s;]+(\d+(?:,\d+)*(?:\.\d+)?K?)/i];
       for (const pattern of arvPatterns) {
         const arvMatch = normalizedText.match(pattern);
         if (arvMatch) {
@@ -333,14 +259,12 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           if (arvMatch[2]) {
             let arvLow = arvMatch[1].replace(/,/g, '');
             let arvHigh = arvMatch[2].replace(/,/g, '');
-
             if (arvLow.toLowerCase().endsWith('k')) {
               arvLow = (parseFloat(arvLow.toLowerCase().replace('k', '')) * 1000).toString();
             }
             if (arvHigh.toLowerCase().endsWith('k')) {
               arvHigh = (parseFloat(arvHigh.toLowerCase().replace('k', '')) * 1000).toString();
             }
-
             const arvAvg = Math.round((parseFloat(arvLow) + parseFloat(arvHigh)) / 2);
             arvValue = String(arvAvg);
           } else {
@@ -350,19 +274,12 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
             }
             arvValue = arv;
           }
-
           form.setValue('afterRepairValue', arvValue);
           extracted.arv = true;
           break;
         }
       }
-
-      const rehabPatterns = [
-        /(?:Rehab|Renovation|Repair|Repairs)\s*(?:Cost|Estimate|Budget)?[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /(?:Rehab|REHAB)[:;]\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i,
-        /(?:Rehab|REHAB)\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i
-      ];
-
+      const rehabPatterns = [/(?:Rehab|Renovation|Repair|Repairs)\s*(?:Cost|Estimate|Budget)?[:;]?\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i, /(?:Rehab|REHAB)[:;]\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i, /(?:Rehab|REHAB)\s*\$?\s*(\d+(?:,\d+)*(?:\.\d+)?K?)/i];
       for (const pattern of rehabPatterns) {
         const rehabMatch = normalizedText.match(pattern);
         if (rehabMatch) {
@@ -375,14 +292,11 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
           break;
         }
       }
-
       const address = form.getValues('address') || '';
       const city = form.getValues('city') || '';
       const state = form.getValues('state') || '';
       const zipCode = form.getValues('zipCode') || '';
-
       let description = normalizedText;
-
       if (extracted.address && address) {
         description = description.replace(address, '');
       }
@@ -395,25 +309,15 @@ const AIPropertyExtractor: React.FC<AIPropertyExtractorProps> = ({
       if (extracted.zip && zipCode) {
         description = description.replace(zipCode, '');
       }
-
-      description = description
-        .replace(/\s+/g, ' ')
-        .replace(/,\s*,/g, ',')
-        .replace(/\s+\./g, '.')
-        .trim();
-
+      description = description.replace(/\s+/g, ' ').replace(/,\s*,/g, ',').replace(/\s+\./g, '.').trim();
       if (description) {
         form.setValue('description', description);
       }
 
       // Enhanced address extraction with Cohere API
-      const missingFields = Object.entries(extracted).filter(([field, value]) => 
-        !value && ['address', 'city', 'state', 'zip'].includes(field)
-      );
-      
+      const missingFields = Object.entries(extracted).filter(([field, value]) => !value && ['address', 'city', 'state', 'zip'].includes(field));
       if (missingFields.length > 0 && apiKey) {
         console.log("Using Cohere API to extract missing address fields:", missingFields.map(([field]) => field).join(", "));
-        
         try {
           const response = await fetch('https://api.cohere.ai/v1/generate', {
             method: 'POST',
@@ -434,24 +338,20 @@ Text: ${normalizedText}
 Return JSON with ONLY the requested fields:`,
               max_tokens: 150,
               temperature: 0.1,
-              stop_sequences: ["}"],
+              stop_sequences: ["}"]
             })
           });
-
           if (response.ok) {
             const data = await response.json();
             const generatedText = data.generations[0].text;
-            
             try {
-              let jsonText = generatedText + "}";  // Add closing brace if not present
+              let jsonText = generatedText + "}"; // Add closing brace if not present
               const startIdx = jsonText.indexOf('{');
               const endIdx = jsonText.lastIndexOf('}') + 1;
-              
               if (startIdx >= 0 && endIdx > startIdx) {
                 const jsonStr = jsonText.substring(startIdx, endIdx);
                 const extractedData = JSON.parse(jsonStr);
                 console.log("Extracted address data from Cohere:", extractedData);
-                
                 if (!extracted.address && extractedData.address) {
                   form.setValue('address', extractedData.address);
                 }
@@ -478,7 +378,6 @@ Return JSON with ONLY the requested fields:`,
       // Only set rehab if explicitly found in the text or via the Cohere API
 
       const anyFieldExtracted = Object.values(extracted).some(value => value === true);
-
       if (anyFieldExtracted) {
         toast.success("Property details extracted successfully!");
       } else {
@@ -494,41 +393,27 @@ Return JSON with ONLY the requested fields:`,
 
   // Helper definition for US states
   const usStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
-
-  return (
-    <div className="mb-12">
+  return <div className="mb-12">
       <div className="bg-white rounded-xl p-8 px-[32px] py-0">
         <h3 className="text-2xl font-bold mb-2">Paste Property Details</h3>
-        <p className="text-sm text-gray-600 mb-6">
-          List faster with AI. Just paste your property details here and Realer Estate will sort it for you
-        </p>
+        <p className="text-gray-600 mb-6 text-sm">List faster with AI. Just paste your property details here and AI will sort it for you. *Check important info*</p>
         
         <div className="relative">
-          <AITextArea 
-            value={propertyText}
-            onChange={(e) => setPropertyText(e.target.value)}
-            isProcessing={isProcessing}
-          />
+          <AITextArea value={propertyText} onChange={e => setPropertyText(e.target.value)} isProcessing={isProcessing} />
         </div>
         
         <div className="flex justify-end mt-4">
           <Button type="button" onClick={extractPropertyDetails} disabled={isProcessing || !propertyText.trim()} className="relative group">
-            {isProcessing ? (
-              <div className="flex items-center gap-2">
+            {isProcessing ? <div className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span className="font-bold">Extracting...</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
+              </div> : <div className="flex items-center gap-2">
                 <Wand2 className="h-4 w-4" />
                 <span className="font-bold">Extract Details</span>
-              </div>
-            )}
+              </div>}
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AIPropertyExtractor;
