@@ -28,7 +28,7 @@ const HeroSection: React.FC = () => {
         style={{
           backgroundImage: `url('/lovable-uploads/28a79fc0-8fcc-4d56-9bd6-0696e9db1e9b.png')`,
           backgroundSize: '80% auto', // Reduced from 90% to 80%
-          backgroundPosition: 'calc(50% - 15px) center', // Shifted 15px to the left
+          backgroundPosition: 'calc(50% - 20px) center', // Shifted 15px to the left
           backgroundRepeat: 'no-repeat',
           opacity: 0.9
         }}
