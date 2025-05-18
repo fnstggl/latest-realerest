@@ -115,11 +115,3 @@ input[type="tel"]:focus {
   outline-color: transparent !important;
   box-shadow: none !important;
 }
-
-/* Specific fix for search bar focus */
-.glass-input:focus {
-  outline: none !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-  background-color: white !important;
-}
