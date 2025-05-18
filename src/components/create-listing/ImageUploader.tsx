@@ -106,7 +106,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         <div className="flex flex-col items-center justify-center">
           <ImagePlus className="w-10 h-10 mb-2 text-gray-400" />
           <p className="mb-2 text-sm font-medium">
-            Drag & drop images or <span className="text-primary underline ">browse</span>
+            Drag & drop images or <span className="underline text-black">browse</span>
           </p>
           <p className="text-xs text-gray-500">
             Supports JPG, PNG, WebP • 10MB max file size
