@@ -1,5 +1,3 @@
-
-
 @import './base.css';
 @import './typography.css';
 @import './glassmorphism.css';
@@ -90,12 +88,14 @@
   transition: transform 0.3s ease, opacity 0.3s ease !important;
 }
 
-/* Remove black outline on focus for search inputs */
-input:focus-visible, 
-textarea:focus-visible,
-select:focus-visible {
-  outline: none !important;
+/* Custom search bar focus styles */
+.search-bar-focus:focus {
+  font-size: 0.9em !important;
   border-color: transparent !important;
+  outline-width: 3px !important;
+  outline-color: #76818f !important;
+  outline-style: solid !important;
+  outline-offset: 1.5px !important;
   box-shadow: none !important;
 }
 
@@ -113,5 +113,14 @@ input[type="password"]:focus,
 input[type="tel"]:focus {
   border-color: transparent !important;
   outline-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Remove black outline on focus for search inputs - KEEP THE EXCEPTION FOR SEARCH-BAR-FOCUS */
+input:not(.search-bar-focus):focus-visible, 
+textarea:focus-visible,
+select:focus-visible {
+  outline: none !important;
+  border-color: transparent !important;
   box-shadow: none !important;
 }
