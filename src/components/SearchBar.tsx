@@ -27,7 +27,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ className = "" }) => {
           placeholder="Search by city, address, or zip code..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg glass-input text-foreground rounded-xl bg-white backdrop-blur-sm border-transparent transition-all duration-300 relative z-10 focus:outline-none focus:ring-0 focus:border-transparent"
+className="w-full px-4 py-2 text-sm placeholder-gray-400 bg-white text-black border border-gray-300 rounded-xl shadow-sm relative z-10 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all duration-300"
         />
         <GlowEffect
           colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
