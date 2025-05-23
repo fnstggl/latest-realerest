@@ -93,8 +93,8 @@
 :not(.searchbar-isolated) textarea:focus-visible,
 :not(.searchbar-isolated) select:focus-visible {
   outline: none !important;
-  border-color: transparent !important;
   box-shadow: none !important;
+  /* Removed border-color override to allow gray outline to show */
 }
 
 /* Override any orange outline/border in inputs across the site */
