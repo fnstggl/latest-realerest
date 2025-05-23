@@ -49,7 +49,9 @@ const HeroSection: React.FC = () => {
               Helping families buy homes they were told they <span className="font-bold">couldn't afford</span>.
             </p>
             <div className="glass-card p-0.25 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
-              <SearchBar className="" />
+              <div className="searchbar-isolated">
+                <SearchBar className="" />
+              </div>
               <GlowEffect
                 colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
                 mode="flowHorizontal"
