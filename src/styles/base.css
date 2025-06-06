@@ -3,6 +3,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom font declarations for Polysans */
+@font-face {
+  font-family: 'Polysans';
+  src: url('/fonts/polysans-bold.woff2') format('woff2'),
+       url('/fonts/polysans-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Polysans';
+  src: url('/fonts/polysans-bold-italic.woff2') format('woff2'),
+       url('/fonts/polysans-bold-italic.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
