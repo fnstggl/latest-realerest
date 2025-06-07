@@ -16,13 +16,13 @@ const FeaturedProperties: React.FC = () => {
       <section className="py-16 relative overflow-hidden perspective-container">
         <div className="container px-4 lg:px-8 mx-auto relative z-10">
           <div className="flex items-center mb-8">
-            <h2 className="text-xl sm:text-2xl font-editorial font-bold italic text-foreground tracking-wide">
+            <h2 className="text-xl sm:text-2xl font-polysans font-bold text-[#01204b] tracking-wide pl-[10px]">
               Featured homes
             </h2>
           </div>
           
-          <p className="text-sm sm:text-base text-foreground mb-8 max-w-3xl font-polysans-semibold">
-            Real estate for real people. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
+          <p className="text-sm sm:text-base text-[#01204b] mb-8 max-w-3xl font-polysans-semibold pl-[10px]">
+            Only homes priced <span className="font-polysans-semibold">below-market</span>. That's Realer Estate
           </p>
           
           <div className="flex justify-center items-center min-h-[300px]">
@@ -37,13 +37,13 @@ const FeaturedProperties: React.FC = () => {
     <section className="py-16 relative overflow-hidden perspective-container">
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <h2 className="text-xl sm:text-2xl font-editorial font-bold italic text-foreground tracking-wide">
+          <h2 className="text-xl sm:text-2xl font-polysans font-bold text-[#01204b] tracking-wide pl-[10px]">
             Featured homes
           </h2>
         </div>
         
-        <p className="text-sm sm:text-base text-foreground mb-8 max-w-3xl font-polysans-semibold">
-          Real estate for real people. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
+        <p className="text-sm sm:text-base text-[#01204b] mb-8 max-w-3xl font-polysans-semibold pl-[10px]">
+          Only homes priced <span className="font-polysans-semibold">below-market</span>. That's Realer Estate
         </p>
         
         {error ? (
