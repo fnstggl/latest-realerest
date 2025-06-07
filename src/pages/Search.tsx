@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -57,10 +58,10 @@ const Search: React.FC = () => {
     setPropertyType(filters.propertyType === 'any' ? '' : filters.propertyType || '');
     
     // Other filters
-    setNearbyOnly(!!filters.nearbyOnly);
+    setNearbyOnly(filters.nearbyOnly || false);
     setBelowMarket(filters.belowMarket || 0);
     setIncludeRental(filters.includeRental !== false); // Default to true
-    setWithPhotosOnly(!!filters.withPhotosOnly);
+    setWithPhotosOnly(filters.withPhotosOnly || false);
   };
 
   const handleSortChange = (option: string) => {

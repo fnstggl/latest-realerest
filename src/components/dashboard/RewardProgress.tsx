@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,27 +7,40 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/utils';
 import { BuyerProgress, BuyerStatus, RewardStatusDetails } from '@/types/bounty';
-import { PencilIcon, PlusIcon, TrashIcon, CheckCircle2, Circle, AlertCircle } from 'lucide-react';
+import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
-import { useAuth } from '@/context/AuthContext';
 
 const RewardProgress = ({ 
-  claimId, 
+  propertyId, 
+  reward = 0, 
   initialStatus = { 
     claimed: false,
+    foundBuyer: false,
+    submittedOffer: false,
+    offerAccepted: false,
+    dealClosed: false,
     buyers: []
-  },
-  onStatusUpdate
+  }
 }: {
-  claimId: string;
+  propertyId: string;
+  reward?: number;
   initialStatus?: RewardStatusDetails;
-  onStatusUpdate?: () => void;
 }) => {
   const { user } = useAuth();
   const [status, setStatus] = useState<RewardStatusDetails>(initialStatus);
   const [showAddBuyer, setShowAddBuyer] = useState(false);
   const [newBuyerName, setNewBuyerName] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   const handleAddBuyer = async () => {
     if (!newBuyerName.trim()) {
@@ -50,27 +62,28 @@ const RewardProgress = ({
       };
 
       // Update local state
-      const updatedBuyers = [...(status.buyers || []), newBuyer];
+      const updatedBuyers = [...status.buyers, newBuyer];
       const updatedStatus = { 
         ...status, 
-        buyers: updatedBuyers
+        buyers: updatedBuyers,
+        foundBuyer: true
       };
       setStatus(updatedStatus);
 
-      // Update database using bounty_claims table
+      // Update database
       const { error } = await supabase
-        .from('bounty_claims')
-        .update({
+        .from('property_rewards')
+        .upsert({
+          property_id: propertyId,
+          user_id: user?.id,
           status_details: updatedStatus
-        })
-        .eq('id', claimId);
+        });
 
       if (error) throw error;
       
       setNewBuyerName('');
       setShowAddBuyer(false);
       toast.success("Buyer added successfully");
-      onStatusUpdate?.();
     } catch (error) {
       console.error("Error adding buyer:", error);
       toast.error("Failed to add buyer");
@@ -84,7 +97,7 @@ const RewardProgress = ({
     
     setLoading(true);
     try {
-      const updatedBuyers = (status.buyers || []).map(buyer => {
+      const updatedBuyers = status.buyers.map(buyer => {
         if (buyer.id === buyerId) {
           const update = { ...buyer, [field]: value };
           
@@ -99,25 +112,30 @@ const RewardProgress = ({
         return buyer;
       });
 
+      // Check if we need to update overall status
+      const anyTrueForThisStep = updatedBuyers.some(buyer => buyer[field] === true);
+      
+      // Update fields that depend on buyer progress
       const updatedStatus = { 
         ...status, 
-        buyers: updatedBuyers
+        buyers: updatedBuyers,
+        [field]: anyTrueForThisStep
       };
 
       setStatus(updatedStatus);
 
-      // Update database using bounty_claims table
+      // Update database
       const { error } = await supabase
-        .from('bounty_claims')
-        .update({
+        .from('property_rewards')
+        .upsert({
+          property_id: propertyId,
+          user_id: user.id,
           status_details: updatedStatus
-        })
-        .eq('id', claimId);
+        });
 
       if (error) throw error;
       
       toast.success(`Progress updated: ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
-      onStatusUpdate?.();
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update progress");
@@ -127,7 +145,7 @@ const RewardProgress = ({
   };
 
   const renderBuyerList = () => {
-    if (!status.buyers || status.buyers.length === 0) {
+    if (status.buyers.length === 0) {
       return (
         <div className="text-center p-4 bg-gray-50 rounded-lg">
           <p>No buyers added yet</p>
@@ -199,7 +217,7 @@ const RewardProgress = ({
     <div className="mt-6">
       <div className="mb-6">
         <h3 className="text-xl font-bold mb-2">Track Your Progress</h3>
-        <p className="text-gray-600">Complete these steps to earn your reward.</p>
+        <p className="text-gray-600">Complete these steps to earn your {formatCurrency(reward)} reward.</p>
       </div>
       
       <div className="mb-6">
