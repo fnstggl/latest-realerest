@@ -1,191 +1,266 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
-import { CheckCircle2, Circle, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { formatDate } from '@/lib/utils';
+import { BuyerProgress, BuyerStatus, RewardStatusDetails } from '@/types/bounty';
+import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 
-interface RewardStatusDetails {
-  listingApproved: boolean;
-  buyerFound: boolean;
-  dealClosed: boolean;
-  payoutSent: boolean;
-}
-
-const defaultStatus: RewardStatusDetails = {
-  listingApproved: false,
-  buyerFound: false,
-  dealClosed: false,
-  payoutSent: false,
-};
-
-interface RewardProgressProps {
+const RewardProgress = ({ 
+  propertyId, 
+  reward = 0, 
+  initialStatus = { 
+    claimed: false,
+    foundBuyer: false,
+    submittedOffer: false,
+    offerAccepted: false,
+    dealClosed: false,
+    buyers: []
+  }
+}: {
   propertyId: string;
   reward?: number;
   initialStatus?: RewardStatusDetails;
-}
-
-const RewardProgress: React.FC<RewardProgressProps> = ({ 
-  propertyId, 
-  reward = 0, 
-  initialStatus = defaultStatus 
 }) => {
   const { user } = useAuth();
   const [status, setStatus] = useState<RewardStatusDetails>(initialStatus);
+  const [showAddBuyer, setShowAddBuyer] = useState(false);
+  const [newBuyerName, setNewBuyerName] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (user?.id) {
-      fetchRewardStatus();
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const handleAddBuyer = async () => {
+    if (!newBuyerName.trim()) {
+      toast.error("Please enter a buyer name");
+      return;
     }
-  }, [user?.id, propertyId]);
 
-  const fetchRewardStatus = async () => {
-    if (!user?.id) return;
-    
+    setLoading(true);
     try {
-      setLoading(true);
-      
-      // Check if property_rewards table exists, if not use default status
-      const { data, error } = await supabase
-        .from('bounty_claims')
-        .select('*')
-        .eq('property_id', propertyId)
-        .eq('user_id', user.id)
-        .single();
+      const newBuyer: BuyerProgress = {
+        id: uuidv4(),
+        name: newBuyerName.trim(),
+        status: "Interested Buyer",
+        foundBuyer: true,
+        submittedOffer: false,
+        offerAccepted: false,
+        dealClosed: false,
+        foundBuyerDate: new Date().toISOString()
+      };
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching reward status:', error);
-        return;
-      }
+      // Update local state
+      const updatedBuyers = [...status.buyers, newBuyer];
+      const updatedStatus = { 
+        ...status, 
+        buyers: updatedBuyers,
+        foundBuyer: true
+      };
+      setStatus(updatedStatus);
 
-      if (data) {
-        // Map bounty claim status to reward status
-        setStatus({
-          listingApproved: data.status !== 'pending',
-          buyerFound: data.status === 'approved' || data.status === 'paid',
-          dealClosed: data.status === 'paid',
-          payoutSent: data.status === 'paid',
+      // Update database
+      const { error } = await supabase
+        .from('property_rewards')
+        .upsert({
+          property_id: propertyId,
+          user_id: user?.id,
+          status_details: updatedStatus
         });
-      }
+
+      if (error) throw error;
+      
+      setNewBuyerName('');
+      setShowAddBuyer(false);
+      toast.success("Buyer added successfully");
     } catch (error) {
-      console.error('Error fetching reward status:', error);
+      console.error("Error adding buyer:", error);
+      toast.error("Failed to add buyer");
     } finally {
       setLoading(false);
     }
   };
 
-  const updateRewardStatus = async (newStatus: Partial<RewardStatusDetails>) => {
-    if (!user?.id) return;
-
+  const updateBuyerStatus = async (buyerId: string, field: keyof BuyerProgress, value: boolean) => {
+    if (!user) return;
+    
+    setLoading(true);
     try {
-      setLoading(true);
-      
-      // Update local state
-      setStatus(prev => ({ ...prev, ...newStatus }));
-      
-      // Update bounty claim status based on the new reward status
-      let claimStatus = 'pending';
-      const updatedStatus = { ...status, ...newStatus };
-      
-      if (updatedStatus.payoutSent) {
-        claimStatus = 'paid';
-      } else if (updatedStatus.dealClosed) {
-        claimStatus = 'approved';
-      } else if (updatedStatus.listingApproved) {
-        claimStatus = 'pending';
-      }
+      const updatedBuyers = status.buyers.map(buyer => {
+        if (buyer.id === buyerId) {
+          const update = { ...buyer, [field]: value };
+          
+          // Add date stamp for the action
+          const dateField = `${String(field)}Date`;
+          if (value && !(buyer as any)[dateField]) {
+            (update as any)[dateField] = new Date().toISOString();
+          }
+          
+          return update;
+        }
+        return buyer;
+      });
 
+      // Check if we need to update overall status
+      const anyTrueForThisStep = updatedBuyers.some(buyer => buyer[field] === true);
+      
+      // Update fields that depend on buyer progress
+      const updatedStatus = { 
+        ...status, 
+        buyers: updatedBuyers,
+        [field]: anyTrueForThisStep
+      };
+
+      setStatus(updatedStatus);
+
+      // Update database
       const { error } = await supabase
-        .from('bounty_claims')
+        .from('property_rewards')
         .upsert({
           property_id: propertyId,
           user_id: user.id,
-          status: claimStatus,
-          amount: reward,
+          status_details: updatedStatus
         });
 
-      if (error) {
-        console.error('Error updating reward status:', error);
-        // Revert local state on error
-        setStatus(status);
-      }
+      if (error) throw error;
+      
+      toast.success(`Progress updated: ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
     } catch (error) {
-      console.error('Error updating reward status:', error);
-      setStatus(status);
+      console.error("Error updating status:", error);
+      toast.error("Failed to update progress");
     } finally {
       setLoading(false);
     }
   };
 
-  const getStepIcon = (completed: boolean, isLast: boolean = false) => {
-    if (completed) {
-      return <CheckCircle2 className="w-6 h-6 text-green-500" />;
-    } else if (isLast) {
-      return <AlertCircle className="w-6 h-6 text-yellow-500" />;
-    } else {
-      return <Circle className="w-6 h-6 text-gray-300" />;
+  const renderBuyerList = () => {
+    if (status.buyers.length === 0) {
+      return (
+        <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <p>No buyers added yet</p>
+        </div>
+      );
     }
+    
+    return status.buyers.map(buyer => (
+      <div key={buyer.id} className="mb-6 p-4 bg-white border border-gray-200 rounded-lg">
+        <h4 className="font-bold mb-3">
+          {buyer.name}
+        </h4>
+        
+        <div className="space-y-3">
+          {/* Found Buyer - always true when added */}
+          <div className="flex items-center">
+            <CheckCircle2 className="text-green-500 mr-2" size={18} />
+            <span>Found Buyer</span>
+          </div>
+          
+          {/* Submitted Offer */}
+          <div 
+            className="flex items-center cursor-pointer" 
+            onClick={() => updateBuyerStatus(buyer.id, 'submittedOffer', !buyer.submittedOffer)}
+          >
+            {buyer.submittedOffer ? (
+              <CheckCircle2 className="text-green-500 mr-2" size={18} />
+            ) : (
+              <Circle className="text-gray-400 mr-2" size={18} />
+            )}
+            <span>Submitted Offer</span>
+          </div>
+          
+          {/* Offer Accepted */}
+          <div 
+            className="flex items-center cursor-pointer" 
+            onClick={() => buyer.submittedOffer && updateBuyerStatus(buyer.id, 'offerAccepted', !buyer.offerAccepted)}
+          >
+            {buyer.offerAccepted ? (
+              <CheckCircle2 className="text-green-500 mr-2" size={18} />
+            ) : buyer.submittedOffer ? (
+              <Circle className="text-gray-400 mr-2" size={18} />
+            ) : (
+              <AlertCircle className="text-gray-300 mr-2" size={18} />
+            )}
+            <span className={!buyer.submittedOffer ? "text-gray-300" : ""}>Offer Accepted</span>
+          </div>
+          
+          {/* Deal Closed */}
+          <div 
+            className="flex items-center cursor-pointer" 
+            onClick={() => buyer.offerAccepted && updateBuyerStatus(buyer.id, 'dealClosed', !buyer.dealClosed)}
+          >
+            {buyer.dealClosed ? (
+              <CheckCircle2 className="text-green-500 mr-2" size={18} />
+            ) : buyer.offerAccepted ? (
+              <Circle className="text-gray-400 mr-2" size={18} />
+            ) : (
+              <AlertCircle className="text-gray-300 mr-2" size={18} />
+            )}
+            <span className={!buyer.offerAccepted ? "text-gray-300" : ""}>Deal Closed</span>
+          </div>
+        </div>
+      </div>
+    ));
   };
 
-  const steps = [
-    {
-      title: "Listing Approved",
-      description: "Your property listing has been reviewed and approved",
-      completed: status.listingApproved,
-      onClick: () => updateRewardStatus({ listingApproved: !status.listingApproved })
-    },
-    {
-      title: "Buyer Found",
-      description: "A qualified buyer has been found for your property",
-      completed: status.buyerFound,
-      onClick: () => updateRewardStatus({ buyerFound: !status.buyerFound })
-    },
-    {
-      title: "Deal Closed",
-      description: "The sale has been completed successfully",
-      completed: status.dealClosed,
-      onClick: () => updateRewardStatus({ dealClosed: !status.dealClosed })
-    },
-    {
-      title: "Payout Sent",
-      description: "Your reward has been processed and sent",
-      completed: status.payoutSent,
-      onClick: () => updateRewardStatus({ payoutSent: !status.payoutSent })
-    }
-  ];
-
-  if (loading) {
-    return <div className="animate-pulse">Loading reward progress...</div>;
-  }
-
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Reward Progress</h3>
-        <span className="text-2xl font-bold text-green-600">${reward.toLocaleString()}</span>
+    <div className="mt-6">
+      <div className="mb-6">
+        <h3 className="text-xl font-bold mb-2">Track Your Progress</h3>
+        <p className="text-gray-600">Complete these steps to earn your {formatCurrency(reward)} reward.</p>
       </div>
-
-      <div className="space-y-4">
-        {steps.map((step, index) => (
-          <div key={index} className="flex items-start space-x-4">
-            <div className="flex-shrink-0 mt-1">
-              {getStepIcon(step.completed, index === steps.length - 1)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <button
-                onClick={step.onClick}
-                disabled={loading}
-                className="text-left w-full group hover:bg-gray-50 p-2 rounded transition-colors disabled:opacity-50"
-              >
-                <p className={`text-sm font-medium ${step.completed ? 'text-green-700' : 'text-gray-900'}`}>
-                  {step.title}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">{step.description}</p>
-              </button>
-            </div>
+      
+      <div className="mb-6">
+        {renderBuyerList()}
+      </div>
+      
+      {!showAddBuyer ? (
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={() => setShowAddBuyer(true)}
+          disabled={loading}
+        >
+          Add Buyer
+        </Button>
+      ) : (
+        <div className="space-y-4">
+          <div className="flex">
+            <input
+              type="text"
+              className="flex-grow border border-gray-300 rounded-l-lg px-3 py-2"
+              placeholder="Enter buyer name"
+              value={newBuyerName}
+              onChange={(e) => setNewBuyerName(e.target.value)}
+            />
+            <Button 
+              className="rounded-l-none"
+              onClick={handleAddBuyer}
+              disabled={loading}
+            >
+              Add
+            </Button>
           </div>
-        ))}
-      </div>
+          <Button 
+            variant="outline" 
+            className="w-full" 
+            onClick={() => setShowAddBuyer(false)}
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

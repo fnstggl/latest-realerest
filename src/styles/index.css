@@ -115,16 +115,11 @@
   box-shadow: none !important;
 }
 
-/* Ensure the searchbar maintains its navy blue border and outline */
-.searchbar-isolated input {
-  border: 2px solid #01204b !important;
-  outline: none !important;
-}
-
+/* Ensure the searchbar maintains its navy blue outline */
 .searchbar-isolated input:focus,
 .searchbar-isolated input:hover,
 .searchbar-isolated input:focus-visible {
-  border: 2px solid #01204b !important;
-  outline: none !important;
-  box-shadow: none !important;
+  outline: 3px solid #01204b !important;
+  outline-offset: 1.5px !important;
+  border-color: transparent !important;
 }

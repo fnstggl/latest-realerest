@@ -1,153 +1,122 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import Navbar from '@/components/Navbar';
+import { useAuth } from '@/context/AuthContext';
 import SearchHeader from '@/components/search/SearchHeader';
 import SearchResults from '@/components/search/SearchResults';
 import SearchFooter from '@/components/search/SearchFooter';
-import { useProperties } from '@/hooks/useProperties';
+import LocationAlertForm from '@/components/LocationAlertForm';
+import HorizontalFilters from '@/components/search/HorizontalFilters';
 import SEO from '@/components/SEO';
-
-export interface PropertyFilters {
-  minPrice: number;
-  maxPrice: number;
-  beds: number;
-  baths: number;
-  propertyType: string;
-  listingType: string;
-  city: string;
-  state: string;
-  sortBy: string;
-  hasReward: boolean;
-}
 
 const Search: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const query = searchParams.get('q') || '';
+  const searchQuery = searchParams.get('q') || '';
+  const [isGridView, setIsGridView] = useState(true);
+  const [sortOption, setSortOption] = useState("recommended");
+  const { isAuthenticated } = useAuth();
   
-  const [filters, setFilters] = useState<PropertyFilters>({
-    minPrice: 0,
-    maxPrice: 5000000,
-    beds: 0,
-    baths: 0,
-    propertyType: 'all',
-    listingType: 'all',
-    city: '',
-    state: '',
-    sortBy: 'newest',
-    hasReward: false,
-  });
+  // Filter states
+  const [location, setLocation] = useState(searchQuery);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(10000000);
+  const [minBeds, setMinBeds] = useState(0);
+  const [minBaths, setMinBaths] = useState(0);
+  const [propertyType, setPropertyType] = useState('');
+  const [nearbyOnly, setNearbyOnly] = useState(false);
+  const [belowMarket, setBelowMarket] = useState(0);
+  const [includeRental, setIncludeRental] = useState(true);
+  const [withPhotosOnly, setWithPhotosOnly] = useState(false);
 
-  const { properties, loading, error } = useProperties();
+  useEffect(() => {
+    setLocation(searchQuery);
+  }, [searchQuery]);
 
-  // Filter properties based on search query and filters
-  const filteredProperties = useMemo(() => {
-    if (!properties) return [];
-
-    return properties.filter(property => {
-      // Text search
-      if (query) {
-        const searchText = query.toLowerCase();
-        const matchesSearch = 
-          property.title.toLowerCase().includes(searchText) ||
-          property.city.toLowerCase().includes(searchText) ||
-          property.state.toLowerCase().includes(searchText) ||
-          property.address.toLowerCase().includes(searchText) ||
-          property.zip_code.includes(searchText);
-        
-        if (!matchesSearch) return false;
-      }
-
-      // Price range
-      if (property.price < filters.minPrice || property.price > filters.maxPrice) {
-        return false;
-      }
-
-      // Beds
-      if (filters.beds > 0 && property.beds < filters.beds) {
-        return false;
-      }
-
-      // Baths
-      if (filters.baths > 0 && property.baths < filters.baths) {
-        return false;
-      }
-
-      // Property type
-      if (filters.propertyType !== 'all' && property.property_type !== filters.propertyType) {
-        return false;
-      }
-
-      // Listing type
-      if (filters.listingType !== 'all' && property.listing_type !== filters.listingType) {
-        return false;
-      }
-
-      // City
-      if (filters.city && !property.city.toLowerCase().includes(filters.city.toLowerCase())) {
-        return false;
-      }
-
-      // State
-      if (filters.state && !property.state.toLowerCase().includes(filters.state.toLowerCase())) {
-        return false;
-      }
-
-      // Has reward
-      if (filters.hasReward && (!property.reward_amount || property.reward_amount <= 0)) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [properties, query, filters]);
-
-  // Sort properties
-  const sortedProperties = useMemo(() => {
-    const sorted = [...filteredProperties];
-    
-    switch (filters.sortBy) {
-      case 'price-low':
-        return sorted.sort((a, b) => a.price - b.price);
-      case 'price-high':
-        return sorted.sort((a, b) => b.price - a.price);
-      case 'newest':
-        return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      case 'oldest':
-        return sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-      case 'reward-high':
-        return sorted.sort((a, b) => (b.reward_amount || 0) - (a.reward_amount || 0));
-      default:
-        return sorted;
+  const handleFilterChange = (filters: any) => {
+    // Handle location separately to avoid overwriting search query
+    if (filters.location) {
+      setLocation(filters.location);
     }
-  }, [filteredProperties, filters.sortBy]);
+    
+    setMinPrice(filters.minPrice ?? 0);
+    setMaxPrice(filters.maxPrice ?? 10000000);
+    
+    // Handle beds and baths properly
+    if (filters.bedrooms && filters.bedrooms !== 'any') {
+      setMinBeds(parseInt(filters.bedrooms) || 0);
+    } else {
+      setMinBeds(0);
+    }
+    
+    if (filters.bathrooms && filters.bathrooms !== 'any') {
+      setMinBaths(parseInt(filters.bathrooms) || 0);
+    } else {
+      setMinBaths(0);
+    }
+    
+    // Handle property type
+    setPropertyType(filters.propertyType === 'any' ? '' : filters.propertyType || '');
+    
+    // Other filters
+    setNearbyOnly(filters.nearbyOnly || false);
+    setBelowMarket(filters.belowMarket || 0);
+    setIncludeRental(filters.includeRental !== false); // Default to true
+    setWithPhotosOnly(filters.withPhotosOnly || false);
+  };
+
+  const handleSortChange = (option: string) => {
+    setSortOption(option);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FCFBF8] pt-24">
       <SEO
-        title={`Search Results${query ? ` for "${query}"` : ''} - Realer Estate`}
-        description={`Browse ${sortedProperties.length} properties${query ? ` matching "${query}"` : ''}. Find below market real estate deals and investment opportunities.`}
-        canonical={`/search${query ? `?q=${encodeURIComponent(query)}` : ''}`}
+        title={location ? `Properties in ${location} | Realer Estate` : "Search Properties | Realer Estate"}
+        description={`Find below-market real estate deals ${location ? `in ${location}` : 'in your area'}. Browse homes, apartments, and investment properties with significant discounts.`}
+        canonical="/search"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": location ? `Properties in ${location}` : "Search Properties",
+          "description": `Find below-market real estate deals ${location ? `in ${location}` : 'in your area'}`,
+          "url": window.location.origin + `/search${location ? `?q=${encodeURIComponent(location)}` : ''}`,
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": `${window.location.origin}/search?q={search_term_string}`
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }}
       />
+      <SearchHeader />
       
-      <Navbar />
+      <div className="container px-4 lg:px-8 mx-auto py-8">
+        {/* Horizontal filters component */}
+        <HorizontalFilters onFilterChange={handleFilterChange} />
+        
+        {/* Search results */}
+        <SearchResults
+          location={location}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          minBeds={minBeds}
+          minBaths={minBaths}
+          propertyType={propertyType}
+          nearbyOnly={nearbyOnly}
+          belowMarket={belowMarket}
+          sort={sortOption}
+          includeRental={includeRental}
+          withPhotosOnly={withPhotosOnly}
+        />
+      </div>
       
-      <main className="pt-20">
-        <SearchHeader 
-          query={query}
-          filters={filters}
-          onFiltersChange={setFilters}
-          resultCount={sortedProperties.length}
-        />
-        
-        <SearchResults 
-          properties={sortedProperties}
-          loading={loading}
-          error={error}
-        />
-        
-        <SearchFooter />
-      </main>
+      <div className="w-full">
+        <LocationAlertForm />
+      </div>
+      
+      <SearchFooter />
     </div>
   );
 };

@@ -1,213 +1,177 @@
 
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Award, DollarSign, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { RewardStatusDetails, BuyerProgress, BuyerStatus } from '@/types/bounty';
 import RewardProgress from './RewardProgress';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { DollarSign, TrendingUp, Clock, CheckCircle } from 'lucide-react';
 
-interface Property {
+type PropertyListing = {
   id: string;
   title: string;
-  city: string;
-  state: string;
-  price: number;
-  reward_amount: number;
-  status: string;
-  created_at: string;
-}
+  reward: number;
+  location: string;
+  images: string[];
+};
 
-interface BountyClaim {
+type BountyClaim = {
   id: string;
-  property_id: string;
-  amount: number;
-  status: 'pending' | 'approved' | 'paid';
-  created_at: string;
-  property_listings: Property;
-}
+  property_listings: PropertyListing;
+  status: string;
+  status_details: RewardStatusDetails;
+};
 
-const RewardsTab: React.FC = () => {
-  const { user } = useAuth();
-  const [claims, setClaims] = useState<BountyClaim[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [totalEarnings, setTotalEarnings] = useState(0);
-  const [pendingEarnings, setPendingEarnings] = useState(0);
+const RewardsTab = () => {
+  const [expandedRewardId, setExpandedRewardId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (user) {
-      fetchRewards();
-    }
-  }, [user]);
-
-  const fetchRewards = async () => {
-    if (!user) return;
-
-    try {
-      setLoading(true);
-      
-      const { data: claimsData, error: claimsError } = await supabase
+  const { data: rewards, isLoading } = useQuery({
+    queryKey: ['rewards'],
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from('bounty_claims')
         .select(`
           *,
           property_listings (
             id,
             title,
-            city,
-            state,
-            price,
-            reward_amount,
-            status,
-            created_at
+            reward,
+            location,
+            images
           )
         `)
-        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (claimsError) {
-        console.error('Error fetching claims:', claimsError);
-        return;
-      }
-
-      setClaims(claimsData || []);
-
-      // Calculate totals
-      const total = claimsData?.reduce((sum, claim) => {
-        return claim.status === 'paid' ? sum + claim.amount : sum;
-      }, 0) || 0;
-
-      const pending = claimsData?.reduce((sum, claim) => {
-        return claim.status === 'pending' || claim.status === 'approved' ? sum + claim.amount : sum;
-      }, 0) || 0;
-
-      setTotalEarnings(total);
-      setPendingEarnings(pending);
-
-    } catch (error) {
-      console.error('Error fetching rewards:', error);
-    } finally {
-      setLoading(false);
+      if (error) throw error;
+      
+      // Initialize the buyers array if it doesn't exist
+      return data.map((claim: any) => {
+        if (!claim.status_details.buyers) {
+          // Create a default buyer if there are no buyers yet
+          claim.status_details.buyers = [{
+            id: crypto.randomUUID(),
+            name: "Primary Buyer",
+            status: "Interested Buyer",
+            foundBuyer: claim.status_details.foundBuyer || false,
+            submittedOffer: claim.status_details.submittedOffer || false,
+            offerAccepted: claim.status_details.offerAccepted || false,
+            dealClosed: claim.status_details.dealClosed || false,
+            foundBuyerDate: claim.status_details.foundBuyerDate,
+            submittedOfferDate: claim.status_details.submittedOfferDate,
+            offerAcceptedDate: claim.status_details.offerAcceptedDate,
+            dealClosedDate: claim.status_details.dealClosedDate
+          }];
+        } else {
+          // Ensure all existing buyers have a status
+          claim.status_details.buyers = claim.status_details.buyers.map((buyer: any) => ({
+            ...buyer,
+            status: buyer.status || "Interested Buyer"
+          }));
+        }
+        return claim;
+      }) as BountyClaim[];
     }
+  });
+
+  const handleStatusUpdate = () => {
+    // Refetch rewards data after status update
+    queryClient.invalidateQueries({ queryKey: ['rewards'] });
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">Paid</Badge>;
-      case 'approved':
-        return <Badge variant="default" className="bg-blue-100 text-blue-800 border-blue-200">Approved</Badge>;
-      case 'pending':
-        return <Badge variant="default" className="bg-yellow-100 text-yellow-800 border-yellow-200">Pending</Badge>;
-      default:
-        return <Badge variant="outline">Unknown</Badge>;
-    }
+  const toggleRewardExpanded = (rewardId: string) => {
+    setExpandedRewardId(expandedRewardId === rewardId ? null : rewardId);
   };
 
-  if (loading) {
+  const calculateOverallProgress = (statusDetails: RewardStatusDetails): number => {
+    if (!statusDetails.buyers || statusDetails.buyers.length === 0) return 0;
+    
+    // Get the buyer with the most progress
+    const highestProgress = Math.max(...statusDetails.buyers.map(buyer => {
+      const steps = [buyer.foundBuyer, buyer.submittedOffer, buyer.offerAccepted, buyer.dealClosed];
+      return (steps.filter(Boolean).length / 4) * 100;
+    }));
+    
+    return highestProgress;
+  };
+
+  if (isLoading) {
+    return <div className="flex justify-center py-8">Loading...</div>;
+  }
+
+  if (!rewards?.length) {
     return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[...Array(3)].map((_, i) => (
-            <Card key={i}>
-              <CardContent className="p-6">
-                <div className="animate-pulse">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+        <Award size={32} className="mx-auto mb-4 text-gray-400" />
+        <h3 className="text-lg font-semibold mb-2">No claimed rewards yet</h3>
+        <p className="text-gray-600 mb-6">Claim property rewards to earn commissions</p>
+        <Button asChild variant="outline">
+          <Link to="/search">Browse Properties</Link>
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Earnings</p>
-                <p className="text-2xl font-bold text-green-600">${totalEarnings.toLocaleString()}</p>
-              </div>
-              <DollarSign className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending Earnings</p>
-                <p className="text-2xl font-bold text-yellow-600">${pendingEarnings.toLocaleString()}</p>
-              </div>
-              <Clock className="h-8 w-8 text-yellow-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Active Claims</p>
-                <p className="text-2xl font-bold text-blue-600">{claims.length}</p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Claims List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Reward Claims</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {claims.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No reward claims found.</p>
-              <p className="text-sm text-gray-400 mt-2">Start by listing a property to earn rewards!</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {claims.map((claim) => (
-                <div key={claim.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h4 className="font-semibold text-gray-900">
-                        {claim.property_listings?.title || 'Property'}
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {claim.property_listings?.city}, {claim.property_listings?.state}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Listed on {new Date(claim.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-green-600">
-                        ${claim.amount.toLocaleString()}
-                      </p>
-                      {getStatusBadge(claim.status)}
-                    </div>
-                  </div>
-                  
-                  <RewardProgress 
-                    propertyId={claim.property_id}
-                    reward={claim.amount}
-                  />
+    <div className="space-y-4">
+      {rewards.map((reward) => {
+        const propertyListings = reward.property_listings;
+        const images = propertyListings?.images || [];
+        const title = propertyListings?.title || 'Property';
+        const location = propertyListings?.location || 'Unknown location';
+        const rewardAmount = propertyListings?.reward || 0;
+        const isExpanded = expandedRewardId === reward.id;
+        
+        // Calculate if any buyer has completed all steps
+        const isCompleted = reward.status_details.buyers?.some(buyer => buyer.dealClosed) || false;
+        const progress = calculateOverallProgress(reward.status_details);
+        
+        return (
+          <div key={reward.id} className="bg-white p-6 rounded-lg border border-gray-200">
+            <div 
+              className="flex items-center justify-between cursor-pointer"
+              onClick={() => toggleRewardExpanded(reward.id)}
+            >
+              <div className="flex items-center space-x-4">
+                <img 
+                  src={images[0] || '/placeholder.svg'} 
+                  alt={title}
+                  className="w-16 h-16 object-cover rounded"
+                />
+                <div>
+                  <h3 className="font-semibold text-lg">{title}</h3>
+                  <p className="text-sm text-gray-600">{location}</p>
                 </div>
-              ))}
+              </div>
+              <div className="flex items-center">
+                <div className="text-right mr-4">
+                  <div className="flex items-center text-green-600 font-semibold text-xl">
+                    <DollarSign className="mr-1" />
+                    {rewardAmount.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {isCompleted ? 'Completed' : 'In Progress'}
+                  </div>
+                </div>
+                <Button variant="ghost" size="sm">
+                  <ChevronRight className={`transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                </Button>
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+            
+            {isExpanded && (
+              <div className="mt-6">
+                <RewardProgress 
+                  claimId={reward.id} 
+                  initialStatus={reward.status_details} 
+                  onStatusUpdate={handleStatusUpdate}
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
