@@ -34,19 +34,19 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 210 100% 15%;
+    --foreground: 280 10% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 100% 15%;
+    --card-foreground: 280 10% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 100% 15%;
+    --popover-foreground: 280 10% 10%;
 
     --primary: 24 100% 50%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 280 30% 96%;
-    --secondary-foreground: 210 100% 15%;
+    --secondary-foreground: 280 10% 10%;
 
     --muted: 280 30% 96%;
     --muted-foreground: 280 5% 45%;
@@ -63,11 +63,12 @@
 
     --radius: 1.25rem;
     
-    /* Orange and navy colors */
-    --orange-primary: #fd4801;
-    --navy-primary: #01204b;
-    --orange-secondary: #ff6b35;
-    --navy-secondary: #1e3a5f;
+    /* Purple colors */
+    --purple-primary: #9b87f5;
+    --purple-secondary: #7E69AB;
+    --purple-tertiary: #6E59A5;
+    --purple-light: #D6BCFA;
+    --purple-vivid: #8B5CF6;
 
     /* Adding cream background color */
     --cream-background: 60 33% 98%;
@@ -78,7 +79,6 @@
     background-attachment: fixed;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-text-size-adjust: 100%;
-    color: #01204b;
   }
 
   html {
@@ -96,13 +96,11 @@
   :root {
     font-family: 'Helvetica', 'Arial', sans-serif;
     font-weight: bold;
-    color: #01204b;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Futura', 'Helvetica', 'Arial', sans-serif;
     font-weight: 700;
-    color: #01204b;
   }
   
   /* Add Inter font family */

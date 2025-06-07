@@ -75,8 +75,8 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				donedeal: {
-					'navy': '#01204b',
-					'red': '#fd4801',
+					'navy': '#000000',
+					'red': '#000000',
 					'pink': '#F8F9FA',
 					'blue': '#F8F9FA',
 					'light-gray': '#F8F9FA',
@@ -84,7 +84,7 @@ export default {
 				},
 				glass: {
 					purple: '#8B5CF6',
-					orange: '#fd4801',
+					orange: '#F97316',
 					pink: '#FF3CAC',
 					peach: '#FDE1D3',
 					blue: '#0EA5E9',
@@ -185,15 +185,15 @@ export default {
 				'fifth': 'fifth 35s infinite'
 			},
 			backgroundImage: {
-				'gradient-purple': 'linear-gradient(135deg, #fd4801 0%, #ff6b35 100%)',
-				'gradient-orange': 'linear-gradient(135deg, #fd4801 0%, #ff6b35 100%)',
-				'gradient-pink': 'linear-gradient(135deg, #fd4801 0%, #ff6b35 100%)',
+				'gradient-purple': 'linear-gradient(135deg, #8B5CF6 0%, #7E69AB 100%)',
+				'gradient-orange': 'linear-gradient(135deg, #F97316 0%, #FDBA74 100%)',
+				'gradient-pink': 'linear-gradient(135deg, #FF3CAC 0%, #F8A4D8 100%)',
 				'gradient-peach': 'linear-gradient(135deg, #FDE1D3 0%, #FECACA 100%)',
-				'gradient-orange-pink': 'linear-gradient(135deg, #fd4801 0%, #ff6b35 100%)',
-				'gradient-blue-purple': 'linear-gradient(135deg, #fd4801 0%, #ff6b35 100%)',
+				'gradient-orange-pink': 'linear-gradient(135deg, #F97316 0%, #FF3CAC 100%)',
+				'gradient-blue-purple': 'linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%)',
 				'gradient-green-blue': 'linear-gradient(135deg, #10B981 0%, #0EA5E9 100%)',
-				'gradient-yellow-orange': 'linear-gradient(135deg, #FBBF24 0%, #fd4801 100%)',
-				'rainbow-gradient': 'linear-gradient(124deg, #fd4801, #ff6b35, #fd4801, #ff6b35)',
+				'gradient-yellow-orange': 'linear-gradient(135deg, #FBBF24 0%, #F97316 100%)',
+				'rainbow-gradient': 'linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3)',
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
 			}
