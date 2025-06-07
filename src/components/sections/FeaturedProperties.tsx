@@ -16,12 +16,12 @@ const FeaturedProperties: React.FC = () => {
       <section className="py-16 relative overflow-hidden perspective-container">
         <div className="container px-4 lg:px-8 mx-auto relative z-10">
           <div className="flex items-center mb-8">
-            <h2 className="text-2xl sm:text-4xl font-editorial font-bold italic text-foreground tracking-wide">
+            <h2 className="text-xl sm:text-2xl font-editorial font-bold italic text-foreground tracking-wide">
               Featured homes
             </h2>
           </div>
           
-          <p className="text-base sm:text-xl text-foreground mb-8 max-w-3xl">
+          <p className="text-base sm:text-xl text-[#01204b] mb-8 max-w-3xl font-polysans-semibold">
             Real estate for <span className="font-editorial italic">real people</span>. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
           </p>
           
@@ -37,12 +37,12 @@ const FeaturedProperties: React.FC = () => {
     <section className="py-16 relative overflow-hidden perspective-container">
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
         <div className="flex items-center mb-8">
-          <h2 className="text-2xl sm:text-4xl font-editorial font-bold italic text-foreground tracking-wide">
+          <h2 className="text-xl sm:text-2xl font-editorial font-bold italic text-foreground tracking-wide">
             Featured homes
           </h2>
         </div>
         
-        <p className="text-base sm:text-xl text-foreground mb-8 max-w-3xl">
+        <p className="text-base sm:text-xl text-[#01204b] mb-8 max-w-3xl font-polysans-semibold">
           Real estate for <span className="font-editorial italic">real people</span>. We only offer below-market homes you can actually afford, because we know buying a home isn't cheap.
         </p>
         

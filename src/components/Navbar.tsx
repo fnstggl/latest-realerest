@@ -48,23 +48,23 @@ const Navbar: React.FC = () => {
         <div className="flex flex-col gap-4 sm:gap-6 p-6 sm:p-8">
           <Link to="/" className="flex items-center gap-2">
             <img src="/lovable-uploads/4a5ee413-b1c2-49b0-817d-51d20149fc74.png" alt="Realer Estate Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
-            <span className="font-bold text-black text-lg sm:text-xl md:text-2xl">Realer Estate</span>
+            <span className="font-bold text-[#01204b] text-lg sm:text-xl md:text-2xl">Realer Estate</span>
           </Link>
 
           <nav className="flex flex-col space-y-1 sm:space-y-2">
-            <Link to="/" className="text-black hover:nav-home-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/" className="text-[#01204b] hover:nav-home-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Home
             </Link>
-            <Link to="/search" className="text-black hover:nav-browse-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/search" className="text-[#01204b] hover:nav-browse-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Browse
             </Link>
-            <Link to="/sell/create" className="text-black hover:nav-sell-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/sell/create" className="text-[#01204b] hover:nav-sell-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Sell
             </Link>
-            <Link to="/guide" className="text-black hover:nav-guide-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/guide" className="text-[#01204b] hover:nav-guide-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Guide
             </Link>
-            <Link to="/about" className="text-black hover:nav-about-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/about" className="text-[#01204b] hover:nav-about-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               About
             </Link>
           </nav>
@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
                 <Button variant="translucent" className="w-full justify-center font-polysans-semibold text-sm sm:text-base" onClick={handleSignIn}>
                   Log In
                 </Button>
-                <Button variant="default" className="w-full justify-center font-polysans-semibold text-sm sm:text-base" onClick={handleSignUp}>
+                <Button variant="default" className="w-full justify-center font-polysans-semibold text-sm sm:text-base bg-[#01204b] text-white hover:bg-[#01204b]/90" onClick={handleSignUp}>
                   Sign up
                 </Button>
               </>}
@@ -116,11 +116,11 @@ const Navbar: React.FC = () => {
                 {unreadCount > 0}
                 </Button>
               </div> : <>
-                <Button variant="translucent" className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-black h-6 sm:h-7" onClick={handleSignIn}>
+                <Button variant="translucent" className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-[#01204b] h-6 sm:h-7" onClick={handleSignIn}>
                   Log In
                 </Button>
 
-                <Button variant="default" className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-white bg-black hover:bg-black/90 h-6 sm:h-7" onClick={handleSignUp}>
+                <Button variant="default" className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-white bg-[#01204b] hover:bg-[#01204b]/90 h-6 sm:h-7" onClick={handleSignUp}>
                   Sign up
                 </Button>
               </>}
