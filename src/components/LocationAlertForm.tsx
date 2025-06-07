@@ -1,171 +1,86 @@
 
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 
-const LocationAlertForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    location: '',
-    maxPrice: '',
-    propertyType: '',
-    isAgent: false
-  });
-  const [isLoading, setIsLoading] = useState(false);
+const LocationAlertForm = () => {
+  const [email, setEmail] = useState('');
+  const [location, setLocation] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
+    if (!email || !location) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    setIsSubmitting(true);
     try {
+      // Standardize inputs to improve matching (trim whitespace and convert to lowercase)
+      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedLocation = location.trim().toLowerCase();
+      
+      // Check if this email is already subscribed to this location
+      const { data: existingAlerts, error: checkError } = await supabase
+        .from('location_alerts')
+        .select('id')
+        .ilike('email', normalizedEmail)
+        .ilike('location', normalizedLocation);
+        
+      if (checkError) throw checkError;
+      
+      if (existingAlerts && existingAlerts.length > 0) {
+        toast.info(`You've already joined the early access list for ${location}`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // No duplicate found, create new alert
       const { error } = await supabase
         .from('location_alerts')
         .insert([{
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || null,
-          location: formData.location,
-          max_price: formData.maxPrice ? parseInt(formData.maxPrice) : null,
-          property_type: formData.propertyType || null,
-          is_agent: formData.isAgent
+          email: normalizedEmail,
+          location: normalizedLocation
         }]);
-
+        
       if (error) throw error;
-
-      toast.success("Alert created! We'll notify you when properties match your criteria.");
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        location: '',
-        maxPrice: '',
-        propertyType: '',
-        isAgent: false
-      });
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create alert");
+      
+      toast.success("Thanks for subscribing! We'll notify you when new properties are listed in your area.");
+      setEmail('');
+      setLocation('');
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+      console.error('Error:', error);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="bg-gray-50 rounded-xl p-6 mb-8">
-      <h3 className="text-2xl font-bold text-[#01204b] mb-2">Early Access</h3>
-      <p className="text-gray-600 mb-6">
-        Get notified when new below-market properties become available in your area.
-      </p>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="name" className="text-sm font-medium text-gray-700">Name *</Label>
-            <Input
-              id="name"
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="Your full name"
-              required
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email *</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              placeholder="your@email.com"
-              required
-              className="mt-1"
-            />
-          </div>
+  return <div className="w-full max-w-3xl mx-auto text-center px-4">
+      <h3 className="font-bold text-black mb-2 text-base">Can't find a home in your area?</h3>
+      <p className="text-gray-600 mb-6">Be the first to know as soon as one's listed</p>
+      <form onSubmit={handleSubmit} className="flex flex-col max-w-xl mx-auto gap-4">
+        <Input type="text" placeholder="City, State" value={location} onChange={e => setLocation(e.target.value)} className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20" required />
+        <Input type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20" required />
+        <div className="relative w-full rounded-full overflow-hidden">
+          <Button type="submit" disabled={isSubmitting} variant="translucent" className="w-full font-bold border-none">
+            <span className="relative z-10">{isSubmitting ? "Processing..." : "Early Access"}</span>
+          </Button>
+          <span className="absolute inset-0 opacity-100 pointer-events-none rounded-full" style={{
+          background: "transparent",
+          border: "2px solid transparent",
+          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+          backgroundOrigin: "border-box",
+          backgroundClip: "border-box",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude"
+        }} />
         </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone (Optional)</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              placeholder="(555) 123-4567"
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label htmlFor="location" className="text-sm font-medium text-gray-700">Preferred Location *</Label>
-            <Input
-              id="location"
-              type="text"
-              value={formData.location}
-              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-              placeholder="City, State or ZIP"
-              required
-              className="mt-1"
-            />
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="maxPrice" className="text-sm font-medium text-gray-700">Max Price (Optional)</Label>
-            <Input
-              id="maxPrice"
-              type="number"
-              value={formData.maxPrice}
-              onChange={(e) => setFormData(prev => ({ ...prev, maxPrice: e.target.value }))}
-              placeholder="500000"
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label htmlFor="propertyType" className="text-sm font-medium text-gray-700">Property Type (Optional)</Label>
-            <Select value={formData.propertyType} onValueChange={(value) => setFormData(prev => ({ ...prev, propertyType: value }))}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="single-family">Single Family</SelectItem>
-                <SelectItem value="condo">Condo</SelectItem>
-                <SelectItem value="townhouse">Townhouse</SelectItem>
-                <SelectItem value="multi-family">Multi-Family</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="isAgent"
-            checked={formData.isAgent}
-            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isAgent: checked as boolean }))}
-          />
-          <Label htmlFor="isAgent" className="text-sm text-gray-700">
-            I am a real estate agent
-          </Label>
-        </div>
-
-        <Button 
-          type="submit" 
-          disabled={isLoading}
-          className="w-full md:w-auto bg-white border-2 border-[#fd4801] text-[#fd4801] hover:bg-[#fd4801] hover:text-white transition-all font-medium"
-        >
-          {isLoading ? 'Creating Alert...' : 'Get Early Access'}
-        </Button>
       </form>
-    </div>
-  );
+    </div>;
 };
 
 export default LocationAlertForm;
