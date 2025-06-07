@@ -115,11 +115,23 @@
   box-shadow: none !important;
 }
 
-/* Ensure the searchbar maintains its navy blue outline */
+/* Ensure the searchbar maintains its navy blue outline on all states */
+.searchbar-isolated input {
+  outline: 3px solid #01204b !important;
+  outline-offset: 1.5px !important;
+  border-color: transparent !important;
+}
+
+.searchbar-isolated input:hover {
+  outline: 3px solid #01204b !important;
+  outline-offset: 1.5px !important;
+  border-color: transparent !important;
+}
+
 .searchbar-isolated input:focus,
-.searchbar-isolated input:hover,
 .searchbar-isolated input:focus-visible {
   outline: 3px solid #01204b !important;
   outline-offset: 1.5px !important;
   border-color: transparent !important;
+  box-shadow: none !important;
 }
