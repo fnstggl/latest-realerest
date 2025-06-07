@@ -1,7 +1,7 @@
 
 @layer components {
   .story-link {
-    @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-[#0892D0] after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
+    @apply relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-[#fd4801] after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left;
   }
   
   .text-shadow {
@@ -25,15 +25,15 @@
     color: transparent;
   }
 
-  /* Apple-style gradient glowing text */
+  /* Apple-style orange glowing text */
   .apple-glow-text {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    background: #fd4801;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     position: relative;
     display: inline-block;
-    text-shadow: 0 0 20px rgba(108, 66, 245, 0.5), 0 0 40px rgba(217, 70, 239, 0.3), 0 0 80px rgba(255, 92, 0, 0.2);
+    text-shadow: 0 0 20px rgba(253, 72, 1, 0.5), 0 0 40px rgba(253, 72, 1, 0.3), 0 0 80px rgba(253, 72, 1, 0.2);
     font-weight: bold;
     padding: 0.2em 0.5em;
     transform: translateZ(20px);
@@ -41,49 +41,49 @@
   }
 
   .apple-glow-text-small {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    background: #fd4801;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     position: relative;
     display: inline-block;
-    text-shadow: 0 0 15px rgba(108, 66, 245, 0.4), 0 0 30px rgba(217, 70, 239, 0.2), 0 0 60px rgba(255, 92, 0, 0.15);
+    text-shadow: 0 0 15px rgba(253, 72, 1, 0.4), 0 0 30px rgba(253, 72, 1, 0.2), 0 0 60px rgba(253, 72, 1, 0.15);
     font-weight: bold;
     transform: translateZ(10px);
     filter: brightness(1.05);
   }
   
-  /* Electric blue glow */
+  /* Orange glow */
   .electric-blue-glow {
     color: white;
     position: relative;
     display: inline-block;
-    text-shadow: 0 0 10px rgba(8, 146, 208, 0.7), 0 0 20px rgba(8, 146, 208, 0.5), 0 0 30px rgba(8, 146, 208, 0.3);
+    text-shadow: 0 0 10px rgba(253, 72, 1, 0.7), 0 0 20px rgba(253, 72, 1, 0.5), 0 0 30px rgba(253, 72, 1, 0.3);
     font-weight: bold;
   }
   
-  /* Blue outline text for headers */
+  /* Orange outline text for headers */
   .blue-outline-text {
     color: white;
-    text-shadow: 0 0 2px #0892D0, 0 0 10px rgba(8, 146, 208, 0.7), 0 0 20px rgba(8, 146, 208, 0.3);
+    text-shadow: 0 0 2px #fd4801, 0 0 10px rgba(253, 72, 1, 0.7), 0 0 20px rgba(253, 72, 1, 0.3);
     font-weight: bold;
   }
   
-  /* Blue text */
+  /* Orange text */
   .blue-text {
-    color: #0892D0;
+    color: #fd4801;
     font-weight: bold;
   }
   
-  /* Gradient hover text effect for links - changed to electric blue */
+  /* Gradient hover text effect for links - changed to orange */
   .gradient-hover-text {
     position: relative;
     transition: all 0.3s ease;
   }
   
   .gradient-hover-text:hover {
-    color: #0892D0;
-    text-shadow: 0 0 10px rgba(8, 146, 208, 0.5), 0 0 20px rgba(8, 146, 208, 0.3);
+    color: #fd4801;
+    text-shadow: 0 0 10px rgba(253, 72, 1, 0.5), 0 0 20px rgba(253, 72, 1, 0.3);
   }
 
   /* Gradient text styles for navigation */
@@ -160,7 +160,7 @@
   }
   
   .editorial-callout {
-    border-left: 4px solid #000;
+    border-left: 4px solid #01204b;
     padding-left: 1rem;
     margin: 2rem 0;
     font-size: 1.2rem;
@@ -215,16 +215,16 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    background-color: black;
+    background-color: #01204b;
   }
 
-  /* Red highlight hover effect for specific words */
+  /* Orange highlight hover effect for specific words */
   .red-highlight-word {
     position: relative;
     transition: color 0.3s ease;
   }
 
   .red-highlight-word:hover {
-    color: #ea384c;
+    color: #fd4801;
   }
 }

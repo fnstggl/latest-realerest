@@ -1,3 +1,4 @@
+
 @layer components {
   /* Gradient borders */
   .border-gradient-br-pink-purple-gold {
@@ -10,50 +11,50 @@
     content: '';
     position: absolute;
     inset: -2px;
-    background: linear-gradient(90deg, #0892D0, #0892D0 50%, #0892D0 100%);
+    background: #fd4801;
     border-radius: inherit;
     z-index: -1;
   }
   
-  /* Button with rainbow gradient background - now static */
+  /* Button with orange gradient background */
   .btn-rainbow-gradient {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    background: #fd4801;
     color: white;
-    background-size: 100% 100%; /* Made static by removing animation */
+    background-size: 100% 100%;
   }
   
-  /* Gradient backgrounds - updated to electric blue */
+  /* Gradient backgrounds - updated to orange */
   .bg-gradient-purple-pink {
-    background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
+    background: linear-gradient(135deg, #fd4801 0%, #ff6b35 100%);
   }
   
   .bg-gradient-blue-purple {
-    background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
+    background: linear-gradient(135deg, #fd4801 0%, #ff6b35 100%);
   }
   
   .bg-gradient-orange-pink {
-    background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
+    background: linear-gradient(135deg, #fd4801 0%, #ff6b35 100%);
   }
   
-  /* Text gradients - made static by removing animations */
+  /* Text gradients - changed to orange */
   .text-gradient-primary {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    background: #fd4801;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    background-size: 100% 100%; /* Made static */
+    background-size: 100% 100%;
   }
   
   /* Static gradient text */
   .text-gradient-static {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    background: #fd4801;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   
   .text-gradient-gold {
-    background: linear-gradient(135deg, #0892D0 0%, #54C5F8 100%);
+    background: linear-gradient(135deg, #fd4801 0%, #ff6b35 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -73,15 +74,15 @@
     /* No glow effects */
   }
   
-  /* Animated gradient background - made static */
+  /* Animated gradient background - changed to orange */
   .animated-gradient-bg {
-    background: linear-gradient(-45deg, #0892D0, #54C5F8, #0892D0, #54C5F8);
-    background-size: 100% 100%; /* Made static by removing animation */
+    background: linear-gradient(-45deg, #fd4801, #ff6b35, #fd4801, #ff6b35);
+    background-size: 100% 100%;
   }
   
   /* Gradient border button */
   .gradient-border-button {
-    @apply relative bg-white hover:bg-white/90 text-black font-medium px-4 py-2 rounded-lg transition-all;
+    @apply relative bg-white hover:bg-white/90 text-[#01204b] font-medium px-4 py-2 rounded-lg transition-all;
     border: 2px solid transparent;
     background-clip: padding-box;
   }
@@ -92,7 +93,7 @@
     inset: -2px;
     z-index: -1;
     border-radius: inherit;
-    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
+    background: #fd4801;
   }
 
   .gradient-border-button:disabled::before {
@@ -102,7 +103,7 @@
   /* Navbar gradient hover effect - text only */
   .nav-gradient-hover {
     position: relative;
-    color: #333;
+    color: #01204b;
     transition: color 0.3s ease;
   }
 
@@ -118,75 +119,45 @@
     white-space: nowrap;
   }
 
-  /* Each link gets its own segment of the gradient */
+  /* Each link gets orange on hover */
   .nav-home:hover {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 
   .nav-browse:hover {
-    background: linear-gradient(90deg, #6C42F5, #9B4FEF);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 
   .nav-sell:hover {
-    background: linear-gradient(90deg, #9B4FEF, #FF5C00);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 
   .nav-about:hover {
-    background: linear-gradient(90deg, #FF5C00, #D946EF);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 
   .nav-contact:hover {
-    background: linear-gradient(90deg, #D946EF, #FF3CAC);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
   
-  /* Mobile nav hover effects - using the same gradients as desktop */
+  /* Mobile nav hover effects - using orange */
   .hover\:nav-home-hover:hover {
-    background: linear-gradient(90deg, #3C79F5, #6C42F5);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 
   .hover\:nav-browse-hover:hover {
-    background: linear-gradient(90deg, #6C42F5, #9B4FEF);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 
   .hover\:nav-sell-hover:hover {
-    background: linear-gradient(90deg, #9B4FEF, #FF5C00);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 
   .hover\:nav-about-hover:hover {
-    background: linear-gradient(90deg, #FF5C00, #D946EF);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 
   .hover\:nav-contact-hover:hover {
-    background: linear-gradient(90deg, #D946EF, #FF3CAC);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fd4801;
   }
 }

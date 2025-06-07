@@ -22,7 +22,7 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: linear-gradient(90deg, #0894FF, #C959DD, #FF2E54, #FF9004);
+  background: #fd4801;
   z-index: -1;
   border-radius: inherit;
   animation: animate-glow 3s linear infinite;
