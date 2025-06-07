@@ -1,6 +1,6 @@
 
 @layer components {
-  /* Orange glow card - updated from rainbow */
+  /* Rainbow glow card - updated with defined layering */
   .rainbow-glow-card {
     position: relative;
     display: block;
@@ -17,7 +17,7 @@
     inset: -3px;
     border-radius: inherit;
     padding: 3px;
-    background: #fd4801;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -28,7 +28,7 @@
     z-index: 0;
   }
   
-  /* Border gradient card - updated to orange */
+  /* Border gradient card specifically for About page sections */
   .border-gradient-card {
     position: relative;
     display: block;
@@ -40,7 +40,7 @@
     inset: 0;
     padding: 2px;
     border-radius: 12px;
-    background: #fd4801;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%);
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -49,7 +49,7 @@
     z-index: 1;
   }
   
-  /* Border gradient - updated to orange */
+  /* Border gradient */
   .border-gradient-br-pink-purple-gold {
     position: relative;
     border: none;
@@ -61,7 +61,7 @@
     position: absolute;
     inset: -2px;
     border-radius: inherit;
-    background: #fd4801;
+    background: linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -76,7 +76,7 @@
     opacity: 1;
   }
 
-  /* Orange price - updated from rainbow */
+  /* Rainbow price */
   .rainbow-price {
     background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(8px);
@@ -94,7 +94,7 @@
     inset: -2px;
     border-radius: inherit;
     padding: 2px;
-    background: #fd4801;
+    background: #0892D0;
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -104,7 +104,7 @@
     filter: blur(2px);
   }
   
-  /* Orange badge - updated from rainbow */
+  /* Rainbow badge for discount */
   .rainbow-badge {
     background: rgba(255, 255, 255, 0.65);
     position: relative;
@@ -121,7 +121,7 @@
     inset: -2px;
     border-radius: inherit;
     padding: 2px;
-    background: #fd4801;
+    background: #0892D0;
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -131,7 +131,7 @@
     filter: blur(2px);
   }
   
-  /* Orange button circle - updated from rainbow */
+  /* Rainbow button circle */
   .rainbow-btn-circle {
     background: rgba(255, 255, 255, 0.65);
     border: 1px solid rgba(255, 255, 255, 0.4);
@@ -147,7 +147,7 @@
     inset: -2px;
     border-radius: inherit;
     padding: 2px;
-    background: #fd4801;
+    background: #0892D0;
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -180,7 +180,7 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
-  /* Orange button glow - updated from electric blue */
+  /* Electric blue button glow - modified to use gradient border instead */
   .electric-blue-button {
     position: relative;
     z-index: 1;

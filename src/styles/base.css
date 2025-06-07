@@ -34,19 +34,19 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 210 100% 15%;
+    --foreground: 280 10% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 100% 15%;
+    --card-foreground: 280 10% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 100% 15%;
+    --popover-foreground: 280 10% 10%;
 
     --primary: 24 100% 50%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 280 30% 96%;
-    --secondary-foreground: 210 100% 15%;
+    --secondary-foreground: 280 10% 10%;
 
     --muted: 280 30% 96%;
     --muted-foreground: 280 5% 45%;
@@ -75,7 +75,7 @@
   }
 
   body {
-    @apply bg-[#FCFBF8] text-[#01204b] antialiased;
+    @apply bg-[#FCFBF8] text-foreground antialiased;
     background-attachment: fixed;
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-text-size-adjust: 100%;
@@ -101,7 +101,6 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Futura', 'Helvetica', 'Arial', sans-serif;
     font-weight: 700;
-    color: #01204b;
   }
   
   /* Add Inter font family */

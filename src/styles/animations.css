@@ -73,7 +73,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: #fd4801;
+    background-image: linear-gradient(135deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%);
     animation: pulse 2.5s infinite;
   }
 
