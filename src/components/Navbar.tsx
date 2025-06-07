@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
   const LogoText = () => (
     <>
       <img 
-        src="/lovable-uploads/4a5ee413-b1c2-49b0-817d-51d20149fc74.png" 
+        src="/lovable-uploads/bbf6e9a4-967b-4152-b8f4-6978f6969bf4.png" 
         alt="Realer Estate Logo" 
         className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" 
       />
@@ -47,7 +47,7 @@ const Navbar: React.FC = () => {
     >
         <div className="flex flex-col gap-4 sm:gap-6 p-6 sm:p-8">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/lovable-uploads/4a5ee413-b1c2-49b0-817d-51d20149fc74.png" alt="Realer Estate Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+            <img src="/lovable-uploads/bbf6e9a4-967b-4152-b8f4-6978f6969bf4.png" alt="Realer Estate Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
             <span className="font-bold text-black text-lg sm:text-xl md:text-2xl">Realer Estate</span>
           </Link>
 
@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
     </Sheet>;
   return <nav className="fixed top-1 left-0 right-0 px-3 sm:px-4 md:px-6 z-50" style={{ paddingTop: '5px' }}>
       {/* White pill background for the navbar */}
-      <div className={`max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 px-4 sm:px-6 ${isAuthenticated ? 'py-0.5 sm:py-1' : 'py-1 sm:py-1.5'}`}>
+      <div className="max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             {isMobile && <MobileNavigation />}
@@ -106,14 +106,14 @@ const Navbar: React.FC = () => {
 
           <div className="flex items-center gap-1 xs:gap-2 sm:gap-4">
             {isAuthenticated ? <div className="flex gap-1 xs:gap-1 sm:gap-2 items-center">
-                <div className="p-0.5">
+                <div className="p-0">
                   <NotificationCenter />
                 </div>
-                <div className="p-0.5">
+                <div className="p-0">
                   <ChatIcon />
                 </div>
 
-                <Button variant="ghost" className="p-1 sm:p-1.5 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent hover:text-current cursor-pointer" onClick={() => navigate('/dashboard')}>
+                <Button variant="ghost" className="p-1 sm:p-1 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent hover:text-current cursor-pointer" onClick={() => navigate('/dashboard')}>
                   <User size={isMobile ? 14 : 20} className="mr-1 sm:mr-2" />
                   <span className="font-polysans-semibold text-xs sm:text-sm">{user?.name || 'Account'}</span>
 
