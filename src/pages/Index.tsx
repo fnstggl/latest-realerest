@@ -22,7 +22,7 @@ const Index: React.FC = () => {
           "@type": "Organization",
           "name": "Realer Estate",
           "url": currentDomain,
-          "logo": `${currentDomain}/lovable-uploads/7c808a82-7af5-43f9-ada8-82e9817c464d.png`,
+          "logo": `${currentDomain}/lovable-uploads/4a5ee413-b1c2-49b0-817d-51d20149fc74.png`,
           "sameAs": [],
           "description": "Find below market real estate deals & investment opportunities at Realer Estate. Get motivated sellers and off-market properties.",
           "address": {
@@ -41,7 +41,7 @@ const Index: React.FC = () => {
       <div 
         className="fixed top-0 left-0 right-0 h-32 z-0"
         style={{
-          backgroundImage: `url('/lovable-uploads/b5e7d002-e88d-4169-9267-59cb3c3ac6e3.png')`,
+          backgroundImage: `url('/lovable-uploads/51eb8d56-acce-4716-96f8-061ed0f47dad.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'top center',
           backgroundRepeat: 'no-repeat'

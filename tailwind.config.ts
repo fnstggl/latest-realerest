@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -27,6 +28,7 @@ export default {
 				'editorial': ['Playfair Display', 'Georgia', 'serif'], // A serif font that mimics the style
 				'playfair': ['Playfair Display', 'serif'],
 				'polysans': ['Polysans', 'Inter', 'Helvetica', 'Arial', 'sans-serif'],
+				'polysans-semibold': ['Polysans Semi Bold', 'Polysans', 'Inter', 'Helvetica', 'Arial', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

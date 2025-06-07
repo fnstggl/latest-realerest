@@ -12,8 +12,8 @@ const HeroSection: React.FC = () => {
       <div 
         className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-0 w-full h-full"
         style={{
-          backgroundImage: `url('/lovable-uploads/f0704145-be82-43e3-ad6f-b5f79e264949.png')`,
-          backgroundSize: 'contain',
+          backgroundImage: `url('/lovable-uploads/742a873b-5de6-42da-b666-b87cde6906bb.png')`,
+          backgroundSize: 'cover',
           backgroundPosition: 'bottom center',
           backgroundRepeat: 'no-repeat',
           opacity: 0.3
@@ -31,7 +31,7 @@ const HeroSection: React.FC = () => {
                 at a <em>price</em> you'll <span className="font-bold">love</span> more
               </h1>
             </div>
-            <p className="text-[#01204b] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10">
+            <p className="text-[#01204b] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10 font-polysans-semibold">
               Below & off-market properties. All in one place.
             </p>
             <div className="glass-card p-0.25 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
@@ -43,52 +43,6 @@ const HeroSection: React.FC = () => {
                 scale={1}
                 className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute -inset-[3px] rounded-xl pointer-events-none"
               />
-            </div>
-            <div className="flex flex-row gap-3 sm:gap-4 justify-center mx-auto">
-              <Button 
-                asChild 
-                className="font-bold text-xs sm:text-sm md:text-base shadow-sm backdrop-blur-xl bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
-              >
-                <Link to="/search">
-                  <span className="relative z-10">Find Homes</span>
-                  <span 
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                    style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                      filter: "blur(2px)"
-                    }}
-                  ></span>
-                </Link>
-              </Button>
-              <Button 
-                asChild 
-                className="font-bold text-xs sm:text-sm md:text-base shadow-sm backdrop-blur-xl bg-white hover:bg-white text-black relative group overflow-hidden border border-transparent rounded-lg"
-              >
-                <Link to="/about">
-                  <span className="relative z-10">Learn More</span>
-                  <span 
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                    style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                      filter: "blur(2px)"
-                    }}
-                  ></span>
-                </Link>
-              </Button>
             </div>
           </div>
         </div>
