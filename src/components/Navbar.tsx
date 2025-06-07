@@ -84,9 +84,9 @@ const Navbar: React.FC = () => {
         </div>
       </SheetContent>
     </Sheet>;
-  return <nav className="fixed top-0 left-0 right-0 py-0.5 sm:py-1 px-3 sm:px-4 md:px-6 z-50">
+  return <nav className="fixed top-1 left-0 right-0 px-3 sm:px-4 md:px-6 z-50" style={{ paddingTop: '5px' }}>
       {/* White pill background for the navbar */}
-      <div className="max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6">
+      <div className={`max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 px-4 sm:px-6 ${isAuthenticated ? 'py-0.5 sm:py-1' : 'py-1 sm:py-1.5'}`}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             {isMobile && <MobileNavigation />}
@@ -105,11 +105,15 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-1 xs:gap-2 sm:gap-4">
-            {isAuthenticated ? <div className="flex gap-1 xs:gap-2 sm:gap-4 items-center">
-                <NotificationCenter />
-                <ChatIcon />
+            {isAuthenticated ? <div className="flex gap-1 xs:gap-1 sm:gap-2 items-center">
+                <div className="p-0.5">
+                  <NotificationCenter />
+                </div>
+                <div className="p-0.5">
+                  <ChatIcon />
+                </div>
 
-                <Button variant="ghost" className="p-1 sm:p-2 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent hover:text-current cursor-pointer" onClick={() => navigate('/dashboard')}>
+                <Button variant="ghost" className="p-1 sm:p-1.5 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent hover:text-current cursor-pointer" onClick={() => navigate('/dashboard')}>
                   <User size={isMobile ? 14 : 20} className="mr-1 sm:mr-2" />
                   <span className="font-polysans-semibold text-xs sm:text-sm">{user?.name || 'Account'}</span>
 

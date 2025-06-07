@@ -36,12 +36,9 @@ const CTASection: React.FC = () => {
             <p className="text-base sm:text-xl mb-8 text-[#01204b] font-polysans-semibold">Realer Estate skips the middleman, connects you with motivated sellers and prices homes to sell—fast.</p>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative group">
-                <Button asChild variant="ghost" className="font-polysans font-bold shadow-none text-[#01204b] hover:bg-transparent p-0 h-auto">
+                <Button asChild variant="ghost" className="font-polysans font-bold text-[#01204b] hover:bg-[#FFFFFF] bg-[#FFFFFF] p-2 h-auto transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
                   <Link to="/about">Learn More</Link>
                 </Button>
-                <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg border-2 border-[#fd4801]"
-                ></span>
               </div>
             </div>
           </div>
