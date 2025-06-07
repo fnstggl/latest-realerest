@@ -70,8 +70,7 @@ const LocationAlertForm = () => {
           </Button>
           <span className="absolute inset-0 opacity-100 pointer-events-none rounded-full" style={{
           background: "transparent",
-          border: "2px solid transparent",
-          backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
+          border: "2px solid #fd4801",
           backgroundOrigin: "border-box",
           backgroundClip: "border-box",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
