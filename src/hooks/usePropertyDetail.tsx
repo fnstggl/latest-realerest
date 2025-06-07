@@ -1,86 +1,79 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
-import { useUserProfiles } from './useUserProfiles';
+import { toast } from 'sonner';
 
-type PropertyDetailType = {
+interface Property {
   id: string;
   title: string;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  beds: number;
+  baths: number;
+  square_feet: number;
   price: number;
-  market_price: number;
-  location: string;
-  full_address: string;
+  after_repair_value: number;
   description: string;
-  beds: number;
-  baths: number;
-  sqft: number;
+  property_type: string;
   images: string[];
-  user_id: string;
-  below_market: number;
-  seller_name: string;
-  seller_email: string;
-  seller_phone: string;
-  seller_id: string;
-  reward: number | null;
-  after_repair_value?: number;
-  estimated_rehab?: number;
-  property_type?: string;
-  year_built?: number | null;
-  lot_size?: number | null;
-  parking?: string | null;
-  comparable_addresses?: string[];
-  created_at?: string;
-  additional_images_link?: string | null;
-};
-
-export interface PropertyDetail {
-  id: string;
-  price: number;
-  market_price: number;
-  beds: number;
-  baths: number;
-  sqft: number;
-  title: string;
-  location: string;
-  description?: string;
-  images: string[];
+  additional_images: string;
+  additional_images_link: string;
+  comparable_addresses: string[];
   user_id: string;
   created_at: string;
   updated_at: string;
-  after_repair_value?: number;
-  estimated_rehab?: number;
-  reward?: number;
-  full_address?: string;
-  property_type?: string;
-  additional_images_link?: string;
-  // Add these optional properties
+  features?: string[];
+  // Optional fields that may not exist in all property records
   year_built?: number;
-  lot_size?: number;
+  lot_size?: string;
   parking?: string;
 }
 
-const usePropertyDetail = (propertyId?: string) => {
-  const { user } = useAuth();
-  const { getUserProfile } = useUserProfiles();
-  const [property, setProperty] = useState<PropertyDetailType | null>(null);
+interface Offer {
+  id: string;
+  property_id: string;
+  buyer_id: string;
+  amount: number;
+  message: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  created_at: string;
+  buyer_name?: string;
+  buyer_email?: string;
+}
+
+interface Seller {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+}
+
+export const usePropertyDetail = (propertyId: string | undefined) => {
+  const [property, setProperty] = useState<Property | null>(null);
+  const [seller, setSeller] = useState<Seller | null>(null);
+  const [offers, setOffers] = useState<Offer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [sellerInfo, setSellerInfo] = useState<{ name: string | null; phone: string | null; email: string | null }>({ name: null, phone: null, email: null });
-  const [waitlistStatus, setWaitlistStatus] = useState<string | null>(null);
-  const [isOwner, setIsOwner] = useState(false);
-  const [isApproved, setIsApproved] = useState(false);
-  const [shouldShowSellerInfo, setShouldShowSellerInfo] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchPropertyData = async () => {
-    setIsLoading(true);
-    setError(null);
-
+  useEffect(() => {
     if (!propertyId) {
       setIsLoading(false);
       return;
     }
 
+    fetchPropertyDetails();
+  }, [propertyId]);
+
+  const fetchPropertyDetails = async () => {
+    if (!propertyId) return;
+
     try {
+      setIsLoading(true);
+      setError(null);
+
+      // Fetch property details
       const { data: propertyData, error: propertyError } = await supabase
         .from('property_listings')
         .select('*')
@@ -88,146 +81,102 @@ const usePropertyDetail = (propertyId?: string) => {
         .single();
 
       if (propertyError) {
-        setError(propertyError);
-        console.error("Error fetching property:", propertyError);
-        return;
+        throw new Error('Property not found');
       }
 
-      if (propertyData) {
-        const price = Number(propertyData.price);
-        const marketPrice = Number(propertyData.market_price);
-        const belowMarket = marketPrice > price ? ((marketPrice - price) / marketPrice * 100).toFixed(1) : "0";
-        
-        // Handle null or undefined reward properly
-        const rewardAmount = propertyData.reward ? Number(propertyData.reward) : null;
+      // Fetch seller details
+      const { data: sellerData, error: sellerError } = await supabase
+        .from('profiles')
+        .select('id, name, email, phone')
+        .eq('id', propertyData.user_id)
+        .single();
 
-        // Fetch seller profile using useUserProfiles hook
-        let sellerProfile = null;
-        try {
-          sellerProfile = await getUserProfile(propertyData.user_id);
-          console.log("Seller profile fetched:", sellerProfile);
-        } catch (profileError) {
-          console.error("Error fetching seller profile:", profileError);
-        }
-
-        // Create a user-friendly seller name
-        // Capitalize first letter and use name from profile or format email if name isn't available
-        let sellerName = 'Property Owner';
-        
-        if (sellerProfile) {
-          if (sellerProfile.name && !sellerProfile.name.includes('@')) {
-            sellerName = sellerProfile.name;
-          } else if (sellerProfile.email) {
-            // Create a readable name from the email (e.g., john.doe@example.com → John)
-            const emailName = sellerProfile.email.split('@')[0];
-            sellerName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
-          }
-        }
-        
-        const sellerEmail = sellerProfile?.email || '';
-
-        const mappedProperty: PropertyDetailType = {
-          id: propertyData.id,
-          title: propertyData.title,
-          price: Number(propertyData.price),
-          market_price: Number(propertyData.market_price),
-          location: propertyData.location,
-          full_address: propertyData.full_address || '',
-          description: propertyData.description || '',
-          beds: propertyData.beds,
-          baths: propertyData.baths,
-          sqft: propertyData.sqft,
-          images: propertyData.images || [],
-          user_id: propertyData.user_id,
-          below_market: parseFloat(belowMarket),
-          seller_name: sellerName,
-          seller_email: sellerEmail,
-          seller_phone: '',
-          seller_id: propertyData.user_id,
-          reward: rewardAmount,
-          after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
-          estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
-          property_type: propertyData.property_type,
-          year_built: propertyData.year_built || null,
-          lot_size: propertyData.lot_size || null,
-          parking: propertyData.parking || null,
-          comparable_addresses: propertyData.comparable_addresses,
-          created_at: propertyData.created_at,
-          additional_images_link: propertyData.additional_images_link || null
-        };
-
-        setProperty(mappedProperty);
-
-        const { data: sellerData, error: sellerError } = await supabase
-          .from('profiles')
-          .select('name, phone, email, id')
-          .eq('id', propertyData.user_id)
-          .single();
-
-        if (sellerError) {
-          console.error("Error fetching seller info:", sellerError);
-        } else if (sellerData) {
-          // Check if name is an actual name (not an email) and not empty
-          let name = sellerName;
-          if (sellerData.name && !sellerData.name.includes('@') && sellerData.name.trim() !== '') {
-            name = sellerData.name;
-          }
-          
-          setSellerInfo({
-            name: name,
-            phone: sellerData.phone || null,
-            email: sellerData.email || null
-          });
-
-          setProperty(prev => {
-            if (!prev) return null;
-            return {
-              ...prev,
-              seller_name: name,
-              seller_email: sellerData.email || sellerEmail,
-              seller_phone: sellerData.phone || '',
-            };
-          });
-        }
-
-        const { data: authData } = await supabase.auth.getUser();
-        const currentUser = authData?.user;
-        const isCurrentUserOwner = currentUser?.id === propertyData.user_id;
-        setIsOwner(isCurrentUserOwner);
-        
-        // Auto-approve all non-owner users - this is the key change
-        if (!isCurrentUserOwner) {
-          setIsApproved(true);
-          setWaitlistStatus('approved');
-        }
+      if (sellerError) {
+        console.warn('Could not fetch seller details:', sellerError);
       }
+
+      // Fetch offers for this property
+      const { data: offersData, error: offersError } = await supabase
+        .from('property_offers')
+        .select(`
+          *,
+          profiles:buyer_id (
+            name,
+            email
+          )
+        `)
+        .eq('property_id', propertyId)
+        .order('created_at', { ascending: false });
+
+      if (offersError) {
+        console.warn('Could not fetch offers:', offersError);
+      }
+
+      // Transform property data
+      const transformedProperty: Property = {
+        id: propertyData.id,
+        title: propertyData.title,
+        address: propertyData.address,
+        city: propertyData.city,
+        state: propertyData.state,
+        zip_code: propertyData.zip_code,
+        beds: propertyData.beds,
+        baths: propertyData.baths,
+        square_feet: propertyData.square_feet,
+        price: propertyData.price,
+        after_repair_value: propertyData.after_repair_value,
+        description: propertyData.description,
+        property_type: propertyData.property_type,
+        images: Array.isArray(propertyData.images) ? propertyData.images : [],
+        additional_images: propertyData.additional_images || '',
+        additional_images_link: propertyData.additional_images_link || '',
+        comparable_addresses: Array.isArray(propertyData.comparable_addresses) ? propertyData.comparable_addresses : [],
+        user_id: propertyData.user_id,
+        created_at: propertyData.created_at,
+        updated_at: propertyData.updated_at,
+        // Handle optional fields safely
+        year_built: propertyData.year_built || undefined,
+        lot_size: propertyData.lot_size || undefined,
+        parking: propertyData.parking || undefined,
+        features: Array.isArray(propertyData.features) ? propertyData.features : []
+      };
+
+      // Transform offers data
+      const transformedOffers: Offer[] = (offersData || []).map(offer => ({
+        id: offer.id,
+        property_id: offer.property_id,
+        buyer_id: offer.buyer_id,
+        amount: offer.amount,
+        message: offer.message || '',
+        status: offer.status as 'pending' | 'accepted' | 'rejected',
+        created_at: offer.created_at,
+        buyer_name: offer.profiles?.name || 'Unknown',
+        buyer_email: offer.profiles?.email || ''
+      }));
+
+      setProperty(transformedProperty);
+      setSeller(sellerData || null);
+      setOffers(transformedOffers);
+
     } catch (err: any) {
-      setError(err);
-      console.error("Unexpected error:", err);
+      console.error('Error fetching property details:', err);
+      setError(err.message || 'Failed to load property details');
+      toast.error('Failed to load property details');
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchPropertyData();
-  }, [propertyId]);
-
-  useEffect(() => {
-    setShouldShowSellerInfo(isOwner || isApproved);
-  }, [isOwner, isApproved]);
+  const refreshOffers = () => {
+    fetchPropertyDetails();
+  };
 
   return {
     property,
+    seller,
+    offers,
     isLoading,
     error,
-    sellerInfo,
-    waitlistStatus,
-    isOwner,
-    isApproved,
-    shouldShowSellerInfo,
-    refreshProperty: fetchPropertyData
+    refreshOffers
   };
 };
-
-export { usePropertyDetail };

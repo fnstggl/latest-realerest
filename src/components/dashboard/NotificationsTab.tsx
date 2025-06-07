@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, Check, X } from "lucide-react";
+import { Bell } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
@@ -29,7 +29,7 @@ interface NotificationsTabProps {
   clearAll: () => void;
 }
 
-const NotificationCenter: React.FC<NotificationsTabProps> = ({ 
+const NotificationsTab: React.FC<NotificationsTabProps> = ({ 
   notifications, 
   markAsRead,
   clearAll
@@ -101,4 +101,4 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
   );
 };
 
-export default NotificationCenter;
+export default NotificationsTab;
