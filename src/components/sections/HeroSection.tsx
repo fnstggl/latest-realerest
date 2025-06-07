@@ -12,7 +12,7 @@ const HeroSection: React.FC = () => {
       <div 
         className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-0 w-full h-full"
         style={{
-          backgroundImage: `url('/lovable-uploads/742a873b-5de6-42da-b666-b87cde6906bb.png')`,
+          backgroundImage: `url('/lovable-uploads/bea0bd67-09a3-4aab-b79b-5053a47af153.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'bottom center',
           backgroundRepeat: 'no-repeat',
@@ -36,13 +36,6 @@ const HeroSection: React.FC = () => {
             </p>
             <div className="glass-card p-0.25 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
               <SearchBar className="" />
-              <GlowEffect
-                colors={['#3C79F5', '#6C42F5', '#D946EF', '#FF5C00', '#FF3CAC']}
-                mode="flowHorizontal"
-                blur="soft"
-                scale={1}
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute -inset-[3px] rounded-xl pointer-events-none"
-              />
             </div>
           </div>
         </div>

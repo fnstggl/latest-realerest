@@ -37,14 +37,16 @@ const Index: React.FC = () => {
         Realer Estate – Below Market Real Estate Deals & Investment Opportunities
       </h1>
 
-      {/* Orange gradient at the top */}
+      {/* Orange gradient at the top - extended to cover navbar and hero section with smooth fade */}
       <div 
-        className="fixed top-0 left-0 right-0 h-32 z-0"
+        className="fixed top-0 left-0 right-0 h-48 z-0"
         style={{
           backgroundImage: `url('/lovable-uploads/51eb8d56-acce-4716-96f8-061ed0f47dad.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'top center',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
+          mask: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)',
+          WebkitMask: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%)'
         }}
       ></div>
 
