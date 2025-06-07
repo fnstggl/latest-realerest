@@ -59,13 +59,13 @@ const LocationAlertForm = () => {
   };
 
   return <div className="w-full max-w-3xl mx-auto text-center px-4">
-      <h3 className="font-bold text-black mb-2 text-base">Can't find a home in your area?</h3>
-      <p className="text-gray-600 mb-6">Be the first to know as soon as one's listed</p>
+      <h3 className="font-polysans font-bold text-[#01204b] mb-2 text-base">Can't find a home in your area?</h3>
+      <p className="text-gray-600 font-polysans-semibold mb-6">Be the first to know as soon as one's listed</p>
       <form onSubmit={handleSubmit} className="flex flex-col max-w-xl mx-auto gap-4">
-        <Input type="text" placeholder="City, State" value={location} onChange={e => setLocation(e.target.value)} className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20" required />
-        <Input type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20" required />
+        <Input type="text" placeholder="City, State" value={location} onChange={e => setLocation(e.target.value)} className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20 font-polysans-semibold" required />
+        <Input type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} className="focus-visible:ring-2 focus-visible:ring-[#000000e6] focus-visible:ring-opacity-20 font-polysans-semibold" required />
         <div className="relative w-full rounded-full overflow-hidden">
-          <Button type="submit" disabled={isSubmitting} variant="translucent" className="w-full font-bold border-none">
+          <Button type="submit" disabled={isSubmitting} variant="translucent" className="w-full font-polysans-semibold border-none">
             <span className="relative z-10">{isSubmitting ? "Processing..." : "Early Access"}</span>
           </Button>
           <span className="absolute inset-0 opacity-100 pointer-events-none rounded-full" style={{

@@ -13,34 +13,34 @@ const SiteFooter: React.FC = () => {
               <img src="/lovable-uploads/a77605f2-0937-4fdc-9f3f-85775c17338e.png" alt="Realer Estate Logo" className="w-10 h-10 object-contain" />
               <span className="font-editorial font-bold italic text-[#fd4801] text-xl">Realer Estate</span>
             </Link>
-            <p className="text-gray-600">Connecting families with affordable housing—fast.</p>
+            <p className="text-gray-600 font-polysans font-bold">Connecting families with affordable housing—fast.</p>
           </div>
           
           <div>
-            <h3 className="font-bold text-black mb-4 text-lg">Platform</h3>
+            <h3 className="font-polysans font-bold text-[#01204b] mb-4 text-lg">Platform</h3>
             <ul className="space-y-2">
-              <li><Link to="/search" className="text-gray-600 hover:text-black transition-colors font-medium">Search Homes</Link></li>
-              <li><Link to="/sell/create" className="text-gray-600 hover:text-black transition-colors font-medium">List Property</Link></li>
-              <li><Link to="/faq" className="text-gray-600 hover:text-black transition-colors font-medium">FAQ</Link></li>
+              <li><Link to="/search" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">Search Homes</Link></li>
+              <li><Link to="/sell/create" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">List Property</Link></li>
+              <li><Link to="/faq" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">FAQ</Link></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-bold text-black mb-4 text-lg">Company</h3>
+            <h3 className="font-polysans font-bold text-[#01204b] mb-4 text-lg">Company</h3>
             <ul className="space-y-2">
-              <li><Link to="/about" className="text-gray-600 hover:text-black transition-colors font-medium">About Us</Link></li>
-              <li><Link to="/blog" className="text-gray-600 hover:text-black transition-colors font-medium">Blog</Link></li>
-              <li><Link to="/careers" className="text-gray-600 hover:text-black transition-colors font-medium">Careers</Link></li>
-              <li><Link to="/contact" className="text-gray-600 hover:text-black transition-colors font-medium">Contact</Link></li>
+              <li><Link to="/about" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">About Us</Link></li>
+              <li><Link to="/blog" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">Blog</Link></li>
+              <li><Link to="/careers" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">Careers</Link></li>
+              <li><Link to="/contact" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">Contact</Link></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-bold text-black mb-4 text-lg">Legal</h3>
+            <h3 className="font-polysans font-bold text-[#01204b] mb-4 text-lg">Legal</h3>
             <ul className="space-y-2">
-              <li><Link to="/terms" className="text-gray-600 hover:text-black transition-colors font-medium">Terms of Service</Link></li>
-              <li><Link to="/privacy" className="text-gray-600 hover:text-black transition-colors font-medium">Privacy Policy</Link></li>
-              <li><Link to="/cookies" className="text-gray-600 hover:text-black transition-colors font-medium">Cookie Policy</Link></li>
+              <li><Link to="/terms" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">Terms of Service</Link></li>
+              <li><Link to="/privacy" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">Privacy Policy</Link></li>
+              <li><Link to="/cookies" className="text-gray-600 hover:text-black transition-colors font-polysans-semibold">Cookie Policy</Link></li>
             </ul>
           </div>
         </div>

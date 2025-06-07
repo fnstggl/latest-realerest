@@ -25,7 +25,7 @@ const CTASection: React.FC = () => {
       <div className="container px-4 lg:px-8 mx-auto flex justify-center">
         <div className="grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 max-w-5xl w-full">
           <div>
-            <h2 className="text-2xl sm:text-4xl font-polysans font-bold mb-4 text-foreground">
+            <h2 className="text-2xl sm:text-4xl font-polysans font-bold mb-4 text-[#01204b]">
               But how are these homes 
               actually
               <br />
@@ -35,12 +35,14 @@ const CTASection: React.FC = () => {
             </h2>
             <p className="text-base sm:text-xl mb-8 text-[#01204b] font-polysans-semibold">Realer Estate skips the middleman, connects you with motivated sellers and prices homes to sell—fast.</p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl border border-white/30 electric-blue-button">
-                <Link to="/search">Find Homes</Link>
-              </Button>
-              <Button asChild variant="glass" className="font-bold shadow-lg backdrop-blur-xl border border-white/30 electric-blue-button">
-                <Link to="/about">Learn More</Link>
-              </Button>
+              <div className="relative group">
+                <Button asChild variant="ghost" className="font-polysans font-bold shadow-none text-[#01204b] hover:bg-transparent p-0 h-auto">
+                  <Link to="/about">Learn More</Link>
+                </Button>
+                <span 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg border-2 border-[#fd4801]"
+                ></span>
+              </div>
             </div>
           </div>
           <div className="overflow-hidden rounded-xl shadow-2xl">
