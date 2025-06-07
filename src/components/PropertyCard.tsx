@@ -65,12 +65,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       to={`/property/${id}`} 
       className="block perspective-container h-full property-card-glow"
     >
-     <div className="h-full border-2 border-[#01204b] shadow-lg overflow-hidden transform transition duration-200 hover:-translate-y-1 hover:shadow-xl relative z-10 flex flex-col bg-white">
+     <div className="h-full border-2 border-[#01204b] shadow-lg overflow-hidden transform transition duration-200 hover:-translate-y-1 hover:shadow-xl relative z-10 flex flex-col bg-white rounded-xl">
         <div className="relative">
           <OptimizedImage 
             src={validImage} 
             alt={location || 'Property'} 
-            className="h-[240px] w-full object-cover"
+            className="h-[240px] w-full object-cover rounded-t-xl"
             width={imageDimensions.width}
             height={imageDimensions.height}
             sizes="(max-width: 768px) 100vw, 33vw"
@@ -78,7 +78,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           
           <div className="absolute top-4 left-0 right-0 px-4 flex justify-between items-start">
             {belowMarket > 0 && (
-              <div className="py-1 px-3 font-polysans-semibold text-foreground bg-white/90">
+              <div className="py-1 px-3 font-polysans-semibold text-foreground bg-white/90 rounded-full">
                 <span>{roundedBelowMarket}% OFF</span>
               </div>
             )}
@@ -124,10 +124,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
                 </div>
               </div>
               
-              <div className="w-10 h-10 flex items-center justify-center transition-all duration-300 relative group overflow-hidden bg-white border border-transparent">
+              <div className="w-10 h-10 flex items-center justify-center transition-all duration-300 relative group overflow-hidden bg-white border border-transparent rounded-full">
                 <ArrowRight size={20} className="text-foreground relative z-10" />
                 <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-full"
                   style={{
                     background: "transparent",
                     border: "2px solid #fd4801",
