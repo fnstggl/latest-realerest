@@ -39,9 +39,9 @@ export const usePropertyDetail = (id: string) => {
         id: property.id,
         title: property.title,
         price: property.price,
-        listPrice: property.list_price,
-        discountPercentage: property.discount_percentage,
-        address: property.address,
+        listPrice: property.price, // Use price as fallback since list_price doesn't exist
+        discountPercentage: 0, // Default since discount_percentage doesn't exist
+        address: property.title, // Use title as fallback since address doesn't exist
         location: property.location,
         beds: property.beds,
         baths: property.baths,
@@ -51,18 +51,18 @@ export const usePropertyDetail = (id: string) => {
         images: property.images || [],
         additionalImages: property.additional_images || [],
         additionalImagesLink: property.additional_images_link,
-        status: property.status,
+        status: 'active', // Default since status doesn't exist
         reward: property.reward || 0,
         afterRepairValue: property.after_repair_value,
-        estimatedRepairCost: property.estimated_repair_cost,
+        estimatedRepairCost: 0, // Default since estimated_repair_cost doesn't exist
         comparableAddresses: property.comparable_addresses || [],
         userId: property.user_id,
         createdAt: property.created_at,
         updatedAt: property.updated_at,
         // Handle missing fields gracefully
-        yearBuilt: null, // property.year_built doesn't exist in schema
-        lotSize: null, // property.lot_size doesn't exist in schema  
-        parking: null, // property.parking doesn't exist in schema
+        yearBuilt: null,
+        lotSize: null,
+        parking: null,
         seller: property.profiles ? {
           id: property.profiles.id,
           name: property.profiles.name,

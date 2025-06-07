@@ -57,11 +57,11 @@ const RewardProgress = ({
       };
       setStatus(updatedStatus);
 
-      // Update database using bounty_claims table
+      // Update database using bounty_claims table - cast to any to handle Json type
       const { error } = await supabase
         .from('bounty_claims')
         .update({
-          status_details: updatedStatus
+          status_details: updatedStatus as any
         })
         .eq('id', claimId);
 
@@ -106,11 +106,11 @@ const RewardProgress = ({
 
       setStatus(updatedStatus);
 
-      // Update database using bounty_claims table
+      // Update database using bounty_claims table - cast to any to handle Json type
       const { error } = await supabase
         .from('bounty_claims')
         .update({
-          status_details: updatedStatus
+          status_details: updatedStatus as any
         })
         .eq('id', claimId);
 

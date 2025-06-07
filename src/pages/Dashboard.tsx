@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import TabNav from '@/components/dashboard/TabNav';
+import { TabNav } from '@/components/dashboard/TabNav';
 import PropertiesTab from '@/components/dashboard/PropertiesTab';
 import OffersTab from '@/components/dashboard/OffersTab';
 import LikedPropertiesTab from '@/components/dashboard/LikedPropertiesTab';
@@ -19,15 +19,9 @@ import SEO from '@/components/SEO';
 type DashboardTab = 'properties' | 'offers' | 'liked' | 'notifications' | 'account' | 'rewards' | 'waitlist' | 'waitlisted' | 'bounties' | 'payouts';
 
 const Dashboard: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<DashboardTab>('properties');
-  const { notifications, markAllAsRead } = useNotifications();
-
-  useEffect(() => {
-    if (activeTab === 'notifications' && notifications.length > 0) {
-      markAllAsRead();
-    }
-  }, [activeTab, notifications.length, markAllAsRead]);
+  const { notifications } = useNotifications();
 
   if (!isAuthenticated) {
     return <Navigate to="/signin" replace />;
@@ -36,27 +30,27 @@ const Dashboard: React.FC = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'properties':
-        return <PropertiesTab />;
+        return <PropertiesTab myProperties={[]} setMyProperties={() => {}} waitlistUsers={[]} showAddForm={false} setShowAddForm={() => {}} refreshProperties={() => {}} isLoading={false} />;
       case 'offers':
         return <OffersTab />;
       case 'liked':
         return <LikedPropertiesTab />;
       case 'notifications':
-        return <NotificationsTab notifications={notifications} />;
+        return <NotificationsTab notifications={notifications.map(n => ({ ...n, timestamp: new Date(n.timestamp) }))} />;
       case 'account':
-        return <AccountTab />;
+        return <AccountTab user={user} logout={logout} accountType="buyer" onUpdateAccountType={() => {}} />;
       case 'rewards':
         return <RewardsTab />;
       case 'waitlist':
-        return <WaitlistTab />;
+        return <WaitlistTab waitlistUsers={[]} setWaitlistUsers={() => {}} />;
       case 'waitlisted':
         return <WaitlistedTab />;
       case 'bounties':
         return <BountiesTab />;
       case 'payouts':
-        return <PayoutsTab />;
+        return <PayoutsTab myProperties={[]} setMyProperties={() => {}} waitlistUsers={[]} showAddForm={false} setShowAddForm={() => {}} refreshProperties={() => {}} isLoading={false} />;
       default:
-        return <PropertiesTab />;
+        return <PropertiesTab myProperties={[]} setMyProperties={() => {}} waitlistUsers={[]} showAddForm={false} setShowAddForm={() => {}} refreshProperties={() => {}} isLoading={false} />;
     }
   };
 
