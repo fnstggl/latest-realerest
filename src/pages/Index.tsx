@@ -37,6 +37,17 @@ const Index: React.FC = () => {
         Realer Estate – Below Market Real Estate Deals & Investment Opportunities
       </h1>
 
+      {/* Orange gradient at the top */}
+      <div 
+        className="fixed top-0 left-0 right-0 h-32 z-0"
+        style={{
+          backgroundImage: `url('/lovable-uploads/b5e7d002-e88d-4169-9267-59cb3c3ac6e3.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      ></div>
+
       {/* Subtle gradient blobs for background */}
       <div className="fixed top-[10%] left-[15%] w-[150px] sm:w-[200px] md:w-[250px] lg:w-[300px] h-[150px] sm:h-[200px] md:h-[250px] lg:h-[300px] rounded-full bg-blue-100/20 filter blur-[40px] sm:blur-[60px] md:blur-[80px] -z-10"></div>
       <div className="fixed top-[20%] right-[15%] w-[125px] sm:w-[175px] md:w-[200px] lg:w-[250px] h-[125px] sm:h-[175px] md:h-[200px] lg:h-[250px] rounded-full bg-purple-100/20 filter blur-[35px] sm:blur-[50px] md:blur-[70px] -z-10"></div>

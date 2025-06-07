@@ -84,44 +84,47 @@ const Navbar: React.FC = () => {
         </div>
       </SheetContent>
     </Sheet>;
-  return <nav className="glass fixed top-0 left-0 right-0 py-2 sm:py-3 px-3 sm:px-4 md:px-6 z-50 backdrop-blur-lg bg-[#FCFBF8]/20 border-b border-white/30">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          {isMobile && <MobileNavigation />}
+  return <nav className="fixed top-0 left-0 right-0 py-2 sm:py-3 px-3 sm:px-4 md:px-6 z-50">
+      {/* White pill background for the navbar */}
+      <div className="max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-2 sm:py-3 px-4 sm:px-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            {isMobile && <MobileNavigation />}
 
-          <Link to="/" className="flex items-center gap-2">
-            <LogoText />
-          </Link>
-        </div>
+            <Link to="/" className="flex items-center gap-2">
+              <LogoText />
+            </Link>
+          </div>
 
-        <div className="hidden md:flex space-x-6 lg:space-x-8 mx-auto">
-          <Link to="/" className="playfair-hover font-semibold text-sm lg:text-base">Home</Link>
-          <Link to="/search" className="playfair-hover font-semibold text-sm lg:text-base">Browse</Link>
-          <Link to="/sell/create" className="playfair-hover font-semibold text-sm lg:text-base">Sell</Link>
-          <Link to="/guide" className="playfair-hover font-semibold text-sm lg:text-base">Guide</Link>
-          <Link to="/about" className="playfair-hover font-semibold text-sm lg:text-base">About</Link>
-        </div>
+          <div className="hidden md:flex space-x-6 lg:space-x-8 mx-auto">
+            <Link to="/" className="playfair-hover font-semibold text-sm lg:text-base">Home</Link>
+            <Link to="/search" className="playfair-hover font-semibold text-sm lg:text-base">Browse</Link>
+            <Link to="/sell/create" className="playfair-hover font-semibold text-sm lg:text-base">Sell</Link>
+            <Link to="/guide" className="playfair-hover font-semibold text-sm lg:text-base">Guide</Link>
+            <Link to="/about" className="playfair-hover font-semibold text-sm lg:text-base">About</Link>
+          </div>
 
-        <div className="flex items-center gap-1 xs:gap-2 sm:gap-4">
-          {isAuthenticated ? <div className="flex gap-1 xs:gap-2 sm:gap-4 items-center">
-              <NotificationCenter />
-              <ChatIcon />
+          <div className="flex items-center gap-1 xs:gap-2 sm:gap-4">
+            {isAuthenticated ? <div className="flex gap-1 xs:gap-2 sm:gap-4 items-center">
+                <NotificationCenter />
+                <ChatIcon />
 
-              <Button variant="ghost" className="p-1 sm:p-2 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent hover:text-current cursor-pointer" onClick={() => navigate('/dashboard')}>
-                <User size={isMobile ? 14 : 20} className="mr-1 sm:mr-2" />
-                <span className="font-bold text-xs sm:text-sm">{user?.name || 'Account'}</span>
+                <Button variant="ghost" className="p-1 sm:p-2 text-xs sm:text-base relative text-foreground border-transparent hover:bg-transparent hover:text-current cursor-pointer" onClick={() => navigate('/dashboard')}>
+                  <User size={isMobile ? 14 : 20} className="mr-1 sm:mr-2" />
+                  <span className="font-bold text-xs sm:text-sm">{user?.name || 'Account'}</span>
 
-              {unreadCount > 0}
-              </Button>
-            </div> : <>
-              <Button variant="translucent" className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 text-black h-7 sm:h-9" onClick={handleSignIn}>
-                Log In
-              </Button>
+                {unreadCount > 0}
+                </Button>
+              </div> : <>
+                <Button variant="translucent" className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 text-black h-7 sm:h-9" onClick={handleSignIn}>
+                  Log In
+                </Button>
 
-              <Button variant="default" className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 text-white bg-black hover:bg-black/90 h-7 sm:h-9" onClick={handleSignUp}>
-                Sign up
-              </Button>
-            </>}
+                <Button variant="default" className="font-bold text-[10px] xs:text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3 text-white bg-black hover:bg-black/90 h-7 sm:h-9" onClick={handleSignUp}>
+                  Sign up
+                </Button>
+              </>}
+          </div>
         </div>
       </div>
     </nav>;
