@@ -230,7 +230,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       <h4 className="font-bold">{notification.title}</h4>
                       <p className="text-sm">{notification.message}</p>
                       <p className="text-xs text-gray-500 mt-1">
-  {new Date(notification.timestamp).toISOString().split('T')[0]}
+                        {new Date(notification.timestamp).toLocaleString()}
                       </p>
                     </div>
                     {!notification.read && <div className="px-2 py-1 text-xs font-bold rounded text-white bg-black">
