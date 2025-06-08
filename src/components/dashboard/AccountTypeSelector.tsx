@@ -51,7 +51,7 @@ const AccountTypeSelector: React.FC<AccountTypeSelectorProps> = ({ currentType, 
             }`}
           >
             <div className="font-polysans font-bold capitalize mb-1 text-[#01204b]">{type}</div>
-            <div className="text-sm text-gray-600 font-polysans font-semibold">{description}</div>
+            <div className="text-sm text-gray-600 font-polysans-semibold">{description}</div>
           </button>
         ))}
       </div>
