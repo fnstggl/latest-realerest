@@ -47,7 +47,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   const { getOrCreateConversation } = useMessages();
   const { user } = useAuth();
 
-  // Fetch seller's email and phone from Supabase
+  // Fetch seller's email and phone from Supabase - ALWAYS fetch for all users
   useEffect(() => {
     const fetchSellerInfo = async () => {
       if (!sellerId) return;
@@ -64,6 +64,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           return;
         }
         
+        // Always set the seller email and phone for all users
         if (data?.email) {
           setSellerEmail(data.email);
         }
@@ -167,7 +168,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
             <span className="text-sm text-gray-500 ml-2 font-polysans">(View listings)</span>
           </Link>
           
-          {/* Contact icons */}
+          {/* Contact icons - show for ALL users, not just owners */}
           <div className="flex items-center space-x-2">
             {/* Phone icon - only show if seller has phone */}
             {sellerPhone && (
@@ -196,7 +197,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
               </div>
             )}
             
-            {/* Email icon - always show if we have seller email */}
+            {/* Email icon - ALWAYS show for ALL users if we have seller email */}
             {sellerEmail && (
               <div className="relative">
                 <button

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -221,10 +220,9 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
         className="w-full bg-[#01204b] hover:bg-[#01204b]/90 text-white font-polysans font-bold rounded-lg"
         onClick={() => toast.error('Please log in to make an offer')}
       >
+        {/* Wallet/Card icon - more rectangular shape */}
         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" strokeWidth="2"/>
-          <line x1="8" y1="21" x2="16" y2="21" strokeWidth="2"/>
-          <line x1="12" y1="17" x2="12" y2="21" strokeWidth="2"/>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
         </svg>
         Make an Offer
       </Button>
@@ -238,10 +236,9 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           variant="default" 
           className="w-full bg-[#01204b] hover:bg-[#01204b]/90 text-white font-polysans font-bold rounded-lg"
         >
+          {/* Wallet/Card icon - more rectangular shape */}
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" strokeWidth="2"/>
-            <line x1="8" y1="21" x2="16" y2="21" strokeWidth="2"/>
-            <line x1="12" y1="17" x2="12" y2="21" strokeWidth="2"/>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
           </svg>
           {existingOffer ? `Update Offer (${formatCurrency(Number(existingOffer.offer_amount))})` : 'Make an Offer'}
         </Button>
