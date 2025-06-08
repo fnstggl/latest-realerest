@@ -43,7 +43,7 @@ const FeaturedProperties: React.FC = () => {
         </div>
         
         <p className="text-sm sm:text-base text-[#01204b] mb-8 max-w-3xl font-polysans-semibold pl-[10px]">
-          Only homes priced <span className="font-polysans-semibold">below-market</span>. That's Realer Estate
+          Only homes priced <span className="font-polysans-semibold">below-market</span>. That's Realer Estate.
         </p>
         
         {error ? (
