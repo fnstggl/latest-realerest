@@ -17,15 +17,15 @@ const RewardInput: React.FC<RewardInputProps> = ({
   const rewardAmount = Number(value) || 0;
   
   const getFeedbackStyle = (amount: number) => {
-    if (amount >= 10000) return "text-[#FEC6A1] font-semibold";
-    if (amount > 5000) return "text-[#FEF7CD] font-semibold";
-    return "text-[#F2FCE2] font-semibold";
+    if (amount >= 10000) return "text-[#FD4802] font-semibold";
+    if (amount > 5000) return "text-[#FFCA2E] font-semibold";
+    return "text-[#FFE968] font-semibold";
   };
   
   const getFeedbackText = (amount: number) => {
-    if (amount >= 10000) return "Aggressive offer - High priority for wholesalers";
-    if (amount > 5000) return "Competitive offer - Good visibility";
-    if (amount >= 3000) return "Conservative offer - Standard visibility";
+    if (amount >= 10000) return "Competitive offer - Top priority for wholesalers";
+    if (amount > 5000) return "Standard offer - High priority for wholesalers";
+    if (amount >= 3000) return "Conservative offer - Basic priority for wholesalers";
     return "";
   };
   
