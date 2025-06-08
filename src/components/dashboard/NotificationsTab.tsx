@@ -79,7 +79,7 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
                 <div>
                   <h3 className="font-polysans text-lg text-[#01204b]">{notification.title}</h3>
                   <p className="mb-2 font-polysans-semibold text-[#01204b]">{notification.message}</p>
-                  <p className="text-sm text-gray-500 font-polysans">
+                  <p className="text-sm text-gray-500 font-polysans-semibold">
                     {notification.timestamp.toLocaleString()}
                   </p>
                 </div>
