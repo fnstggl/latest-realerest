@@ -164,7 +164,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                         size="sm"
                         variant="ghost"
                         onClick={() => handleMessageClick(user.id)}
-                        className="hover:bg-white/20 text-[#ababab] font-polysans-semibold px-0"
+                        className="hover:bg-white/20 text-[#746d79] font-polysans-semibold px-0"
                       >
                         <MessageCircle size={16} className="mr-1" />
                         Message buyer
@@ -201,7 +201,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                         <>
                           <Button 
                             size="sm" 
-                            className="bg-white text-[#fd4801] hover:text-white hover:bg-[#fd4801] border border-white/40 hover:border-[#fd4801] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
+className="bg-white text-[#fd4801] hover:text-white hover:bg-[#fd4801] border border-white/40 hover:border-[#fd4801] transition-colors shadow-sm"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'accepted', 
@@ -217,7 +217,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                           </Button>
                           <Button 
                             size="sm" 
-                            className="bg-white text-[#01204b] hover:text-white hover:bg-[#01204b] border border-white/40 hover:border-[#01204b] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(253,61,181,0.5)]"
+className="bg-white text-[#01204b] hover:text-white hover:bg-[#01204b] border border-white/40 hover:border-[#01204b] transition-colors shadow-sm"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'declined', 
