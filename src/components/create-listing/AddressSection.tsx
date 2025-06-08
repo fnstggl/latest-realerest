@@ -60,7 +60,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                     defaultValue={field.value}
                   >
                     <SelectTrigger 
-                      className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-semibold placeholder:text-[#746d79] placeholder:font-polysans placeholder:font-semibold"
+className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-semibold text-[#746d79]"
                     >
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
