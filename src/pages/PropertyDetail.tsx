@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -246,16 +247,16 @@ const PropertyDetail: React.FC = () => {
             {property?.after_repair_value !== undefined && property?.estimated_rehab !== undefined && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white border border-gray-200 p-3 rounded-lg">
-                  <div className="text-lg font-bold text-black">
+                  <div className="text-lg font-polysans font-bold text-[#01204b]">
                     {formatCurrency(property?.after_repair_value)}
                   </div>
-                  <div className="text-xs">After Repair Value</div>
+                  <div className="text-xs font-polysans-semibold text-[#01204b]">After Repair Value</div>
                 </div>
                 <div className="bg-white border border-gray-200 p-3 rounded-lg">
-                  <div className="text-lg font-bold text-black">
+                  <div className="text-lg font-polysans font-bold text-[#01204b]">
                     {formatCurrency(property?.estimated_rehab)}
                   </div>
-                  <div className="text-xs">Est. Rehab Cost</div>
+                  <div className="text-xs font-polysans-semibold text-[#01204b]">Est. Rehab Cost</div>
                 </div>
               </div>
             )}

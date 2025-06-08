@@ -28,42 +28,42 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
 
   return (
     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8">
-      <h2 className="text-xl font-bold mb-4 text-black">Property Details</h2>
+      <h2 className="text-xl font-polysans font-bold mb-4 text-[#01204b]">Property Details</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {afterRepairValue !== undefined && (
           <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600">After Repair Value:</span>
-            <span className="font-bold text-black">{formatCurrency(afterRepairValue)}</span>
+            <span className="text-gray-600 font-polysans-semibold">After Repair Value:</span>
+            <span className="font-polysans font-bold text-[#01204b]">{formatCurrency(afterRepairValue)}</span>
           </div>
         )}
         {estimatedRehab !== undefined && (
           <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600">Estimated Rehab Cost:</span>
-            <span className="font-bold text-black">{formatCurrency(estimatedRehab)}</span>
+            <span className="text-gray-600 font-polysans-semibold">Estimated Rehab Cost:</span>
+            <span className="font-polysans font-bold text-[#01204b]">{formatCurrency(estimatedRehab)}</span>
           </div>
         )}
         {propertyType && (
           <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600">Property Type:</span>
-            <span className="font-bold text-black">{propertyType}</span>
+            <span className="text-gray-600 font-polysans-semibold">Property Type:</span>
+            <span className="font-polysans font-bold text-[#01204b]">{propertyType}</span>
           </div>
         )}
         {yearBuilt !== undefined && yearBuilt !== null && (
           <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600">Year Built:</span>
-            <span className="font-bold text-black">{yearBuilt}</span>
+            <span className="text-gray-600 font-polysans-semibold">Year Built:</span>
+            <span className="font-polysans font-bold text-[#01204b]">{yearBuilt}</span>
           </div>
         )}
         {lotSize !== undefined && lotSize !== null && (
           <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600">Lot Size:</span>
-            <span className="font-bold text-black">{lotSize} sqft</span>
+            <span className="text-gray-600 font-polysans-semibold">Lot Size:</span>
+            <span className="font-polysans font-bold text-[#01204b]">{lotSize} sqft</span>
           </div>
         )}
         {parking !== undefined && parking !== null && (
           <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600">Parking:</span>
-            <span className="font-bold text-black">{parking}</span>
+            <span className="text-gray-600 font-polysans-semibold">Parking:</span>
+            <span className="font-polysans font-bold text-[#01204b]">{parking}</span>
           </div>
         )}
       </div>
@@ -77,7 +77,7 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
             className="flex items-center p-3 border rounded-lg bg-white hover:bg-gray-50 transition-colors"
           >
             <ExternalLink size={18} className="mr-2" />
-            <span className="text-gray-800">View Additional Images</span>
+            <span className="text-gray-800 font-polysans">View Additional Images</span>
           </a>
         </div>
       )}

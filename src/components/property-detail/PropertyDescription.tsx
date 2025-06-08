@@ -1,12 +1,14 @@
 import React from 'react';
-import { formatCurrency } from '@/lib/utils';
 import { ExternalLink } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
+import PropertyDetails from './PropertyDetails';
+
 interface PropertyDescriptionProps {
   description?: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  belowMarket: number;
+  beds?: number;
+  baths?: number;
+  sqft?: number;
+  belowMarket?: number;
   comparables?: string[];
   afterRepairValue?: number;
   estimatedRehab?: number;
@@ -16,6 +18,7 @@ interface PropertyDescriptionProps {
   parking?: string | null;
   additionalImagesLink?: string | null;
 }
+
 const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
   description,
   beds,
@@ -31,61 +34,113 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
   parking,
   additionalImagesLink
 }) => {
-  const defaultDescription = `This beautiful property offers great value at ${belowMarket}% below market price. 
-  With ${beds} bedrooms and ${baths} bathrooms across ${sqft.toLocaleString()} square feet, 
-  it's perfect for families looking for their dream home.
-  
-  Located in a desirable neighborhood, this property won't last long at this price!`;
-  const hasPropertyDetails = afterRepairValue !== undefined || estimatedRehab !== undefined || propertyType || yearBuilt !== undefined || lotSize !== undefined || parking !== undefined;
-  return <div className="p-4 sm:p-6 rounded-xl bg-white my-0">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black">Property Description</h2>
-      <p className="whitespace-pre-line text-sm sm:text-base p-4 bg-white rounded-lg text-black">
-        {description || defaultDescription}
-      </p>
-      
-      {hasPropertyDetails && <div className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white rounded-lg">
-            {afterRepairValue !== undefined && <div className="flex justify-between p-3 border rounded-lg bg-white">
-                <span className="text-gray-600">After Repair Value:</span>
-                <span className="font-bold text-black">{formatCurrency(afterRepairValue)}</span>
-              </div>}
-            {estimatedRehab !== undefined && <div className="flex justify-between p-3 border rounded-lg bg-white">
-                <span className="text-gray-600">Estimated Rehab Cost:</span>
-                <span className="font-bold text-black">{formatCurrency(estimatedRehab)}</span>
-              </div>}
-            {propertyType && <div className="flex justify-between p-3 border rounded-lg bg-white">
-                <span className="text-gray-600">Property Type:</span>
-                <span className="font-bold text-black">{propertyType}</span>
-              </div>}
-            {yearBuilt !== undefined && yearBuilt !== null && <div className="flex justify-between p-3 border rounded-lg bg-white">
-                <span className="text-gray-600">Year Built:</span>
-                <span className="font-bold text-black">{yearBuilt}</span>
-              </div>}
-            {lotSize !== undefined && lotSize !== null && <div className="flex justify-between p-3 border rounded-lg bg-white">
-                <span className="text-gray-600">Lot Size:</span>
-                <span className="font-bold text-black">{lotSize} sqft</span>
-              </div>}
-            {parking !== undefined && parking !== null && <div className="flex justify-between p-3 border rounded-lg bg-white">
-                <span className="text-gray-600">Parking:</span>
-                <span className="font-bold text-black">{parking}</span>
-              </div>}
+  return (
+    <div className="space-y-6">
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+        <h2 className="text-xl font-polysans font-bold mb-4 text-[#01204b]">Property Description</h2>
+        <p className="text-gray-700 leading-relaxed mb-6 font-polysans-semibold text-[#01204b]">
+          {description || `Beautiful ${beds} bedroom, ${baths} bathroom property with ${sqft?.toLocaleString()} square feet of living space. This property is priced below market value, offering excellent investment potential.`}
+        </p>
+        
+        {/* Removed ARV, Est Rehab and Property Type for mobile - keeping only on desktop */}
+        <div className="hidden md:grid md:grid-cols-2 gap-4 mb-6">
+          <div>
+            <h3 className="font-semibold mb-3 text-[#01204b]">Property Information</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Bedrooms:</span>
+                <span className="font-medium text-[#01204b]">{beds}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Bathrooms:</span>
+                <span className="font-medium text-[#01204b]">{baths}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Square Feet:</span>
+                <span className="font-medium text-[#01204b]">{sqft?.toLocaleString()}</span>
+              </div>
+              {propertyType && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Property Type:</span>
+                  <span className="font-medium text-[#01204b]">{propertyType}</span>
+                </div>
+              )}
+            </div>
           </div>
-        </div>}
-      
-      {comparables && comparables.length > 0 && <div className="mt-6 p-4 bg-white rounded-lg">
-          <h3 className="text-lg sm:text-xl font-bold mb-2 text-black inline-block px-3 py-1">Comparable Properties</h3>
-          <ul className="list-disc pl-5 text-sm sm:text-base mt-4 space-y-2 text-black">
-            {comparables.map((address, index) => <li key={index} className="mb-1 break-words p-2 bg-white rounded-md">{address}</li>)}
-          </ul>
-        </div>}
-      
-      {additionalImagesLink && <div className="mt-6 p-4 bg-white rounded-lg border border-gray-200">
-          <h3 className="text-lg font-medium mb-2 text-black">Additional Images</h3>
-          <a href={additionalImagesLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-black hover:text-black transition-colors">
-            <ExternalLink size={16} className="mr-1" />
-            View more images
-          </a>
-        </div>}
-    </div>;
+          
+          <div>
+            <h3 className="font-semibold mb-3 text-[#01204b]">Investment Details</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Below Market:</span>
+                <span className="font-medium text-green-600">{belowMarket?.toFixed(1)}%</span>
+              </div>
+              {afterRepairValue && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">After Repair Value:</span>
+                  <span className="font-medium text-[#01204b]">{formatCurrency(afterRepairValue)}</span>
+                </div>
+              )}
+              {estimatedRehab && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Est. Rehab Cost:</span>
+                  <span className="font-medium text-[#01204b]">{formatCurrency(estimatedRehab)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile version - removed ARV, Est Rehab, Property Type */}
+        <div className="md:hidden space-y-4 mb-6">
+          <div>
+            <h3 className="font-semibold mb-3 text-[#01204b]">Property Information</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Bedrooms:</span>
+                <span className="font-medium text-[#01204b]">{beds}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Bathrooms:</span>
+                <span className="font-medium text-[#01204b]">{baths}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Square Feet:</span>
+                <span className="font-medium text-[#01204b]">{sqft?.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Below Market:</span>
+                <span className="font-medium text-green-600">{belowMarket?.toFixed(1)}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {comparables && comparables.length > 0 && (
+          <div className="mt-6">
+            <h3 className="font-semibold mb-3 text-[#01204b]">Comparable Properties</h3>
+            <div className="space-y-2">
+              {comparables.map((address, index) => (
+                <div key={index} className="p-2 bg-gray-50 rounded text-sm text-[#01204b]">
+                  {address}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <PropertyDetails
+        afterRepairValue={afterRepairValue}
+        estimatedRehab={estimatedRehab}
+        propertyType={propertyType}
+        yearBuilt={yearBuilt}
+        lotSize={lotSize}
+        parking={parking}
+        additionalImages={additionalImagesLink}
+      />
+    </div>
+  );
 };
+
 export default PropertyDescription;

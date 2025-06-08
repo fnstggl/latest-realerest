@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { MapPin, MessageSquare } from 'lucide-react';
+import { MapPin, MessageSquare, Mail, Copy } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import LikeButton from './LikeButton';
 import RewardToolTip from './RewardToolTip';
@@ -255,10 +256,10 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
       const restOfAddress = addressParts.length > 1 ? addressParts.slice(1).join(',').trim() : '';
       
       return (
-        <span className="font-medium text-sm sm:text-base break-words">
+        <span className="font-polysans-semibold text-sm sm:text-base break-words text-[#01204b]">
           {showAddress ? streetAddress : (
             <span 
-              className="cursor-pointer text-black font-bold hover:underline"
+              className="cursor-pointer text-[#01204b] font-polysans font-bold hover:underline"
               onClick={() => setShowAddress(!showAddress)}
             >
               Click to View Full Address
@@ -271,7 +272,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     }
     
     return (
-      <span className="font-medium text-sm sm:text-base">
+      <span className="font-polysans-semibold text-sm sm:text-base text-[#01204b]">
         {location}
       </span>
     );
@@ -281,16 +282,16 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2">
-          <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-            <span className="text-black font-playfair font-bold italic mr-1">{roundedBelowMarket}%</span> 
-            <span className="text-black font-playfair font-bold italic">Below Market</span>
+          <div className="bg-white text-[#01204b] px-2 sm:px-3 py-1 border border-gray-200 font-polysans font-bold italic inline-flex items-center text-sm sm:text-base rounded-lg">
+            <span className="text-[#01204b] font-polysans font-bold italic mr-1">{roundedBelowMarket}%</span> 
+            <span className="text-[#01204b] font-polysans font-bold italic">Below Market</span>
           </div>
           
           {/* Only render the reward section if there's a valid reward */}
           {hasValidReward && (
-            <div className="bg-white text-black px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
-              <span className="font-futura font-extrabold mr-1 text-[#4CA154]">{formatCurrency(reward)}</span> 
-              <span className="font-futura font-extrabold mr-1 text-[#4CA154]">Reward</span>
+            <div className="bg-white text-[#fd4801] px-2 sm:px-3 py-1 border border-gray-200 font-bold inline-flex items-center text-sm sm:text-base rounded-lg">
+              <span className="font-polysans font-extrabold mr-1 text-[#fd4801]">{formatCurrency(reward)}</span> 
+              <span className="font-polysans font-extrabold mr-1 text-[#fd4801]">Reward</span>
               <RewardToolTip amount={reward} />
             </div>
           )}
@@ -298,43 +299,43 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
         {propertyId && <LikeButton propertyId={propertyId} sellerId={userId || ''} />}
       </div>
       
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 break-words text-black">{title}</h1>
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-polysans font-bold mb-2 break-words text-[#01204b]">{title}</h1>
       
       <div className="flex items-start sm:items-center mb-4 flex-wrap">
-        <MapPin size={16} className="mr-1 sm:mr-2 text-black mt-1 sm:mt-0" />
+        <MapPin size={16} className="mr-1 sm:mr-2 text-[#01204b] mt-1 sm:mt-0" />
         {renderLocation()}
       </div>
       
       <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
         <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
-          <div className="text-lg sm:text-2xl font-bold text-black">{formatCurrency(price)}</div>
-          <div className="text-xs sm:text-sm text-black">Listing Price</div>
+          <div className="text-lg sm:text-2xl font-polysans font-bold text-[#01204b]">{formatCurrency(price)}</div>
+          <div className="text-xs sm:text-sm text-[#01204b] font-polysans-semibold">Listing Price</div>
         </div>
         <div className="p-2 sm:p-4 rounded-lg border border-gray-200">
-          <div className="text-base sm:text-xl font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
-          <div className="text-xs sm:text-sm text-black">Market Value</div>
+          <div className="text-base sm:text-xl font-polysans font-bold line-through text-gray-500">{formatCurrency(marketPrice)}</div>
+          <div className="text-xs sm:text-sm text-[#01204b] font-polysans-semibold">Market Value</div>
         </div>
       </div>
       
       <div className="flex justify-between pt-2 sm:pt-3 border-t border-gray-200">
         <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{beds}</span>
-          <span className="ml-1 text-black">Beds</span>
+          <span className="font-polysans-semibold text-[#01204b]">{beds}</span>
+          <span className="ml-1 text-[#01204b] font-polysans-semibold">Beds</span>
         </div>
         <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{baths}</span>
-          <span className="ml-1 text-black">Baths</span>
+          <span className="font-polysans-semibold text-[#01204b]">{baths}</span>
+          <span className="ml-1 text-[#01204b] font-polysans-semibold">Baths</span>
         </div>
         <div className="px-3 py-1 rounded-lg border border-gray-200">
-          <span className="font-bold text-black">{sqft?.toLocaleString()}</span>
-          <span className="ml-1 text-black">sqft</span>
+          <span className="font-polysans-semibold text-[#01204b]">{sqft?.toLocaleString()}</span>
+          <span className="ml-1 text-[#01204b] font-polysans-semibold">sqft</span>
         </div>
       </div>
 
       {waitlistStatus === 'pending' && (
         <div className="mt-4 space-y-3">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <p className="text-black font-medium">Waitlist Request Pending</p>
+            <p className="text-[#01204b] font-medium">Waitlist Request Pending</p>
             <p className="text-sm text-gray-600 mt-1">You've joined the waitlist for this property. The seller will review your request soon.</p>
           </div>
           

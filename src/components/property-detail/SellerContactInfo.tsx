@@ -1,5 +1,5 @@
-import React from 'react';
-import { Phone, Mail, User, MessageSquare, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Phone, Mail, User, MessageSquare, Clock, Copy } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useMessages } from "@/hooks/useMessages";
@@ -28,6 +28,9 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   propertyId,
   propertyTitle
 }) => {
+  const [showEmailPopup, setShowEmailPopup] = useState(false);
+  const [sellerEmail, setSellerEmail] = useState<string | null>(null);
+  
   // Make sure we're doing proper debugging
   console.log("SellerContactInfo rendering:", { 
     showContact, 
@@ -41,6 +44,34 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   const navigate = useNavigate();
   const { getOrCreateConversation } = useMessages();
   const { user } = useAuth();
+
+  // Fetch seller's email from Supabase
+  useEffect(() => {
+    const fetchSellerEmail = async () => {
+      if (!sellerId) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('id', sellerId)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching seller email:', error);
+          return;
+        }
+        
+        if (data?.email) {
+          setSellerEmail(data.email);
+        }
+      } catch (err) {
+        console.error('Error in fetchSellerEmail:', err);
+      }
+    };
+    
+    fetchSellerEmail();
+  }, [sellerId]);
 
   // Return null early if we shouldn't display contact info
   if (!showContact) {
@@ -100,94 +131,75 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
       navigate('/messages');
     }
   };
+
+  const copyEmailToClipboard = () => {
+    if (sellerEmail) {
+      navigator.clipboard.writeText(sellerEmail);
+      toast.success("Email copied to clipboard");
+    }
+  };
   
   return (
     <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mb-4">
-      <h3 className="text-lg font-bold mb-3 text-black">Seller Information</h3>
+      <h3 className="text-lg font-polysans font-bold mb-3 text-[#01204b]">Seller Information</h3>
       
       <div className="space-y-2">
-        <Link 
-          to={`/seller/${sellerId}`} 
-          className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform"
-        >
-          <User size={16} className="mr-2 text-black" />
-          <span className="text-black">{displayName}</span>
-          <span className="text-sm text-gray-500 ml-2">(View listings)</span>
+        <div className="flex items-center justify-between p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
+          <Link 
+            to={`/seller/${sellerId}`} 
+            className="flex items-center hover:scale-[1.02] transition-transform"
+          >
+            <User size={16} className="mr-2 text-[#01204b]" />
+            <span className="text-[#01204b] font-polysans">{displayName}</span>
+            <span className="text-sm text-gray-500 ml-2 font-polysans">(View listings)</span>
+          </Link>
           
-          {/* Gradient border on hover */}
-          <span 
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-            style={{
-              background: "transparent",
-              border: "2px solid transparent",
-              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "border-box",
-              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-              boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-            }}
-          />
-        </Link>
+          {/* Email icon with popup */}
+          {sellerEmail && (
+            <div className="relative">
+              <button
+                onClick={() => setShowEmailPopup(!showEmailPopup)}
+                className="p-1 hover:bg-gray-100 rounded transition-colors"
+              >
+                <Mail size={16} className="text-[#01204b]" />
+              </button>
+              
+              {showEmailPopup && (
+                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[200px] z-10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-[#01204b] font-polysans">{sellerEmail}</span>
+                    <button
+                      onClick={copyEmailToClipboard}
+                      className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
+                      title="Copy email"
+                    >
+                      <Copy size={14} className="text-[#01204b]" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         
         {/* Always show contact information section, but vary content based on waitlist status */}
         {isPending ? (
           <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
-            <Clock size={16} className="mr-2 text-black" />
-            <span className="text-gray-600">Contact details will be available once your waitlist request is approved</span>
+            <Clock size={16} className="mr-2 text-[#01204b]" />
+            <span className="text-gray-600 font-polysans">Contact details will be available once your waitlist request is approved</span>
           </div>
         ) : (
           <>
-            {email && (
-              <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
-                <Mail size={16} className="mr-2 text-black" />
-                <a href={`mailto:${email}`} className="text-black hover:underline">{email}</a>
-                
-                {/* Gradient border on hover */}
-                <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude",
-                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-                  }}
-                />
-              </div>
-            )}
-            
             {phone && (
-              <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm group relative overflow-hidden hover:scale-[1.02] transition-transform">
-                <Phone size={16} className="mr-2 text-black" />
-                <a href={`tel:${phone}`} className="text-black hover:underline">{phone}</a>
-                
-                {/* Gradient border on hover */}
-                <span 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
-                  style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude",
-                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-                  }}
-                />
+              <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm hover:scale-[1.02] transition-transform">
+                <Phone size={16} className="mr-2 text-[#01204b]" />
+                <a href={`tel:${phone}`} className="text-[#01204b] hover:underline font-polysans">{phone}</a>
               </div>
             )}
             
-            {!email && !phone && (
-              <div className="text-sm text-gray-500 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
-                Contact details are not available for this seller.
+            {!phone && (
+              <div className="text-sm text-gray-500 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm font-polysans">
+                Phone number not available for this seller.
               </div>
             )}
           </>
@@ -198,36 +210,16 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           <button
             type="button"
             onClick={handleMessageSeller}
-            className={
-              "w-full mt-2 block relative overflow-hidden font-bold py-2 rounded-xl backdrop-blur-lg bg-white text-black " +
-              "border-none group shadow transition-transform"
-            }
+            className="w-full mt-2 block relative overflow-hidden font-polysans font-bold py-2 rounded-xl backdrop-blur-lg bg-white text-[#01204b] border-2 border-[#fd4801] shadow transition-transform"
             style={{
               position: "relative",
-              // Ensure the button's stacking context does not block the span
               zIndex: 1,
             }}
           >
             <span className="flex items-center justify-center relative z-10">
-              <MessageSquare size={18} className="mr-2 text-black" />
-              <span className="relative z-10">Message Seller</span>
+              <MessageSquare size={18} className="mr-2 text-[#01204b]" />
+              <span className="relative z-10 text-[#01204b]">Message Seller</span>
             </span>
-            {/* Gradient border - always visible now */}
-            <span
-              className="absolute inset-0 opacity-100 rounded-xl pointer-events-none"
-              style={{
-                background: "transparent",
-                border: "2px solid transparent",
-                backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                backgroundOrigin: "border-box",
-                backgroundClip: "border-box",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-                boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)",
-                zIndex: 2,
-              }}
-            />
           </button>
         )}
         
@@ -235,13 +227,21 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           <Button 
             variant="glass"
             disabled
-            className="w-full mt-2 text-gray-500 font-bold py-2 rounded-xl backdrop-blur-lg bg-white/50"
+            className="w-full mt-2 text-gray-500 font-polysans font-bold py-2 rounded-xl backdrop-blur-lg bg-white/50"
           >
-            <Clock size={18} className="mr-2 text-black" />
-            <span>Messaging Available After Approval</span>
+            <Clock size={18} className="mr-2 text-[#01204b]" />
+            <span className="font-polysans">Messaging Available After Approval</span>
           </Button>
         )}
       </div>
+      
+      {/* Click outside to close popup */}
+      {showEmailPopup && (
+        <div 
+          className="fixed inset-0 z-5" 
+          onClick={() => setShowEmailPopup(false)}
+        />
+      )}
     </div>
   );
 };
