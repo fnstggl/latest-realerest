@@ -43,7 +43,7 @@ export function TabNav({ items, activeTab, onValueChange }: TabNavProps) {
               key={item.value}
               value={item.value}
               onClick={() => onValueChange(item.value)}
-              className="data-[state=active]:text-black data-[state=active]:bg-white data-[state=active]:shadow-none font-bold relative text-black hover:bg-white group"
+              className="data-[state=active]:text-[#01204b] data-[state=active]:bg-white data-[state=active]:shadow-none font-polysans-semibold relative text-[#01204b] hover:bg-white group"
             >
               <Icon size={18} className="mr-2" />
               {!isMobile && item.name}
@@ -62,13 +62,8 @@ export function TabNav({ items, activeTab, onValueChange }: TabNavProps) {
                     className="absolute inset-0 opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
                     style={{
                       background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF3CAC 80%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude"
+                      border: "2px solid #fd4801",
+                      borderRadius: "8px"
                     }}
                   />
                 </motion.div>

@@ -38,7 +38,7 @@ const AccountTypeSelector: React.FC<AccountTypeSelectorProps> = ({ currentType, 
 
   return (
     <div className="space-y-4">
-      <h3 className="font-bold text-lg mb-2">Account Type</h3>
+      <h3 className="font-polysans-semibold text-lg mb-2 text-[#01204b]">Account Type</h3>
       <div className="grid gap-4">
         {accountTypes.map(({ type, description }) => (
           <button
@@ -46,12 +46,12 @@ const AccountTypeSelector: React.FC<AccountTypeSelectorProps> = ({ currentType, 
             onClick={() => handleTypeChange(type)}
             className={`p-4 rounded-lg border text-left transition-all ${
               currentType === type 
-                ? 'border-black bg-black/5' 
-                : 'border-gray-200 hover:border-black'
+                ? 'border-[#01204b] bg-[#01204b]/5' 
+                : 'border-gray-200 hover:border-[#01204b]'
             }`}
           >
-            <div className="font-semibold capitalize mb-1">{type}</div>
-            <div className="text-sm text-gray-600">{description}</div>
+            <div className="font-polysans-semibold capitalize mb-1 text-[#01204b]">{type}</div>
+            <div className="text-sm text-gray-600 font-polysans">{description}</div>
           </button>
         ))}
       </div>

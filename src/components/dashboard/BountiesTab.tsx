@@ -66,16 +66,16 @@ const BountiesTab = () => {
   });
 
   if (isLoading) {
-    return <div className="flex justify-center py-8">Loading...</div>;
+    return <div className="flex justify-center py-8 font-polysans text-[#01204b]">Loading...</div>;
   }
 
   if (!rewards?.length) {
     return (
       <div className="text-center py-12 bg-white rounded-xl shadow-sm">
         <Award size={32} className="mx-auto mb-4 text-gray-400" />
-        <h3 className="text-lg font-semibold mb-2">No claimed rewards yet</h3>
-        <p className="text-gray-600 mb-6">Claim property rewards to earn commissions</p>
-        <Button asChild variant="outline">
+        <h3 className="text-lg font-polysans-semibold mb-2 text-[#01204b]">No claimed rewards yet</h3>
+        <p className="text-gray-600 mb-6 font-polysans">Claim property rewards to earn commissions</p>
+        <Button asChild variant="outline" className="font-polysans-semibold">
           <Link to="/search">Browse Properties</Link>
         </Button>
       </div>
@@ -103,16 +103,16 @@ const BountiesTab = () => {
                 className="w-16 h-16 object-cover rounded"
               />
               <div>
-                <h3 className="font-semibold">{title}</h3>
-                <p className="text-sm text-gray-600">{location}</p>
+                <h3 className="font-polysans-semibold text-[#01204b]">{title}</h3>
+                <p className="text-sm text-gray-600 font-polysans">{location}</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="flex items-center text-green-600 font-semibold">
+              <div className="flex items-center text-green-600 font-polysans-semibold">
                 <DollarSign size={16} className="mr-1" />
                 {rewardAmount}
               </div>
-              <div className="text-sm text-gray-500 capitalize">
+              <div className="text-sm text-gray-500 capitalize font-polysans">
                 {isCompleted ? 'Completed' : 'In Progress'}
               </div>
             </div>
