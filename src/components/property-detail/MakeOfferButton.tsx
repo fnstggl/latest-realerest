@@ -218,10 +218,14 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
     return (
       <Button 
         variant="default" 
-        className="w-full bg-black hover:bg-gray-800 text-white font-polysans font-bold"
+        className="w-full bg-[#01204b] hover:bg-[#01204b]/90 text-white font-polysans font-bold rounded-lg"
         onClick={() => toast.error('Please log in to make an offer')}
       >
-        <DollarSign size={18} className="mr-2" />
+        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" strokeWidth="2"/>
+          <line x1="8" y1="21" x2="16" y2="21" strokeWidth="2"/>
+          <line x1="12" y1="17" x2="12" y2="21" strokeWidth="2"/>
+        </svg>
         Make an Offer
       </Button>
     );
@@ -232,9 +236,13 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       <DialogTrigger asChild>
         <Button 
           variant="default" 
-          className="w-full bg-black hover:bg-gray-800 text-white font-polysans font-bold"
+          className="w-full bg-[#01204b] hover:bg-[#01204b]/90 text-white font-polysans font-bold rounded-lg"
         >
-          <DollarSign size={18} className="mr-2" />
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" strokeWidth="2"/>
+            <line x1="8" y1="21" x2="16" y2="21" strokeWidth="2"/>
+            <line x1="12" y1="17" x2="12" y2="21" strokeWidth="2"/>
+          </svg>
           {existingOffer ? `Update Offer (${formatCurrency(Number(existingOffer.offer_amount))})` : 'Make an Offer'}
         </Button>
       </DialogTrigger>
@@ -307,7 +315,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
           <Button 
             onClick={handleSubmit} 
             disabled={isSubmitting}
-            className="w-full bg-black hover:bg-gray-800 text-white font-polysans font-bold"
+            className="w-full bg-[#01204b] hover:bg-[#01204b]/90 text-white font-polysans font-bold rounded-lg"
           >
             {isSubmitting ? 
               `${existingOffer ? 'Updating' : 'Submitting'} Offer...` : 

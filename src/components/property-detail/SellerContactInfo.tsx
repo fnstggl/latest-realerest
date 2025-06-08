@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Phone, Mail, User, MessageSquare, Clock, Copy } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -29,9 +30,10 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   propertyTitle
 }) => {
   const [showEmailPopup, setShowEmailPopup] = useState(false);
+  const [showPhonePopup, setShowPhonePopup] = useState(false);
   const [sellerEmail, setSellerEmail] = useState<string | null>(null);
+  const [sellerPhone, setSellerPhone] = useState<string | null>(null);
   
-  // Make sure we're doing proper debugging
   console.log("SellerContactInfo rendering:", { 
     showContact, 
     name, 
@@ -45,32 +47,35 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   const { getOrCreateConversation } = useMessages();
   const { user } = useAuth();
 
-  // Fetch seller's email from Supabase
+  // Fetch seller's email and phone from Supabase
   useEffect(() => {
-    const fetchSellerEmail = async () => {
+    const fetchSellerInfo = async () => {
       if (!sellerId) return;
       
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('email')
+          .select('email, phone')
           .eq('id', sellerId)
           .single();
         
         if (error) {
-          console.error('Error fetching seller email:', error);
+          console.error('Error fetching seller info:', error);
           return;
         }
         
         if (data?.email) {
           setSellerEmail(data.email);
         }
+        if (data?.phone) {
+          setSellerPhone(data.phone);
+        }
       } catch (err) {
-        console.error('Error in fetchSellerEmail:', err);
+        console.error('Error in fetchSellerInfo:', err);
       }
     };
     
-    fetchSellerEmail();
+    fetchSellerInfo();
   }, [sellerId]);
 
   // Return null early if we shouldn't display contact info
@@ -138,13 +143,20 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
       toast.success("Email copied to clipboard");
     }
   };
+
+  const copyPhoneToClipboard = () => {
+    if (sellerPhone) {
+      navigator.clipboard.writeText(sellerPhone);
+      toast.success("Phone number copied to clipboard");
+    }
+  };
   
   return (
     <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mb-4">
       <h3 className="text-lg font-polysans font-bold mb-3 text-[#01204b]">Seller Information</h3>
       
       <div className="space-y-2">
-        <div className="flex items-center justify-between p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
+        <div className="flex items-center justify-between p-2 rounded-lg bg-white border border-white/10 shadow-sm">
           <Link 
             to={`/seller/${sellerId}`} 
             className="flex items-center hover:scale-[1.02] transition-transform"
@@ -154,59 +166,65 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
             <span className="text-sm text-gray-500 ml-2 font-polysans">(View listings)</span>
           </Link>
           
-          {/* Email icon with popup */}
-          {sellerEmail && (
-            <div className="relative">
-              <button
-                onClick={() => setShowEmailPopup(!showEmailPopup)}
-                className="p-1 hover:bg-gray-100 rounded transition-colors"
-              >
-                <Mail size={16} className="text-[#01204b]" />
-              </button>
-              
-              {showEmailPopup && (
-                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[200px] z-10">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-[#01204b] font-polysans">{sellerEmail}</span>
-                    <button
-                      onClick={copyEmailToClipboard}
-                      className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
-                      title="Copy email"
-                    >
-                      <Copy size={14} className="text-[#01204b]" />
-                    </button>
+          {/* Contact icons */}
+          <div className="flex items-center space-x-2">
+            {/* Phone icon - only show if seller has phone */}
+            {sellerPhone && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowPhonePopup(!showPhonePopup)}
+                  className="p-1 hover:bg-gray-100 rounded transition-colors"
+                >
+                  <Phone size={16} className="text-[#01204b]" />
+                </button>
+                
+                {showPhonePopup && (
+                  <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[200px] z-10">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-[#01204b] font-polysans">{sellerPhone}</span>
+                      <button
+                        onClick={copyPhoneToClipboard}
+                        className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
+                        title="Copy phone number"
+                      >
+                        <Copy size={14} className="text-[#01204b]" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-        
-        {/* Always show contact information section, but vary content based on waitlist status */}
-        {isPending ? (
-          <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm">
-            <Clock size={16} className="mr-2 text-[#01204b]" />
-            <span className="text-gray-600 font-polysans">Contact details will be available once your waitlist request is approved</span>
-          </div>
-        ) : (
-          <>
-            {phone && (
-              <div className="flex items-center p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm hover:scale-[1.02] transition-transform">
-                <Phone size={16} className="mr-2 text-[#01204b]" />
-                <a href={`tel:${phone}`} className="text-[#01204b] hover:underline font-polysans">{phone}</a>
+                )}
               </div>
             )}
             
-            {!phone && (
-              <div className="text-sm text-gray-500 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-sm font-polysans">
-                Phone number not available for this seller.
+            {/* Email icon - always show */}
+            {sellerEmail && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowEmailPopup(!showEmailPopup)}
+                  className="p-1 hover:bg-gray-100 rounded transition-colors"
+                >
+                  <Mail size={16} className="text-[#01204b]" />
+                </button>
+                
+                {showEmailPopup && (
+                  <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[200px] z-10">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-[#01204b] font-polysans">{sellerEmail}</span>
+                      <button
+                        onClick={copyEmailToClipboard}
+                        className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
+                        title="Copy email"
+                      >
+                        <Copy size={14} className="text-[#01204b]" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
-          </>
-        )}
+          </div>
+        </div>
         
         {sellerId && !isPending && (
-          // Note: Use a button instead of Link so we can dynamically navigate after conversation creation
           <button
             type="button"
             onClick={handleMessageSeller}
@@ -235,11 +253,14 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
         )}
       </div>
       
-      {/* Click outside to close popup */}
-      {showEmailPopup && (
+      {/* Click outside to close popups */}
+      {(showEmailPopup || showPhonePopup) && (
         <div 
           className="fixed inset-0 z-5" 
-          onClick={() => setShowEmailPopup(false)}
+          onClick={() => {
+            setShowEmailPopup(false);
+            setShowPhonePopup(false);
+          }}
         />
       )}
     </div>
