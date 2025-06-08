@@ -52,7 +52,7 @@ const RewardInput: React.FC<RewardInputProps> = ({
         placeholder="Enter reward amount ($3,000 minimum)" 
         value={value} 
         onChange={e => onChange(e.target.value)} 
-        className="w-full" 
+        className="w-full font-polysans font-bold text-[#746d79]" 
       />
       
       <p className="text-sm italic text-[#8E9196] mt-1 px-[10px] font-polysans font-semibold">Recommended to sell faster</p>
