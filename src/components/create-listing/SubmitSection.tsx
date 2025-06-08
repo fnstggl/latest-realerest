@@ -30,7 +30,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
             <span>Authentication Required</span>
           </div>
         ) : (
-          <span className="relative z-10">Create Listing</span>
+          <span className="relative z-10 font-polysans font-bold">Create Listing</span>
         )}
         
         <span 
