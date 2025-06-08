@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
         alt="Realer Estate Logo" 
         className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" 
       />
-      <span className="font-playfair font-bold italic text-[#fd4801] text-sm md:text-sm hidden md:block">Realer Estate</span>
+      <span className="font-polysans font-bold italic text-[#fd4801] text-sm md:text-sm hidden md:block">Realer Estate</span>
     </>
   );
   const MobileNavigation = () => <Sheet>
