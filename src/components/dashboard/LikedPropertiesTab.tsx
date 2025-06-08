@@ -55,18 +55,18 @@ const LikedPropertiesTab = () => {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center py-8 font-polysans text-[#01204b]">Loading...</div>;
+    return <div className="flex justify-center py-8 font-polysans-semibold text-[#01204b]">Loading...</div>;
   }
 
   if (!likedProperties || likedProperties.length === 0) {
     return (
       <div className="text-center py-12 bg-white rounded-xl shadow-sm">
         <Heart size={32} className="mx-auto mb-4 text-gray-400" />
-        <h3 className="text-lg font-polysans-semibold mb-2 text-[#01204b]">No liked properties</h3>
-        <p className="text-gray-600 mb-6 font-polysans">
+        <h3 className="text-lg font-polysans-bold mb-2 text-[#01204b]">No liked properties</h3>
+        <p className="text-gray-600 mb-6 font-polysans-semibold">
           When you like a property, it'll appear here for easy access.
         </p>
-        <Button asChild variant="outline" className="font-polysans-semibold">
+        <Button asChild variant="outline" className="font-polysans-bold">
           <Link to="/search">Browse Properties</Link>
         </Button>
       </div>

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -316,7 +317,7 @@ const OffersTab: React.FC = () => {
   if (loading) {
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-8 mx-6">
-        <h2 className="text-xl font-bold mb-6">Loading Offers...</h2>
+        <h2 className="text-xl font-polysans-bold mb-6 text-[#01204b]">Loading Offers...</h2>
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
             <div key={i} className="border border-gray-200 p-4 animate-pulse rounded-lg">
@@ -333,7 +334,7 @@ const OffersTab: React.FC = () => {
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm mx-6">
       <div className="border-b border-gray-200 p-4">
-        <h2 className="text-xl font-bold">Property Offers</h2>
+        <h2 className="text-xl font-polysans-bold text-[#01204b]">Property Offers</h2>
       </div>
       
       {offers.length > 0 ? (
@@ -344,11 +345,11 @@ const OffersTab: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-lg">
-                      <Link to={`/property/${offer.propertyId}`} className="text-black hover:text-[#0892D0]">
+                      <Link to={`/property/${offer.propertyId}`} className="text-[#01204b] hover:text-[#0892D0] font-polysans-bold">
                         {offer.property.title}
                       </Link>
                     </CardTitle>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 font-polysans-semibold">
                       From: {offer.buyerName} • {new Date(offer.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -358,24 +359,24 @@ const OffersTab: React.FC = () => {
               <CardContent className="p-4">
                 <div className="mb-4">
                   <div className="flex justify-between mb-2">
-                    <span>Property Asking Price:</span>
-                    <span className="font-bold">${offer.property.price.toLocaleString()}</span>
+                    <span className="font-polysans-semibold text-[#01204b]">Property Asking Price:</span>
+                    <span className="font-polysans-bold text-[#01204b]">${offer.property.price.toLocaleString()}</span>
                   </div>
                   
                   <div className="flex justify-between mb-2">
-                    <span>{offer.counterOffers.length > 0 ? "Latest Offer Amount:" : "Offer Amount:"}</span>
-                    <span className="font-bold">${getLatestOfferAmount(offer).toLocaleString()}</span>
+                    <span className="font-polysans-semibold text-[#01204b]">{offer.counterOffers.length > 0 ? "Latest Offer Amount:" : "Offer Amount:"}</span>
+                    <span className="font-polysans-bold text-[#01204b]">${getLatestOfferAmount(offer).toLocaleString()}</span>
                   </div>
                   
                   {offer.counterOffers.length > 0 && (
                     <div className="mt-4 border border-gray-200 rounded-lg p-3 mb-4 bg-gray-50">
-                      <h3 className="font-bold text-sm mb-2">Negotiation History</h3>
+                      <h3 className="font-polysans-bold text-sm mb-2 text-[#01204b]">Negotiation History</h3>
                       <div className="space-y-2 max-h-36 overflow-y-auto">
                         <div className="flex justify-between items-center p-2 bg-white border border-gray-200 rounded-md">
                           <div>
-                            <strong>Initial Offer:</strong> ${offer.offerAmount.toLocaleString()}
+                            <strong className="font-polysans-bold text-[#01204b]">Initial Offer:</strong> <span className="font-polysans-semibold text-[#01204b]">${offer.offerAmount.toLocaleString()}</span>
                           </div>
-                          <div className="text-xs bg-green-100 px-2 py-1 font-bold rounded-md">
+                          <div className="text-xs bg-green-100 px-2 py-1 font-polysans-bold rounded-md">
                             Buyer
                           </div>
                         </div>
@@ -387,9 +388,9 @@ const OffersTab: React.FC = () => {
                             }`}
                           >
                             <div>
-                              <strong>${counterOffer.amount.toLocaleString()}</strong>
+                              <strong className="font-polysans-bold text-[#01204b]">${counterOffer.amount.toLocaleString()}</strong>
                             </div>
-                            <div className={`text-xs font-bold px-2 py-1 rounded-md ${
+                            <div className={`text-xs font-polysans-bold px-2 py-1 rounded-md ${
                               counterOffer.from_seller ? 'bg-blue-100' : 'bg-green-100'
                             }`}>
                               {counterOffer.from_seller ? 'You (Seller)' : 'Buyer'}
@@ -403,13 +404,13 @@ const OffersTab: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     {offer.buyerEmail && (
                       <div className="text-sm border border-gray-200 rounded-lg p-2 bg-white">
-                        <span className="font-semibold">Email:</span> {offer.buyerEmail}
+                        <span className="font-polysans-bold text-[#01204b]">Email:</span> <span className="font-polysans-semibold text-[#01204b]">{offer.buyerEmail}</span>
                       </div>
                     )}
                     
                     {offer.buyerPhone && (
                       <div className="text-sm border border-gray-200 rounded-lg p-2 bg-white">
-                        <span className="font-semibold">Phone:</span> {offer.buyerPhone}
+                        <span className="font-polysans-bold text-[#01204b]">Phone:</span> <span className="font-polysans-semibold text-[#01204b]">{offer.buyerPhone}</span>
                       </div>
                     )}
                   </div>
@@ -420,7 +421,7 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="relative font-bold bg-white text-black border border-transparent hover:bg-white/90 transition-all"
+                        className="relative font-polysans-bold bg-white text-[#01204b] border border-transparent hover:bg-white/90 transition-all"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept
@@ -441,7 +442,7 @@ const OffersTab: React.FC = () => {
                       
                       <Button 
                         onClick={() => handleCounterOffer(offer)} 
-                        className="font-bold border border-black bg-white hover:bg-black/5 text-black transition-all"
+                        className="font-polysans-bold border border-[#01204b] bg-white hover:bg-[#01204b]/5 text-[#01204b] transition-all"
                       >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter
@@ -453,7 +454,7 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="relative font-bold bg-white text-black border border-transparent hover:bg-white/90 transition-all"
+                        className="relative font-polysans-bold bg-white text-[#01204b] border border-transparent hover:bg-white/90 transition-all"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
@@ -474,7 +475,7 @@ const OffersTab: React.FC = () => {
                       
                       <Button 
                         onClick={() => handleCounterOffer(offer)} 
-                        className="font-bold border border-black bg-white hover:bg-black/5 text-black transition-all"
+                        className="font-polysans-bold border border-[#01204b] bg-white hover:bg-[#01204b]/5 text-[#01204b] transition-all"
                       >
                         <ArrowRightLeft size={16} className="mr-2" />
                         Counter Again
@@ -483,7 +484,7 @@ const OffersTab: React.FC = () => {
                   )}
                   
                   <Button onClick={() => handleMessageBuyer(offer)} variant="outline" 
-                    className="relative font-bold bg-white text-black border border-gray-200 hover:bg-white transition-all group">
+                    className="relative font-polysans-bold bg-white text-[#01204b] border border-gray-200 hover:bg-white transition-all group">
                     <MessageSquare size={16} className="mr-2" />
                     Message Buyer
                     <span 
@@ -504,7 +505,7 @@ const OffersTab: React.FC = () => {
                 
                 {offer.status === "accepted" && (
                   <div className="relative bg-white border-2 border-transparent p-3 rounded-lg mt-4">
-                    <p className="text-black font-bold">
+                    <p className="text-[#01204b] font-polysans-bold">
                       <CheckCircle size={16} className="inline mr-2" />
                       You've accepted this offer. Contact the buyer to proceed with the sale.
                     </p>
@@ -526,7 +527,7 @@ const OffersTab: React.FC = () => {
                 
                 {offer.status === "declined" && (
                   <div className="bg-red-100 border border-red-300 p-3 rounded-lg mt-4">
-                    <p className="text-red-800 font-bold">
+                    <p className="text-red-800 font-polysans-bold">
                       <XCircle size={16} className="inline mr-2" />
                       You've declined this offer.
                     </p>
@@ -535,7 +536,7 @@ const OffersTab: React.FC = () => {
 
                 {offer.status === "withdrawn" && (
                   <div className="bg-gray-100 border border-gray-300 p-3 rounded-lg mt-4">
-                    <p className="text-gray-800 font-bold">
+                    <p className="text-gray-800 font-polysans-bold">
                       <XCircle size={16} className="inline mr-2" />
                       This offer has been withdrawn by the buyer.
                     </p>
@@ -548,29 +549,29 @@ const OffersTab: React.FC = () => {
       ) : (
         <div className="p-12 text-center">
           <Clock size={48} className="mx-auto mb-4 text-gray-400" />
-          <h3 className="text-xl font-bold mb-2">No Offers Yet</h3>
-          <p className="text-gray-500">You haven't received any offers on your properties yet.</p>
+          <h3 className="text-xl font-polysans-bold mb-2 text-[#01204b]">No Offers Yet</h3>
+          <p className="text-gray-500 font-polysans-semibold">You haven't received any offers on your properties yet.</p>
         </div>
       )}
       
       <Dialog open={counterOfferDialogOpen} onOpenChange={setCounterOfferDialogOpen}>
         <DialogContent className="bg-white border border-gray-200 rounded-lg shadow-sm">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Make Counter Offer</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-polysans-bold text-[#01204b]">Make Counter Offer</DialogTitle>
+            <DialogDescription className="font-polysans-semibold text-[#01204b]">
               {selectedOffer && <span>Enter your counter offer amount for {selectedOffer.property.title}</span>}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div>
-              <Label htmlFor="counterOfferAmount" className="text-black font-bold">Counter Offer Amount ($)</Label>
+              <Label htmlFor="counterOfferAmount" className="text-[#01204b] font-polysans-bold">Counter Offer Amount ($)</Label>
               <Input 
                 id="counterOfferAmount" 
                 type="number" 
                 value={counterOfferAmount} 
                 onChange={e => setCounterOfferAmount(Number(e.target.value))} 
-                className="mt-2 border border-gray-200 focus:border-[#0892D0]" 
+                className="mt-2 border border-gray-200 focus:border-[#0892D0] font-polysans-semibold" 
               />
             </div>
           </div>
@@ -580,14 +581,14 @@ const OffersTab: React.FC = () => {
               type="button" 
               variant="outline" 
               onClick={() => setCounterOfferDialogOpen(false)} 
-              className="font-bold border border-gray-200 hover:border-gray-300 transition-all" 
+              className="font-polysans-bold border border-gray-200 hover:border-gray-300 transition-all" 
               disabled={submitting}
             >
               Cancel
             </Button>
             <Button 
               type="button" 
-              className="bg-black text-white font-bold border border-black hover:bg-gray-900 transition-all" 
+              className="bg-[#01204b] text-white font-polysans-bold border border-[#01204b] hover:bg-[#01204b]/90 transition-all" 
               onClick={submitCounterOffer} 
               disabled={submitting}
             >

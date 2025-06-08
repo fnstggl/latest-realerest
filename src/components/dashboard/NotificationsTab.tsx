@@ -56,10 +56,10 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
     <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg overflow-hidden">
       <div className="border-b border-white/20 p-4 bg-white/30">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-polysans-semibold text-[#01204b]">Recent Notifications</h2>
+          <h2 className="text-xl font-polysans-bold text-[#01204b]">Recent Notifications</h2>
           <Button 
             onClick={clearAll}
-            className="font-polysans-semibold border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
+            className="font-polysans-bold border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]" 
             variant="outline"
           >
             Mark All as Read
@@ -77,14 +77,14 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-polysans-semibold text-lg text-[#01204b]">{notification.title}</h3>
-                  <p className="mb-2 font-polysans text-[#01204b]">{notification.message}</p>
-                  <p className="text-sm text-gray-500 font-polysans">
+                  <h3 className="font-polysans-bold text-lg text-[#01204b]">{notification.title}</h3>
+                  <p className="mb-2 font-polysans-semibold text-[#01204b]">{notification.message}</p>
+                  <p className="text-sm text-gray-500 font-polysans-semibold">
                     {notification.timestamp.toLocaleString()}
                   </p>
                 </div>
                 {!notification.read && (
-                  <div className="bg-[#0892D0] px-2 py-1 text-xs font-polysans-semibold rounded text-white">NEW</div>
+                  <div className="bg-[#0892D0] px-2 py-1 text-xs font-polysans-bold rounded text-white">NEW</div>
                 )}
               </div>
             </div>
@@ -93,8 +93,8 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
       ) : (
         <div className="p-12 text-center">
           <Bell size={48} className="mx-auto mb-4 text-gray-400" />
-          <h3 className="text-xl font-polysans-semibold mb-2 text-[#01204b]">No Notifications</h3>
-          <p className="text-gray-500 font-polysans">You don't have any notifications yet.</p>
+          <h3 className="text-xl font-polysans-bold mb-2 text-[#01204b]">No Notifications</h3>
+          <p className="text-gray-500 font-polysans-semibold">You don't have any notifications yet.</p>
         </div>
       )}
     </div>
