@@ -395,8 +395,8 @@ Return JSON with ONLY the requested fields:`,
   const usStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
   return <div className="mb-12">
       <div className="bg-white rounded-xl p-8 px-[32px] py-0">
-        <h3 className="text-2xl font-bold mb-2">Paste Property Details</h3>
-        <p className="text-gray-600 mb-6 text-sm">List faster with AI. Just paste your property details here and AI will sort it for you. *Check important info*</p>
+        <h3 className="text-2xl font-polysans font-bold text-[#01204b] mb-2">Paste Property Details</h3>
+        <p className="text-sm text-gray-600 font-polysans font-semibold mb-6">List faster with AI. Just paste your property details here and AI will sort it for you. *Check important info*</p>
         
         <div className="relative">
           <AITextArea value={propertyText} onChange={e => setPropertyText(e.target.value)} isProcessing={isProcessing} />
