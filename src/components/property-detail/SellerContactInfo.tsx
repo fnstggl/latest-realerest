@@ -93,8 +93,9 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   
   if (name && !isEmail) {
     displayName = name;
-  } else if (email) {
-    const emailName = email.split('@')[0];
+  } else if (email || sellerEmail) {
+    const emailToUse = sellerEmail || email;
+    const emailName = emailToUse!.split('@')[0];
     displayName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
   }
 
@@ -152,11 +153,11 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   };
   
   return (
-    <div className="backdrop-blur-lg border border-white/20 shadow-lg p-4 rounded-xl mb-4">
+    <div className="backdrop-blur-lg border border-white/20 p-4 rounded-xl mb-4">
       <h3 className="text-lg font-polysans font-bold mb-3 text-[#01204b]">Seller Information</h3>
       
       <div className="space-y-2">
-        <div className="flex items-center justify-between p-2 rounded-lg bg-white border border-white/10 shadow-sm">
+        <div className="flex items-center justify-between p-2 rounded-lg bg-white border border-white/10">
           <Link 
             to={`/seller/${sellerId}`} 
             className="flex items-center hover:scale-[1.02] transition-transform"
@@ -195,7 +196,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
               </div>
             )}
             
-            {/* Email icon - always show */}
+            {/* Email icon - always show if we have seller email */}
             {sellerEmail && (
               <div className="relative">
                 <button
@@ -228,7 +229,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           <button
             type="button"
             onClick={handleMessageSeller}
-            className="w-full mt-2 block relative overflow-hidden font-polysans font-bold py-2 rounded-xl backdrop-blur-lg bg-white text-[#01204b] border-2 border-[#fd4801] shadow transition-transform"
+            className="w-full mt-2 block relative overflow-hidden font-polysans font-bold py-2 rounded-xl backdrop-blur-lg bg-white text-[#01204b] border-2 border-[#fd4801] transition-transform"
             style={{
               position: "relative",
               zIndex: 1,
