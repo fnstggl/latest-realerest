@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -26,8 +27,12 @@ const Navbar: React.FC = () => {
     navigate('/signup');
   };
   const LogoText = () => <>
-      <img alt="Realer Estate Logo" className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" src="/lovable-uploads/181aeb29-75eb-495e-b539-237f692b2fe3.png" />
-      <span className="font-playfair font-bold italic text-[#fd4801] text-sm md:text-sm hidden md:block">Realer Estate</span>
+      <img alt="Realer Estate Logo" className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" src="/lovable-uploads/28418ea7-41d5-43dc-ae56-fada13c6e299.png" />
+      <span className="text-[#fd4801] text-sm md:text-sm hidden md:block">
+        <span className="font-polysans font-bold">Real</span>
+        <span className="font-polysans font-bold italic">er</span>
+        <span className="font-polysans font-bold"> Estate</span>
+      </span>
     </>;
   const MobileNavigation = () => <Sheet>
       <SheetTrigger asChild>
@@ -39,8 +44,12 @@ const Navbar: React.FC = () => {
     >
         <div className="flex flex-col gap-4 sm:gap-6 p-6 sm:p-8">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/lovable-uploads/bbf6e9a4-967b-4152-b8f4-6978f6969bf4.png" alt="Realer Estate Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
-            <span className="font-bold text-black text-lg sm:text-xl md:text-2xl">Realer Estate</span>
+            <img src="/lovable-uploads/28418ea7-41d5-43dc-ae56-fada13c6e299.png" alt="Realer Estate Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+            <span className="text-black text-lg sm:text-xl md:text-2xl">
+              <span className="font-polysans font-bold">Real</span>
+              <span className="font-polysans font-bold italic">er</span>
+              <span className="font-polysans font-bold"> Estate</span>
+            </span>
           </Link>
 
           <nav className="flex flex-col space-y-1 sm:space-y-2">

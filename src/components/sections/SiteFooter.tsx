@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LocationAlertForm from '@/components/LocationAlertForm';
@@ -10,8 +11,12 @@ const SiteFooter: React.FC = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4 hover:opacity-90 transition-opacity">
-              <img src="/lovable-uploads/a77605f2-0937-4fdc-9f3f-85775c17338e.png" alt="Realer Estate Logo" className="w-10 h-10 object-contain" />
-              <span className="font-editorial font-bold italic text-[#fd4801] text-xl">Realer Estate</span>
+              <img src="/lovable-uploads/28418ea7-41d5-43dc-ae56-fada13c6e299.png" alt="Realer Estate Logo" className="w-10 h-10 object-contain" />
+              <span className="text-[#fd4801] text-xl">
+                <span className="font-polysans font-bold">Real</span>
+                <span className="font-polysans font-bold italic">er</span>
+                <span className="font-polysans font-bold"> Estate</span>
+              </span>
             </Link>
             <p className="text-gray-600 font-polysans font-bold">Connecting families with affordable housing—fast.</p>
           </div>
@@ -55,3 +60,4 @@ const SiteFooter: React.FC = () => {
 };
 
 export default SiteFooter;
+
