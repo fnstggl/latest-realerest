@@ -1,7 +1,7 @@
 
 import React from 'react';
-import MessageBubble from './MessageBubble';
 import { Message } from '@/hooks/useMessages';
+import MessageBubble from './MessageBubble';
 
 interface MessageGroupProps {
   date: string;
@@ -11,21 +11,23 @@ interface MessageGroupProps {
 
 const MessageGroup: React.FC<MessageGroupProps> = ({ date, messages, currentUserId }) => {
   return (
-    <div className="mb-6">
-      <div className="flex justify-center mb-4">
-        <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-polysans font-semibold">
-          {date}
-        </span>
+    <div className="space-y-4">
+      <div className="flex justify-center">
+        <div className="bg-gray-100 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
+          {new Date().toDateString() === new Date(date).toDateString() ? 'Today' : date}
+        </div>
       </div>
-      <div className="space-y-3">
-        {messages.map((message) => (
-          <MessageBubble
-            key={message.id}
-            message={message}
-            isCurrentUser={message.sender_id === currentUserId}
+      
+      {messages.map((message) => {
+        const isCurrentUser = message.senderId === currentUserId;
+        return (
+          <MessageBubble 
+            key={message.id} 
+            message={message} 
+            isCurrentUser={isCurrentUser} 
           />
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 };
