@@ -104,7 +104,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                   
                   <div className="flex gap-6 mb-6">
                     <div className="text-2xl font-polysans text-[#01204b]">${property.price.toLocaleString()}</div>
-                    <div className="text-gray-500 line-through">${property.marketPrice.toLocaleString()}</div>
+                    <div className="text-gray-500 font-polysans-semibold line-through">${property.marketPrice.toLocaleString()}</div>
                   </div>
                   
                   <div className="flex gap-6 mb-6">
