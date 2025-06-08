@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Phone, Mail, User, MessageSquare, Clock, Copy } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -47,9 +46,18 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   const { getOrCreateConversation } = useMessages();
   const { user } = useAuth();
 
-  // Fetch seller's email and phone from Supabase - ALWAYS fetch for all users
+  // Fetch seller's email and phone from Supabase - but also use props as fallback
   useEffect(() => {
     const fetchSellerInfo = async () => {
+      // Always set the email and phone from props first as fallback
+      if (email) {
+        setSellerEmail(email);
+      }
+      if (phone) {
+        setSellerPhone(phone);
+      }
+      
+      // Then try to fetch from Supabase if we have sellerId
       if (!sellerId) return;
       
       try {
@@ -64,7 +72,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           return;
         }
         
-        // Always set the seller email and phone for all users
+        // Update with Supabase data if available, otherwise keep the props fallback
         if (data?.email) {
           setSellerEmail(data.email);
         }
@@ -77,7 +85,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
     };
     
     fetchSellerInfo();
-  }, [sellerId]);
+  }, [sellerId, email, phone]);
 
   // Return null early if we shouldn't display contact info
   if (!showContact) {
@@ -94,7 +102,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   
   if (name && !isEmail) {
     displayName = name;
-  } else if (email || sellerEmail) {
+  } else if (sellerEmail || email) {
     const emailToUse = sellerEmail || email;
     const emailName = emailToUse!.split('@')[0];
     displayName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
@@ -140,18 +148,24 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
   };
 
   const copyEmailToClipboard = () => {
-    if (sellerEmail) {
-      navigator.clipboard.writeText(sellerEmail);
+    const emailToCopy = sellerEmail || email;
+    if (emailToCopy) {
+      navigator.clipboard.writeText(emailToCopy);
       toast.success("Email copied to clipboard");
     }
   };
 
   const copyPhoneToClipboard = () => {
-    if (sellerPhone) {
-      navigator.clipboard.writeText(sellerPhone);
+    const phoneToCopy = sellerPhone || phone;
+    if (phoneToCopy) {
+      navigator.clipboard.writeText(phoneToCopy);
       toast.success("Phone number copied to clipboard");
     }
   };
+  
+  // Determine what email and phone to display - use fetched data or fallback to props
+  const displayEmail = sellerEmail || email;
+  const displayPhone = sellerPhone || phone;
   
   return (
     <div className="backdrop-blur-lg border border-white/20 p-4 rounded-xl mb-4">
@@ -170,8 +184,8 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           
           {/* Contact icons - show for ALL users when we have seller contact info */}
           <div className="flex items-center space-x-2">
-            {/* Phone icon - only show if seller has phone */}
-            {sellerPhone && (
+            {/* Phone icon - show if we have any phone number */}
+            {displayPhone && (
               <div className="relative">
                 <button
                   onClick={() => setShowPhonePopup(!showPhonePopup)}
@@ -183,7 +197,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
                 {showPhonePopup && (
                   <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[200px] z-10">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-[#01204b] font-polysans">{sellerPhone}</span>
+                      <span className="text-sm text-[#01204b] font-polysans">{displayPhone}</span>
                       <button
                         onClick={copyPhoneToClipboard}
                         className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
@@ -197,8 +211,8 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
               </div>
             )}
             
-            {/* Email icon - show for ALL users when we have seller email */}
-            {sellerEmail && (
+            {/* Email icon - show for ALL users when we have any email */}
+            {displayEmail && (
               <div className="relative">
                 <button
                   onClick={() => setShowEmailPopup(!showEmailPopup)}
@@ -210,7 +224,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
                 {showEmailPopup && (
                   <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[200px] z-10">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-[#01204b] font-polysans">{sellerEmail}</span>
+                      <span className="text-sm text-[#01204b] font-polysans">{displayEmail}</span>
                       <button
                         onClick={copyEmailToClipboard}
                         className="ml-2 p-1 hover:bg-gray-100 rounded transition-colors"
