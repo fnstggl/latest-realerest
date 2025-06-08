@@ -63,7 +63,7 @@ export function TabNav({ items, activeTab, onValueChange }: TabNavProps) {
                     style={{
                       background: "transparent",
                       border: "2px solid #fd4801",
-                      borderRadius: "8px"
+                      borderRadius: "9999px"
                     }}
                   />
                 </motion.div>
