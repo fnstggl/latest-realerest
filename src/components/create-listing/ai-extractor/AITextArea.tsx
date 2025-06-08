@@ -21,7 +21,7 @@ const AITextArea = ({ value, onChange, isProcessing }: AITextAreaProps) => {
             value={value}
             onChange={onChange}
             placeholder="Paste property details here... (e.g. '123 Main St, Portland, OR 97204 • 3 Beds / 2 Baths • 1,800 SqFt • Asking: $450,000 • ARV: $500,000')"
-            className="w-full px-6 py-4 min-h-[120px] text-lg bg-white rounded-xl transition-all duration-300 relative z-20 focus:outline-none focus:ring-0 focus:border-transparent border-none"
+            className="w-full px-6 py-4 min-h-[120px] text-lg bg-white rounded-xl transition-all duration-300 relative z-20 focus:outline-none focus:ring-0 focus:border-transparent border-none font-polysans font-semibold placeholder:text-[#746d79] placeholder:font-polysans placeholder:font-semibold"
           />
           
           {/* Glow effect container */}
