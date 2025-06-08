@@ -164,7 +164,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                         size="sm"
                         variant="ghost"
                         onClick={() => handleMessageClick(user.id)}
-                        className="hover:bg-white/20 text-[#fd4801] font-polysans-semibold px-0"
+                        className="hover:bg-white/20 text-[#ababab] font-polysans-semibold px-0"
                       >
                         <MessageCircle size={16} className="mr-1" />
                         Message buyer
@@ -181,9 +181,9 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                   </td>
                   <td className="p-4">
                     <span className={`relative inline-flex px-3 py-1 rounded-md font-polysans ${
-                      user.status === 'accepted' ? 'bg-white text-black' : 
+                      user.status === 'accepted' ? 'bg-white text-[#01204b]' : 
                       user.status === 'declined' ? 'bg-red-100 text-red-800' : 
-                      'bg-white border border-black text-black'
+                      'bg-white border border-[#01204b] text-[#01204b]'
                     }`}>
                       {user.status.toUpperCase()}
                       {user.status === 'accepted' && (
