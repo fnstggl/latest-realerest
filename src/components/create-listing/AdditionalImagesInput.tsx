@@ -22,11 +22,11 @@ const AdditionalImagesInput: React.FC<AdditionalImagesInputProps> = ({ form }) =
         name="additionalImagesLink"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="font-medium text-gray-700">Additional Images (Optional)</FormLabel>
+            <FormLabel className="font-polysans font-bold text-gray-700">Additional Images (Optional)</FormLabel>
             <FormControl>
               <Input
                 placeholder="Paste a Google Drive or Dropbox link to upload more images"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 font-polysans font-bold text-[#746d79]"
                 {...field}
               />
             </FormControl>
