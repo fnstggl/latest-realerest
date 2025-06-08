@@ -13,7 +13,7 @@ interface PropertyDetailsSectionProps {
 const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form }) => {
   return (
     <div className="rounded-xl border border-black/10 bg-white p-6">
-      <h2 className="text-xl font-bold mb-4">Property Details</h2>
+      <h2 className="text-xl font-polysans font-bold mb-4 text-[#01204b]">Property Details</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Bedrooms */}
         <FormField 
@@ -21,7 +21,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
           name="beds" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Bedrooms</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">Bedrooms</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -41,7 +41,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
           name="baths" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Bathrooms</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">Bathrooms</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -61,7 +61,7 @@ const PropertyDetailsSection: React.FC<PropertyDetailsSectionProps> = ({ form })
           name="sqft" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Square Footage</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">Square Footage</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 

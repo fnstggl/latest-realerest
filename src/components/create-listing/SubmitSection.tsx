@@ -17,7 +17,7 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
       <button 
         type="submit" 
         disabled={isSubmitting || hasAuthError} 
-        className="w-full py-6 text-xl rounded-xl disabled:opacity-70 relative bg-white text-black group"
+        className="w-full py-6 text-xl rounded-xl disabled:opacity-70 relative bg-white text-[#01204b] group"
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
@@ -37,14 +37,14 @@ const SubmitSection: React.FC<SubmitSectionProps> = ({
           className="absolute inset-0 rounded-xl pointer-events-none"
           style={{
             background: "transparent",
-            border: "2px solid transparent",
-            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
+            border: "2px solid #fd4801",
+            backgroundImage: "none",
             backgroundOrigin: "border-box",
             backgroundClip: "border-box",
             WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
             WebkitMaskComposite: "xor",
             maskComposite: "exclude",
-            boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
+            boxShadow: "0 0 15px rgba(253, 72, 1, 0.5)"
           }}
         ></span>
       </button>

@@ -17,9 +17,9 @@ const RewardInput: React.FC<RewardInputProps> = ({
   const rewardAmount = Number(value) || 0;
   
   const getFeedbackStyle = (amount: number) => {
-    if (amount >= 10000) return "text-[#FD4802] font-semibold";
-    if (amount >= 5000) return "text-[#FFCA2E] font-semibold";
-    return "text-[#FFE968] font-semibold";
+    if (amount >= 10000) return "text-[#FD4802] font-polysans font-semibold";
+    if (amount >= 5000) return "text-[#FFCA2E] font-polysans font-semibold";
+    return "text-[#FFE968] font-polysans font-semibold";
   };
   
   const getFeedbackText = (amount: number) => {
@@ -32,7 +32,7 @@ const RewardInput: React.FC<RewardInputProps> = ({
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <Label htmlFor="reward" className="font-medium">Offer Reward</Label>
+        <Label htmlFor="reward" className="font-polysans font-semibold text-[#01204b]">Offer Reward</Label>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -55,7 +55,7 @@ const RewardInput: React.FC<RewardInputProps> = ({
         className="w-full" 
       />
       
-      <p className="text-sm italic text-[#8E9196] mt-1 px-[10px]">Recommended to sell faster</p>
+      <p className="text-sm italic text-[#8E9196] mt-1 px-[10px] font-polysans font-semibold">Recommended to sell faster</p>
       
       {rewardAmount >= 3000 && (
         <p className={getFeedbackStyle(rewardAmount)}>

@@ -15,13 +15,13 @@ interface PropertyTypeSectionProps {
 const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
   return (
     <div className="rounded-xl border border-black/10 bg-white p-6">
-      <h2 className="text-xl font-bold mb-4">Property Type</h2>
+      <h2 className="text-xl font-polysans font-bold mb-4 text-[#01204b]">Property Type</h2>
       <FormField 
         control={form.control} 
         name="propertyType" 
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-black font-bold">Select Property Type</FormLabel>
+            <FormLabel className="text-[#01204b] font-polysans font-semibold">Select Property Type</FormLabel>
             <Select 
               onValueChange={field.onChange} 
               defaultValue={field.value}
@@ -36,7 +36,7 @@ const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
                   <SelectItem 
                     key={type} 
                     value={type}
-                    className="relative text-black hover:bg-black/5 focus:bg-black/5 active:bg-black/5 group"
+                    className="relative text-[#01204b] hover:bg-black/5 focus:bg-black/5 active:bg-black/5 group"
                   >
                     {type}
                   </SelectItem>

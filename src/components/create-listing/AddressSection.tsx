@@ -17,11 +17,11 @@ const AddressSection: React.FC<AddressSectionProps> = ({
 }) => {
   return <div className="rounded-xl border border-black/10 bg-white p-6">
       <div>
-        <h2 className="text-xl font-bold mb-4">Property Address</h2>
+        <h2 className="text-xl font-polysans font-bold mb-4 text-[#01204b]">Property Address</h2>
         <FormField control={form.control} name="address" render={({
         field
       }) => <FormItem>
-              <FormLabel className="text-black font-bold">Street Address</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">Street Address</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="e.g. 123 Main St" 
@@ -34,12 +34,12 @@ const AddressSection: React.FC<AddressSectionProps> = ({
       </div>
       
       <div>
-        <h2 className="text-xl font-bold mb-4 my-[15px]">Basic Information</h2>
+        <h2 className="text-xl font-polysans font-bold mb-4 my-[15px] text-[#01204b]">Basic Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FormField control={form.control} name="city" render={({
           field
         }) => <FormItem>
-                <FormLabel className="text-black font-bold">City</FormLabel>
+                <FormLabel className="text-[#01204b] font-polysans font-semibold">City</FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="e.g. Portland" 
@@ -53,7 +53,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
           <FormField control={form.control} name="state" render={({
           field
         }) => <FormItem>
-                <FormLabel className="text-black font-bold">State</FormLabel>
+                <FormLabel className="text-[#01204b] font-polysans font-semibold">State</FormLabel>
                 <FormControl>
                   <Select 
                     onValueChange={field.onChange} 
@@ -83,7 +83,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
           <FormField control={form.control} name="zipCode" render={({
           field
         }) => <FormItem>
-                <FormLabel className="text-black font-bold">ZIP Code</FormLabel>
+                <FormLabel className="text-[#01204b] font-polysans font-semibold">ZIP Code</FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="e.g. 97204" 
@@ -98,7 +98,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
         <FormField control={form.control} name="description" render={({
         field
       }) => <FormItem className="mt-6">
-              <FormLabel className="text-black font-bold">Description</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">Description</FormLabel>
               <FormControl>
                 <Textarea 
                   placeholder="Describe your property..." 
@@ -113,4 +113,3 @@ const AddressSection: React.FC<AddressSectionProps> = ({
 };
 
 export default AddressSection;
-

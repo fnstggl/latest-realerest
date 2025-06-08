@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
 
   return (
     <div className="rounded-xl border border-black/10 bg-white p-6">
-      <h2 className="text-xl font-bold mb-4">Price Information</h2>
+      <h2 className="text-xl font-polysans font-bold mb-4 text-[#01204b]">Price Information</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Listing Price */}
         <FormField 
@@ -31,7 +32,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
           name="price" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Your Listing Price ($)</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">Your Listing Price ($)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -51,7 +52,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
           name="marketPrice" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Average Market Price ($)</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">Average Market Price ($)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -68,7 +69,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
       
       {form.watch('price') && form.watch('marketPrice') && (
         <div className="mt-4 p-4 rounded-xl border border-black/10 bg-white">
-          <p className="font-bold">
+          <p className="font-polysans font-semibold">
             Discount: <span className="text-[#ea384c]">{calculateDiscountPercent()}% below market</span>
           </p>
         </div>
@@ -81,7 +82,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
           name="afterRepairValue" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">After Repair Value ($) (Optional)</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">After Repair Value ($) (Optional)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -101,7 +102,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
           name="estimatedRehab" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Estimated Rehab Cost ($) (Optional)</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans font-semibold">Estimated Rehab Cost ($) (Optional)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
