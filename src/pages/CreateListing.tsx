@@ -466,8 +466,8 @@ const CreateListing: React.FC = () => {
       duration: 0.5
     }}>
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-3 my-[30px]">Create New Property Listing</h1>
-          <p className="mb-8 text-lg font-playfair font-bold italic text-[#4C5563]">
+          <h1 className="text-3xl font-polysans font-bold mb-3 my-[30px] text-[#01204b]">Create New Property Listing</h1>
+          <p className="mb-8 text-lg font-polysans font-semibold italic text-[#01204b]">
             List your property in 60 seconds.
           </p>
           
