@@ -40,12 +40,12 @@ const MessageInput: React.FC<MessageInputProps> = ({
           onChange={(e) => setMessage(e.target.value)}
           placeholder={placeholder}
           disabled={disabled || sending}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-polysans font-bold placeholder:font-polysans placeholder:font-bold"
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         <Button
           type="submit"
           disabled={!message.trim() || disabled || sending}
-          className="bg-[#fd4801] text-white px-4 py-2 rounded-md hover:bg-[#fd4801]/90 transition-colors disabled:bg-gray-300 ml-2"
+          className="bg-black text-white px-4 py-2 rounded-r-md hover:bg-gray-800 transition-colors disabled:bg-gray-300"
         >
           {sending ? (
             <div className="h-6 w-6 border-2 border-t-transparent border-white rounded-full animate-spin" />
