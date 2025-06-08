@@ -37,7 +37,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
                 <Input 
                   type="number" 
                   placeholder="e.g. 450000" 
-                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-bold text-[#746d79]" 
                   {...field} 
                 />
               </FormControl>
@@ -57,7 +57,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
                 <Input 
                   type="number" 
                   placeholder="e.g. 500000" 
-                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-bold text-[#746d79]" 
                   {...field} 
                 />
               </FormControl>
@@ -87,7 +87,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
                 <Input 
                   type="number" 
                   placeholder="e.g. 550000" 
-                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-bold text-[#746d79]" 
                   {...field} 
                 />
               </FormControl>
@@ -107,7 +107,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form }) => {
                 <Input 
                   type="number" 
                   placeholder="e.g. 50000" 
-                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-bold text-[#746d79]" 
                   {...field} 
                 />
               </FormControl>
