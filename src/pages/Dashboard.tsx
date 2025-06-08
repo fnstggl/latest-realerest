@@ -23,16 +23,6 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  read: boolean;
-  timestamp: Date;
-  type?: 'info' | 'success' | 'warning' | 'error' | 'new_listing' | 'message';
-  properties?: any;
-}
-
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -300,13 +290,13 @@ const Dashboard: React.FC = () => {
         >
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-polysans-bold mx-0 my-[35px] text-[#01204b]">Dashboard</h1>
-              <p className="text-lg font-polysans-semibold text-[#01204b]">Manage your properties and waitlists</p>
+              <h1 className="text-4xl font-polysans-semibold mx-0 my-[35px] text-[#01204b]">Dashboard</h1>
+              <p className="text-lg font-polysans text-[#01204b]">Manage your properties and waitlists</p>
             </div>
             
             <Button 
               className="relative bg-white text-[#01204b] border border-gray-200 hover:bg-white transition-all rounded-xl 
-                         text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 font-polysans-bold" 
+                         text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 font-polysans-semibold" 
               onClick={() => navigate('/sell/create')}
             >
               <Plus size={16} className="mr-1 sm:mr-2" />
@@ -336,7 +326,7 @@ const Dashboard: React.FC = () => {
             
             {error && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 mb-4">
-                <p className="font-polysans-semibold">There was an error loading your data. Please refresh and try again.</p>
+                <p className="font-polysans">There was an error loading your data. Please refresh and try again.</p>
               </div>
             )}
             

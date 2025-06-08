@@ -66,16 +66,16 @@ const BountiesTab = () => {
   });
 
   if (isLoading) {
-    return <div className="flex justify-center py-8 font-polysans-semibold text-[#01204b]">Loading...</div>;
+    return <div className="flex justify-center py-8 font-polysans text-[#01204b]">Loading...</div>;
   }
 
   if (!rewards?.length) {
     return (
       <div className="text-center py-12 bg-white rounded-xl shadow-sm">
         <Award size={32} className="mx-auto mb-4 text-gray-400" />
-        <h3 className="text-lg font-polysans-bold mb-2 text-[#01204b]">No claimed rewards yet</h3>
-        <p className="text-gray-600 mb-6 font-polysans-semibold">Claim property rewards to earn commissions</p>
-        <Button asChild variant="outline" className="font-polysans-bold">
+        <h3 className="text-lg font-polysans-semibold mb-2 text-[#01204b]">No claimed rewards yet</h3>
+        <p className="text-gray-600 mb-6 font-polysans">Claim property rewards to earn commissions</p>
+        <Button asChild variant="outline" className="font-polysans-semibold">
           <Link to="/search">Browse Properties</Link>
         </Button>
       </div>
@@ -103,16 +103,16 @@ const BountiesTab = () => {
                 className="w-16 h-16 object-cover rounded"
               />
               <div>
-                <h3 className="font-polysans-bold text-[#01204b]">{title}</h3>
-                <p className="text-sm text-gray-600 font-polysans-semibold">{location}</p>
+                <h3 className="font-polysans-semibold text-[#01204b]">{title}</h3>
+                <p className="text-sm text-gray-600 font-polysans">{location}</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="flex items-center text-green-600 font-polysans-bold">
+              <div className="flex items-center text-green-600 font-polysans-semibold">
                 <DollarSign size={16} className="mr-1" />
                 {rewardAmount}
               </div>
-              <div className="text-sm text-gray-500 capitalize font-polysans-semibold">
+              <div className="text-sm text-gray-500 capitalize font-polysans">
                 {isCompleted ? 'Completed' : 'In Progress'}
               </div>
             </div>

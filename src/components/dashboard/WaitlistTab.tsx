@@ -139,32 +139,32 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
       {sortedWaitlistUsers.length > 0 ? (
         <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg overflow-hidden">
           <div className="border-b border-white/20 p-4 bg-white/30">
-            <h2 className="text-xl font-polysans-bold text-[#01204b]">Waitlist Requests</h2>
+            <h2 className="text-xl font-bold">Waitlist Requests</h2>
           </div>
           
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/20 bg-white/10">
-                <th className="text-left p-4 font-polysans-bold text-[#01204b]">Name</th>
-                <th className="text-left p-4 font-polysans-bold text-[#01204b]">Contact</th>
-                <th className="text-left p-4 font-polysans-bold text-[#01204b]">Property</th>
-                <th className="text-left p-4 font-polysans-bold text-[#01204b]">Status</th>
-                <th className="text-left p-4 font-polysans-bold text-[#01204b]">Actions</th>
+                <th className="text-left p-4 font-bold">Name</th>
+                <th className="text-left p-4 font-bold">Contact</th>
+                <th className="text-left p-4 font-bold">Property</th>
+                <th className="text-left p-4 font-bold">Status</th>
+                <th className="text-left p-4 font-bold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {sortedWaitlistUsers.map((user) => (
                 <tr key={user.id} className="border-b border-white/10 hover:bg-white/20 transition-colors">
-                  <td className="p-4 font-polysans-bold text-[#01204b]">{user.name}</td>
+                  <td className="p-4 font-bold">{user.name}</td>
                   <td className="p-4">
-                    <div className="font-polysans-semibold text-[#01204b]">{user.email}</div>
-                    <div className="font-polysans-semibold text-[#01204b]">{user.phone}</div>
+                    <div>{user.email}</div>
+                    <div>{user.phone}</div>
                     <div className="mt-2">
                       <Button 
                         size="sm"
                         variant="ghost"
                         onClick={() => handleMessageClick(user.id)}
-                        className="hover:bg-white/20 text-[#01204b] font-polysans-bold px-0"
+                        className="hover:bg-white/20 text-black font-bold px-0"
                       >
                         <MessageCircle size={16} className="mr-1" />
                         Message buyer
@@ -174,16 +174,16 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                   <td className="p-4">
                     <Link 
                       to={`/property/${user.propertyId}`}
-                      className="text-[#0892D0] hover:underline font-polysans-semibold"
+                      className="text-[#0892D0] hover:underline"
                     >
                       {user.property?.title || 'Unknown Property'}
                     </Link>
                   </td>
                   <td className="p-4">
-                    <span className={`relative inline-flex px-3 py-1 rounded-md font-polysans-bold ${
-                      user.status === 'accepted' ? 'bg-white text-[#01204b]' : 
+                    <span className={`relative inline-flex px-3 py-1 rounded-md font-bold ${
+                      user.status === 'accepted' ? 'bg-white text-black' : 
                       user.status === 'declined' ? 'bg-red-100 text-red-800' : 
-                      'bg-white border border-[#01204b] text-[#01204b]'
+                      'bg-white border border-black text-black'
                     }`}>
                       {user.status.toUpperCase()}
                       {user.status === 'accepted' && (
@@ -209,7 +209,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                         <>
                           <Button 
                             size="sm" 
-                            className="bg-white text-[#0892D0] hover:text-white hover:bg-[#0892D0] border border-white/40 hover:border-[#0892D0] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(8,146,208,0.5)] font-polysans-bold"
+                            className="bg-white text-[#0892D0] hover:text-white hover:bg-[#0892D0] border border-white/40 hover:border-[#0892D0] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'accepted', 
@@ -221,11 +221,11 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                             )}
                           >
                             <Check size={16} className="mr-1" />
-                            Accept
+                            <span className="font-extrabold">Accept</span>
                           </Button>
                           <Button 
                             size="sm" 
-                            className="bg-white text-[#FD3DB5] hover:text-white hover:bg-[#FD3DB5] border border-white/40 hover:border-[#FD3DB5] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(253,61,181,0.5)] font-polysans-bold"
+                            className="bg-white text-[#FD3DB5] hover:text-white hover:bg-[#FD3DB5] border border-white/40 hover:border-[#FD3DB5] transition-colors shadow-sm hover:shadow-[0_0_10px_rgba(253,61,181,0.5)]"
                             onClick={() => handleUpdateWaitlistStatus(
                               user.id, 
                               'declined', 
@@ -237,7 +237,7 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
                             )}
                           >
                             <X size={16} className="mr-1" />
-                            Decline
+                            <span className="font-extrabold">Decline</span>
                           </Button>
                         </>
                       )}
@@ -251,8 +251,8 @@ const WaitlistTab: React.FC<WaitlistTabProps> = ({ waitlistUsers, setWaitlistUse
       ) : (
         <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-12 text-center shadow-lg">
           <ClipboardCheck size={48} className="mx-auto mb-4 text-gray-400" />
-          <h3 className="text-2xl font-polysans-bold mb-4 text-[#01204b]">No Waitlist Requests</h3>
-          <p className="font-polysans-semibold text-[#01204b]">You don't have any waitlist requests for your properties yet.</p>
+          <h3 className="text-2xl font-bold mb-4">No Waitlist Requests</h3>
+          <p>You don't have any waitlist requests for your properties yet.</p>
         </div>
       )}
     </>
