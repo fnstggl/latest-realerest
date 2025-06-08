@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -101,15 +102,14 @@ export const useUserProfiles = () => {
           return userProfile;
         }
         
-        // If name is empty but email exists
+        // If name is empty but email exists, create a proper display name from email
         if (profileData.email) {
-          // Try to create a user-friendly name from the email
           const emailName = profileData.email.split('@')[0];
           const capitalizedName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
           
           const userProfile: UserProfile = {
             id: userId,
-            name: capitalizedName || 'User',
+            name: capitalizedName,
             email: profileData.email,
             role,
             _source: 'db'
@@ -135,13 +135,13 @@ export const useUserProfiles = () => {
       }
 
       if (emailData) {
-        // Create a user-friendly name from the email
+        // Create a proper display name from the email
         const emailName = emailData.split('@')[0];
         const capitalizedName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
         
         const userProfile: UserProfile = {
           id: userId,
-          name: capitalizedName || 'User',
+          name: capitalizedName,
           email: emailData,
           role: 'buyer',
           _source: 'rpc'
@@ -251,7 +251,7 @@ export const useUserProfiles = () => {
             const role = normalizeRole(dbProfile.account_type);
             let userProfile: UserProfile;
             
-            // CRITICAL FIX: Only use name if it exists and isn't empty
+            // CRITICAL FIX: Prioritize actual names from database over any fallback logic
             if (dbProfile.name && dbProfile.name.trim() !== '') {
               userProfile = {
                 id: userId,
@@ -261,17 +261,20 @@ export const useUserProfiles = () => {
                 _source: 'db'
               };
             } 
-            // If name is empty but email exists
+            // Only if name is truly empty/null, then fall back to email processing
             else if (dbProfile.email) {
+              const emailName = dbProfile.email.split('@')[0];
+              const capitalizedName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+              
               userProfile = {
                 id: userId,
-                name: dbProfile.email,
+                name: capitalizedName,
                 email: dbProfile.email,
                 role,
                 _source: 'db'
               };
             }
-            // Shouldn't happen but just in case
+            // Last resort fallback
             else {
               userProfile = {
                 id: userId,

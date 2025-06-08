@@ -97,13 +97,19 @@ const MessageList: React.FC<MessageListProps> = ({
         console.log(`[MessageList] Getting profile for ${otherUserId}:`, 
                     userProfile || 'Not found in map');
         
-        // Determine display name with proper priority:
-        // 1. Use profile name from userProfilesMap if available
-        // 2. Fall back to conversation.otherUserName
+        // CRITICAL FIX: Properly prioritize profile names over fallbacks
+        // 1. First priority: Use profile name from userProfilesMap if available and not empty
+        // 2. Second priority: Fall back to conversation.otherUserName (legacy data)
         // 3. Last resort: "Unknown User"
-        const displayName = userProfile?.name || 
-                            conversation.otherUserName || 
-                            "Unknown User";
+        let displayName = "Unknown User";
+        
+        if (userProfile?.name && userProfile.name.trim() !== '') {
+          displayName = userProfile.name.trim();
+        } else if (conversation.otherUserName && conversation.otherUserName.trim() !== '') {
+          displayName = conversation.otherUserName.trim();
+        }
+        
+        console.log(`[MessageList] Final display name for ${otherUserId}: "${displayName}" (from ${userProfile?.name ? 'profile' : 'conversation fallback'})`);
         
         // Get consistent profile picture color for this user
         const profileColor = getUserProfileColor(otherUserId);
