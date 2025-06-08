@@ -290,8 +290,8 @@ const Dashboard: React.FC = () => {
         >
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-polysans-semibold mx-0 my-[35px] text-[#01204b]">Dashboard</h1>
-              <p className="text-lg font-polysans text-[#01204b]">Manage your properties and waitlists</p>
+              <h1 className="text-4xl font-polysans mx-0 my-[35px] text-[#01204b]">Dashboard</h1>
+              <p className="text-lg font-polysans-semibold text-[#01204b]">Manage your properties and waitlists</p>
             </div>
             
             <Button 
