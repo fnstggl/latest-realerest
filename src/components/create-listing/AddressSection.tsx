@@ -25,7 +25,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
               <FormControl>
                 <Input 
                   placeholder="e.g. 123 Main St" 
-                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                  className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-semibold placeholder:text-[#746d79] placeholder:font-polysans placeholder:font-semibold" 
                   {...field} 
                 />
               </FormControl>
@@ -43,7 +43,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                 <FormControl>
                   <Input 
                     placeholder="e.g. Portland" 
-                    className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                    className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-semibold placeholder:text-[#746d79] placeholder:font-polysans placeholder:font-semibold" 
                     {...field} 
                   />
                 </FormControl>
@@ -60,7 +60,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                     defaultValue={field.value}
                   >
                     <SelectTrigger 
-                      className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0"
+                      className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-semibold placeholder:text-[#746d79] placeholder:font-polysans placeholder:font-semibold"
                     >
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
@@ -87,7 +87,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                 <FormControl>
                   <Input 
                     placeholder="e.g. 97204" 
-                    className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0" 
+                    className="h-12 rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 font-polysans font-semibold placeholder:text-[#746d79] placeholder:font-polysans placeholder:font-semibold" 
                     {...field} 
                   />
                 </FormControl>
@@ -102,7 +102,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
               <FormControl>
                 <Textarea 
                   placeholder="Describe your property..." 
-                  className="min-h-[120px] rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 focus:border-2" 
+                  className="min-h-[120px] rounded-xl border-black/10 hover:border-black focus:border-black focus:ring-0 focus:border-2  font-polysans font-semibold placeholder:text-[#746d79] placeholder:font-polysans placeholder:font-semibold" 
                   {...field} 
                 />
               </FormControl>
