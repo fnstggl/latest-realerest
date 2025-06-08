@@ -13,9 +13,6 @@ interface PropertyDescriptionProps {
   afterRepairValue?: number;
   estimatedRehab?: number;
   propertyType?: string;
-  yearBuilt?: number | null;
-  lotSize?: number | null;
-  parking?: string | null;
   additionalImagesLink?: string | null;
 }
 
@@ -29,9 +26,6 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
   afterRepairValue,
   estimatedRehab,
   propertyType,
-  yearBuilt,
-  lotSize,
-  parking,
   additionalImagesLink
 }) => {
   return (
@@ -134,9 +128,6 @@ const PropertyDescription: React.FC<PropertyDescriptionProps> = ({
         afterRepairValue={afterRepairValue}
         estimatedRehab={estimatedRehab}
         propertyType={propertyType}
-        yearBuilt={yearBuilt}
-        lotSize={lotSize}
-        parking={parking}
         additionalImages={additionalImagesLink}
       />
     </div>

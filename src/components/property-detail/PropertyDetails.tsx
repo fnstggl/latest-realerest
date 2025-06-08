@@ -7,9 +7,6 @@ interface PropertyDetailsProps {
   afterRepairValue?: number;
   estimatedRehab?: number;
   propertyType?: string;
-  yearBuilt?: number | null;
-  lotSize?: number | null;
-  parking?: string | null;
   additionalImages?: string | null;
 }
 
@@ -17,12 +14,9 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   afterRepairValue,
   estimatedRehab,
   propertyType,
-  yearBuilt,
-  lotSize,
-  parking,
   additionalImages
 }) => {
-  if (!afterRepairValue && !estimatedRehab && !propertyType && !yearBuilt && !lotSize && !parking && !additionalImages) {
+  if (!afterRepairValue && !estimatedRehab && !propertyType && !additionalImages) {
     return null;
   }
 
@@ -46,24 +40,6 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({
           <div className="flex justify-between p-3 border rounded-lg">
             <span className="text-gray-600 font-polysans-semibold">Property Type:</span>
             <span className="font-polysans font-bold text-[#01204b]">{propertyType}</span>
-          </div>
-        )}
-        {yearBuilt !== undefined && yearBuilt !== null && (
-          <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600 font-polysans-semibold">Year Built:</span>
-            <span className="font-polysans font-bold text-[#01204b]">{yearBuilt}</span>
-          </div>
-        )}
-        {lotSize !== undefined && lotSize !== null && (
-          <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600 font-polysans-semibold">Lot Size:</span>
-            <span className="font-polysans font-bold text-[#01204b]">{lotSize} sqft</span>
-          </div>
-        )}
-        {parking !== undefined && parking !== null && (
-          <div className="flex justify-between p-3 border rounded-lg">
-            <span className="text-gray-600 font-polysans-semibold">Parking:</span>
-            <span className="font-polysans font-bold text-[#01204b]">{parking}</span>
           </div>
         )}
       </div>

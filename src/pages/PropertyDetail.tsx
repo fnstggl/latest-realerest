@@ -289,9 +289,6 @@ const PropertyDetail: React.FC = () => {
             afterRepairValue={property?.after_repair_value}
             estimatedRehab={property?.estimated_rehab}
             propertyType={property?.property_type}
-            yearBuilt={property?.year_built}
-            lotSize={property?.lot_size}
-            parking={property?.parking}
             additionalImagesLink={property?.additional_images_link}
           />
         </div>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -25,9 +26,6 @@ type PropertyDetailType = {
   after_repair_value?: number;
   estimated_rehab?: number;
   property_type?: string;
-  year_built?: number | null;
-  lot_size?: number | null;
-  parking?: string | null;
   comparable_addresses?: string[];
   created_at?: string;
   additional_images_link?: string | null;
@@ -53,10 +51,6 @@ export interface PropertyDetail {
   full_address?: string;
   property_type?: string;
   additional_images_link?: string;
-  // Add these optional properties
-  year_built?: number;
-  lot_size?: number;
-  parking?: string;
 }
 
 const usePropertyDetail = (propertyId?: string) => {
@@ -148,9 +142,6 @@ const usePropertyDetail = (propertyId?: string) => {
           after_repair_value: propertyData.after_repair_value ? Number(propertyData.after_repair_value) : undefined,
           estimated_rehab: propertyData.estimated_rehab ? Number(propertyData.estimated_rehab) : undefined,
           property_type: propertyData.property_type,
-          year_built: propertyData.year_built || null,
-          lot_size: propertyData.lot_size || null,
-          parking: propertyData.parking || null,
           comparable_addresses: propertyData.comparable_addresses,
           created_at: propertyData.created_at,
           additional_images_link: propertyData.additional_images_link || null
