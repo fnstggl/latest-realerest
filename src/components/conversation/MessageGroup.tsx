@@ -13,7 +13,7 @@ const MessageGroup: React.FC<MessageGroupProps> = ({ date, messages, currentUser
   return (
     <div className="space-y-4">
       <div className="flex justify-center">
-        <div className="bg-gray-100 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
+        <div className="bg-gray-100 px-3 py-1 rounded-full text-xs font-polysans font-semibold text-gray-600">
           {new Date().toDateString() === new Date(date).toDateString() ? 'Today' : date}
         </div>
       </div>

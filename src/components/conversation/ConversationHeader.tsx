@@ -29,7 +29,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
         <ArrowLeft />
       </Button>
       <div className="flex items-center">
-        <h1 className="font-bold text-xl sm:text-2xl">{displayName}</h1>
+        <h1 className="font-polysans font-bold text-xl sm:text-2xl text-[#01204b]">{displayName}</h1>
         {/* UserTag is hidden as requested */}
       </div>
     </div>
