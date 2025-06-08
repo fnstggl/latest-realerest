@@ -59,7 +59,7 @@ export function TabNav({ items, activeTab, onValueChange }: TabNavProps) {
                   }}
                 >
                   <span 
-                    className="absolute inset-0 opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"
+                    className="absolute inset-0 opacity-100 transition-opacity duration-300 rounded-full pointer-events-none"
                     style={{
                       background: "transparent",
                       border: "2px solid #fd4801",
