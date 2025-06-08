@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { useAuth } from '@/context/AuthContext';
 import NotificationCenter from './NotificationCenter';
 import ChatIcon from './ChatIcon';
 import { useNotifications } from '@/context/NotificationContext';
-
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -27,16 +25,10 @@ const Navbar: React.FC = () => {
   const handleSignUp = () => {
     navigate('/signup');
   };
-  const LogoText = () => (
-    <>
-      <img 
-        src="/lovable-uploads/bbf6e9a4-967b-4152-b8f4-6978f6969bf4.png" 
-        alt="Realer Estate Logo" 
-        className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" 
-      />
-      <span className="font-polysans font-bold italic text-[#fd4801] text-sm md:text-sm hidden md:block">Realer Estate</span>
-    </>
-  );
+  const LogoText = () => <>
+      <img alt="Realer Estate Logo" className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" src="/lovable-uploads/181aeb29-75eb-495e-b539-237f692b2fe3.png" />
+      <span className="font-playfair font-bold italic text-[#fd4801] text-sm md:text-sm hidden md:block">Realer Estate</span>
+    </>;
   const MobileNavigation = () => <Sheet>
       <SheetTrigger asChild>
         <Button variant="glass" size="icon" className="md:hidden h-8 w-8 sm:h-9 sm:w-9">
@@ -84,7 +76,9 @@ const Navbar: React.FC = () => {
         </div>
       </SheetContent>
     </Sheet>;
-  return <nav className="fixed top-1 left-0 right-0 px-3 sm:px-4 md:px-6 z-50" style={{ paddingTop: '5px' }}>
+  return <nav className="fixed top-1 left-0 right-0 px-3 sm:px-4 md:px-6 z-50" style={{
+    paddingTop: '5px'
+  }}>
       {/* White pill background for the navbar */}
       <div className="max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6">
         <div className="flex justify-between items-center">
@@ -133,5 +127,4 @@ const Navbar: React.FC = () => {
       </div>
     </nav>;
 };
-
 export default Navbar;
