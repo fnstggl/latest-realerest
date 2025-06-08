@@ -168,7 +168,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
             <span className="text-sm text-gray-500 ml-2 font-polysans">(View listings)</span>
           </Link>
           
-          {/* Contact icons - show for ALL users, not just owners */}
+          {/* Contact icons - show for ALL users when we have seller contact info */}
           <div className="flex items-center space-x-2">
             {/* Phone icon - only show if seller has phone */}
             {sellerPhone && (
@@ -197,7 +197,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
               </div>
             )}
             
-            {/* Email icon - ALWAYS show for ALL users if we have seller email */}
+            {/* Email icon - show for ALL users when we have seller email */}
             {sellerEmail && (
               <div className="relative">
                 <button
