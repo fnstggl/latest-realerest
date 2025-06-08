@@ -27,8 +27,8 @@ const PropertyTypeSection: React.FC<PropertyTypeSectionProps> = ({ form }) => {
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-12 rounded-xl bg-white relative border border-black/10 hover:border-black focus:border-black focus:ring-black transition-all duration-300">
-                  <SelectValue placeholder="Select property type" />
+<SelectTrigger className="h-12 rounded-xl bg-white relative border border-black/10 hover:border-black focus:border-black focus:ring-black transition-all duration-300 font-polysans font-semibold text-[#746d79]">
+                  <SelectValue placeholder="e.g. House, Apartment, etc" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="bg-white border border-black/10 rounded-xl">
