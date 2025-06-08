@@ -3,7 +3,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import UserTag from '@/components/UserTag';
 import { UserRole } from '@/components/UserTag';
 
 interface ConversationHeaderProps {
@@ -31,7 +30,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
       </Button>
       <div className="flex items-center">
         <h1 className="font-bold text-xl sm:text-2xl">{displayName}</h1>
-        <UserTag role={userRole} />
+        {/* UserTag is hidden as requested */}
       </div>
     </div>
   );

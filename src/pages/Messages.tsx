@@ -75,14 +75,14 @@ const Messages: React.FC = () => {
         >
           <div className="flex items-center justify-between mb-4 sm:mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Messages</h1>
-              <p className="text-sm sm:text-base md:text-lg">Connect with buyers and sellers</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-polysans font-bold text-[#01204b]">Messages</h1>
+              <p className="text-sm sm:text-base md:text-lg font-polysans font-semibold text-[#01204b]">Connect with buyers and sellers</p>
             </div>
           </div>
 
           <div className="bg-white/90 border border-gray-200 rounded-xl shadow-sm">
             <div className="border-b border-gray-200 p-3 sm:p-4 rounded-t-xl">
-              <h2 className="text-lg sm:text-xl font-bold">Conversations</h2>
+              <h2 className="text-lg sm:text-xl font-polysans font-bold text-[#01204b]">Conversations</h2>
             </div>
 
             {isLoading ? (

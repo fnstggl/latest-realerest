@@ -8,13 +8,29 @@ import { MessageSquare, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { UserProfile } from '@/hooks/useUserProfiles';
-import UserTag from '@/components/UserTag';
 
 interface MessageListProps {
   conversations: Conversation[];
   loading: boolean;
   userProfilesMap: Record<string, UserProfile>;
 }
+
+// Function to get consistent random color for a user
+const getUserProfileColor = (userId: string): string => {
+  const colors = ['#aaaaae', '#ff92ac', '#ff594f', '#ffa742', '#ffcd48', '#70de7f', '#76d0fb', '#ab92f8'];
+  
+  // Create a simple hash from the userId to ensure consistency
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    const char = userId.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  
+  // Use absolute value and modulo to get consistent index
+  const colorIndex = Math.abs(hash) % colors.length;
+  return colors[colorIndex];
+};
 
 const MessageList: React.FC<MessageListProps> = ({
   conversations,
@@ -89,8 +105,8 @@ const MessageList: React.FC<MessageListProps> = ({
                             conversation.otherUserName || 
                             "Unknown User";
         
-        // Get the role, ensuring it's a valid UserRole type
-        const userRole = (userProfile?.role || conversation.otherUserRole || "buyer") as "buyer" | "seller" | "wholesaler";
+        // Get consistent profile picture color for this user
+        const profileColor = getUserProfileColor(otherUserId);
         
         return <div 
                 key={conversation.id} 
@@ -99,17 +115,20 @@ const MessageList: React.FC<MessageListProps> = ({
               >
               <div className="flex items-start">
                 <div className="mr-3 flex flex-col items-center">
-                  <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg">
+                  <div 
+                    className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                    style={{ backgroundColor: profileColor }}
+                  >
                     {displayName.charAt(0).toUpperCase() || '?'}
                   </div>
                 </div>
                 
                 <div className="flex-1">
                   <div className="flex items-center">
-                    <h3 className="font-bold text-lg">
+                    <h3 className="font-polysans font-bold text-lg text-[#01204b]">
                       {displayName}
                     </h3>
-                    <UserTag role={userRole} />
+                    {/* UserTag is hidden as requested */}
                   </div>
                   
                   {conversation.propertyId && conversation.propertyTitle && <div className="flex items-center text-sm text-[#0892D0] cursor-pointer hover:underline mb-1" onClick={e => handlePropertyClick(e, conversation.propertyId)}>
@@ -118,14 +137,14 @@ const MessageList: React.FC<MessageListProps> = ({
                       <ExternalLink size={12} className="ml-1" />
                     </div>}
                   
-                  <p className={`text-sm ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
+                  <p className={`text-sm font-polysans font-semibold ${isUnread ? 'font-semibold' : 'text-gray-600'}`}>
                     {conversation.lastMessage ? (conversation.lastMessage.sender_id === user?.id ? 'You: ' : '') : ''}
                     {truncateMessage(conversation.lastMessage?.content || 'Start a conversation...')}
                   </p>
                 </div>
                 
                 <div className="text-right flex flex-col items-end">
-                  <p className="text-xs text-gray-500 mb-2">
+                  <p className="text-xs text-gray-500 mb-2 font-polysans font-semibold">
                     {conversation.lastMessage?.created_at 
                       ? formatDistanceToNow(new Date(conversation.lastMessage.created_at), {
                           addSuffix: true
