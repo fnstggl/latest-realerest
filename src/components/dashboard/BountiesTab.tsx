@@ -66,7 +66,7 @@ const BountiesTab = () => {
   });
 
   if (isLoading) {
-    return <div className="flex justify-center py-8 font-polysans-semibold text-[#01204b]">Loading...</div>;
+    return <div className="flex justify-center py-8 font-polysans text-[#01204b]">Loading...</div>;
   }
 
   if (!rewards?.length) {
@@ -103,16 +103,16 @@ const BountiesTab = () => {
                 className="w-16 h-16 object-cover rounded"
               />
               <div>
-                <h3 className="font-polysans text-[#01204b]">{title}</h3>
-                <p className="text-sm text-gray-600 font-polysans-semibold">{location}</p>
+                <h3 className="font-polysans-semibold text-[#01204b]">{title}</h3>
+                <p className="text-sm text-gray-600 font-polysans">{location}</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="flex items-center text-green-600 font-polysans">
+              <div className="flex items-center text-green-600 font-polysans-semibold">
                 <DollarSign size={16} className="mr-1" />
                 {rewardAmount}
               </div>
-              <div className="text-sm text-gray-500 capitalize font-polysans-semibold">
+              <div className="text-sm text-gray-500 capitalize font-polysans">
                 {isCompleted ? 'Completed' : 'In Progress'}
               </div>
             </div>
