@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
     navigate('/signup');
   };
   const LogoText = () => <>
-      <img alt="Realer Estate Logo" className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" src="/lovable-uploads/28418ea7-41d5-43dc-ae56-fada13c6e299.png" />
+      <img alt="Realer Estate Logo" className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" src="/lovable-uploads/bc372b10-d371-4de2-bbc1-edbd6483d58b.png" />
       <span className="text-[#fd4801] text-sm md:text-sm hidden md:block">
         <span className="font-polysans font-bold">Real</span>
         <span className="font-polysans font-bold italic">er</span>
@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
     >
         <div className="flex flex-col gap-4 sm:gap-6 p-6 sm:p-8">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/lovable-uploads/28418ea7-41d5-43dc-ae56-fada13c6e299.png" alt="Realer Estate Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+            <img src="/lovable-uploads/bc372b10-d371-4de2-bbc1-edbd6483d58b.png" alt="Realer Estate Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
             <span className="text-black text-lg sm:text-xl md:text-2xl">
               <span className="font-polysans font-bold">Real</span>
               <span className="font-polysans font-bold italic">er</span>

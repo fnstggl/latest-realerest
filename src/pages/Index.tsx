@@ -41,7 +41,7 @@ const Index: React.FC = () => {
       <div 
         className="fixed top-0 left-0 right-0 h-48 z-0"
         style={{
-          backgroundImage: `url('/lovable-uploads/51eb8d56-acce-4716-96f8-061ed0f47dad.png')`,
+          backgroundImage: `url('/lovable-uploads/c37ca549-83c9-405a-8a70-39612fc5b110.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'top center',
           backgroundRepeat: 'no-repeat',
