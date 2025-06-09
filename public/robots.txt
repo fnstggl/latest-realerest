@@ -14,5 +14,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://donedealhome.com/sitemap.xml
-
+Sitemap: https://realerestate.org/sitemap.xml

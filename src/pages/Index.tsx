@@ -9,7 +9,7 @@ import SiteFooter from '@/components/sections/SiteFooter';
 import SEO from '@/components/SEO';
 
 const Index: React.FC = () => {
-  const currentDomain = window.location.origin;
+  const currentDomain = 'https://realerestate.org';
 
   return (
     <div className="min-h-screen bg-[#FCFBF8] overflow-x-hidden relative perspective-container">

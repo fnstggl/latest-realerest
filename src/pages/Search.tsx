@@ -79,12 +79,12 @@ const Search: React.FC = () => {
           "@type": "WebPage",
           "name": location ? `Properties in ${location}` : "Search Properties",
           "description": `Find below-market real estate deals ${location ? `in ${location}` : 'in your area'}`,
-          "url": window.location.origin + `/search${location ? `?q=${encodeURIComponent(location)}` : ''}`,
+          "url": `https://realerestate.org/search${location ? `?q=${encodeURIComponent(location)}` : ''}`,
           "potentialAction": {
             "@type": "SearchAction",
             "target": {
               "@type": "EntryPoint",
-              "urlTemplate": `${window.location.origin}/search?q={search_term_string}`
+              "urlTemplate": `https://realerestate.org/search?q={search_term_string}`
             },
             "query-input": "required name=search_term_string"
           }

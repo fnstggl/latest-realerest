@@ -21,9 +21,10 @@ const SEO: React.FC<SEOProps> = ({
   schema,
   children
 }) => {
-  const currentDomain = window.location.origin;
-  const url = canonical ? `${currentDomain}${canonical}` : window.location.pathname ? `${currentDomain}${window.location.pathname}` : currentDomain;
-  const fullImageUrl = image.startsWith('http') ? image : `${currentDomain}${image}`;
+  // Use the new primary domain
+  const primaryDomain = 'https://realerestate.org';
+  const url = canonical ? `${primaryDomain}${canonical}` : window.location.pathname ? `${primaryDomain}${window.location.pathname}` : primaryDomain;
+  const fullImageUrl = image.startsWith('http') ? image : `${primaryDomain}${image}`;
   const favicon = '/lovable-uploads/44490515-f297-40ac-a263-afe8590da99f.png';
   
   // Add image dimensions for better SEO
@@ -37,7 +38,7 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="description" content={description} />
       <link rel="canonical" href={url} />
       <link rel="icon" type="image/png" href={favicon} />
-      <link rel="preconnect" href={currentDomain} />
+      <link rel="preconnect" href={primaryDomain} />
       
       {/* Open Graph with improved image metadata */}
       <meta property="og:title" content={title} />

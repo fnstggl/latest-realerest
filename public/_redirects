@@ -1,3 +1,7 @@
 
+# Domain redirects - redirect old domain to new domain
+https://donedealhome.com/* https://realerestate.org/:splat 301!
+http://donedealhome.com/* https://realerestate.org/:splat 301!
+
 # Default SPA fallback
 /* /index.html 200
