@@ -7,16 +7,16 @@ import { GlowEffect } from '@/components/ui/glow-effect';
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="pt-32 sm:pt-24 md:pt-36 pb-16 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full bg-white">
+    <section className="pt-32 sm:pt-24 md:pt-36 pb-16 sm:pb-16 relative overflow-hidden perspective-container flex justify-center w-full">
       {/* City skyline background image - positioned absolutely behind all content */}
       <div 
         className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-0 w-full h-full"
         style={{
-          backgroundImage: `url('/lovable-uploads/2e646dcf-9304-4d5c-876a-c9f76f580cc3.png')`,
+          backgroundImage: `url('/lovable-uploads/b39bcd6e-3df5-46e8-bd3b-45dd17153ef9.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'bottom center',
           backgroundRepeat: 'no-repeat',
-          opacity: 1
+          opacity: 0.3
         }}
       ></div>
       

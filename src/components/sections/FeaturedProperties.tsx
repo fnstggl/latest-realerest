@@ -15,7 +15,7 @@ const FeaturedProperties: React.FC = () => {
     return (
       <section className="py-16 relative overflow-hidden perspective-container">
         <div className="container px-4 lg:px-8 mx-auto relative z-10">
-          <div className="flex items-center mb-4">
+          <div className="flex items-center mb-8">
             <h2 className="text-xl sm:text-2xl font-polysans font-bold text-[#01204b] tracking-wide pl-[10px]">
               Featured homes
             </h2>
@@ -36,7 +36,7 @@ const FeaturedProperties: React.FC = () => {
   return (
     <section className="py-16 relative overflow-hidden perspective-container">
       <div className="container px-4 lg:px-8 mx-auto relative z-10">
-        <div className="flex items-center mb-4">
+        <div className="flex items-center mb-8">
           <h2 className="text-xl sm:text-2xl font-polysans font-bold text-[#01204b] tracking-wide pl-[10px]">
             Featured homes
           </h2>
