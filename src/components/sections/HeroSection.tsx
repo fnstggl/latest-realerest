@@ -28,7 +28,7 @@ const HeroSection: React.FC = () => {
             </h1>
             <div className="mb-2 sm:mb-4 md:mb-6">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#01204b] tracking-normal py-1 font-polysans">
-                at a <span className="bg-[#fd4801] text-white px-2 py-1 font-bold italic">price</span> you'll <span className="font-bold">love</span> more
+                at a <span className="bg-[#fd4801] text-white px-1.5 py-1 font-bold italic">price</span> you'll <span className="font-bold">love</span> more
               </h1>
             </div>
             <p className="text-[#01204b] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10 font-polysans-semibold">
