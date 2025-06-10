@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -144,11 +145,11 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="hidden md:flex space-x-6 lg:space-x-8 mx-auto">
-            <Link to="/" className="playfair-hover font-polysans-semibold text-sm lg:text-sm">Home</Link>
-            <Link to="/search" className="playfair-hover font-polysans-semibold text-sm lg:text-sm">Browse</Link>
-            <Link to="/sell/create" className="playfair-hover font-polysans-semibold text-sm lg:text-sm">Sell</Link>
-            <Link to="/guide" className="playfair-hover font-polysans-semibold text-sm lg:text-sm">Guide</Link>
-            <Link to="/about" className="playfair-hover font-polysans-semibold text-sm lg:text-sm">About</Link>
+            <Link to="/" className="text-[#01204b] hover:text-[#01204b]/70 transition-colors font-polysans-semibold text-sm lg:text-sm">Home</Link>
+            <Link to="/search" className="text-[#01204b] hover:text-[#01204b]/70 transition-colors font-polysans-semibold text-sm lg:text-sm">Browse</Link>
+            <Link to="/sell/create" className="text-[#01204b] hover:text-[#01204b]/70 transition-colors font-polysans-semibold text-sm lg:text-sm">Sell</Link>
+            <Link to="/guide" className="text-[#01204b] hover:text-[#01204b]/70 transition-colors font-polysans-semibold text-sm lg:text-sm">Guide</Link>
+            <Link to="/about" className="text-[#01204b] hover:text-[#01204b]/70 transition-colors font-polysans-semibold text-sm lg:text-sm">About</Link>
           </div>
 
           <div className="flex items-center gap-1 xs:gap-2 sm:gap-4">
@@ -167,11 +168,11 @@ const Navbar: React.FC = () => {
                 {unreadCount > 0}
                 </Button>
               </div> : <>
-                <Button variant="translucent" className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-black h-6 sm:h-7" onClick={handleSignIn}>
+                <Button variant="ghost" className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-[#fd4801] bg-white hover:bg-white border-none shadow-none h-6 sm:h-7" onClick={handleSignIn}>
                   Log In
                 </Button>
 
-                <Button className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-white bg-[#01204b] hover:bg-[#01204b]/90 h-6 sm:h-7" onClick={handleSignUp}>
+                <Button className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-white bg-[#fd4801] hover:bg-[#fd4801]/90 h-6 sm:h-7" onClick={handleSignUp}>
                   Sign up
                 </Button>
               </>}

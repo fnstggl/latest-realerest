@@ -22,13 +22,13 @@ const HeroSection: React.FC = () => {
       
       <div className="container px-4 lg:px-8 mx-auto relative flex justify-center">
         <div className="w-full max-w-5xl text-center mx-auto">
-          <div className="flex flex-col items-center relative z-10">
+          <div className="flex flex-col items-center relative z-10" style={{ transform: 'translateY(-20px)' }}>
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#01204b] mb-1 sm:mb-3 md:mb-4 mx-auto text-center leading-tight font-polysans">
               Find a home you <span className="font-bold">love</span>...
             </h1>
             <div className="mb-2 sm:mb-4 md:mb-6">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#01204b] tracking-normal py-1 font-polysans">
-                at a <em>price</em> you'll <span className="font-bold">love</span> more
+                at a <span className="bg-[#fd4801] text-white px-2 py-1 rounded font-bold italic">price</span> you'll <span className="font-bold">love</span> more
               </h1>
             </div>
             <p className="text-[#01204b] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10 font-polysans-semibold">
