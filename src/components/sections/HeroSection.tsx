@@ -12,7 +12,7 @@ const HeroSection: React.FC = () => {
       <div 
         className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-0 w-full h-full"
         style={{
-          backgroundImage: `url('/lovable-uploads/bea0bd67-09a3-4aab-b79b-5053a47af153.png')`,
+          backgroundImage: `url('/lovable-uploads/b39bcd6e-3df5-46e8-bd3b-45dd17153ef9.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'bottom center',
           backgroundRepeat: 'no-repeat',
