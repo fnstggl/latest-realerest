@@ -1,6 +1,5 @@
-
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu, User } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -10,14 +9,9 @@ import { useAuth } from '@/context/AuthContext';
 import NotificationCenter from './NotificationCenter';
 import ChatIcon from './ChatIcon';
 import { useNotifications } from '@/context/NotificationContext';
-
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const isMobile = useIsMobile();
-  const [scrolled, setScrolled] = useState(false);
-  const isHomePage = location.pathname === '/';
-  
   const {
     isAuthenticated,
     user
@@ -25,20 +19,6 @@ const Navbar: React.FC = () => {
   const {
     unreadCount
   } = useNotifications();
-
-  // Handle scroll effect for non-home pages
-  useEffect(() => {
-    if (isHomePage) return;
-
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setScrolled(scrollTop > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isHomePage]);
-
   const handleSignIn = () => {
     navigate('/signin');
   };
@@ -104,26 +84,11 @@ const Navbar: React.FC = () => {
         </div>
       </SheetContent>
     </Sheet>;
-
-  // Determine navbar positioning and styling based on page
-  const navbarClasses = isHomePage 
-    ? "fixed top-1 left-0 right-0 px-3 sm:px-4 md:px-6 z-50"
-    : "fixed top-0 left-0 right-0 px-3 sm:px-4 md:px-6 z-50";
-
-  const navbarStyle = isHomePage 
-    ? { paddingTop: '5px' }
-    : {};
-
-  // Background styling for non-home pages with scroll effect
-  const backgroundClasses = isHomePage
-    ? "max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6"
-    : scrolled 
-      ? "max-w-7xl mx-auto bg-white/80 backdrop-blur-md border border-white/20 shadow-lg transition-all duration-300 py-3 sm:py-4 px-4 sm:px-6"
-      : "max-w-7xl mx-auto bg-white shadow-lg transition-all duration-300 py-3 sm:py-4 px-4 sm:px-6";
-
-  return <nav className={navbarClasses} style={navbarStyle}>
-      {/* Background container with conditional styling */}
-      <div className={backgroundClasses}>
+  return <nav className="fixed top-1 left-0 right-0 px-3 sm:px-4 md:px-6 z-50" style={{
+    paddingTop: '5px'
+  }}>
+      {/* White pill background for the navbar */}
+      <div className="max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             {isMobile && <MobileNavigation />}
