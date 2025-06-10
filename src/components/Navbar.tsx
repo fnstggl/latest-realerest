@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu, User } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -9,9 +9,14 @@ import { useAuth } from '@/context/AuthContext';
 import NotificationCenter from './NotificationCenter';
 import ChatIcon from './ChatIcon';
 import { useNotifications } from '@/context/NotificationContext';
+
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const isHomePage = location.pathname === '/';
+  
   const {
     isAuthenticated,
     user
@@ -19,6 +24,20 @@ const Navbar: React.FC = () => {
   const {
     unreadCount
   } = useNotifications();
+
+  // Handle scroll detection for non-home pages
+  useEffect(() => {
+    if (isHomePage) return;
+
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isHomePage]);
+
   const handleSignIn = () => {
     navigate('/signin');
   };
@@ -84,11 +103,37 @@ const Navbar: React.FC = () => {
         </div>
       </SheetContent>
     </Sheet>;
-  return <nav className="fixed top-1 left-0 right-0 px-3 sm:px-4 md:px-6 z-50" style={{
-    paddingTop: '5px'
-  }}>
+
+  // Determine navbar styling based on page and scroll state
+  const getNavbarStyles = () => {
+    if (isHomePage) {
+      // Home page styling (unchanged)
+      return "fixed top-1 left-0 right-0 px-3 sm:px-4 md:px-6 z-50";
+    } else {
+      // Other pages - sticky with scroll-based transparency
+      return `fixed top-0 left-0 right-0 px-3 sm:px-4 md:px-6 z-50 transition-all duration-300 ${
+        isScrolled ? 'pt-1' : 'pt-1'
+      }`;
+    }
+  };
+
+  const getNavbarContentStyles = () => {
+    if (isHomePage) {
+      // Home page styling (unchanged)
+      return "max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6";
+    } else {
+      // Other pages - maintain rounded pill shape with transparency on scroll
+      return `max-w-7xl mx-auto rounded-full shadow-lg backdrop-blur-lg border py-1 sm:py-1.5 px-4 sm:px-6 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/80 border-white/40' 
+          : 'bg-white border-white/30'
+      }`;
+    }
+  };
+
+  return <nav className={getNavbarStyles()} style={isHomePage ? { paddingTop: '5px' } : {}}>
       {/* White pill background for the navbar */}
-      <div className="max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6">
+      <div className={getNavbarContentStyles()}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             {isMobile && <MobileNavigation />}
