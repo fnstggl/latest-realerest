@@ -60,11 +60,11 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
   const propertyTypeOptions = ["any", "house", "apartment", "condo", "duplex"];
 
   return (
-    <div className="w-full bg-white rounded-lg shadow-sm mb-6">
+    <div className="w-full font-polysans-semibold bg-white rounded-lg shadow-sm mb-6">
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
         <CollapsibleTrigger asChild>
           <div className="flex items-center justify-between p-4 cursor-pointer">
-            <div className="flex items-center gap-2 text-gray-700 font-polysans-semibold">
+            <div className="flex items-center gap-2 text-gray-700 font-polysans">
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 21V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M4 10V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -128,7 +128,7 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
 
               <TabsContent value="price" className="p-4">
                 <div>
-                  <h3 className="text-lg font-polysans-semibold text-[#01204b] mb-3">Price Range</h3>
+                  <h3 className="text-lg font-polysans text-[#01204b] mb-3">Price Range</h3>
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-md font-polysans-semibold text-[#01204b] mb-2">Min Price</h3>
@@ -204,7 +204,7 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
               <TabsContent value="beds-baths" className="p-4">
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-polysans-semibold text-[#01204b] mb-3">Bedrooms</h3>
+                    <h3 className="text-lg font-polysans text-[#01204b] mb-3">Bedrooms</h3>
                     <ToggleGroup 
                       type="single" 
                       value={filters.bedrooms}
@@ -228,7 +228,7 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-polysans-semibold text-[#01204b] mb-3">Bathrooms</h3>
+                    <h3 className="text-lg font-polysans text-[#01204b] mb-3">Bathrooms</h3>
                     <ToggleGroup 
                       type="single" 
                       value={filters.bathrooms}
@@ -255,7 +255,7 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
 
               <TabsContent value="type" className="p-4">
                 <div>
-                  <h3 className="text-lg font-polysans-semibold text-[#01204b] mb-3">Property Type</h3>
+                  <h3 className="text-lg font-polysans text-[#01204b] mb-3">Property Type</h3>
                   <ToggleGroup 
                     type="single" 
                     value={filters.propertyType}
@@ -281,7 +281,7 @@ const HorizontalFilters: React.FC<HorizontalFiltersProps> = ({ onFilterChange })
 
               <TabsContent value="below-market" className="p-4">
                 <div>
-                  <h3 className="text-lg font-polysans-semibold text-[#01204b] mb-3">Minimum % Below Market</h3>
+                  <h3 className="text-lg font-polysans text-[#01204b] mb-3">Minimum % Below Market</h3>
                   <ToggleGroup 
                     type="single" 
                     value={filters.belowMarket.toString()}
