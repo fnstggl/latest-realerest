@@ -71,19 +71,19 @@ const Navbar: React.FC = () => {
           </Link>
 
           <nav className="flex flex-col space-y-1 sm:space-y-2">
-            <Link to="/" className="text-black hover:nav-home-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/" className="text-[#01204b] hover:nav-home-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Home
             </Link>
-            <Link to="/search" className="text-black hover:nav-browse-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/search" className="text-[#01204b] hover:nav-browse-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Browse
             </Link>
-            <Link to="/sell/create" className="text-black hover:nav-sell-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/sell/create" className="text-[#01204b] hover:nav-sell-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Sell
             </Link>
-            <Link to="/guide" className="text-black hover:nav-guide-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/guide" className="text-[#01204b] hover:nav-guide-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               Guide
             </Link>
-            <Link to="/about" className="text-black hover:nav-about-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
+            <Link to="/about" className="text-[#01204b] hover:nav-about-hover transition-colors font-polysans-semibold text-base sm:text-lg md:text-xl py-2 sm:py-3">
               About
             </Link>
           </nav>
