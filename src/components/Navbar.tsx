@@ -125,7 +125,7 @@ const Navbar: React.FC = () => {
       // Other pages - maintain rounded pill shape with transparency on scroll
       return `max-w-7xl mx-auto rounded-full shadow-lg backdrop-blur-lg border py-1 sm:py-1.5 px-4 sm:px-6 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/80 border-white/40' 
+          ? 'bg-white/60 border-white/40' 
           : 'bg-white border-white/30'
       }`;
     }
