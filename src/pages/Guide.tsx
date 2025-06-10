@@ -45,11 +45,11 @@ const Guide: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="max-w-5xl mx-auto"
         >
-          <div className="text-center mb-12">
-            <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl mb-6">
-              <span className="font-playfair italic">Realer Estate</span> Guides
+          <div className="font-polysans text-[#01204b] text-center mb-12">
+            <h1 className="font-polysans text-[#01204b] text-3xl sm:text-4xl md:text-5xl mb-6">
+              <span className="font-polysans italic text-[#fd4801]">Realer Estate</span> Guides
             </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
+            <p className="font-polysans-semibold text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
               Learn how our platform works and get step-by-step guidance for buyers, sellers, and wholesalers.
             </p>
           </div>
@@ -68,10 +68,10 @@ const Guide: React.FC = () => {
                   <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${guide.color} mb-4 flex items-center justify-center`}>
                     <guide.icon size={24} className="text-white" />
                   </div>
-                  <h2 className="text-xl font-bold mb-2">{guide.title}</h2>
-                  <p className="text-gray-600">{guide.description}</p>
+                  <h2 className="text-xl font-polysans text-[#01204b] mb-2">{guide.title}</h2>
+                  <p className="font-polysans text-gray-600">{guide.description}</p>
                   <div className="mt-auto pt-4">
-                    <span className="font-medium text-black inline-flex items-center">
+                    <span className="font-polysans-semibold text-[#01204b] inline-flex items-center">
                       Learn more
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
