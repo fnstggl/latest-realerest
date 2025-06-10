@@ -92,10 +92,10 @@ const Navbar: React.FC = () => {
             {isAuthenticated ? <Button className="w-full justify-center font-polysans-semibold text-sm sm:text-base" variant="translucent" onClick={() => navigate('/dashboard')}>
                 Dashboard
               </Button> : <>
-                <Button variant="translucent" className="w-full justify-center font-polysans-semibold text-[#fd4801] text-sm sm:text-base" onClick={handleSignIn}>
+                <Button variant="translucent" className="w-full justify-center font-polysans-semibold text-sm sm:text-base" onClick={handleSignIn}>
                   Log In
                 </Button>
-                <Button variant="default" className="w-full justify-center font-polysans-semibold text-sm sm:text-base bg-[#fd4801]" onClick={handleSignUp}>
+                <Button variant="default" className="w-full justify-center font-polysans-semibold text-sm sm:text-base" onClick={handleSignUp}>
                   Sign up
                 </Button>
               </>}
