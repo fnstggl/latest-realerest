@@ -53,15 +53,16 @@ const Guide: React.FC = () => {
           
           {/* Background image overlay with subtitle overlay */}
           <div className="relative mt-0 mb-24">
-            <div 
-              className="absolute inset-0 w-full h-[400px] z-0"
-              style={{
-                backgroundImage: `url('/lovable-uploads/3814ac85-68ae-4ca8-a30d-92713ab1360b.png')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center top',
-                backgroundRepeat: 'no-repeat'
-              }}
-            ></div>
+          <div 
+  className="absolute inset-x-0 top-0 w-full h-[400px] z-0"
+  style={{
+    backgroundImage: `url('/lovable-uploads/3814ac85-68ae-4ca8-a30d-92713ab1360b.png')`,
+    backgroundSize: '100% auto',
+    backgroundPosition: 'top center',
+    backgroundRepeat: 'no-repeat',
+    paddingBottom: '80px'
+  }}
+></div>
             
             {/* Subtitle overlay positioned over the background image */}
             <div className="relative z-10 pt-8 text-center">
