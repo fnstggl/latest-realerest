@@ -52,7 +52,7 @@ const Guide: React.FC = () => {
           </div>
           
           {/* Background image overlay with subtitle overlay */}
-          <div className="relative mt-4 mb-24">
+          <div className="relative mt-0 mb-24">
             <div 
               className="absolute inset-0 w-full h-[400px] z-0"
               style={{
