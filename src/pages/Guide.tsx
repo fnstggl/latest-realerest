@@ -54,7 +54,7 @@ const Guide: React.FC = () => {
           {/* Background image overlay with subtitle overlay */}
           <div className="relative mt-0 mb-24">
             <div 
-              className="absolute inset-0 w-full h-[400px] z-0"
+<div className="absolute inset-0 w-full h-[400px] z-0 pb-20">
               style={{
                 backgroundImage: `url('/lovable-uploads/3814ac85-68ae-4ca8-a30d-92713ab1360b.png')`,
                 backgroundSize: 'cover',
@@ -71,7 +71,7 @@ const Guide: React.FC = () => {
             </div>
             
             {/* Guide cards positioned lower to show more of the background image */}
-            <div className="relative z-10 pt-64 sm:pt-72 md:pt-80 lg:pt-[24rem]">
+<div className="relative z-10 pt-40 sm:pt-44 md:pt-48 lg:pt-52">
               <div className="grid md:grid-cols-3 gap-6">
                 {guides.map((guide) => (
                   <motion.div
