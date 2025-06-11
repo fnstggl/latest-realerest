@@ -33,7 +33,7 @@ const HeroSection: React.FC = () => {
             </div>
 <p
   className="text-[#01204b] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10 font-polysans-semibold"
-  style={{ marginTop: '-5px' }}
+  style={{ marginTop: '-8px' }}
 >
               Below & off-market properties. All in one place.
             </p>
