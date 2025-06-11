@@ -64,7 +64,7 @@ const Guide: React.FC = () => {
             ></div>
             
             {/* Guide cards positioned lower to show more of the background image */}
-            <div className="relative z-10 pt-64">
+            <div className="relative z-10 pt-100">
               <div className="grid md:grid-cols-3 gap-6">
                 {guides.map((guide) => (
                   <motion.div
