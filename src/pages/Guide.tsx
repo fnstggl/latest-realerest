@@ -45,25 +45,25 @@ const Guide: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="max-w-5xl mx-auto"
         >
-          <div className="font-polysans text-[#01204b] text-center mb-12">
-            <h1 className="font-polysans-semibold text-[#01204b] text-3xl sm:text-4xl md:text-5xl mb-6">
+          <div className="font-polysans text-[#01204b] text-center mb-6">
+            <h1 className="font-polysans-semibold text-[#01204b] text-3xl sm:text-4xl md:text-5xl">
               Real<span className="font-polysans italic">er</span> Estate Guides
             </h1>
           </div>
           
-          {/* Background image overlay */}
-          <div className="relative mb-12">
+          {/* Background image overlay with more spacing */}
+          <div className="relative mt-16 mb-24">
             <div 
               className="absolute inset-0 w-full h-[400px] z-0"
               style={{
                 backgroundImage: `url('/lovable-uploads/3814ac85-68ae-4ca8-a30d-92713ab1360b.png')`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundPosition: 'center top',
                 backgroundRepeat: 'no-repeat'
               }}
             ></div>
             
-            {/* Guide cards positioned to overlay the bottom of the background image */}
+            {/* Guide cards positioned lower to show more of the background image */}
             <div className="relative z-10 pt-64">
               <div className="grid md:grid-cols-3 gap-6">
                 {guides.map((guide) => (
