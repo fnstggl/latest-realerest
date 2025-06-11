@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ const HeroSection: React.FC = () => {
       <div 
         className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-0 w-full h-full"
         style={{
-          backgroundImage: `url('/lovable-uploads/f8d9fea4-7d9f-4454-b9f5-f1c315d3cb41.png')`,
+          backgroundImage: `url('/lovable-uploads/20e7a594-00f9-493b-bdbf-9aea52b1463e.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'bottom center',
           backgroundRepeat: 'no-repeat',
