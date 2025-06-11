@@ -31,7 +31,10 @@ const HeroSection: React.FC = () => {
                 at a <span className="bg-[#fd4801] text-white px-1.5 py-0.5 leading-none font-bold italic">price</span> you'll <span className="font-bold">love</span> more
               </h1>
             </div>
-            <p className="text-[#01204b] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10 font-polysans-semibold">
+<p
+  className="text-[#01204b] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10 font-polysans-semibold"
+  style={{ marginTop: '-5px' }}
+>
               Below & off-market properties. All in one place.
             </p>
             <div className="glass-card p-0.25 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
