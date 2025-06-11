@@ -58,7 +58,7 @@ const Guide: React.FC = () => {
               style={{
                 backgroundImage: `url('/lovable-uploads/3814ac85-68ae-4ca8-a30d-92713ab1360b.png')`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundPosition: 'center top',
                 backgroundRepeat: 'no-repeat'
               }}
             ></div>
