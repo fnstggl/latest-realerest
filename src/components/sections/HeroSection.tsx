@@ -32,7 +32,9 @@ const HeroSection: React.FC = () => {
               </h1>
             </div>
 <p
-<p className="text-[#01204b] mt-[-5px] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10 font-polysans-semibold">
+  className="text-[#01204b] mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm md:text-base mx-auto max-w-2xl text-center relative z-10 font-polysans-semibold"
+  style={{ marginTop: '-8px' }}
+>
               Below & off-market properties. All in one place.
             </p>
             <div className="glass-card p-0.25 mb-4 sm:mb-6 md:mb-8 shadow-xl rounded-xl mx-auto w-full max-w-2xl relative">
