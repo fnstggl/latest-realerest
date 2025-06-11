@@ -45,7 +45,7 @@ const Guide: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="max-w-5xl mx-auto"
         >
-          <div className="font-polysans text-[#01204b] text-center mb-2">
+          <div className="font-polysans text-[#01204b] text-center">
             <h1 className="font-polysans-semibold text-[#01204b] text-3xl sm:text-4xl md:text-5xl">
               Real<span className="font-polysans italic">er</span> Estate Guides
             </h1>
