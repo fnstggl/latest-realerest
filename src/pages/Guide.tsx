@@ -45,13 +45,13 @@ const Guide: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="max-w-5xl mx-auto"
         >
-          <div className="font-polysans text-[#01204b] text-center mb-6">
+          <div className="font-polysans text-[#01204b] text-center mb-2">
             <h1 className="font-polysans-semibold text-[#01204b] text-3xl sm:text-4xl md:text-5xl">
               Real<span className="font-polysans italic">er</span> Estate Guides
             </h1>
           </div>
           
-          {/* Background image overlay with more spacing */}
+          {/* Background image overlay with subtitle overlay */}
           <div className="relative mt-16 mb-24">
             <div 
               className="absolute inset-0 w-full h-[400px] z-0"
@@ -63,8 +63,15 @@ const Guide: React.FC = () => {
               }}
             ></div>
             
+            {/* Subtitle overlay positioned over the background image */}
+            <div className="relative z-10 pt-8 text-center">
+              <p className="font-polysans-semibold text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
+                Learn how our platform works and get step-by-step guidance for buyers, sellers, and wholesalers.
+              </p>
+            </div>
+            
             {/* Guide cards positioned lower to show more of the background image */}
-<div className="relative z-10 pt-64 sm:pt-72 md:pt-80 lg:pt-[24rem]">
+            <div className="relative z-10 pt-64 sm:pt-72 md:pt-80 lg:pt-[24rem]">
               <div className="grid md:grid-cols-3 gap-6">
                 {guides.map((guide) => (
                   <motion.div
@@ -94,13 +101,6 @@ const Guide: React.FC = () => {
                 ))}
               </div>
             </div>
-          </div>
-          
-          {/* Moved subtitle to bottom */}
-          <div className="text-center">
-            <p className="font-polysans-semibold text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
-              Learn how our platform works and get step-by-step guidance for buyers, sellers, and wholesalers.
-            </p>
           </div>
         </motion.div>
       </div>
