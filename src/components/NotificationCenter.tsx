@@ -4,6 +4,7 @@ import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useNotifications } from '@/context/NotificationContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
@@ -174,6 +175,41 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     }
   };
 
+  // Get notification badge based on type
+  const getNotificationBadge = (type?: string) => {
+    switch (type) {
+      case 'like':
+        return (
+          <Badge 
+            className="bg-blue-100 text-blue-700 border-blue-200 font-polysans font-bold text-xs px-2 py-1"
+            style={{ backgroundColor: '#dbeafe', color: '#1d4ed8', borderColor: '#93c5fd' }}
+          >
+            LIKE
+          </Badge>
+        );
+      case 'offer':
+        return (
+          <Badge 
+            className="bg-green-100 text-green-700 border-green-200 font-polysans font-bold text-xs px-2 py-1"
+            style={{ backgroundColor: '#dcfce7', color: '#15803d', borderColor: '#86efac' }}
+          >
+            OFFER
+          </Badge>
+        );
+      case 'counter_offer':
+        return (
+          <Badge 
+            className="bg-orange-100 text-orange-700 border-orange-200 font-polysans font-bold text-xs px-2 py-1"
+            style={{ backgroundColor: '#fed7aa', color: '#c2410c', borderColor: '#fdba74' }}
+          >
+            COUNTER
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
@@ -184,16 +220,10 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
         >
           <Bell size={20} className="text-black" />
           {unreadCount > 0 && showIndicator && (
-            <span className="absolute -top-1 -right-1 flex items-center justify-center">
-              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#0892D0] via-[#54C5F8] to-[#0892D0] animate-spin"></span>
-              <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-medium text-black">
-                {unreadCount > 99 ? '99+' : unreadCount}
-              </span>
-            </span>
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
           )}
         </Button>
       </PopoverTrigger>
-      
       
       <PopoverContent className="w-80 p-0 border border-gray-200 shadow-md rounded-lg bg-white/95 backdrop-blur-sm" align="end">
         <div className="border-b border-gray-200 p-4">
@@ -216,31 +246,49 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
         </div>
         
         <div className="max-h-[400px] overflow-y-auto">
-          {isLoading ?
-        // Loading skeleton - simplified with fewer items
-        <div className="space-y-4 p-4">
-              {[1, 2].map(i => <div key={i} className="flex flex-col space-y-2">
+          {isLoading ? (
+            // Loading skeleton - simplified with fewer items
+            <div className="space-y-4 p-4">
+              {[1, 2].map(i => (
+                <div key={i} className="flex flex-col space-y-2">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-full" />
-                </div>)}
-            </div> : notifications.length > 0 ? <div className="divide-y divide-gray-100">
-              {notifications.map(notification => <div key={notification.id} className={`p-4 ${!notification.read ? 'bg-blue-50' : ''} cursor-pointer hover:bg-gray-50 transition-colors`} onClick={() => handleNotificationClick(notification)}>
+                </div>
+              ))}
+            </div>
+          ) : notifications.length > 0 ? (
+            <div className="divide-y divide-gray-100">
+              {notifications.map(notification => (
+                <div 
+                  key={notification.id} 
+                  className={`p-4 ${!notification.read ? 'bg-blue-50' : ''} cursor-pointer hover:bg-gray-50 transition-colors`} 
+                  onClick={() => handleNotificationClick(notification)}
+                >
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-bold">{notification.title}</h4>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-bold">{notification.title}</h4>
+                        {getNotificationBadge(notification.type)}
+                      </div>
                       <p className="text-sm">{notification.message}</p>
                       <p className="text-xs text-gray-500 mt-1">
                         {new Date(notification.timestamp).toLocaleString()}
                       </p>
                     </div>
-                    {!notification.read && <div className="px-2 py-1 text-xs font-bold rounded text-white bg-black">
+                    {!notification.read && (
+                      <div className="px-2 py-1 text-xs font-bold rounded text-white bg-black">
                         NEW
-                      </div>}
+                      </div>
+                    )}
                   </div>
-                </div>)}
-            </div> : <div className="p-8 text-center">
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-8 text-center">
               <p className="text-gray-500">No notifications</p>
-            </div>}
+            </div>
+          )}
         </div>
       </PopoverContent>
     </Popover>

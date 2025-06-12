@@ -1,5 +1,5 @@
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { UserRole } from '@/components/UserTag';
@@ -63,6 +63,7 @@ export function useMessages() {
       
       if (!conversationData.length) {
         setConversations([]);
+        setUnreadCount(0);
         setLoading(false);
         return;
       }
@@ -140,6 +141,46 @@ export function useMessages() {
       setLoading(false);
     }
   }, [user?.id]);
+
+  // Set up real-time subscription for messages
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const subscription = supabase
+      .channel('messages')
+      .on('postgres_changes', 
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages'
+        }, 
+        () => {
+          // Refresh conversations when new messages arrive
+          refreshConversations();
+        }
+      )
+      .on('postgres_changes', 
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'messages'
+        }, 
+        () => {
+          // Refresh conversations when messages are updated (read status)
+          refreshConversations();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [user?.id, refreshConversations]);
+
+  // Initial load
+  useEffect(() => {
+    refreshConversations();
+  }, [refreshConversations]);
 
   const getOrCreateConversation = useCallback(async (otherUserId: string) => {
     if (!user?.id || !otherUserId) return null;

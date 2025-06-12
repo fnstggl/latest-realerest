@@ -67,9 +67,9 @@ const LikeButton: React.FC<LikeButtonProps> = ({ propertyId, sellerId }) => {
         await supabase.from('notifications').insert({
           user_id: sellerId,
           title: 'New Property Like',
-          message: 'Someone liked your property!',
+          message: `${user.name || user.email || 'Someone'} liked your property!`,
           type: 'like',
-          properties: { property_id: propertyId }
+          properties: { propertyId: propertyId }
         });
       }
 
