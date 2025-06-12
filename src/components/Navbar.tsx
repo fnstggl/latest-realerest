@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -46,7 +45,7 @@ const Navbar: React.FC = () => {
     navigate('/signup');
   };
   const LogoText = () => <>
-      <img alt="Realer Estate Logo" className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:h-6 object-contain mt-[3px]" src="/lovable-uploads/14700a32-d53a-47c1-85a0-3cf22afea5f0.png" />
+      <img alt="Realer Estate Logo" className="w-6 h-6 sm:w-6 sm:h-6 md:w-6 md:w-6 object-contain mt-[3px]" src="/lovable-uploads/14700a32-d53a-47c1-85a0-3cf22afea5f0.png" />
       <span className="text-[#fd4801] text-sm md:text-sm hidden md:block">
         <span className="font-polysans font-bold">Real</span>
         <span className="font-polysans font-bold italic">er</span>
@@ -120,8 +119,8 @@ const Navbar: React.FC = () => {
 
   const getNavbarContentStyles = () => {
     if (isHomePage) {
-      // Home page styling (unchanged)
-      return "max-w-7xl mx-auto bg-white rounded-full shadow-lg backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6";
+      // Home page styling - remove shadow
+      return "max-w-7xl mx-auto bg-white rounded-full backdrop-blur-lg border border-white/30 py-1 sm:py-1.5 px-4 sm:px-6";
     } else {
       // Other pages - maintain rounded pill shape with transparency on scroll
       return `max-w-7xl mx-auto rounded-full shadow-lg backdrop-blur-lg border py-1 sm:py-1.5 px-4 sm:px-6 transition-all duration-300 ${
@@ -168,7 +167,7 @@ const Navbar: React.FC = () => {
                 {unreadCount > 0}
                 </Button>
               </div> : <>
-                <Button variant="ghost" className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-[#fd4801] bg-white hover:bg-white border-none shadow-none h-6 sm:h-7" onClick={handleSignIn}>
+                <Button variant="ghost" className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-[#fd4801] bg-transparent hover:bg-transparent border-none shadow-none h-6 sm:h-7 hover:text-[#ff6b35]" onClick={handleSignIn}>
                   Log In
                 </Button>
 

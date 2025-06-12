@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ const HeroSection: React.FC = () => {
             </h1>
             <div className="mb-2 sm:mb-4 md:mb-6">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#01204b] tracking-normal py-1 font-polysans">
-                at a <span className="bg-[#fd4801] text-white px-1.5 py-0.5 leading-none font-bold italic">price</span> you'll <span className="font-bold">love</span> more
+                at a <span className="text-[#01204b] px-1.5 py-0.5 leading-none font-bold italic">price</span> you'll <span className="font-bold">love</span> more
               </h1>
             </div>
 <p
