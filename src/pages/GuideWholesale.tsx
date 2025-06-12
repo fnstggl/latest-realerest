@@ -50,8 +50,8 @@ const GuideWholesale: React.FC = () => {
             opacity: 1
           }} transition={{
             duration: 0.5
-          }} className="text-3xl md:text-4xl font-futura-extra-bold">
-              How to <span className="font-playfair italic">Wholesale</span> with Realer Estate
+          }} className="text-3xl md:text-4xl font-polysans text-[#01204b]">
+              How to <span className="font-polysans italic text-[#01204b]">Wholesale</span> with Realer Estate
             </motion.h1>
             
             <Button variant="ghost" onClick={() => navigate('/guide')} className="flex items-center gap-2">
@@ -69,7 +69,7 @@ const GuideWholesale: React.FC = () => {
         }} transition={{
           duration: 0.5,
           delay: 0.1
-        }} className="text-gray-600 mb-12 text-lg">
+        }} className="text-gray-600 font-polysans-semibold mb-12 text-lg">
             Follow these steps to earn rewards by connecting buyers with sellers on our platform.
           </motion.p>
           
@@ -89,13 +89,13 @@ const GuideWholesale: React.FC = () => {
                     <div className="w-16 h-16 rounded-full flex items-center justify-center text-black mb-4 bg-transparent">
                       <step.icon size={32} />
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                      <span className="font-playfair italic pr-2">Step {step.number}:</span>
+                    <h2 className="text-2xl md:text-3xl font-polysans text-[#01204b] mb-3">
+                      <span className="font-polysans italic text-[#01204b]pr-2">Step {step.number}:</span>
                       {step.title}
                     </h2>
-                    <p className="text-gray-600 mb-6">{step.description}</p>
+                    <p className="text-gray-600 font-polysans-semibold mb-6">{step.description}</p>
                     <Link to={step.link}>
-                      <Button className="relative bg-white text-black border border-transparent hover:bg-white group">
+                      <Button className="relative bg-white font-polysans text-[#01204b] border border-transparent hover:bg-white group">
                         <span>{step.linkText}</span>
                         <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
                       background: "transparent",
