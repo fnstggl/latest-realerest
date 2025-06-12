@@ -16,7 +16,7 @@ const SiteFooter: React.FC = () => {
                 <span className="font-polysans font-bold"> Estate</span>
               </span>
             </Link>
-            <p className="text-gray-600 font-polysans font-bold">Connecting families with affordable housing—fast.</p>
+            <p className="text-gray-600 font-polysans font-bold">Affordable homes shouldn't be this hard to find. Found them.</p>
           </div>
           
           <div>
