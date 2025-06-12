@@ -94,7 +94,7 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                 </div>
                 <div className="p-6 flex-1">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-2xl font-polysans text-[01204b]">{property.title}</h3>
+                    <h3 className="text-2xl font-polysans text-[#01204b]">{property.title}</h3>
                     <div className="bg-white text-[#fd4802] px-3 py-1 font-polysans inline-flex items-center text-sm rounded-lg">
                       <span>{Math.round(property.belowMarket)}% BELOW MARKET</span>
                     </div>
