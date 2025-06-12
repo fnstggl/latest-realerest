@@ -44,7 +44,7 @@ const About: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-[#FCFBF8] text-black overflow-hidden">
+    <div className="min-h-screen bg-[#FCFBF8] text-[#01204b] overflow-hidden">
       <SEO 
         title="About Realer Estate | Our Mission & Story" 
         description="Realer Estate is revolutionizing how people buy and sell homes. Learn about our mission to make housing accessible again with below-market properties." 
@@ -82,7 +82,7 @@ const About: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="mb-8 md:mb-10 text-center"
           >
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-futura font-extrabold tracking-tighter leading-tight">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-futura font-extrabold text-[#01204b] tracking-tighter leading-tight">
               FROM DREAM<br />
               TO DREAM HOME
             </h1>
@@ -95,7 +95,7 @@ const About: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-center"
           >
-            <p className="text-lg md:text-xl font-futura font-bold tracking-tight">
+            <p className="text-lg md:text-xl font-polysans text-[#01204b] tracking-tight">
               Realer Estate is a platform helping struggling homebuyers find homes they can <em>afford</em>. We 
               understand the Real Estate market is broken. Regular buyers are getting priced out. Not anymore. 
               We provide exclusively below-market homes, available to everyone—no lotteries, waitlists or fees.
@@ -136,15 +136,15 @@ const About: React.FC = () => {
         >
           {/* Journey text moved above image */}
           <div className="mx-auto space-y-6 mb-10">
-            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-futura font-bold tracking-tight text-[#1A1F2C]">
+            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-polysans text-[#01204b] tracking-tight">
               We know how frustrating the process of buying and selling your house can feel, so at Realer Estate... we're doing things differently.
             </motion.p>
             
-            <motion.p custom={1} variants={textRevealVariant} className="text-lg md:text-xl font-futura font-bold tracking-tight text-[#1A1F2C]">
-              By connecting motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-futura font-extrabold italic">actually great deals</span>.
+            <motion.p custom={1} variants={textRevealVariant} className="text-lg md:text-xl font-polysans text-[#01204b] tracking-tight">
+              By connecting motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-polysans italic text-[#01204b]">actually great deals</span>.
             </motion.p>
             
-            <motion.p custom={2} variants={textRevealVariant} className="text-lg md:text-xl font-futura font-bold tracking-tight text-[#1A1F2C]">
+            <motion.p custom={2} variants={textRevealVariant} className="text-lg md:text-xl font-polysans text-[#01204b] tracking-tight">
               "We knew there had to be a better way—something faster, simpler, and actually made for people like us."
             </motion.p>
           </div>
@@ -177,8 +177,8 @@ const About: React.FC = () => {
         >
           {/* Vision text moved above image */}
           <div className="mx-auto space-y-6 mb-10">
-            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-futura font-bold tracking-tight text-[#1A1F2C]">
-              Realer Estate is about revolutionizing the real estate market to make it work for <span className="font-futura font-extrabold italic">people</span> again. You shouldn't have to fight this hard for something so basic.
+            <motion.p custom={0} variants={textRevealVariant} className="text-lg md:text-xl font-polysans tracking-tight text-[#01204b]">
+              Realer Estate is about revolutionizing the real estate market to make it work for <span className="font-polysans italic text-[#01204b]">people</span> again. You shouldn't have to fight this hard for something so basic.
             </motion.p>
             
             <motion.div custom={1} variants={textRevealVariant} className="flex items-center space-x-3 pt-4">
@@ -186,8 +186,8 @@ const About: React.FC = () => {
                 <AvatarFallback className="bg-[#1A1F2C] text-white">RE</AvatarFallback>
               </Avatar>
               <div className="text-left">
-                <p className="font-futura font-bold tracking-tight">- Beckett & Derrick</p>
-                <p className="text-sm font-futura font-bold tracking-tight">Realer Estate Founders</p>
+                <p className="font-polysans text-[#01204b] tracking-tight">- Beckett & Derrick</p>
+                <p className="text-sm font-polysans-semibold text-gray-600 tracking-tight">Realer Estate Founders</p>
               </div>
             </motion.div>
           </div>
@@ -219,24 +219,24 @@ const About: React.FC = () => {
           className="mx-auto max-w-4xl mb-24 md:mb-32"
         >
           <div className="text-center mb-16">
-            <h2 className="text-6xl md:text-7xl font-bold text-[#1A1F2C]">HOW IT WORKS</h2>
-            <p className="text-xl md:text-2xl text-[#8E9196] mt-4">Below-market properties that actually make sense.</p>
+            <h2 className="text-6xl md:text-7xl font-polysans text-[#01204b]]">HOW IT WORKS</h2>
+            <p className="text-xl md:text-2xl font-polysans-semibold text-[#8E9196] mt-4">Below-market properties that actually make sense.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <motion.div custom={0} variants={textRevealVariant} className="border-2 border-[#1A1F2C] p-8 relative">
-              <div className="text-6xl font-playfair italic font-bold mb-6 text-[#1A1F2C]">01</div>
-              <p className="text-lg">We work <span className="font-playfair italic">directly</span> with motivated sellers who are looking to sell their homes below market value to sell them faster.</p>
+              <div className="text-6xl font-polysans italic mb-6 text-[#01204b]">01</div>
+              <p className="text-lg font-polysans text-[#01204b]">We work <span className="font-polysans italic">directly</span> with motivated sellers who are looking to sell their homes below market value to sell them faster.</p>
             </motion.div>
             
             <motion.div custom={1} variants={textRevealVariant} className="border-2 border-[#1A1F2C] p-8 relative">
-              <div className="text-6xl font-playfair italic font-bold mb-6 text-[#1A1F2C]">02</div>
-              <p className="text-lg">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-futura font-extrabold italic">actually great deals</span>.</p>
+              <div className="text-6xl font-polysans italic mb-6 text-[#01204b]">02</div>
+              <p className="text-lg font-polysans text-[#01204b]">By connecting these motivated sellers with buyers looking for affordable housing, we ensure that properties on Realer Estate are <span className="font-polysans text-[#01204b] italic">actually great deals</span>.</p>
             </motion.div>
             
             <motion.div custom={2} variants={textRevealVariant} className="border-2 border-[#1A1F2C] p-8 relative">
-              <div className="text-6xl font-playfair italic font-bold mb-6 text-[#1A1F2C]">03</div>
-              <p className="text-lg">Due to the high demand for below-market properties, listings on our platform <span className="font-futura font-extrabold italic">may not stay available</span> for long.</p>
+              <div className="text-6xl font-polysans italic font-bold mb-6 text-[#01204b]">03</div>
+              <p className="text-lg font-polysans text-[#01204b]">Due to the high demand for below-market properties, listings on our platform <span className="font-polysans italic text-[#01204b]">may not stay available</span> for long.</p>
             </motion.div>
           </div>
         </motion.section>
@@ -254,7 +254,7 @@ const About: React.FC = () => {
           </div>
           
           <div className="text-left">
-            <h2 className="text-6xl md:text-8xl font-bold text-[#1A1F2C] mb-8 leading-tight tracking-tighter">
+            <h2 className="text-6xl md:text-8xl font-bold text-[#01204b] mb-8 leading-tight tracking-tighter">
               <span className="block">REAL ESTATE</span>
               <span className="inline-block font-futura font-extrabold tracking-tighter">
                 DONE RIGHT
@@ -262,10 +262,10 @@ const About: React.FC = () => {
             </h2>
             
             <div className="flex flex-col sm:flex-row gap-6 mt-12">
-              <Button variant="outline" size="lg" className="text-lg font-bold border-[#1A1F2C] text-[#1A1F2C] hover:bg-[#1A1F2C] hover:text-white transition-all py-6" asChild>
+              <Button variant="outline" size="lg" className="text-lg font-polysans border-[#01204b] text-[#01204b] hover:bg-[#01204b] hover:text-white transition-all py-6" asChild>
                 <Link to="/search">Find Properties</Link>
               </Button>
-              <Button variant="default" size="lg" className="text-lg font-bold bg-[#1A1F2C] text-white hover:bg-[#1A1F2C]/80 py-6" asChild>
+              <Button variant="default" size="lg" className="text-lg font-polysans bg-[#01204b] text-white hover:bg-[#01204b]/80 py-6" asChild>
                 <Link to="/sell/create">List Your Property</Link>
               </Button>
             </div>
