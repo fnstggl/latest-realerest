@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -186,7 +187,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
   };
 
   return <div className="space-y-6">
-    <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg">
+    <div className="bg-white border border-gray-200 rounded-xl p-6">
       <AccountTypeSelector 
         currentType={accountType}
         userId={user?.id}
@@ -194,7 +195,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
       />
     </div>
 
-    <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg">
+    <div className="bg-white border border-gray-200 rounded-xl p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Account Information</h2>
       </div>
@@ -203,62 +204,52 @@ const AccountTab: React.FC<AccountTabProps> = ({
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="name" className="font-bold">Full Name</Label>
-            <Input id="name" value={formData.name} onChange={handleInputChange} className="mt-2 border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" />
+            <Input id="name" value={formData.name} onChange={handleInputChange} className="mt-2 border-2 border-[#01204b] bg-white" />
           </div>
           
           <div>
             <Label htmlFor="email" className="font-bold">Email Address</Label>
-            <Input id="email" value={formData.email} className="mt-2 border border-white/40 bg-gray-50" disabled />
+            <Input id="email" value={formData.email} className="mt-2 border-2 border-[#01204b] bg-gray-50" disabled />
           </div>
           
           <div>
             <Label htmlFor="phone" className="font-bold">Phone Number</Label>
-            <Input id="phone" value={formData.phone} onChange={handleInputChange} className="mt-2 border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" placeholder="Enter your phone number" />
+            <Input id="phone" value={formData.phone} onChange={handleInputChange} className="mt-2 border-2 border-[#01204b] bg-white" placeholder="Enter your phone number" />
           </div>
         </div>
         
         <div className="relative">
-          <button type="submit" disabled={saving} className="bg-white text-black border border-transparent px-6 py-2 hover:bg-white/0 transition-all relative rounded-md text-xs">
+          <button type="submit" disabled={saving} className="bg-white text-black border-[3px] border-[#fd4801] px-6 py-2 hover:bg-white transition-all relative rounded-md text-xs">
             {saving ? "Saving Changes..." : "Save Changes"}
-            <span className="absolute inset-[-2px] -z-10 rounded-lg opacity-100 transition-all" style={{
-              background: "transparent",
-              border: "2px solid transparent",
-              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "border-box",
-              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude"
-            }} />
           </button>
         </div>
       </form>
     </div>
     
-    <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg">
+    <div className="bg-white border border-gray-200 rounded-xl p-6">
       <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
       
       <div className="space-y-4">
-        <div className="p-4 border border-white/40 rounded-lg transition-all">
+        <div className="p-4 border border-gray-200 rounded-lg transition-all">
           <div className="flex justify-between items-center">
             <div>
               <h3 className="font-bold text-lg">Notification Preferences</h3>
               <p className="text-gray-600">Manage how you receive notifications</p>
             </div>
-            <Button className="border border-white/40 hover:bg-gray-50" variant="outline" onClick={() => setNotificationDialogOpen(true)}>
+            <Button className="border border-gray-200 hover:bg-gray-50" variant="outline" onClick={() => setNotificationDialogOpen(true)}>
               <Bell size={18} className="mr-2" />
               Manage
             </Button>
           </div>
         </div>
         
-        <div className="p-4 border border-white/40 rounded-lg transition-all">
+        <div className="p-4 border border-gray-200 rounded-lg transition-all">
           <div className="flex justify-between items-center">
             <div>
               <h3 className="font-bold text-lg">Password & Security</h3>
               <p className="text-gray-600">Update your password and security settings</p>
             </div>
-            <Button className="border border-white/40 hover:bg-gray-50" variant="outline" onClick={() => setPasswordDialogOpen(true)}>
+            <Button className="border border-gray-200 hover:bg-gray-50" variant="outline" onClick={() => setPasswordDialogOpen(true)}>
               <Lock size={18} className="mr-2" />
               Update
             </Button>
@@ -267,13 +258,13 @@ const AccountTab: React.FC<AccountTabProps> = ({
       </div>
     </div>
 
-    <div className="glass-card backdrop-blur-lg border border-white/40 rounded-xl p-6 shadow-lg mt-6">
+    <div className="bg-white border border-gray-200 rounded-xl p-6 mt-6">
       <h2 className="text-2xl font-bold mb-6">Account Actions</h2>
       
       <div className="space-y-4">
         <Button 
           variant="outline" 
-          className="w-full justify-center font-bold bg-white/50 hover:bg-red-50 text-red-600 border border-white/40 hover:border-red-500 hover:shadow-[0_0_10px_rgba(220,38,38,0.4)] transition-all" 
+          className="w-full justify-center font-bold bg-white hover:bg-red-50 text-red-600 border border-gray-200 hover:border-red-500 transition-all" 
           onClick={handleSignOut}
         >
           <LogOut size={18} className="mr-2" />
@@ -283,7 +274,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
     </div>
     
     <Dialog open={notificationDialogOpen} onOpenChange={setNotificationDialogOpen}>
-      <DialogContent className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg">
+      <DialogContent className="bg-white border border-gray-200 rounded-xl">
         <DialogHeader>
           <DialogTitle>Notification Preferences</DialogTitle>
         </DialogHeader>
@@ -324,10 +315,10 @@ const AccountTab: React.FC<AccountTabProps> = ({
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={() => setNotificationDialogOpen(false)} className="border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
+          <Button variant="outline" onClick={() => setNotificationDialogOpen(false)} className="border border-gray-200">
             Cancel
           </Button>
-          <Button onClick={handleNotificationUpdate} className="bg-[#0892D0] text-white hover:bg-[#0892D0]/90 hover:shadow-[0_0_15px_rgba(8,146,208,0.7)] transition-all">
+          <Button onClick={handleNotificationUpdate} className="bg-[#fd4801] text-white hover:bg-[#fd4801] hover:shadow-[0_0_15px_rgba(253,72,1,0.7)] transition-all">
             Save Changes
           </Button>
         </DialogFooter>
@@ -335,7 +326,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
     </Dialog>
     
     <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
-      <DialogContent className="glass-card backdrop-blur-lg border border-white/40 rounded-xl shadow-lg">
+      <DialogContent className="bg-white border border-gray-200 rounded-xl">
         <DialogHeader>
           <DialogTitle>Update Password</DialogTitle>
         </DialogHeader>
@@ -347,7 +338,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
             }) => <FormItem>
                     <FormLabel className="font-bold">Current Password</FormLabel>
                     <FormControl>
-                      <Input type="password" className="border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" {...field} />
+                      <Input type="password" className="border-2 border-[#01204b] bg-white" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>} />
@@ -357,7 +348,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
             }) => <FormItem>
                     <FormLabel className="font-bold">New Password</FormLabel>
                     <FormControl>
-                      <Input type="password" className="border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" {...field} />
+                      <Input type="password" className="border-2 border-[#01204b] bg-white" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>} />
@@ -367,16 +358,16 @@ const AccountTab: React.FC<AccountTabProps> = ({
             }) => <FormItem>
                     <FormLabel className="font-bold">Confirm Password</FormLabel>
                     <FormControl>
-                      <Input type="password" className="border border-white/40 focus:border-[#0892D0] focus:shadow-[0_0_10px_rgba(8,146,208,0.5)]" {...field} />
+                      <Input type="password" className="border-2 border-[#01204b] bg-white" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>} />
             
             <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => setPasswordDialogOpen(false)} className="border border-white/40 hover:border-[#0892D0] hover:shadow-[0_0_10px_rgba(8,146,208,0.5)]">
+              <Button type="button" variant="outline" onClick={() => setPasswordDialogOpen(false)} className="border border-gray-200">
                 Cancel
               </Button>
-              <Button type="submit" className="bg-[#0892D0] text-white hover:bg-[#0892D0]/90 hover:shadow-[0_0_15px_rgba(8,146,208,0.7)] transition-all" disabled={updatingPassword}>
+              <Button type="submit" className="bg-[#fd4801] text-white hover:bg-[#fd4801] hover:shadow-[0_0_15px_rgba(253,72,1,0.7)] transition-all" disabled={updatingPassword}>
                 {updatingPassword ? "Updating..." : "Update Password"}
               </Button>
             </DialogFooter>
