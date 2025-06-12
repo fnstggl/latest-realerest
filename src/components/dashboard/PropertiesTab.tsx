@@ -108,9 +108,9 @@ const PropertiesTab: React.FC<PropertiesTabProps> = ({
                   </div>
                   
                   <div className="flex gap-6 mb-6">
-                    <div className="font-polysans-semibold text-[#01204b]">{property.beds} Beds</div>
-                    <div className="font-polysans-semibold text-[#01204b]">{property.baths} Baths</div>
-                    <div className="font-polysans-semibold text-[#01204b]">{property.sqft.toLocaleString()} sqft</div>
+                    <div className="font-polysans-semibold text-gray-600">{property.beds} Beds</div>
+                    <div className="font-polysans-semibold text-gray-600">{property.baths} Baths</div>
+                    <div className="font-polysans-semibold text-gray-600">{property.sqft.toLocaleString()} sqft</div>
                   </div>
                   
                   <div className="flex gap-4 flex-wrap md:flex-nowrap">
