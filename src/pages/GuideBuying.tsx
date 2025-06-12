@@ -82,7 +82,7 @@ const GuideBuying: React.FC = () => {
         }} transition={{
           duration: 0.5,
           delay: 0.1
-        }} className="text-gray-600 mb-12 text-lg">
+        }} className="text-gray-600 mb-12 font-polysans-semibold text-lg">
             Follow these simple steps to find and purchase below-market properties through our platform.
           </motion.p>
           
@@ -102,13 +102,13 @@ const GuideBuying: React.FC = () => {
                     <div className="w-16 h-16 rounded-full flex items-center justify-center bg-transparent">
                       <step.icon size={32} />
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                      <span className="font-playfair italic pr-2">Step {step.number}:</span>
+                    <h2 className="text-2xl md:text-3xl font-polysans text-[#01204b] mb-3">
+                      <span className="font-polysans text-[#01204b] italic pr-2">Step {step.number}:</span>
                       {step.title}
                     </h2>
-                    <p className="text-gray-600 mb-6">{step.description}</p>
+                    <p className="text-gray-600 font-polysans-semibold mb-6">{step.description}</p>
                     <Link to={step.link}>
-                      <Button className="relative bg-white text-black border border-transparent hover:bg-white group">
+                      <Button className="relative bg-white font-polysans text-[#01204b] border border-transparent hover:bg-white group">
                         {step.linkText}
                         <span className="absolute inset-[-2px] -z-10 opacity-100 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" style={{
                           background: "transparent",
