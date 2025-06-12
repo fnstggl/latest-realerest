@@ -228,19 +228,14 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
       <PopoverContent className="w-80 p-0 border border-gray-200 shadow-md rounded-lg bg-white/95 backdrop-blur-sm" align="end">
         <div className="border-b border-gray-200 p-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold">Notifications</h3>
-            <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} className="text-xs text-black hover:text-black font-medium relative group overflow-hidden">
-              <span className="relative z-10">Mark all as read</span>
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none" style={{
-              background: "transparent",
-              border: "2px solid transparent",
-              backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "border-box",
-              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude"
-            }} />
+            <h3 className="text-lg font-polysans text-black">Notifications</h3>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleMarkAllAsRead} 
+              className="text-xs text-black hover:text-black font-medium relative border border-[#fd4801] hover:bg-white rounded-lg px-3 py-1"
+            >
+              Mark all as read
             </Button>
           </div>
         </div>
@@ -267,10 +262,10 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold">{notification.title}</h4>
+                        <h4 className="font-polysans text-[#01204b]">{notification.title}</h4>
                         {getNotificationBadge(notification.type)}
                       </div>
-                      <p className="text-sm">{notification.message}</p>
+                      <p className="text-sm font-polysans-semibold">{notification.message}</p>
                       <p className="text-xs text-gray-500 mt-1">
                         {new Date(notification.timestamp).toLocaleString()}
                       </p>

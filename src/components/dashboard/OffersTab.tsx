@@ -420,23 +420,10 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="relative font-polysans bg-white text-[#01204b] border border-transparent hover:bg-white/90 transition-all"
+                        className="relative font-polysans bg-white text-[#01204b] border border-[#fd4801] hover:bg-white/90 transition-all"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept
-                        <span 
-                          className="absolute inset-0 opacity-100 rounded-lg pointer-events-none"
-                          style={{
-                            background: "transparent",
-                            border: "2px solid transparent",
-                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                            backgroundOrigin: "border-box",
-                            backgroundClip: "border-box",
-                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude"
-                          }}
-                        />
                       </Button>
                       
                       <Button 
@@ -453,23 +440,10 @@ const OffersTab: React.FC = () => {
                     <>
                       <Button 
                         onClick={() => handleOfferAction(offer.id, "accepted")} 
-                        className="relative font-polysans bg-white text-[#01204b] border border-transparent hover:bg-white/90 transition-all"
+                        className="relative font-polysans bg-white text-[#01204b] border border-[#fd4801] hover:bg-white/90 transition-all"
                       >
                         <CheckCircle size={16} className="mr-2" />
                         Accept Counter Offer
-                        <span 
-                          className="absolute inset-0 opacity-100 rounded-lg pointer-events-none"
-                          style={{
-                            background: "transparent",
-                            border: "2px solid transparent",
-                            backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                            backgroundOrigin: "border-box",
-                            backgroundClip: "border-box",
-                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude"
-                          }}
-                        />
                       </Button>
                       
                       <Button 
@@ -483,22 +457,9 @@ const OffersTab: React.FC = () => {
                   )}
                   
                   <Button onClick={() => handleMessageBuyer(offer)} variant="outline" 
-                    className="relative font-polysans bg-white text-[#01204b] border border-gray-200 hover:bg-white transition-all group">
+                    className="relative font-polysans bg-white text-[#01204b] border border-gray-200 hover:bg-white hover:border-[#fd4801] transition-all group">
                     <MessageSquare size={16} className="mr-2" />
                     Message Buyer
-                    <span 
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 rounded-lg pointer-events-none"
-                      style={{
-                        background: "transparent",
-                        border: "2px solid transparent",
-                        backgroundImage: "linear-gradient(90deg, #3C79F5, #6C42F5 20%, #D946EF 40%, #FF5C00 60%, #FF3CAC 80%)",
-                        backgroundOrigin: "border-box",
-                        backgroundClip: "border-box",
-                        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                        WebkitMaskComposite: "xor",
-                        maskComposite: "exclude"
-                      }}
-                    />
                   </Button>
                 </div>
                 

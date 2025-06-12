@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsContent as RadixTabsContent } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -21,6 +22,29 @@ import { TabNav } from "@/components/dashboard/TabNav";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
+// Define types for better type safety
+interface Property {
+  id: string;
+  title: string;
+  price: number;
+  marketPrice: number;
+  image?: string;
+  images?: string[];
+  location: string;
+  beds: number;
+  baths: number;
+  sqft: number;
+  belowMarket: number;
+  waitlistCount?: number;
+}
+
+interface WaitlistUser {
+  id: string;
+  name: string;
+  email: string;
+  propertyId: string;
+}
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -132,7 +156,8 @@ const Dashboard: React.FC = () => {
             <NotificationsTab 
               notifications={notifications.map(n => ({
                 ...n,
-                timestamp: typeof n.timestamp === 'string' ? new Date(n.timestamp) : n.timestamp
+                timestamp: typeof n.timestamp === 'string' ? new Date(n.timestamp) : n.timestamp,
+                type: n.type as 'info' | 'success' | 'warning' | 'error' | 'new_listing' | 'message' | 'like' | 'offer' | 'counter_offer'
               }))} 
               markAsRead={markAsRead} 
               clearAll={clearAll} 
@@ -151,9 +176,9 @@ const Dashboard: React.FC = () => {
           content: (
             <TabsContent value="properties" className="space-y-6">
               <PropertiesTab 
-                myProperties={myProperties as unknown as Property[]} 
+                myProperties={myProperties as Property[]} 
                 setMyProperties={setMyProperties as React.Dispatch<React.SetStateAction<Property[]>>} 
-                waitlistUsers={waitlistUsers as unknown as WaitlistUser[]}
+                waitlistUsers={waitlistUsers as WaitlistUser[]}
                 showAddForm={showAddForm} 
                 setShowAddForm={setShowAddForm} 
                 isLoading={isLoading} 
