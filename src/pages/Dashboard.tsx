@@ -130,7 +130,10 @@ const Dashboard: React.FC = () => {
         content: (
           <TabsContent value="notifications" className="space-y-6 bg-white border border-gray-200 p-6 shadow-sm rounded-xl">
             <NotificationsTab 
-              notifications={notifications as Notification[]} 
+              notifications={notifications.map(n => ({
+                ...n,
+                timestamp: typeof n.timestamp === 'string' ? new Date(n.timestamp) : n.timestamp
+              }))} 
               markAsRead={markAsRead} 
               clearAll={clearAll} 
             />

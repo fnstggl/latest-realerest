@@ -163,9 +163,9 @@ const RewardsTab = () => {
             {isExpanded && (
               <div className="mt-6">
                 <RewardProgress 
-                  claimId={reward.id} 
+                  propertyId={propertyListings?.id || ''} 
+                  reward={rewardAmount}
                   initialStatus={reward.status_details} 
-                  onStatusUpdate={handleStatusUpdate}
                 />
               </div>
             )}

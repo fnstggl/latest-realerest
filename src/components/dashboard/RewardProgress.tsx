@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,18 +8,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/utils';
 import { BuyerProgress, BuyerStatus, RewardStatusDetails } from '@/types/bounty';
-import { PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { PencilIcon, PlusIcon, TrashIcon, CheckCircle2, Circle, AlertCircle } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { useAuth } from '@/context/AuthContext';
 
 const RewardProgress = ({ 
   propertyId, 
   reward = 0, 
   initialStatus = { 
     claimed: false,
-    foundBuyer: false,
-    submittedOffer: false,
-    offerAccepted: false,
-    dealClosed: false,
     buyers: []
   }
 }: {
@@ -65,14 +63,13 @@ const RewardProgress = ({
       const updatedBuyers = [...status.buyers, newBuyer];
       const updatedStatus = { 
         ...status, 
-        buyers: updatedBuyers,
-        foundBuyer: true
+        buyers: updatedBuyers
       };
       setStatus(updatedStatus);
 
-      // Update database
+      // Update database - using bounty_claims table instead of property_rewards
       const { error } = await supabase
-        .from('property_rewards')
+        .from('bounty_claims')
         .upsert({
           property_id: propertyId,
           user_id: user?.id,
@@ -112,21 +109,16 @@ const RewardProgress = ({
         return buyer;
       });
 
-      // Check if we need to update overall status
-      const anyTrueForThisStep = updatedBuyers.some(buyer => buyer[field] === true);
-      
-      // Update fields that depend on buyer progress
       const updatedStatus = { 
         ...status, 
-        buyers: updatedBuyers,
-        [field]: anyTrueForThisStep
+        buyers: updatedBuyers
       };
 
       setStatus(updatedStatus);
 
-      // Update database
+      // Update database - using bounty_claims table instead of property_rewards
       const { error } = await supabase
-        .from('property_rewards')
+        .from('bounty_claims')
         .upsert({
           property_id: propertyId,
           user_id: user.id,
