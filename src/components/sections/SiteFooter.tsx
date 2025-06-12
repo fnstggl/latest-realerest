@@ -16,7 +16,7 @@ const SiteFooter: React.FC = () => {
                 <span className="font-polysans font-bold"> Estate</span>
               </span>
             </Link>
-            <p className="text-gray-600 font-polysans font-bold">Affordable homes shouldn't be this hard to find. Found them.</p>
+            <p className="text-gray-600 font-polysans-semibold">You don't need to pay market price.</p>
           </div>
           
           <div>
