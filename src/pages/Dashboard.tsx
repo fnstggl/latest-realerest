@@ -162,19 +162,6 @@ const Dashboard: React.FC = () => {
           )
         },
         {
-          name: "Waitlist",
-          value: "waitlist",
-          icon: ClipboardCheck,
-          content: (
-            <TabsContent value="waitlist" className="space-y-6">
-              <WaitlistTab 
-                waitlistUsers={waitlistUsers as unknown as WaitlistUser[]}
-                setWaitlistUsers={setWaitlistUsers}
-              />
-            </TabsContent>
-          )
-        },
-        {
           name: "Offers",
           value: "offers",
           icon: CreditCard,
