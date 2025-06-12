@@ -61,10 +61,10 @@ const GuideBuying: React.FC = () => {
             opacity: 1
           }} transition={{
             duration: 0.5
-          }} className="text-3xl md:text-4xl font-futura-extra-bold">
-              <span className="font-futura-extra-bold">How to </span>
-              <span className="font-playfair italic font-bold">Buy</span>
-              <span className="font-futura-extra-bold"> with Realer Estate</span>
+          }} className="text-3xl md:text-4xl font-polysans text-[#01204b]">
+              <span className="font-polysans text-[#01204b]">How to </span>
+              <span className="font-polysans italic text-[#01204b]">Buy</span>
+              <span className="font-polysans text-[#01204b]"> with Realer Estate</span>
             </motion.h1>
             
             <Button variant="ghost" onClick={() => navigate('/guide')} className="flex items-center gap-2">
