@@ -10,28 +10,28 @@ const GuideWholesale: React.FC = () => {
   const navigate = useNavigate();
   const steps = [{
     number: 1,
-    title: 'Find rewards to accept',
+    title: ' Find rewards to accept',
     description: 'Browse properties with reward incentives. These are opportunities for you to connect buyers with sellers and earn a commission when the deal closes successfully.',
     icon: DollarSign,
     link: '/search',
     linkText: 'Browse Rewards'
   }, {
     number: 2,
-    title: 'Bring an interested buyer to the deal',
+    title: ' Bring an interested buyer to the deal',
     description: 'Connect your network of buyers to these below-market opportunities. When you find an interested buyer, join the waitlist to claim the potential reward.',
     icon: Handshake,
     link: '/dashboard',
     linkText: 'View Your Dashboard'
   }, {
     number: 3,
-    title: 'Get the deal to closing',
+    title: ' Get the deal to closing',
     description: 'Facilitate communication between buyer and seller to help move the transaction forward. Our platform makes it easy to coordinate all parties involved.',
     icon: Briefcase,
     link: '/messages',
     linkText: 'Check Messages'
   }, {
     number: 4,
-    title: 'Get paid your reward',
+    title: ' Get paid your reward',
     description: "Once the deal closes successfully, you'll receive your reward payment directly through our secure platform. No waiting, no chasing down payments.",
     icon: Award,
     link: '/dashboard',
