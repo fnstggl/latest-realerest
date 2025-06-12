@@ -236,7 +236,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
               <h3 className="font-polysans text-[#01204b] text-lg">Notification Preferences</h3>
               <p className="text-gray-600 font-polysans-semibold">Manage how you receive notifications</p>
             </div>
-            <Button className="border border-gray-200 hover:bg-gray-50" variant="outline" onClick={() => setNotificationDialogOpen(true)}>
+            <Button className="border border-gray-200 font-polysans hover:bg-gray-50" variant="outline" onClick={() => setNotificationDialogOpen(true)}>
               <Bell size={18} className="mr-2" />
               Manage
             </Button>
@@ -249,7 +249,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
               <h3 className="font-polysans text-[#01204b] text-lg">Password & Security</h3>
               <p className="text-gray-600 font-polysans-semibold">Update your password and security settings</p>
             </div>
-            <Button className="border border-gray-200 hover:bg-gray-50" variant="outline" onClick={() => setPasswordDialogOpen(true)}>
+            <Button className="border border-gray-200 font-polysans hover:bg-gray-50" variant="outline" onClick={() => setPasswordDialogOpen(true)}>
               <Lock size={18} className="mr-2" />
               Update
             </Button>
@@ -259,12 +259,12 @@ const AccountTab: React.FC<AccountTabProps> = ({
     </div>
 
     <div className="bg-white border border-gray-200 rounded-xl p-6 mt-6">
-      <h2 className="text-2xl font-bold mb-6">Account Actions</h2>
+      <h2 className="text-2xl font-polysans text-[#01204b] mb-6">Account Actions</h2>
       
       <div className="space-y-4">
         <Button 
           variant="outline" 
-          className="w-full justify-center font-bold bg-white hover:bg-red-50 text-red-600 border border-gray-200 hover:border-red-500 transition-all" 
+          className="w-full justify-center font-polysans bg-white hover:bg-red-50 text-red-600 border border-gray-200 hover:border-red-500 transition-all" 
           onClick={handleSignOut}
         >
           <LogOut size={18} className="mr-2" />
@@ -282,7 +282,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
         <div className="space-y-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="font-medium">Email Notifications</h4>
+              <h4 className="font-bold">Email Notifications</h4>
               <p className="text-sm text-gray-500">Receive updates via email</p>
             </div>
             <Switch checked={notificationPrefs.email} onCheckedChange={checked => setNotificationPrefs(prev => ({
@@ -293,7 +293,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
           
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="font-medium">Push Notifications</h4>
+              <h4 className="font-bold">Push Notifications</h4>
               <p className="text-sm text-gray-500">Get notified in your browser</p>
             </div>
             <Switch checked={notificationPrefs.push} onCheckedChange={checked => setNotificationPrefs(prev => ({
@@ -304,7 +304,7 @@ const AccountTab: React.FC<AccountTabProps> = ({
           
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="font-medium">Marketing Emails</h4>
+              <h4 className="font-bold">Marketing Emails</h4>
               <p className="text-sm text-gray-500">Receive promotional offers</p>
             </div>
             <Switch checked={notificationPrefs.marketing} onCheckedChange={checked => setNotificationPrefs(prev => ({
