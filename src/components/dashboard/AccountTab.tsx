@@ -197,29 +197,29 @@ const AccountTab: React.FC<AccountTabProps> = ({
 
     <div className="bg-white border border-gray-200 rounded-xl p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Account Information</h2>
+        <h2 className="text-xl font-polysans text-[#01204b]">Account Information</h2>
       </div>
       
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <Label htmlFor="name" className="font-bold">Full Name</Label>
-            <Input id="name" value={formData.name} onChange={handleInputChange} className="mt-2 border-2 border-[#01204b] bg-white" />
+            <Label htmlFor="name" className="font-polysans text-[#01204b]">Full Name</Label>
+            <Input id="name" value={formData.name} onChange={handleInputChange} className="mt-2 border-2 border-[#01204b] font-polysans-semibold bg-white" />
           </div>
           
           <div>
-            <Label htmlFor="email" className="font-bold">Email Address</Label>
-            <Input id="email" value={formData.email} className="mt-2 border-2 border-[#01204b] bg-gray-50" disabled />
+            <Label htmlFor="email" className="font-polysans text-[#01204b]">Email Address</Label>
+            <Input id="email" value={formData.email} className="mt-2 border-2 border-[#01204b] font-polysans-semibold bg-gray-50" disabled />
           </div>
           
           <div>
-            <Label htmlFor="phone" className="font-bold">Phone Number</Label>
-            <Input id="phone" value={formData.phone} onChange={handleInputChange} className="mt-2 border-2 border-[#01204b] bg-white" placeholder="Enter your phone number" />
+            <Label htmlFor="phone" className="font-polysans text-[#01204b]">Phone Number</Label>
+            <Input id="phone" value={formData.phone} onChange={handleInputChange} className="mt-2 border-2 border-[#01204b] font-polysans-semibold bg-white" placeholder="Enter your phone number" />
           </div>
         </div>
         
         <div className="relative">
-          <button type="submit" disabled={saving} className="bg-white text-black border-[3px] border-[#fd4801] px-6 py-2 hover:bg-white transition-all relative rounded-md text-xs">
+          <button type="submit" disabled={saving} className="bg-white font-polysans text-[#01204b] border-[3px] border-[#fd4801] px-6 py-2 hover:bg-white transition-all relative rounded-md text-xs">
             {saving ? "Saving Changes..." : "Save Changes"}
           </button>
         </div>
@@ -227,14 +227,14 @@ const AccountTab: React.FC<AccountTabProps> = ({
     </div>
     
     <div className="bg-white border border-gray-200 rounded-xl p-6">
-      <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
+      <h2 className="text-xl font-polysans text-[#01204b] mb-6">Account Settings</h2>
       
       <div className="space-y-4">
         <div className="p-4 border border-gray-200 rounded-lg transition-all">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="font-bold text-lg">Notification Preferences</h3>
-              <p className="text-gray-600">Manage how you receive notifications</p>
+              <h3 className="font-polysans text-[#01204b] text-lg">Notification Preferences</h3>
+              <p className="text-gray-600 font-polysans-semibold">Manage how you receive notifications</p>
             </div>
             <Button className="border border-gray-200 hover:bg-gray-50" variant="outline" onClick={() => setNotificationDialogOpen(true)}>
               <Bell size={18} className="mr-2" />
@@ -246,8 +246,8 @@ const AccountTab: React.FC<AccountTabProps> = ({
         <div className="p-4 border border-gray-200 rounded-lg transition-all">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="font-bold text-lg">Password & Security</h3>
-              <p className="text-gray-600">Update your password and security settings</p>
+              <h3 className="font-polysans text-[#01204b] text-lg">Password & Security</h3>
+              <p className="text-gray-600 font-polysans-semibold">Update your password and security settings</p>
             </div>
             <Button className="border border-gray-200 hover:bg-gray-50" variant="outline" onClick={() => setPasswordDialogOpen(true)}>
               <Lock size={18} className="mr-2" />
