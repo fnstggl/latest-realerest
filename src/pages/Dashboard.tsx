@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsContent as RadixTabsContent } from "@/components/ui/tabs";
 import Navbar from "@/components/Navbar";
@@ -184,16 +183,6 @@ const Dashboard: React.FC = () => {
           content: (
             <TabsContent value="liked" className="space-y-6">
               <LikedPropertiesTab />
-            </TabsContent>
-          )
-        },
-        {
-          name: "Waitlisted",
-          value: "waitlisted",
-          icon: ClipboardCheck,
-          content: (
-            <TabsContent value="waitlisted" className="space-y-6">
-              <WaitlistedTab />
             </TabsContent>
           )
         },
