@@ -95,7 +95,7 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
           <h2 className="text-xl font-polysans text-[#01204b]">Recent Notifications</h2>
           <Button 
             onClick={clearAll}
-            className="font-polysans-semibold border border-gray-200 hover:border-[#0892D0] hover:bg-white" 
+            className="font-polysans-semibold border border-gray-200 hover:border-[#fd4801] hover:bg-white" 
             variant="outline"
           >
             Mark All as Read
