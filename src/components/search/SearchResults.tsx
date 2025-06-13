@@ -156,21 +156,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             <Link to="/signin">
               <Button 
                 variant="gradient" 
-                className="text-black bg-white hover:bg-white relative overflow-hidden px-8 py-2 rounded-xl z-10"
+className="text-white bg-[#fd4801] hover:bg-[#fd4801] relative font-polysans overflow-hidden px-8 py-3 rounded-full z-10"
               >
                 Sign in to view more properties
                 <span 
-                  className="absolute inset-0 rounded-xl pointer-events-none"
-                     style={{
+className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{
   background: "transparent",
-  border: "2px solid #fd4801",
-  backgroundOrigin: "border-box",
-  backgroundClip: "border-box",
-  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-  WebkitMaskComposite: "xor",
-  maskComposite: "exclude",
-  boxShadow: "0 0 15px rgba(253, 72, 1, 0.3)"
+  border: "3px solid #01204b",
+  borderRadius: "9999px",
+  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
+
                 ></span>
               </Button>
             </Link>
@@ -327,21 +324,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               <Link to="/signin">
                 <Button 
                   variant="gradient" 
-                  className="text-black bg-white hover:bg-white relative overflow-hidden px-8 py-2 rounded-xl z-10"
+className="text-white bg-[#fd4801] hover:bg-[#fd4801] font-polysans relative overflow-hidden px-8 py-3 rounded-full z-10"
                 >
                   Sign in to view more properties
                   <span 
-                    className="absolute inset-0 rounded-xl pointer-events-none"
-                 style={{
+className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
   background: "transparent",
-  border: "2px solid #fd4801",
-  backgroundOrigin: "border-box",
-  backgroundClip: "border-box",
-  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-  WebkitMaskComposite: "xor",
-  maskComposite: "exclude",
-  boxShadow: "0 0 15px rgba(253, 72, 1, 0.3)"
+  border: "3px solid #01204b",
+  borderRadius: "9999px",
+  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
+
                   ></span>
                 </Button>
               </Link>
@@ -362,20 +356,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             <Link to="/signin">
               <Button 
                 variant="gradient" 
-                className="text-black bg-white hover:bg-white relative overflow-hidden px-8 py-2 rounded-xl z-10"
+className="text-white bg-[#fd4801] hover:bg-[#fd4801] relative overflow-hidden font-polysans px-8 py-3 rounded-full z-10"
               >
                 Sign in to view more properties
                 <span 
-                  className="absolute inset-0 rounded-xl pointer-events-none"
+className="absolute inset-0 rounded-full pointer-events-none"
                   style={{
   background: "transparent",
-  border: "2px solid #fd4801",
-  backgroundOrigin: "border-box",
-  backgroundClip: "border-box",
-  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-  WebkitMaskComposite: "xor",
-  maskComposite: "exclude",
-  boxShadow: "0 0 15px rgba(253, 72, 1, 0.3)"
+  border: "3px solid #01204b",
+  borderRadius: "9999px",
+  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
                 ></span>
               </Button>
