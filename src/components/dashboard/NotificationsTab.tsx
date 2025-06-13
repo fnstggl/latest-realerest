@@ -92,10 +92,10 @@ const NotificationCenter: React.FC<NotificationsTabProps> = ({
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
       <div className="border-b border-gray-200 p-4 bg-white">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-polysans text-black">Recent Notifications</h2>
+          <h2 className="text-xl font-polysans text-[#01204b]">Recent Notifications</h2>
           <Button 
             onClick={clearAll}
-            className="font-polysans-semibold border border-gray-200 hover:border-[#0892D0] hover:bg-white" 
+            className="font-polysans-semibold border border-gray-200 hover:border-[#fd4801] hover:bg-white" 
             variant="outline"
           >
             Mark All as Read
