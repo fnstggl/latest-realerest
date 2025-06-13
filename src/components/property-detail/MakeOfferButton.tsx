@@ -218,7 +218,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
     return (
       <Button 
         variant="default" 
-        className="w-full bg-[#01204b] hover:bg-[#01204b]/90 text-white font-polysans font-bold rounded-xl"
+        className="w-full bg-[#fd4801] hover:bg-[#fd4801]/90 text-white font-polysans font-bold rounded-full py-2"
         onClick={() => toast.error('Please log in to make an offer')}
       >
         {/* Simple wallet icon without dots */}
@@ -235,7 +235,7 @@ const MakeOfferButton: React.FC<MakeOfferButtonProps> = ({
       <DialogTrigger asChild>
         <Button 
           variant="default" 
-          className="w-full bg-[#01204b] hover:bg-[#01204b]/90 text-white font-polysans font-bold rounded-xl"
+          className="w-full bg-[#fd4801] hover:bg-[#fd4801]/90 text-white font-polysans font-bold rounded-full py-2"
         >
           {/* Simple wallet icon without dots */}
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

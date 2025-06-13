@@ -244,7 +244,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           <button
             type="button"
             onClick={handleMessageSeller}
-            className="w-full mt-2 block relative overflow-hidden font-polysans font-bold py-2 rounded-xl backdrop-blur-lg bg-white text-[#01204b] border-2 border-[#fd4801] transition-transform"
+            className="w-full mt-2 block relative overflow-hidden font-polysans font-bold py-2 rounded-full backdrop-blur-lg bg-white text-[#01204b] border-2 border-[#fd4801] transition-transform"
             style={{
               position: "relative",
               zIndex: 1,
@@ -261,7 +261,7 @@ const SellerContactInfo: React.FC<SellerContactInfoProps> = ({
           <Button 
             variant="glass"
             disabled
-            className="w-full mt-2 text-gray-500 font-polysans font-bold py-2 rounded-xl backdrop-blur-lg bg-white/50"
+            className="w-full mt-2 text-gray-500 font-polysans font-bold py-2 rounded-full backdrop-blur-lg bg-white/50"
           >
             <Clock size={18} className="mr-2 text-[#01204b]" />
             <span className="font-polysans">Messaging Available After Approval</span>
