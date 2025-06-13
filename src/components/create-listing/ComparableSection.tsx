@@ -13,7 +13,7 @@ interface ComparableSectionProps {
 const ComparableSection: React.FC<ComparableSectionProps> = ({ form }) => {
   return (
     <div className="rounded-xl border border-black/10 bg-white p-6">
-      <h2 className="text-xl font-bold mb-4">Comparable Properties (Optional)</h2>
+      <h2 className="text-lg font-polysans text-[#01204b] mb-4">Comparable Properties (Optional)</h2>
       <div className="space-y-4">
         {/* Comparable Address 1 */}
         <FormField 
@@ -21,7 +21,7 @@ const ComparableSection: React.FC<ComparableSectionProps> = ({ form }) => {
           name="comparableAddress1" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Comparable Address 1</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans">Comparable Address 1</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="Enter address" 
@@ -40,7 +40,7 @@ const ComparableSection: React.FC<ComparableSectionProps> = ({ form }) => {
           name="comparableAddress2" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Comparable Address 2</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans">Comparable Address 2</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="Enter address" 
@@ -59,7 +59,7 @@ const ComparableSection: React.FC<ComparableSectionProps> = ({ form }) => {
           name="comparableAddress3" 
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-black font-bold">Comparable Address 3</FormLabel>
+              <FormLabel className="text-[#01204b] font-polysans">Comparable Address 3</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="Enter address" 
