@@ -247,7 +247,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     }
   };
 
-  // Updated function to handle how we render the location
+  // Updated function to render the location
   const renderLocation = () => {
     if (showFullAddress && fullAddress) {
       // For the full address case, we need to implement masking/unmasking
@@ -282,9 +282,9 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
     <div className="bg-white p-4 sm:p-6 rounded-xl my-[30px]">
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2">
-          <div className="bg-white text-[#01204b] px-2 sm:px-3 py-1 border border-gray-200 font-polysans font-bold italic inline-flex items-center text-sm sm:text-base rounded-lg">
-            <span className="text-[#01204b] font-polysans font-bold italic mr-1">{roundedBelowMarket}%</span> 
-            <span className="text-[#01204b] font-polysans font-bold italic">Below Market</span>
+          <div className="bg-white text-black px-2 sm:px-3 py-1 border-2 border-[#01204b] font-polysans font-bold uppercase inline-flex items-center text-sm sm:text-base rounded-lg">
+            <span className="text-black font-polysans font-bold uppercase mr-1">{roundedBelowMarket}%</span> 
+            <span className="text-black font-polysans font-bold uppercase">Below Market</span>
           </div>
           
           {/* Only render the reward section if there's a valid reward */}

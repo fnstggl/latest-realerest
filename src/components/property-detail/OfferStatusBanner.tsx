@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -263,7 +264,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
 
   if (offerStatus === 'pending') {
     return (
-      <div className="bg-gray-100 border border-gray-200 p-4 mb-4 rounded-lg relative">
+      <div className="bg-gray-100 border border-gray-200 p-4 mb-4 rounded-lg relative mt-20">
         {/* Withdraw button: small, top right */}
         <button
           onClick={handleWithdrawOffer}
@@ -286,7 +287,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
 
   if (offerStatus === 'declined') {
     return (
-      <div className="bg-red-50 border border-red-200 p-4 mb-4 rounded-lg">
+      <div className="bg-red-50 border border-red-200 p-4 mb-4 rounded-lg mt-20">
         <div className="flex items-center">
           <XCircle size={20} className="text-red-500 mr-2" />
           <div className="font-bold">Offer Declined</div>
@@ -300,7 +301,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
 
   if (offerStatus === 'countered') {
     return (
-      <div className="bg-blue-50 border border-blue-200 p-4 mb-4 rounded-lg">
+      <div className="bg-blue-50 border border-blue-200 p-4 mb-4 rounded-lg mt-20">
         <div className="flex items-center">
           <ArrowRightLeft size={20} className="text-blue-600 mr-2" />
           <div className="font-bold">Counter Offer Received</div>
@@ -400,7 +401,7 @@ const OfferStatusBanner: React.FC<OfferStatusBannerProps> = ({
 
   if (offerStatus === 'accepted') {
     return (
-      <div className="bg-blue-50 border border-blue-200 p-4 mb-4 rounded-lg">
+      <div className="bg-blue-50 border border-blue-200 p-4 mb-4 rounded-lg mt-20">
         <div className="flex items-center">
           <CheckCircle size={20} className="text-blue-600 mr-2" />
           <div className="font-bold">Offer Accepted!</div>
