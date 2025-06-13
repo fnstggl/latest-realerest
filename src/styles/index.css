@@ -89,32 +89,6 @@
   transition: transform 0.3s ease, opacity 0.3s ease !important;
 }
 
-/* Remove black outline on focus for most inputs, except inside .searchbar-isolated */
-:not(.searchbar-isolated) input:focus-visible, 
-:not(.searchbar-isolated) textarea:focus-visible,
-:not(.searchbar-isolated) select:focus-visible {
-  outline: none !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-/* Override any orange outline/border in inputs across the site */
-.focus-visible\:ring-2:focus-visible,
-.focus-visible\:ring-\[\#000000e6\]:focus-visible {
-  --tw-ring-color: transparent !important;
-  border-color: transparent !important;
-}
-
-/* Override specific to signup/signin and other forms — exclude .searchbar-isolated */
-:not(.searchbar-isolated) input[type="text"]:focus, 
-:not(.searchbar-isolated) input[type="email"]:focus, 
-:not(.searchbar-isolated) input[type="password"]:focus,
-:not(.searchbar-isolated) input[type="tel"]:focus {
-  border-color: transparent !important;
-  outline-color: transparent !important;
-  box-shadow: none !important;
-}
-
 /* Ensure the searchbar maintains its navy blue outline on all states */
 .searchbar-isolated input {
   outline: 3px solid #01204b !important;
