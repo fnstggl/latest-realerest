@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -13,6 +13,7 @@ const SignUp: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [signupError, setSignupError] = useState<string | null>(null);
   const [signupSuccess, setSignupSuccess] = useState(false);
@@ -99,15 +100,34 @@ const SignUp: React.FC = () => {
               </div>
               <div>
                 <Label htmlFor="password" className="font-polysans text-[#01204b]">Password</Label>
-                <Input type="password" id="password" placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-2 bg-white border-gray-200 font-polysans-semibold focus:border-gray-300 focus:ring-0" />
+                <div className="relative">
+                  <Input 
+                    type={showPassword ? "text" : "password"} 
+                    id="password" 
+                    placeholder="Enter your password" 
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)} 
+                    required 
+                    className="mt-2 bg-white border-gray-200 font-polysans-semibold focus:border-gray-300 focus:ring-0 pr-10" 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
                 <p className="text-xs text-gray-500 mt-1">Password must be at least 6 characters long</p>
               </div>
               <div className="relative">
-                <div className="gradient-border-container">
-                  <button type="submit" className="gradient-border-button w-full font-polysans font-polysans" disabled={isLoading}>
-                    {isLoading ? "Creating Account..." : "Sign Up"}
-                  </button>
-                </div>
+                <button 
+                  type="submit" 
+                  className="w-full bg-[#fd4801] text-white border-2 border-[#01204b] rounded-lg px-4 py-2 font-polysans font-bold hover:bg-[#fd4801]/90 transition-all disabled:opacity-50" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating Account..." : "Sign Up"}
+                </button>
               </div>
               <p className="text-sm text-gray-600 font-polysans-semibold text-center">
                 Already have an account? <Link to="/signin" className="font-polysans text-[#01204b] hover:underline">Sign In</Link>
