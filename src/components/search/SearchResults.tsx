@@ -163,7 +163,7 @@ className="text-white bg-[#fd4801] hover:bg-[#fd4801] relative font-polysans ove
 className="absolute inset-0 rounded-full pointer-events-none"
                     style={{
   background: "transparent",
-  border: "3px solid #01204b",
+  border: "3px solid #fd4801",
   borderRadius: "9999px",
   boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
@@ -331,7 +331,7 @@ className="text-white bg-[#fd4801] hover:bg-[#fd4801] font-polysans relative ove
 className="absolute inset-0 rounded-full pointer-events-none"
                 style={{
   background: "transparent",
-  border: "3px solid #01204b",
+  border: "3px solid #fd4801",
   borderRadius: "9999px",
   boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
@@ -363,7 +363,7 @@ className="text-white bg-[#fd4801] hover:bg-[#fd4801] relative overflow-hidden f
 className="absolute inset-0 rounded-full pointer-events-none"
                   style={{
   background: "transparent",
-  border: "3px solid #01204b",
+  border: "3px solid #fd4801",
   borderRadius: "9999px",
   boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
