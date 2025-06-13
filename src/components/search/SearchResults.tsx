@@ -333,17 +333,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   Sign in to view more properties
                   <span 
                     className="absolute inset-0 rounded-xl pointer-events-none"
-                    style={{
-                      background: "transparent",
-                      border: "2px solid transparent",
-                      backgroundImage: "linear-gradient(90deg, #fd4801, #fd4801)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "border-box",
-                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                      boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-                    }}
+                 style={{
+  background: "transparent",
+  border: "2px solid #fd4801",
+  backgroundOrigin: "border-box",
+  backgroundClip: "border-box",
+  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+  WebkitMaskComposite: "xor",
+  maskComposite: "exclude",
+  boxShadow: "0 0 15px rgba(253, 72, 1, 0.3)"
+}}
                   ></span>
                 </Button>
               </Link>
@@ -370,16 +369,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 <span 
                   className="absolute inset-0 rounded-xl pointer-events-none"
                   style={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    backgroundImage: "linear-gradient(90deg, #fd4801, #fd4801)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "border-box",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude",
-                    boxShadow: "0 0 15px rgba(217, 70, 239, 0.5)"
-                  }}
+  background: "transparent",
+  border: "2px solid #fd4801",
+  backgroundOrigin: "border-box",
+  backgroundClip: "border-box",
+  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+  WebkitMaskComposite: "xor",
+  maskComposite: "exclude",
+  boxShadow: "0 0 15px rgba(253, 72, 1, 0.3)"
+}}
                 ></span>
               </Button>
             </Link>
