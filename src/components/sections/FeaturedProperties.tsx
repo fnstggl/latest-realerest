@@ -87,7 +87,7 @@ const FeaturedProperties: React.FC = () => {
             <div className="mt-12 text-center">
               <Button 
                 onClick={() => navigate('/search')} 
-                className="className="glass-button font-polysans shadow-md transition-colors duration-200 hover:bg-white/10 electric-blue-button"
+                className="glass-button font-polysans font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1 electric-blue-button"
               >
                 View All Homes
               </Button>
