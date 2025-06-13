@@ -233,7 +233,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
               variant="ghost" 
               size="sm" 
               onClick={handleMarkAllAsRead} 
-              className="text-xs text-black hover:text-black font-medium relative border hover:border-[#fd4801] hover:bg-white rounded-lg px-3 py-1"
+              className="text-xs text-black hover:text-black font-medium relative hover:border-[#fd4801] hover:bg-white rounded-lg px-3 py-1"
             >
               Mark all as read
             </Button>
