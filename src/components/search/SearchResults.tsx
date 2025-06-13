@@ -156,17 +156,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             <Link to="/signin">
               <Button 
                 variant="gradient" 
-className="text-white bg-[#fd4801] hover:bg-[#fd4801] hover:shadow-[0_0_25px_rgba(253,72,1,0.6)] transition-all duration-300 font-polysans relative overflow-hidden px-8 py-3 rounded-full z-10 group"
+className="text-white bg-[#fd4801] hover:bg-[#fd4801] relative font-polysans overflow-hidden px-8 py-3 rounded-full z-10"
               >
                 Sign in to view more properties
-                style={{
+                <span 
+className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{
   background: "transparent",
   border: "3px solid #fd4801",
   borderRadius: "9999px",
-  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)",
-  transition: "box-shadow 0.3s ease"
+  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
-
 
                 ></span>
               </Button>
@@ -324,7 +324,7 @@ className="text-white bg-[#fd4801] hover:bg-[#fd4801] hover:shadow-[0_0_25px_rgb
               <Link to="/signin">
                 <Button 
                   variant="gradient" 
-className="text-white bg-[#fd4801] hover:bg-[#fd4801] hover:shadow-[0_0_25px_rgba(253,72,1,0.6)] transition-all duration-300 font-polysans relative overflow-hidden px-8 py-3 rounded-full z-10 group"
+className="text-white bg-[#fd4801] hover:bg-[#fd4801] font-polysans relative overflow-hidden px-8 py-3 rounded-full z-10"
                 >
                   Sign in to view more properties
                   <span 
@@ -333,10 +333,8 @@ className="absolute inset-0 rounded-full pointer-events-none"
   background: "transparent",
   border: "3px solid #fd4801",
   borderRadius: "9999px",
-  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)",
-  transition: "box-shadow 0.3s ease"
+  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
-
 
                   ></span>
                 </Button>
@@ -358,17 +356,16 @@ className="absolute inset-0 rounded-full pointer-events-none"
             <Link to="/signin">
               <Button 
                 variant="gradient" 
-className="text-white bg-[#fd4801] hover:bg-[#fd4801] hover:shadow-[0_0_25px_rgba(253,72,1,0.6)] transition-all duration-300 font-polysans relative overflow-hidden px-8 py-3 rounded-full z-10 group"
+className="text-white bg-[#fd4801] hover:bg-[#fd4801] relative overflow-hidden font-polysans px-8 py-3 rounded-full z-10"
               >
                 Sign in to view more properties
                 <span 
 className="absolute inset-0 rounded-full pointer-events-none"
-              style={{
+                  style={{
   background: "transparent",
   border: "3px solid #fd4801",
   borderRadius: "9999px",
-  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)",
-  transition: "box-shadow 0.3s ease"
+  boxShadow: "0 0 15px rgba(1, 32, 75, 0.3)"
 }}
                 ></span>
               </Button>
