@@ -99,6 +99,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           {imageFiles.length}/10 images • 10MB max per image
         </span>
       </div>
+    
+      <p className="text-sm font-polysans font-semibold text-gray-600 mb-4">
+        Tip: The first image should be the front of the house
+      </p>
 
       {/* Image upload area */}
       <div className={`border-2 border-dashed rounded-lg p-6 transition-colors cursor-pointer hover:border-gray-400 text-center ${dragging ? 'border-primary bg-slate-100/30' : 'border-gray-300'}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => document.getElementById('image-upload')?.click()}>
