@@ -27,23 +27,6 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
     return Number(((marketPrice - price) / marketPrice * 100).toFixed(1));
   };
 
-  // Helper function to create more precise location filtering
-  const createLocationFilter = (query: any, location: string) => {
-    const trimmedLocation = location.trim();
-    
-    // First try exact matches (case insensitive)
-    const exactQuery = query.ilike('location', trimmedLocation);
-    
-    // Then try matches that start with the location (for city, state format)
-    const startsWithQuery = query.ilike('location', `${trimmedLocation},%`);
-    
-    // Finally try matches that end with the location (for state matches)
-    const endsWithQuery = query.ilike('location', `%, ${trimmedLocation}`);
-    
-    // Combine with OR logic for more precise matching
-    return query.or(`location.ilike.${trimmedLocation},location.ilike.${trimmedLocation}\\,%,location.ilike.%, ${trimmedLocation}`);
-  };
-
   const fetchListings = async (filters?: any) => {
     setLoading(true);
     setError(null);
@@ -55,14 +38,13 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
 
       // Apply search query if provided
       if (searchQuery) {
-        query = createLocationFilter(query, searchQuery);
+        query = query.or(`location.ilike.%${searchQuery}%,title.ilike.%${searchQuery}%`);
       }
       
       // Apply filters if provided
       if (filters) {
         if (filters.location && filters.location !== '') {
-          // Use more precise location filtering
-          query = createLocationFilter(query, filters.location);
+          query = query.ilike('location', `%${filters.location}%`);
         }
         
         if (filters.minPrice > 0) {
@@ -130,14 +112,6 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
             item => item.belowMarket >= filters.belowMarket
           );
         }
-        
-        // Debug logging to track location filtering
-        console.log('Location search results:', {
-          searchQuery,
-          locationFilter: filters?.location,
-          resultCount: transformedData.length,
-          locations: transformedData.map(item => item.location)
-        });
         
         setListings(transformedData);
       }
