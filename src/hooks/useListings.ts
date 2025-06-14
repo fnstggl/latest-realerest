@@ -17,69 +17,6 @@ export interface Listing {
   reward?: number;
 }
 
-// State name to abbreviation mapping
-const stateNameToAbbreviation: { [key: string]: string } = {
-  'alabama': 'AL',
-  'alaska': 'AK',
-  'arizona': 'AZ',
-  'arkansas': 'AR',
-  'california': 'CA',
-  'colorado': 'CO',
-  'connecticut': 'CT',
-  'delaware': 'DE',
-  'florida': 'FL',
-  'georgia': 'GA',
-  'hawaii': 'HI',
-  'idaho': 'ID',
-  'illinois': 'IL',
-  'indiana': 'IN',
-  'iowa': 'IA',
-  'kansas': 'KS',
-  'kentucky': 'KY',
-  'louisiana': 'LA',
-  'maine': 'ME',
-  'maryland': 'MD',
-  'massachusetts': 'MA',
-  'michigan': 'MI',
-  'minnesota': 'MN',
-  'mississippi': 'MS',
-  'missouri': 'MO',
-  'montana': 'MT',
-  'nebraska': 'NE',
-  'nevada': 'NV',
-  'new hampshire': 'NH',
-  'new jersey': 'NJ',
-  'new mexico': 'NM',
-  'new york': 'NY',
-  'north carolina': 'NC',
-  'north dakota': 'ND',
-  'ohio': 'OH',
-  'oklahoma': 'OK',
-  'oregon': 'OR',
-  'pennsylvania': 'PA',
-  'rhode island': 'RI',
-  'south carolina': 'SC',
-  'south dakota': 'SD',
-  'tennessee': 'TN',
-  'texas': 'TX',
-  'utah': 'UT',
-  'vermont': 'VT',
-  'virginia': 'VA',
-  'washington': 'WA',
-  'west virginia': 'WV',
-  'wisconsin': 'WI',
-  'wyoming': 'WY',
-  'district of columbia': 'DC',
-  'washington dc': 'DC',
-  'washington d.c.': 'DC'
-};
-
-// Function to normalize location search to handle state abbreviations
-const normalizeLocationSearch = (location: string): string => {
-  const lowerLocation = location.toLowerCase().trim();
-  return stateNameToAbbreviation[lowerLocation] || location;
-};
-
 export const useListings = (limit?: number, searchQuery?: string | null) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,12 +48,8 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
       if (locationToSearch && locationToSearch.trim() !== '') {
         console.log('Applying location filter for:', locationToSearch);
         
-        // Normalize the location search to handle state abbreviations
-        const normalizedLocation = normalizeLocationSearch(locationToSearch.trim());
-        console.log('Normalized location:', normalizedLocation);
-        
         // Use more restrictive location matching - exact word matches or starts with
-        const locationFilter = normalizedLocation;
+        const locationFilter = locationToSearch.trim();
         query = query.or(`location.ilike.${locationFilter}%,location.ilike.% ${locationFilter}%,location.ilike.%${locationFilter}`);
         
         console.log('Applied location filter query');
