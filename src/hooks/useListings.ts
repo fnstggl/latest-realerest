@@ -17,20 +17,6 @@ export interface Listing {
   reward?: number;
 }
 
-// State name to abbreviation mapping
-const stateNameToAbbreviation: { [key: string]: string } = {
-  'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR', 'california': 'CA',
-  'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE', 'florida': 'FL', 'georgia': 'GA',
-  'hawaii': 'HI', 'idaho': 'ID', 'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA',
-  'kansas': 'KS', 'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
-  'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS', 'missouri': 'MO',
-  'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV', 'new hampshire': 'NH', 'new jersey': 'NJ',
-  'new mexico': 'NM', 'new york': 'NY', 'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH',
-  'oklahoma': 'OK', 'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
-  'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT', 'vermont': 'VT',
-  'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV', 'wisconsin': 'WI', 'wyoming': 'WY'
-};
-
 export const useListings = (limit?: number, searchQuery?: string | null) => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,12 +25,6 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
   const calculateBelowMarket = (price: number, marketPrice: number): number => {
     if (!price || !marketPrice || marketPrice <= price) return 0;
     return Number(((marketPrice - price) / marketPrice * 100).toFixed(1));
-  };
-
-  // Helper function to convert state names to abbreviations
-  const normalizeLocationSearch = (location: string): string => {
-    const lowerLocation = location.toLowerCase().trim();
-    return stateNameToAbbreviation[lowerLocation] || location;
   };
 
   const fetchListings = async (filters?: any) => {
@@ -61,17 +41,16 @@ export const useListings = (limit?: number, searchQuery?: string | null) => {
         .select('*');
 
       // Determine the location to search for - prioritize searchQuery over filters.location
-      const rawLocationToSearch = searchQuery || filters?.location;
-      console.log('Raw location to search:', rawLocationToSearch);
+      const locationToSearch = searchQuery || filters?.location;
+      console.log('Location to search:', locationToSearch);
 
-      // Apply location search if provided
-      if (rawLocationToSearch && rawLocationToSearch.trim() !== '') {
-        const locationToSearch = normalizeLocationSearch(rawLocationToSearch);
-        console.log('Normalized location to search:', locationToSearch);
+      // Apply location search if provided - make it more restrictive
+      if (locationToSearch && locationToSearch.trim() !== '') {
         console.log('Applying location filter for:', locationToSearch);
         
-        // Use strict location matching - either exact match, starts with, or word boundary matches
-        query = query.or(`location.ilike.${locationToSearch},location.ilike.${locationToSearch}%,location.ilike.% ${locationToSearch}%,location.ilike.%${locationToSearch}%`);
+        // Use more restrictive location matching - exact word matches or starts with
+        const locationFilter = locationToSearch.trim();
+        query = query.or(`location.ilike.${locationFilter}%,location.ilike.% ${locationFilter}%,location.ilike.%${locationFilter}`);
         
         console.log('Applied location filter query');
       }
