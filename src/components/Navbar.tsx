@@ -171,7 +171,7 @@ const Navbar: React.FC = () => {
                   Log In
                 </Button>
 
-                <Button className="font-polysans-semibold text-xs sm:text-sm py-0.5 px-1.5 sm:py-1 sm:px-2 text-white bg-[#fd4801] hover:bg-[#fd4801]/90 h-6 sm:h-7" onClick={handleSignUp}>
+                <Button className="font-polysans-semibold text-xs sm:text-sm py-1 px-1.5 sm:py-1.5 sm:px-2 text-white bg-[#fd4801] hover:bg-[#fd4801]/90 h-7 sm:h-8" onClick={handleSignUp}>
                   Sign up
                 </Button>
               </>}
