@@ -100,7 +100,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         </span>
       </div>
     
-      <p className="text-sm font-polysans font-semibold text-gray-600 mb-4">
+      <p className="text-sm font-polysans-semibold text-gray-600 mb-4">
         Tip: The first image should be the front of the house
       </p>
 
